@@ -1,0 +1,98 @@
+{% load universe_extras %}
+
+<html>
+
+<head>
+
+	<style type="text/css">
+		*
+		{
+			border : 0;
+
+		}
+
+		body 
+		{
+			position: fixed;
+			width : 100%;
+			height : 100%;
+
+			background-color: #948C8C;	
+		}
+
+		#inner_cont_big
+		{	
+			position: absolute;
+			left : 10%;
+			top : 5%;
+			width : 80%;
+			height : 90%;
+		}
+
+		#inner_cont
+		{
+			position: absolute;
+			left : 0;
+			top : 5%;
+			width : 100%;
+			height : 95%;
+
+			overflow: scroll;
+
+			background-color: #43444C
+		}
+
+		#inner_title
+		{
+			position: absolute;
+			left : 0;
+			top : 0;
+			width : 100%;
+			height : 5%;
+
+			background-color: #D1893B
+		}
+	
+		#inner_cont::-webkit-scrollbar 
+		{
+			display: none;
+		}
+
+		*
+		{
+			color : #FFFFFF;
+		}
+
+
+	</style>
+	
+	<script src="/static/Universe/import_mathjax.js"></script>
+
+</head>
+
+<body>
+
+	<div id = "inner_cont_big">
+
+		<div id = "inner_cont">
+			{{文章内容|safe}}
+		</div>
+		<div id = "inner_title">
+			<h>{{文章.名}}</h>
+		</div>
+
+	</div>
+
+</body>
+
+<script type = "text/javascript">
+	var icnt = document.getElementById("inner_cont")
+	var icnt_scr_rat = 0
+	icnt.onscroll = function()
+	{
+		icnt_scr_rat = (icnt.scrollTop) / (icnt.scrollHeight - icnt.offsetHeight)
+	}
+</script>
+
+
+</html>
