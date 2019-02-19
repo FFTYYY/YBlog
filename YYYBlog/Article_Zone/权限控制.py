@@ -1,4 +1,4 @@
-from .static.显示列表 import *
+from .static.Article_Zone.显示列表 import *
 from Entry.models import 访问者
 import time
 
@@ -28,17 +28,19 @@ def 权限查询(request):
 		return "访客"
 	return 访问人[0].权限等级
 
-def 页面许可查询(request , 页面名):
-	权限 = 权限查询(request)
-	for 权限列表 , 页面列表 in 不可视的页面列表.items():
-		if 权限 in 权限列表 and 页面名 in 页面列表:
-			return False
-	return True
+def 节点许可查询(request , 此节点):
+	'''
+		查询request是否获得了足够的权限以访问节点
+	'''
+	while True:
+		节点名 = 此节点.名
 
-def 文章许可查询(request , 页面名 , 文章名):
-	权限 = 权限查询(request)
-	for 权限列表 , 文章列表 in 不可视的文章列表.items():
-		if 权限 in 权限列表 and (页面名,文章名) in 文章列表:
-			return False
+		权限 = 权限查询(request)
+		for 权限列表 , 节点列表 in 不可视的节点列表.items():
+			if 权限 in 权限列表 and 节点名 in 节点列表:
+				return False
+		
+		if 此节点.父 is None or 此节点.父 is 此节点:
+			break
+		此节点 = 此节点.父
 	return True
-
