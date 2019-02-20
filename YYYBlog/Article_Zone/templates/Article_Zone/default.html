@@ -1,0 +1,151 @@
+{% load universe_extras %}
+
+<html>
+
+<head>
+	<link rel = "stylesheet" href = "/static/Article_Zone/default_css.css" type="text/css" />
+	
+	<script src="/static/Universe/import_mathjax.js"></script>
+
+</head>
+
+<body>
+
+	<div id = "left_cont_big">
+
+		<div id = "left_title">
+			列表
+		</div>
+
+		<div class = "left_list_div" id = "left_list_sons">
+			<ol>
+			{% for 节点 in 子节点列表 %}
+				<li class = "left_list">
+					<a href = "../{{节点.地址}}" style = "text-decoration:none;" >
+						{{节点.名}}
+					</a>
+				</li>
+			{% endfor %}
+			</ol>
+		</div>
+
+		<div class = "left_list_div" id = "left_list_fathers">
+			<ol>
+			{% for 节点 in 祖先节点列表 %}
+				<li class = "left_list">
+					<a href = "../{{节点.地址}}" style = "text-decoration:none;" >
+						{{节点.名}}
+					</a>
+				</li>
+			{% endfor %}
+			</ol>
+		</div>
+
+		<div class = "left_list_div" id = "left_list_brothers">
+			<ol>
+			{% for 节点 in 兄弟节点列表 %}
+				<li class = "left_list">
+					<a href = "../{{节点.地址}}" style = "text-decoration:none;" >
+						{{节点.名}}
+					</a>
+				</li>
+			{% endfor %}
+			</ol>
+		</div>
+
+		<div id = "left_down">
+			<button type = "button" class = "left_button" id = "but_son"> 下行 </button>
+			<button type = "button" class = "left_button" id = "but_fat"> 上行 </button>
+			<button type = "button" class = "left_button" id = "but_bro"> 同列行 </button>
+		</div>
+
+		<script type="text/javascript" charset="utf-8">
+
+			function hid_one(one_div , one_but)
+			{
+				one_div.style.display = "none"
+				one_but.style.backgroundColor = "#781AE4FF"
+			}
+
+			function hid_all()
+			{
+				hid_one(div_son , but_son)
+				hid_one(div_fat , but_fat)
+				hid_one(div_bro , but_bro)
+			}
+			function show_one(one_div , one_but)
+			{
+				hid_all();
+				one_div.style.display = "block"
+				one_but.style.backgroundColor = "#F2960CFF"
+			}
+
+			div_son = document.getElementById("left_list_sons")
+			div_fat = document.getElementById("left_list_fathers")
+			div_bro = document.getElementById("left_list_brothers")
+
+			but_son = document.getElementById("but_son")
+			but_fat = document.getElementById("but_fat")
+			but_bro = document.getElementById("but_bro")
+
+			show_one(div_son , but_son)
+
+			but_son.onclick = function(){ show_one(div_son , but_son) }
+			but_fat.onclick = function(){ show_one(div_fat , but_fat) }
+			but_bro.onclick = function(){ show_one(div_bro , but_bro) }
+
+		</script>
+
+	</div>
+
+	<div id = "inner_cont_big">
+
+		<div id = "inner_text">
+			{{内容|safe}}
+		</div>
+
+		<div id = "inner_title">
+			<h>{{此节点.名}}</h>
+		</div>
+
+	</div>
+
+	<div id = "right_cont_big">
+
+		<div id = "right_title">
+			评论区
+		</div>
+
+		<div id = "right_list">
+			<ol class = "right_list_whole">
+			{% for 留言 in 留言列表 %}
+				<li class = "right_list">
+					<pre class = "comment_pre comment_pre_top">{{留言.内容}}</pre>
+					<pre class = "comment_pre comment_pre_bot">	-- {{留言.留言者称呼}} </pre>
+					<div class = "right_line"></div>
+				</li>
+			{% endfor %}
+			</ol>
+		</div>
+
+
+		<div id = "right_down">
+
+		<form action = "submit_comment" method = "post">
+			{% csrf_token %}
+
+			评论内容：
+			<textarea class = "text_input" id = "comment_input" name = "content"></textarea>
+			称呼: <input type = "text" class = "text_input" name = "name"/>
+			邮箱: <input type = "text" class = "text_input" name = "email"/>
+			<input type = "submit" value = "提交" id = "comment_submit"/>
+
+		</form>
+		</div>
+
+	</div>
+
+</body>
+
+</html>
+

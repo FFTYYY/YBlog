@@ -1,8 +1,7 @@
 *.sqlite3
-ADMIN_TEMPLATES_BAK/
-Get_Article_From_isPrigrammer/
 /YYYBlog/Article_Zone/static/Article_Zone/显示列表.py
-/YYYBlog/Article_Zone/templates/Article_Zone/*
 /YYYBlog/YYYBlog/setting_secret_key.py
 
 *.pyc
+ADMIN_TEMPLATES_BAK/
+Get_Article_From_isPrigrammer/
