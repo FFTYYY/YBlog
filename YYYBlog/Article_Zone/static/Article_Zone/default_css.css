@@ -1,0 +1,273 @@
+*
+{
+	border : 0;
+	margin : 0;
+	padding : 0;
+	outline : 0;
+}
+
+body 
+{
+	position : fixed;
+	width : 100%;
+	height : 100%;
+
+	background-color : #948C8C;	
+}
+
+ol
+{
+	position : absolute;
+	list-style-type : none;
+	left : 3px;
+}
+
+.comment_pre
+{
+	white-space : pre-wrap; 
+	word-wrap: break-word; 
+}
+.comment_pre_top
+{
+	padding-top : 5px;
+}
+.comment_pre_bot
+{
+	padding-bottom : 5px;
+}
+.right_list_whole
+{
+	padding-bottom : 10px;
+}
+
+.right_line
+{
+	position : absolute;
+	left : 2px;
+	height : 2px;
+	right : 5px;
+	background-color:#698395FF;
+}
+
+@-webkit-keyframes left_in
+{
+	from 
+	{
+		left : -14%;
+		width : 14%;
+	}
+	to 
+	{
+		left : 0.5%;
+		width : 14%;
+	}
+}
+
+#left_cont_big
+{	
+	position : absolute;
+	left : 0.5%;
+	top : 2%;
+	width : 14%;
+	height : 96%;
+
+	-webkit-animation : left_in 1s;
+}
+
+.left_list
+{
+	padding-top: 10px;
+}
+
+.left_button
+{
+	position : relative;
+	width : 30%;
+	height : 90%;
+	top : 5%;
+	margin-left : 1%;
+	background-color : #6E2BD3FF;
+
+}
+
+#left_title
+{	
+	position : absolute;
+	left : 0;
+	top : 0;
+	width : 100%;
+	height : 5%;
+
+	background-color : #C4A63AFF;
+}
+
+.left_list_div
+{	
+	position : absolute;
+	left : 0;
+	top : 10%;
+	width : 100%;
+	height : 90%;
+
+	background-color : #2794D7FF;
+}
+
+
+#left_down
+{	
+	position : absolute;
+	left : 0;
+	top : 5%;
+	width : 100%;
+	height : 5%;
+
+	background-color : #51C13DFF;
+}
+
+@-webkit-keyframes inner_in
+{
+	from 
+	{
+		opacity : 0.3;
+	}
+	to 
+	{
+		opacity : 1;
+	}
+}
+
+#inner_cont_big
+{	
+	position : absolute;
+	left : 15%;
+	top : 2%;
+	width : 70%;
+	height : 96%;
+}
+
+#inner_text
+{
+	position : absolute;
+	left : 0;
+	top : 5%;
+	width : 100%;
+	height : 95%;
+
+	overflow : scroll;
+
+	background-color : #43444C;
+	-webkit-animation : inner_in 1s;
+}
+
+#inner_title
+{
+	position : absolute;
+	left : 0;
+	top : 0;
+	width : 100%;
+	height : 5%;
+
+	background-color : #D1893B;
+	-webkit-animation : inner_in 1s;
+}
+
+#inner_text::-webkit-scrollbar 
+{
+	display : none;
+}
+
+
+@-webkit-keyframes right_in
+{
+	from 
+	{
+		right : -13%;
+		width : 14%;
+	}
+	to 
+	{
+		right : 0.5%;
+		width : 14%;
+	}
+}
+
+#right_cont_big
+{	
+	position : absolute;
+	right : 0.5%;
+	top : 2%;
+	width : 14%;
+	height : 96%;
+
+	-webkit-animation : right_in 1s;
+}
+
+#right_title
+{	
+	position : absolute;
+	left : 0;
+	top : 0;
+	width : 100%;
+	height : 5%;
+
+	background-color: #C4A63AFF;
+}
+
+#right_list
+{	
+	position : absolute;
+	left : 0;
+	top : 5%;
+	width : 100%;
+	height : 55%;
+
+	background-color: #2794D7FF;
+
+	overflow : auto;
+}
+#right_list::-webkit-scrollbar 
+{
+	display : none;
+}
+
+#right_down
+{	
+	position : absolute;
+	left : 0;
+	top : 60%;
+	width : 100%;
+	height : 40%;
+
+	background-color : #51C13DFF;
+}
+
+.text_input
+{
+
+	background-color : #E01EAAFF;
+}
+
+#comment_input
+{
+	height : 50%;
+	width : 100%;
+}
+
+#comment_submit
+{
+	margin-top : 5px;
+	width : 20%;
+	position : relative;
+	left : 40%;
+	background-color : #6E2BD3FF;
+}
+
+textarea
+{
+	resize : none;
+}
+
+*
+{
+	color : #FFFFFF;
+}

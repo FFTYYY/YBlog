@@ -21,6 +21,10 @@ class 节点(models.Model):
 	def __str__(self):
 		return self.名
 
-#	def save(self , *args , **kwargs):
-#		super(节点,self).save(args , kwargs)
+class 留言(models.Model):
+	内容 = models.TextField(default = "")
+	对象 = models.ForeignKey(节点 , on_delete = models.CASCADE  , related_name = "留言")
+
+	留言者称呼 = models.CharField(max_length = 短文本长度 , default = "匿名")
+	留言者邮箱 = models.CharField(max_length = 短文本长度 , blank = True)
 

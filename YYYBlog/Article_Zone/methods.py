@@ -3,6 +3,7 @@
 '''
 
 import markdown
+from .models import *
 
 def deal_txt(内容):
 	'''
@@ -43,3 +44,19 @@ def deal_content(内容 , 类型 = "html"):
 		内容 = deal_md(内容)
 
 	return 内容
+
+def 获取祖先节点列表(节点):
+	列表 = []
+	while True:
+		父 = 节点.父
+		if not 父:
+			break
+		列表.append(父)
+		节点 = 父
+	return 列表
+
+def 获取兄弟节点列表(节点):
+	父 = 节点.父
+	if not 父:
+		return []
+	return 父.子.all()
