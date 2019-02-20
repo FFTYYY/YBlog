@@ -12,7 +12,21 @@ body
 	width : 100%;
 	height : 100%;
 
-	background-color : #948C8C;	
+	background-color : #3C3C3C;
+}
+
+@-webkit-keyframes right_list_in
+{
+	from 
+	{
+		opacity : 0.3;
+		top : 100%;
+	}
+	to 
+	{
+		opacity : 1;
+		top : 0;
+	}
 }
 
 ol
@@ -20,34 +34,12 @@ ol
 	position : absolute;
 	list-style-type : none;
 	left : 3px;
+
+    word-wrap: break-word;
+    word-break: break-all;
+	-webkit-animation : right_list_in 1s;
 }
 
-.comment_pre
-{
-	white-space : pre-wrap; 
-	word-wrap: break-word; 
-}
-.comment_pre_top
-{
-	padding-top : 5px;
-}
-.comment_pre_bot
-{
-	padding-bottom : 5px;
-}
-.right_list_whole
-{
-	padding-bottom : 10px;
-}
-
-.right_line
-{
-	position : absolute;
-	left : 2px;
-	height : 2px;
-	right : 5px;
-	background-color:#698395FF;
-}
 
 @-webkit-keyframes left_in
 {
@@ -74,9 +66,38 @@ ol
 	-webkit-animation : left_in 1s;
 }
 
+@-webkit-keyframes left_list_hover
+{
+	from 
+	{
+		color : #F5F4F4FF;
+		background-color: #3C3C3CFF;
+	}
+	to 
+	{
+		color : #0F0F0FFF;
+		background-color: #B2B2B2FF;
+	}
+}
+
 .left_list
 {
-	padding-top: 10px;
+	margin-top: 10px;
+}
+
+.left_list:hover
+{
+	color : #0F0F0FFF;
+	background-color: #B2B2B2FF;
+	-webkit-animation : left_list_hover 1s;
+	-webkit-animation-timing-function: ease-out;
+
+}
+
+.left_list_a
+{
+	text-decoration : none;
+	color : inherit;
 }
 
 .left_button
@@ -86,8 +107,26 @@ ol
 	height : 90%;
 	top : 5%;
 	margin-left : 1%;
-	background-color : #6E2BD3FF;
+	background-color : #2D2D2DFF;
+}
 
+.left_list_div_active
+{
+	display : block !important;
+}
+.left_button_active
+{
+	background-color : #757575FF !important;
+}
+
+.left_button:hover
+{
+	background-color : #555555FF;
+}
+
+.left_button:active
+{
+	background-color : #757575FF;
 }
 
 #left_title
@@ -98,7 +137,7 @@ ol
 	width : 100%;
 	height : 5%;
 
-	background-color : #C4A63AFF;
+	background-color : #3C3C3CFF;
 }
 
 .left_list_div
@@ -109,9 +148,14 @@ ol
 	width : 100%;
 	height : 90%;
 
-	background-color : #2794D7FF;
+	background-color : #3C3C3CFF;
+	overflow : auto;
+	display : none;
 }
-
+.left_list_div::-webkit-scrollbar 
+{
+	display : none;
+}
 
 #left_down
 {	
@@ -121,7 +165,7 @@ ol
 	width : 100%;
 	height : 5%;
 
-	background-color : #51C13DFF;
+	background-color : #3C3C3CFF;
 }
 
 @-webkit-keyframes inner_in
@@ -149,13 +193,14 @@ ol
 {
 	position : absolute;
 	left : 0;
-	top : 5%;
-	width : 100%;
-	height : 95%;
+	top : 6%;
+	width : 99%;
+	height : 94%;
+	padding-left: 1%;
 
 	overflow : scroll;
 
-	background-color : #43444C;
+	background-color : #262626FF;
 	-webkit-animation : inner_in 1s;
 }
 
@@ -167,7 +212,7 @@ ol
 	width : 100%;
 	height : 5%;
 
-	background-color : #D1893B;
+	background-color : #262626FF;
 	-webkit-animation : inner_in 1s;
 }
 
@@ -210,7 +255,7 @@ ol
 	width : 100%;
 	height : 5%;
 
-	background-color: #C4A63AFF;
+	background-color: #3C3C3CFF;
 }
 
 #right_list
@@ -221,9 +266,10 @@ ol
 	width : 100%;
 	height : 55%;
 
-	background-color: #2794D7FF;
+	background-color: #282923FF;
 
 	overflow : auto;
+	/*-webkit-animation : right_list_in 1s;*/
 }
 #right_list::-webkit-scrollbar 
 {
@@ -238,28 +284,71 @@ ol
 	width : 100%;
 	height : 40%;
 
-	background-color : #51C13DFF;
+	background-color : #3C3C3CFF;
 }
 
+.comment_pre
+{
+	white-space : pre-wrap; 
+	word-wrap: break-word; 
+	font-size : 13;
+}
+.comment_pre_top
+{
+	padding-top : 5px;
+}
+.comment_pre_bot
+{
+	padding-bottom : 5px;
+}
+.right_list_whole
+{
+	padding-bottom : 10px;
+}
+
+.right_line
+{
+	position : absolute;
+	left : 2px;
+	height : 2px;
+	right : 5px;
+	background-color : #8C8C8CFF;
+}
 .text_input
 {
 
-	background-color : #E01EAAFF;
+	background-color : #232823FF;
+	margin-top : 2px;
+	margin-bottom : 2px;
+	width : 100%;
+	font-size : 13px;
 }
 
 #comment_input
 {
-	height : 50%;
+	height : 40%;
 	width : 100%;
 }
 
 #comment_submit
 {
 	margin-top : 5px;
-	width : 20%;
+	width : 40%;
 	position : relative;
-	left : 40%;
-	background-color : #6E2BD3FF;
+	left : 30%;
+	top : 5%;
+	height : 10%;
+	background-color : #070707FF;
+}
+
+#comment_submit:hover
+{
+	background-color : #727272FF;
+}
+#comment_submit:active
+{
+	color : #000000FF;
+	background-color : #A5A5A5FF;
 }
 
 textarea
@@ -267,7 +356,13 @@ textarea
 	resize : none;
 }
 
+textarea::-webkit-scrollbar 
+{
+	display : none;
+}
+
 *
 {
-	color : #FFFFFF;
+	color : #F5F4F4FF;
+	font-size : 15px;
 }

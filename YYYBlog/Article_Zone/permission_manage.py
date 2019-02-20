@@ -1,4 +1,4 @@
-from .static.Article_Zone.显示列表 import *
+from .static.Article_Zone.display_list import *
 from Entry.models import 访问者
 import time
 

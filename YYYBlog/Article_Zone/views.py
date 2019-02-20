@@ -4,7 +4,7 @@ from django.http import Http404
 import django.http as http
 from .models import 节点 , 留言
 from .methods import *
-from .权限控制 import *
+from .permission_manage import *
 import os
 
 #print (os.path.dirname(__file__))

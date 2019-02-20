@@ -14,14 +14,14 @@
 	<div id = "left_cont_big">
 
 		<div id = "left_title">
-			列表
+			<p style="text-align:center;">列表</p>
 		</div>
 
 		<div class = "left_list_div" id = "left_list_sons">
 			<ol>
 			{% for 节点 in 子节点列表 %}
 				<li class = "left_list">
-					<a href = "../{{节点.地址}}" style = "text-decoration:none;" >
+					<a class = "left_list_a" href = "../{{节点.地址}}" >
 						{{节点.名}}
 					</a>
 				</li>
@@ -33,7 +33,7 @@
 			<ol>
 			{% for 节点 in 祖先节点列表 %}
 				<li class = "left_list">
-					<a href = "../{{节点.地址}}" style = "text-decoration:none;" >
+					<a class = "left_list_a" href = "../{{节点.地址}}">
 						{{节点.名}}
 					</a>
 				</li>
@@ -45,7 +45,7 @@
 			<ol>
 			{% for 节点 in 兄弟节点列表 %}
 				<li class = "left_list">
-					<a href = "../{{节点.地址}}" style = "text-decoration:none;" >
+					<a class = "left_list_a" href = "../{{节点.地址}}">
 						{{节点.名}}
 					</a>
 				</li>
@@ -63,8 +63,9 @@
 
 			function hid_one(one_div , one_but)
 			{
-				one_div.style.display = "none"
-				one_but.style.backgroundColor = "#781AE4FF"
+				//one_div.style.display = "none"
+				one_div.classList.remove("left_list_div_active")
+				one_but.classList.remove("left_button_active")
 			}
 
 			function hid_all()
@@ -76,8 +77,8 @@
 			function show_one(one_div , one_but)
 			{
 				hid_all();
-				one_div.style.display = "block"
-				one_but.style.backgroundColor = "#F2960CFF"
+				one_div.classList.add("left_list_div_active")
+				one_but.classList.add("left_button_active")
 			}
 
 			div_son = document.getElementById("left_list_sons")
@@ -90,9 +91,9 @@
 
 			show_one(div_son , but_son)
 
-			but_son.onclick = function(){ show_one(div_son , but_son) }
-			but_fat.onclick = function(){ show_one(div_fat , but_fat) }
-			but_bro.onclick = function(){ show_one(div_bro , but_bro) }
+			but_son.onclick = function(){ show_one(div_son , but_son); }
+			but_fat.onclick = function(){ show_one(div_fat , but_fat); }
+			but_bro.onclick = function(){ show_one(div_bro , but_bro); }
 
 		</script>
 
@@ -100,12 +101,13 @@
 
 	<div id = "inner_cont_big">
 
-		<div id = "inner_text">
-			{{内容|safe}}
+		<div id = "inner_title">
+			<p style="text-align:center;height:100%;font-size:120%;">{{此节点.名}}</p>
 		</div>
 
-		<div id = "inner_title">
-			<h>{{此节点.名}}</h>
+
+		<div id = "inner_text">
+			{{内容|safe}}
 		</div>
 
 	</div>
@@ -113,7 +115,7 @@
 	<div id = "right_cont_big">
 
 		<div id = "right_title">
-			评论区
+			<p style="text-align:center;">留言区</p>
 		</div>
 
 		<div id = "right_list">
@@ -134,11 +136,11 @@
 		<form action = "submit_comment" method = "post">
 			{% csrf_token %}
 
-			评论内容：
+			留言内容：
 			<textarea class = "text_input" id = "comment_input" name = "content"></textarea>
 			称呼: <input type = "text" class = "text_input" name = "name"/>
 			邮箱: <input type = "text" class = "text_input" name = "email"/>
-			<input type = "submit" value = "提交" id = "comment_submit"/>
+			<input type = "submit" value = "提交留言" id = "comment_submit"/>
 
 		</form>
 		</div>
