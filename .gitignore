@@ -1,7 +1,7 @@
 *.sqlite3
+/YYYBlog/YYYBlog/setting_secret_key.py
 /YYYBlog/Article_Zone/static/Article_Zone/display_list.py
 /YYYBlog/Article_Zone/static/Article_Zone/article_sources
-/YYYBlog/YYYBlog/setting_secret_key.py
 
 *.pyc
-Get_Article_From_isPrigrammer/
+/Get_Article_From_isPrigrammer/

@@ -23,8 +23,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 ]
 
-for zone in Entry.models.空间.objects.all():
-	urlpatterns.append( path(zone.地址 + "/", include(zone.位置 + ".urls")) )
+try:
+	for zone in Entry.models.空间.objects.all():
+		urlpatterns.append( path(zone.地址 + "/", include(zone.位置 + ".urls")) )
+except Exception:
+	pass
 
 urlpatterns.append( path('<str:输入>/', Entry.views.default , name = "default") )
 urlpatterns.append( path('', Entry.views.default , name = "default") )
