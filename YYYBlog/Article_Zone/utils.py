@@ -14,13 +14,19 @@ def deal_txt(内容):
 
 	header = '''
 	<style type="text/css">
-		pre { 
+		pre._txt_content_pre 
+		{ 
+			color : #F5F4F4FF;
+			font-size : 15px;
+			line-height : 17px;
+			letter-spacing : 1px;
+			font-family : "YouYuan";
 			white-space: pre-wrap;
 		} 
 	</style>
 	'''
 
-	内容 = header + "<pre>\n" + 内容 + "</pre>\n"
+	内容 = header + "<pre class = \"_txt_content_pre\">\n" + 内容 + "</pre>\n"
 
 	return 内容
 
@@ -31,17 +37,22 @@ def deal_md(内容):
 	内容 = markdown.markdown(内容)
 	return 内容
 
-def deal_content(内容 , 类型 = "html"):
+def deal_content(内容 , 上下文 = {} , 类型 = 0):
 	'''
 		根据后缀名，把不同类型的文本处理成html
 
 		参数 内容：文件内容
 		参数 名：文件名
 	'''
-	if 类型 == "txt":
+	
+	if 类型 == 1:
 		内容 = deal_txt(内容)
-	elif 类型 == "md":
+	elif 类型 == 2:
 		内容 = deal_md(内容)
+
+	上下文["启用MathJax"] = False
+	if 类型 == 0 or 类型 == 2:
+		上下文["启用MathJax"] = True
 
 	return 内容
 

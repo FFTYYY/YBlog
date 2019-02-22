@@ -35,9 +35,11 @@ ol
 	list-style-type : none;
 	left : 3px;
 
-    word-wrap: break-word;
-    word-break: break-all;
+	word-wrap: break-word;
+	word-break: break-all;
 	-webkit-animation : right_list_in 1s;
+
+	width : 100%;
 }
 
 
@@ -80,9 +82,30 @@ ol
 	}
 }
 
+@-webkit-keyframes left_list_unhover
+{
+	from 
+	{
+		color : #0F0F0FFF;
+		background-color: #B2B2B2FF;
+	}
+	to 
+	{
+		color : #F5F4F4FF;
+		background-color: #3C3C3CFF;
+	}
+}
+
 .left_list
 {
 	margin-top: 10px;
+	line-height: 18px;
+	width : 99%;
+}
+
+.left_list_unhover_anime
+{
+	-webkit-animation : left_list_unhover 0.5s;
 }
 
 .left_list:hover
@@ -96,8 +119,14 @@ ol
 
 .left_list_a
 {
+	font-size: 16px;
 	text-decoration : none;
 	color : inherit;
+	font-family : "STXihei" ;
+	width : 100%;
+	display : block;
+
+	cursor : default;
 }
 
 .left_button
@@ -106,8 +135,8 @@ ol
 	width : 30%;
 	height : 90%;
 	top : 5%;
-	margin-left : 1%;
 	background-color : #2D2D2DFF;
+	cursor : default;
 }
 
 .left_list_div_active
@@ -194,9 +223,12 @@ ol
 	position : absolute;
 	left : 0;
 	top : 6%;
-	width : 99%;
-	height : 94%;
-	padding-left: 1%;
+	width : 98%;
+	height : 92%;
+	padding-left : 1%;
+	padding-right : 1%;
+	padding-top : 1%;
+	padding-bottom : 1%;
 
 	overflow : scroll;
 
@@ -214,6 +246,15 @@ ol
 
 	background-color : #262626FF;
 	-webkit-animation : inner_in 1s;
+}
+
+#inner_title_p
+{
+	text-align : center;
+	height : 100%;
+	font-size : 130%;
+	margin-top : 3px;
+	font-family : "FangSong";
 }
 
 #inner_text::-webkit-scrollbar 
@@ -292,6 +333,7 @@ ol
 	white-space : pre-wrap; 
 	word-wrap: break-word; 
 	font-size : 13;
+	font-family: "NSimSun";
 }
 .comment_pre_top
 {
@@ -339,6 +381,7 @@ ol
 	top : 5%;
 	height : 10%;
 	background-color : #070707FF;
+	cursor : default;
 }
 
 #comment_submit:hover
@@ -365,4 +408,5 @@ textarea::-webkit-scrollbar
 {
 	color : #F5F4F4FF;
 	font-size : 15px;
+	font-family : "YouYuan";
 }
