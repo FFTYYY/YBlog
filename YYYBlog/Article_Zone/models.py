@@ -10,6 +10,8 @@ class 节点(models.Model):
 	地址 = models.CharField(max_length = 短文本长度 , default = "" , blank = True)
 	封面模板位置 = models.CharField(max_length = 短文本长度 , default = "default.html" , blank = True)
 	封底模板位置 = models.CharField(max_length = 短文本长度 , default = "" , blank = True)
+	创建时间 = models.DateTimeField(default = timezone.now)
+	最后修改时间 = models.DateTimeField(default = timezone.now)
 	内容类型 = models.IntegerField(default = 0 , 
 		choices = (
 			(0 , "html"),
@@ -23,8 +25,7 @@ class 节点(models.Model):
 			(1 , "集"),
 		)
 	)
-	创建时间 = models.DateTimeField(default = timezone.now)
-	最后修改时间 = models.DateTimeField(default = timezone.now)
+	最低访问等级需求 = models.IntegerField(default = 0)
 	内容 = models.TextField(default = "" , blank = True)
 
 	def __str__(self):
@@ -45,4 +46,3 @@ class 留言(models.Model):
 	留言者邮箱 = models.CharField(max_length = 短文本长度 , blank = True)
 
 	创建时间 = models.DateTimeField(default = timezone.now)
-
