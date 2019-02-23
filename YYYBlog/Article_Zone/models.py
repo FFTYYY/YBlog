@@ -1,5 +1,7 @@
 from django.db import models
 import django.utils.timezone as timezone
+from .utils.deal_file import get_file_name
+import os
 
 短文本长度 = 200
 
@@ -14,7 +16,8 @@ class 节点(models.Model):
 	最后修改时间 = models.DateTimeField(default = timezone.now)
 	内容类型 = models.IntegerField(default = 0 , 
 		choices = (
-			(0 , "html"),
+			(0 , "html（Django模板）"),
+			(3 , "html（非Django模板）"),
 			(1 , "txt"),
 			(2 , "md"),
 		)
@@ -46,3 +49,14 @@ class 留言(models.Model):
 	留言者邮箱 = models.CharField(max_length = 短文本长度 , blank = True)
 
 	创建时间 = models.DateTimeField(default = timezone.now)
+
+class 文章文件(models.Model):
+	文件名 = models.CharField(max_length = 短文本长度 , blank = True , default = "")
+	目标节点 = models.ForeignKey(节点 , on_delete = models.SET_NULL , null = True , related_name = "文件")
+	文件 = models.FileField(upload_to = get_file_name)
+
+	def save(self):
+		if not self.文件名:
+			self.文件名 = os.path.basename(self.文件.path)
+		super(文章文件 , self).save()
+

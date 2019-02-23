@@ -3,7 +3,8 @@
 '''
 
 import markdown
-from .models import *
+from Article_Zone.models import *
+from django.template import Context, Template
 
 def deal_txt(内容):
 	'''
@@ -37,6 +38,11 @@ def deal_md(内容):
 	内容 = markdown.markdown(内容)
 	return 内容
 
+def deal_template(内容 , 上下文):
+	内容 = "{% load universe_extras %}\n{% load article_zone_extras %}\n" + 内容
+	内容 = Template(内容).render(Context(上下文))
+	return 内容
+
 def deal_content(内容 , 上下文 = {} , 类型 = 0):
 	'''
 		根据后缀名，把不同类型的文本处理成html
@@ -45,29 +51,12 @@ def deal_content(内容 , 上下文 = {} , 类型 = 0):
 		参数 名：文件名
 	'''
 	
+	上下文["启用MathJax"] = (类型 == 0 or 类型 == 2)
+
 	if 类型 == 1:
 		内容 = deal_txt(内容)
-	elif 类型 == 2:
+	if 类型 == 2:
 		内容 = deal_md(内容)
-
-	上下文["启用MathJax"] = False
-	if 类型 == 0 or 类型 == 2:
-		上下文["启用MathJax"] = True
-
+	if 类型 == 0:
+		内容 = deal_template(内容 , 上下文)
 	return 内容
-
-def 获取祖先节点列表(节点):
-	列表 = []
-	while True:
-		父 = 节点.父
-		if not 父:
-			break
-		列表.append(父)
-		节点 = 父
-	return 列表
-
-def 获取兄弟节点列表(节点):
-	父 = 节点.父
-	if not 父:
-		return []
-	return 父.子.all()

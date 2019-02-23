@@ -6,4 +6,4 @@ register = template.Library()
 @register.filter
 @stringfilter
 def lks(arg1, arg2):
-    return str(arg1) + str(arg2)
+	return str(arg1) + str(arg2)

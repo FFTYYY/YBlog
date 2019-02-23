@@ -3,14 +3,14 @@ from django.shortcuts import HttpResponse
 from django.http import Http404
 import django.http as http
 from .models import 节点 , 留言
-from .utils import *
-from .permission_manage import *
+from .utils.relationship import *
+from .utils.deal_content import *
+from .utils.permission_manage import *
 import os
 import django.utils.timezone as timezone
 
 应用名 = "Article_Zone"
 应用地址 = "/文章"
-静态文件前缀 = "{0}/static/{0}".format(os.path.dirname(__file__))
 
 def 默认(request):
 	return http.HttpResponseRedirect("./root")
@@ -24,7 +24,6 @@ def 获取节点(request , 节点地址):
 
 	上下文 = {}
 
-	内容 = deal_content(此节点.内容 , 上下文 , 此节点.内容类型)
 	子节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 此节点.子.all())
 	祖先节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 获取祖先节点列表(此节点))
 	兄弟节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 获取兄弟节点列表(此节点))
@@ -34,12 +33,19 @@ def 获取节点(request , 节点地址):
 
 	上下文.update({
 		"此节点" : 此节点,
-		"内容" : 内容,
 		"子节点列表" : 子节点列表,
 		"祖先节点列表" : 祖先节点列表,
 		"兄弟节点列表" : 兄弟节点列表,
 		"留言列表" : 留言列表,
 	})
+
+	内容 = deal_content(此节点.内容 , 上下文 , 此节点.内容类型)
+
+	上下文.update({
+		"内容" : 内容,
+	})
+
+
 	模板位置 = 此节点.封面模板位置
 	模板位置 = 应用名 + "/" + 模板位置
 

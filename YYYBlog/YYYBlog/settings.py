@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'Entry.apps.EntryConfig',
     'Article_Zone.apps.ArticleZoneConfig',
     'Universe.apps.UniverseConfig',
+    "Article_Zone.templatetags"
 ]
 
 MIDDLEWARE = [
@@ -114,6 +115,9 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/

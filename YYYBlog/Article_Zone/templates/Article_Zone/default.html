@@ -1,14 +1,16 @@
 {% load universe_extras %}
+{% load article_zone_extras %}
+{% load static %}
 
 <html>
 
 <head>
 
-	<link rel = "stylesheet" href = "/static/Article_Zone/default_css.css" type="text/css" />
+	<link rel = "stylesheet" href = {% static "default_css.css"|make_static:"this" %} type = "text/css" />
 	
 	<!-- 只对于特定类型的界面启动Mathjax，具体由view控制 -->
 	{% if 启用MathJax %}
-			<script src="/static/Universe/import_mathjax.js"></script>
+			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
 	{% endif %}
 </head>
 
