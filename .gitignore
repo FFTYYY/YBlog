@@ -3,4 +3,4 @@
 /YYYBlog/media/
 
 *.pyc
-/Get_Article_From_isPrigrammer/
+utils/Get_Article_From_isPrigrammer/

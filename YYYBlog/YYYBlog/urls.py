@@ -19,10 +19,12 @@ from django.urls import path , include
 import Entry.models
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls import url
 
 urlpatterns = [
 	path('入口/', include('Entry.urls')),
 	path('admin/', admin.site.urls),
+	url(r'^simditor/', include('simditor.urls')) ,
 ]
 
 if settings.DEBUG == True:

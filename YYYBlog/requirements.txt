@@ -1,0 +1,5 @@
+Django>=2.1.2
+django-extensions>=2.1.4
+django-simditor>=0.0.15
+Markdown>=3.0
+

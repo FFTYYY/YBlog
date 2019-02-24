@@ -1,12 +1,7 @@
 from django import template
 from django.template.defaultfilters import stringfilter
-from Article_Zone.utils.deal_file import get_file_name_目标节点
 
 register = template.Library()
-
-@register.filter()
-def get_file_path(文件名 , 节点):
-	return "/media/" + get_file_name_目标节点(节点 , 文件名)
 
 @register.filter()
 def make_static(路径 , 命令):

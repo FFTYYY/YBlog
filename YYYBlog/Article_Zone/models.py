@@ -1,7 +1,7 @@
 from django.db import models
 import django.utils.timezone as timezone
-from .utils.deal_file import get_file_name
 import os
+from simditor.fields import RichTextField
 
 短文本长度 = 200
 
@@ -29,7 +29,7 @@ class 节点(models.Model):
 		)
 	)
 	最低访问等级需求 = models.IntegerField(default = 0)
-	内容 = models.TextField(default = "" , blank = True)
+	内容 = RichTextField(default = "" , blank = True)
 
 	def __str__(self):
 		return self.名
@@ -49,14 +49,3 @@ class 留言(models.Model):
 	留言者邮箱 = models.CharField(max_length = 短文本长度 , blank = True)
 
 	创建时间 = models.DateTimeField(default = timezone.now)
-
-class 文章文件(models.Model):
-	文件名 = models.CharField(max_length = 短文本长度 , blank = True , default = "")
-	目标节点 = models.ForeignKey(节点 , on_delete = models.SET_NULL , null = True , related_name = "文件")
-	文件 = models.FileField(upload_to = get_file_name)
-
-	def save(self):
-		if not self.文件名:
-			self.文件名 = os.path.basename(self.文件.path)
-		super(文章文件 , self).save()
-

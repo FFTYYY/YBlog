@@ -404,9 +404,26 @@ textarea::-webkit-scrollbar
 	display : none;
 }
 
+hr
+{
+	background-color : #DBDBDBFF;
+	border : none;
+	margin-top : 20px;
+	margin-bottom : 20px;
+	padding : 0;
+	height : 1px;
+}
+
 *
 {
 	color : #F5F4F4FF;
 	font-size : 15px;
 	font-family : "YouYuan";
+	line-height : 18px;
+}
+
+img
+{
+	margin-top : 6px;
+	margin-bottom : 6px
 }
