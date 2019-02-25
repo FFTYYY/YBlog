@@ -15,7 +15,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path , include
-#from .Entry.models import Zone 
 import Entry.models
 from django.conf import settings
 from django.conf.urls.static import static
@@ -24,7 +23,7 @@ from django.conf.urls import url
 urlpatterns = [
 	path('入口/', include('Entry.urls')),
 	path('admin/', admin.site.urls),
-	url(r'^simditor/', include('simditor.urls')) ,
+	path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 
 if settings.DEBUG == True:
@@ -39,4 +38,4 @@ else:
 
 urlpatterns.append( path('<str:输入>/', Entry.views.default , name = "default") )
 urlpatterns.append( path('', Entry.views.default , name = "default") )
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

@@ -1,7 +1,8 @@
 from django.db import models
 import django.utils.timezone as timezone
 import os
-from simditor.fields import RichTextField
+#from simditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 短文本长度 = 200
 
@@ -29,7 +30,7 @@ class 节点(models.Model):
 		)
 	)
 	最低访问等级需求 = models.IntegerField(default = 0)
-	内容 = RichTextField(default = "" , blank = True)
+	内容 = RichTextUploadingField(default = "" , blank = True)
 
 	def __str__(self):
 		return self.名

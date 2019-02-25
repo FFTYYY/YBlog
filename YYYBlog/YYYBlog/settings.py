@@ -29,45 +29,46 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django_extensions',
-    'Entry.apps.EntryConfig',
-    'Article_Zone.apps.ArticleZoneConfig',
-    'Universe.apps.UniverseConfig',
-    "simditor"
+	'django.contrib.admin',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.messages',
+	'django.contrib.staticfiles',
+	'django_extensions',
+	'Entry.apps.EntryConfig',
+	'Article_Zone.apps.ArticleZoneConfig',
+	'Universe.apps.UniverseConfig',
+	"ckeditor" ,
+	'ckeditor_uploader',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'django.middleware.security.SecurityMiddleware',
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.middleware.common.CommonMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'YYYBlog.urls'
 
 TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
+	{
+		'BACKEND': 'django.template.backends.django.DjangoTemplates',
+		'DIRS': [os.path.join(BASE_DIR, 'templates')],
+		'APP_DIRS': True,
+		'OPTIONS': {
+			'context_processors': [
+				'django.template.context_processors.debug',
+				'django.template.context_processors.request',
+				'django.contrib.auth.context_processors.auth',
+				'django.contrib.messages.context_processors.messages',
+			],
+		},
+	},
 ]
 
 WSGI_APPLICATION = 'YYYBlog.wsgi.application'
@@ -77,10 +78,10 @@ WSGI_APPLICATION = 'YYYBlog.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+	'default': {
+		'ENGINE': 'django.db.backends.sqlite3',
+		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+	}
 }
 
 
@@ -88,25 +89,25 @@ DATABASES = {
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+	{
+		'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+	},
+	{
+		'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+	},
+	{
+		'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+	},
+	{
+		'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+	},
 ]
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'zh-Hans'
+LANGUAGE_CODE = 'zh-hans'
 
 TIME_ZONE = 'Asia/Shanghai'
 
@@ -124,24 +125,26 @@ MEDIA_URL = '/media/'
 
 STATIC_URL = '/static/'
 
-SIMDITOR_UPLOAD_PATH = 'uploads/'
-SIMDITOR_IMAGE_BACKEND = 'pillow'
+CKEDITOR_UPLOAD_PATH = 'uploads'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
 
-SIMDITOR_TOOLBAR = [
-    'title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale',
-    'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link',
-    'image', 'hr', '|', 'indent', 'outdent', 'alignment', 'fullscreen',
-    'markdown', 'emoji'
-]
+CKEDITOR_CONFIGS = {
+	"default" : {
+		"language" : "zh-cn" ,
+		"width" : "1000px" ,
+		"height" : "400px" ,
+		"tabSpaces" : 8 ,
+		"disableObjectResizing" : False , 
+		'toolbar': 'Custom',
+		'toolbar_Custom': [
+			['Styles', 'Format', 'Bold', 'Italic', 'Underline', 'Strike', 'SpellChecker', 'Undo', 'Redo'],
+			['Image', 'Table', 'HorizontalRule'],
+			['TextColor', 'BGColor'],
+			["Indent" , "Outdent"],
+			['Smiley', 'SpecialChar'], ['Source'],
+			['Maximize'] , 
+		],
+		'enterMode' : 2,
 
-SIMDITOR_CONFIGS = {
-    'toolbar': SIMDITOR_TOOLBAR,
-    'upload': {
-        'url': '/simditor/upload/',
-        'fileKey': 'upload',
-        'image_size': 1024 * 1024 * 4   # max image size 4MB
-    },
-    'emoji': {
-        'imagePath': '/static/simditor/images/emoji/'
-    }
+	},
 }

@@ -23,7 +23,7 @@ def deal_txt(内容):
 			letter-spacing : 1px;
 			font-family : "YouYuan";
 			white-space: pre-wrap;
-		} 
+		}
 	</style>
 	'''
 
@@ -38,8 +38,47 @@ def deal_md(内容):
 	内容 = markdown.markdown(内容)
 	return 内容
 
+def deal_html(内容):
+	内容 = """
+		<style type="text/css">
+			q
+			{
+				/*background-color : #333333FF;*/
+				padding-top : 5px;
+				padding-left : 5px;
+				padding-bottom : 5px;
+				padding-right : 5px;
+				margin : 8px;
+				display : inline-block;
+				width:auto;
+				font-family : "STKaiti";
+				font-size : 120%;
+				line-height : 120%;
+				quotes : none;
+			}
+			.marker
+			{
+				font-family : "Kaiti";
+				color : #C1C1C1FF;
+				margin-left: 3px;
+			}
+			.marker>strong
+			{
+				font-family : "Kaiti";
+				color : #C9C9C9FF;
+				font-weight : 120%;
+			}
+		</style>
+
+		<div class = "the_inside_content">
+	""" + 内容 + """
+		</div>
+	"""
+	return 内容
+
 def deal_template(内容 , 上下文):
-	内容 = "{% load universe_extras %}\n{% load article_zone_extras %}\n" + 内容
+	内容 = deal_html(内容)
+	内容 = "{% load universe_extras %}\n{% load article_zone_extras %}\n" + 内容 
 	内容 = Template(内容).render(Context(上下文))
 	return 内容
 
@@ -59,4 +98,6 @@ def deal_content(内容 , 上下文 = {} , 类型 = 0):
 		内容 = deal_md(内容)
 	if 类型 == 0:
 		内容 = deal_template(内容 , 上下文)
+	if 类型 == 3:
+		内容 = deal_html(内容)
 	return 内容
