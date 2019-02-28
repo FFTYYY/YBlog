@@ -29,6 +29,8 @@ class 节点(models.Model):
 			(1 , "集"),
 		)
 	)
+
+	排序依据 = models.IntegerField(default = 0)
 	最低访问等级需求 = models.IntegerField(default = 0)
 	内容 = RichTextUploadingField(default = "" , blank = True)
 
@@ -37,6 +39,8 @@ class 节点(models.Model):
 
 	def save(self):
 		self.最后修改时间 = timezone.now()
+		if self.父 and self.排序依据 == 0:
+			self.排序依据 = len(self.父.子.all()) + 1
 		super(节点 , self).save()
 		if not self.地址:
 			self.地址 = "page_" + str(self.id)
