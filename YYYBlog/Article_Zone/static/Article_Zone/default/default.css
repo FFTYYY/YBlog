@@ -1,0 +1,141 @@
+*
+{
+	border : 0;
+	margin : 0;
+	padding : 0;
+	outline : 0;
+}
+
+body 
+{
+	position : fixed;
+	width : 100%;
+	height : 100%;
+
+	background-color : #202020;
+}
+
+
+#left_part
+{	
+	position : absolute;
+	left : 0.5%;
+	top : 2%;
+	width : 14%;
+	height : 96%;
+
+	-webkit-animation : left_in 1s;
+}
+
+@-webkit-keyframes left_in
+{
+	from 
+	{
+		left : -14%;
+		width : 14%;
+	}
+	to 
+	{
+		left : 0.5%;
+		width : 14%;
+	}
+}
+
+#right_part
+{	
+	position : absolute;
+	right : 0.5%;
+	top : 2%;
+	width : 14%;
+	height : 96%;
+
+	-webkit-animation : right_in 1s;
+}
+
+#inner_part
+{	
+	position : absolute;
+	left : 15%;
+	top : 2%;
+	width : 70%;
+	height : 96%;
+}
+
+@-webkit-keyframes inner_in
+{
+	from 
+	{
+		opacity : 0.3;
+	}
+	to 
+	{
+		opacity : 1;
+	}
+}
+
+@-webkit-keyframes right_in
+{
+	from 
+	{
+		right : -13%;
+		width : 14%;
+	}
+	to 
+	{
+		right : 0.5%;
+		width : 14%;
+	}
+}
+
+
+
+@-webkit-keyframes left_line_in
+{
+	from 
+	{
+		top : 100%;
+	}
+	to 
+	{
+		top : 0;
+	}
+}
+
+
+@-webkit-keyframes right_line_in
+{
+	from 
+	{
+		bottom : 100%;
+	}
+	to 
+	{		
+		bottom : 0;
+	}
+}
+
+#left_line
+{
+	position : absolute;
+	top : 0;
+	height : 100%;
+	width : 0.2%;
+	left : 14.8%;
+
+	-webkit-animation : left_line_in 2s;
+}
+
+#right_line
+{
+	position : absolute;
+	bottom : 0;
+	height : 100%;
+	width : 0.2%;
+	right : 15%;
+	-webkit-animation : right_line_in 2s;
+}
+
+.right_line,#left_line,#right_line,hr
+{
+	background-color : #6C6C6CFF;
+}

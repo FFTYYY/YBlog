@@ -1,0 +1,18 @@
+{% load universe_extras %}
+{% load article_zone_extras %}
+{% load static %}
+
+<div id = "content_area">
+
+	<link rel = "stylesheet" href = {% static "default/content_area.css"|make_static:"this" %} type = "text/css" />
+
+	<div id = "inner_title">
+		<p id = "inner_title_p">{{此节点.名}}</p>
+	</div>
+
+	<!-- 中间的内容 -->
+	<div id = "inner_text">
+		{{内容|safe}}
+	</div>
+
+</div>

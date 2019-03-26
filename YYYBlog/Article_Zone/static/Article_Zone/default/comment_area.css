@@ -1,0 +1,160 @@
+#comment_area
+{
+	position : absolute;
+	width : 100%;
+	height : 100%;
+}
+
+@-webkit-keyframes right_list_in
+{
+	from 
+	{
+		opacity : 0.3;
+		top : 100%;
+	}
+	to 
+	{
+		opacity : 1;
+		top : 0;
+	}
+}
+
+#comment_area ol
+{
+	position : absolute;
+	list-style-type : none;
+	left : 3px;
+
+	word-wrap: break-word;
+	word-break: break-all;
+	-webkit-animation : right_list_in 1s;
+
+	width : 100%;
+}
+
+#comment_area #right_title
+{	
+	position : absolute;
+	left : 0;
+	top : 0;
+	width : 100%;
+	height : 5%;
+
+	background-color: #00000000;
+}
+
+#comment_area #right_list
+{	
+	position : absolute;
+	left : 0;
+	top : 5%;
+	width : 100%;
+	height : 55%;
+
+	background-color: #00000000;
+
+	overflow : auto;
+	/*-webkit-animation : right_list_in 1s;*/
+}
+#comment_area #right_list::-webkit-scrollbar 
+{
+	display : none;
+}
+
+#comment_area #right_down
+{	
+	position : absolute;
+	left : 0;
+	top : 60%;
+	width : 100%;
+	height : 40%;
+
+	background-color : #00000000;
+}
+
+#comment_area .comment_pre
+{
+	white-space : pre-wrap; 
+	word-wrap: break-word; 
+	font-size : 13;
+	font-family: "NSimSun";
+}
+#comment_area .comment_pre_top
+{
+	padding-top : 5px;
+}
+#comment_area .comment_pre_bot
+{
+	padding-bottom : 5px;
+}
+#comment_area .right_list_whole
+{
+	padding-bottom : 10px;
+}
+
+#comment_area .right_line
+{
+	position : absolute;
+	left : 2px;
+	height : 2px;
+	right : 5px;
+}
+#comment_area .text_input
+{
+
+	background-color : #363636FF;
+	margin-top : 2px;
+	margin-bottom : 2px;
+	width : 100%;
+	font-size : 13px;
+}
+
+#comment_area #comment_input
+{
+	height : 40%;
+	width : 100%;
+}
+
+#comment_area #comment_submit
+{
+	margin-top : 5px;
+	width : 40%;
+	position : relative;
+	left : 30%;
+	top : 5%;
+	height : 10%;
+	cursor : default;
+}
+
+#comment_area #comment_submit,.left_button
+{
+	background-color : #00000000;
+}
+#comment_area #comment_submit:hover,.left_button:hover
+{
+	background-color : #727272FF;
+}
+##comment_area comment_submit:active,.left_button:active
+{
+	color : #000000FF;
+	background-color : #A5A5A5FF;
+}
+
+#comment_area textarea
+{
+	resize : none;
+}
+
+textarea::-webkit-scrollbar 
+{
+	display : none;
+}
+
+
+#comment_area *
+{
+	color : #E0E0E0FF;
+	font-size : 15px;
+	font-family : "YouYuan";
+	line-height : 18px;
+}

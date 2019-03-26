@@ -11,7 +11,7 @@ class 节点(models.Model):
 	父 = models.ForeignKey("self", on_delete = models.SET_NULL , null = True , 
 			blank = True , related_name = "子")
 	地址 = models.CharField(max_length = 短文本长度 , default = "" , blank = True)
-	封面模板位置 = models.CharField(max_length = 短文本长度 , default = "default.html" , blank = True)
+	封面模板位置 = models.CharField(max_length = 短文本长度 , default = "/default/default.html" , blank = True)
 	封底模板位置 = models.CharField(max_length = 短文本长度 , default = "" , blank = True)
 	创建时间 = models.DateTimeField(default = timezone.now)
 	最后修改时间 = models.DateTimeField(default = timezone.now)
@@ -21,6 +21,7 @@ class 节点(models.Model):
 			(3 , "html（非Django模板）"),
 			(1 , "txt"),
 			(2 , "md"),
+			(4 , "pdf"),
 		)
 	)
 	节点类型 = models.IntegerField(default = 0 , 
@@ -29,7 +30,7 @@ class 节点(models.Model):
 			(1 , "集"),
 		)
 	)
-
+	界面强化标签 = models.CharField(max_length = 短文本长度 , default = "" , blank = True)
 	排序依据 = models.IntegerField(default = 0)
 	最低访问等级需求 = models.IntegerField(default = 0)
 	内容 = RichTextUploadingField(default = "" , blank = True)

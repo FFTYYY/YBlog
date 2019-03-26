@@ -138,13 +138,16 @@ CKEDITOR_CONFIGS = {
 		'toolbar': 'Custom',
 		'toolbar_Custom': [
 			['Styles', 'Format', 'Bold', 'Italic', 'Underline', 'Strike', 'SpellChecker', 'Undo', 'Redo'],
-			['Image', 'Table', 'HorizontalRule'],
+			['Image', 'Table', 'HorizontalRule' , 'Iframe' , 'Link'],
 			['TextColor', 'BGColor'],
 			["Indent" , "Outdent"],
-			['Smiley', 'SpecialChar'], ['Source'],
-			['Maximize'] , 
+			['Smiley', 'SpecialChar'], ['Source','Source Editing Area'],
+			['Maximize' , 'ShowBlocks'] , 
 		],
 		'enterMode' : 2,
+		'removePlugins': 'stylesheetparser',
+		"allowedContent" : True , 
+		"disallowedContent" : True, 
 
 	},
 }

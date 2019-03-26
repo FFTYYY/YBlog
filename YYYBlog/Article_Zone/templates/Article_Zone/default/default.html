@@ -6,7 +6,7 @@
 
 <head>
 
-	<link rel = "stylesheet" href = {% static "default/default_css.css"|make_static:"this" %} type = "text/css" />
+	<link rel = "stylesheet" href = {% static "default/default.css"|make_static:"this" %} type = "text/css" />
 	
 	<!-- 只对于特定类型的界面启动Mathjax，具体由view控制 -->
 	{% if 启用MathJax %}
@@ -16,198 +16,93 @@
 
 <body>
 
-	<!-- 左边栏，主要用于显示其他文章链接 -->
-	<div id = "left_cont_big">
-
-		<div id = "left_title">
-			<p style="text-align:center;">相关页面列表</p>
-		</div>
-
-		<!-- 左边栏的列表部分 -->
-		<!-- 注意左边栏和右边栏的命名是不对称的，左边是left_list_div，右边是right_list -->
-		<div class = "left_list_div" id = "left_list_sons">
-			<ol>
-				<!-- ..而左边的left_list则是只的列表元素（右边则是comment_list） -->
-			{% for 节点 in 子节点列表 %}
-				<li class = "left_list">
-					<a class = "left_list_a" href = "../{{节点.地址}}" >
-						{{节点.名}}
-					</a>
-				</li>
-			{% endfor %}
-			</ol>
-		</div>
-
-		<!-- 左边呈现了三种列表，即儿子、祖先和兄弟，根据按钮来选择显示哪一个列表 -->
-		<div class = "left_list_div" id = "left_list_fathers">
-			<ol>
-			{% for 节点 in 祖先节点列表 %}
-				<li class = "left_list">
-					<a class = "left_list_a" href = "../{{节点.地址}}">
-						{{节点.名}}
-					</a>
-				</li>
-			{% endfor %}
-			</ol>
-		</div>
-
-		<div class = "left_list_div" id = "left_list_brothers">
-			<ol>
-			{% for 节点 in 兄弟节点列表 %}
-				<li class = "left_list">
-					<a class = "left_list_a" href = "../{{节点.地址}}">
-						{{节点.名}}
-					</a>
-				</li>
-			{% endfor %}
-			</ol>
-		</div>
-
-		<!-- 左边的按钮，原本设计在下方的，所以叫left_down，
-			后来发现下方可能被mathjax的加载框挡到，就放到上面了 -->
-		<div id = "left_down">
-			<button type = "button" class = "left_button" id = "but_son"> 下行 </button>
-			<button type = "button" class = "left_button" id = "but_fat"> 上行 </button>
-			<button type = "button" class = "left_button" id = "but_bro"> 同列行 </button>
-		</div>
-
-		<!-- 控制按钮行为的脚本 -->
-		<script type="text/javascript" charset="utf-8">
-
-			function hid_one(one_div , one_but)
-			{//取消某个按钮和其对应的列表
-				//通过控制其class来改变其css样式，从而达成显隐
-				one_div.classList.remove("left_list_div_active")
-				one_but.classList.remove("left_button_active")
-			}
-
-			function hid_all()
-			{//取消所有按钮和其对应的列表
-				hid_one(div_son , but_son)
-				hid_one(div_fat , but_fat)
-				hid_one(div_bro , but_bro)
-			}
-			function show_one(one_div , one_but)
-			{//只激活某一个按钮和其对应的列表
-				hid_all();
-				one_div.classList.add("left_list_div_active")
-				one_but.classList.add("left_button_active")
-			}
-
-			div_son = document.getElementById("left_list_sons")
-			div_fat = document.getElementById("left_list_fathers")
-			div_bro = document.getElementById("left_list_brothers")
-
-			but_son = document.getElementById("but_son")
-			but_fat = document.getElementById("but_fat")
-			but_bro = document.getElementById("but_bro")
-
-			/*
-				考虑到对于文章，一般没有下属节点，因此默认显示兄弟节点
-				而对于集，一般想要向下走，因此默认显示儿子节点
-			*/
-			{% if 此节点.节点类型 == 0 %}
-				show_one(div_bro , but_bro)
-			{% else %}
-				show_one(div_son , but_son)
-			{% endif %}
-
-			but_son.onclick = function(){ show_one(div_son , but_son); }
-			but_fat.onclick = function(){ show_one(div_fat , but_fat); }
-			but_bro.onclick = function(){ show_one(div_bro , but_bro); }
-
-			//双击上行键直接跳到父亲，方便使用
-			{% if 此节点.父 %}
-				but_fat.ondblclick = function(){ window.location.href = '../{{此节点.父.地址}}' }
-			{% endif %}
-
-		</script>
-
-		<!-- 
-			因为css里没有unhover的伪类，如果直接给元素添加动画则其入场时也会有动画，这里是保证了其出场之
-			后给其添加动画。
-			如果几个列表来回切换的话，会有多次入场，而后面的入场也可能会因为前面添加了动画而有动画，因此要在
-			动画结束后移除动画... 
-		-->
-		<script type="text/javascript" charset="utf-8">
-
-			lls = document.getElementsByClassName("left_list")
-			for(var i = 0;i < lls.length;i++)
-			{
-				lls[i].onmouseout = function (){
-					//移除的同时立刻获得动画
-					this.classList.add("left_list_unhover_anime")
-					
-					//因为动画的执行时间是0.5s，在0.5s后移除动画
-					setTimeout(
-						function (){
-							this.classList.remove("left_list_unhover_anime")
-						}.bind(this),
-						500
-					)
-					
-				}
-		    }
-		</script>
-
+	<!-- 左边栏部分 -->
+	<div id = "left_part">
+		{% include "Article_Zone/default/nodelist_area.html" %}
 	</div>
 
 	<!-- 中间部分 -->
-	<div id = "inner_cont_big">
-
-		<div id = "inner_title">
-			<p id = "inner_title_p">{{此节点.名}}</p>
-		</div>
-
-		<!-- 中间的内容 -->
-		<div id = "inner_text">
-			{{内容|safe}}
-		</div>
-
+	<div id = "inner_part">
+		{% include "Article_Zone/default/content_area.html" %}
 	</div>
+
 
 	<!-- 右边栏部分 -->
-	<div id = "right_cont_big">
-
-		<div id = "right_title">
-			<p style="text-align:center;">留言区</p>
-		</div>
-
-		<!-- 右边栏的列表部分，也就是留言列表 -->
-		<div id = "right_list">
-			<ol class = "right_list_whole">
-			{% for 留言 in 留言列表 %}
-				<li class = "right_list">
-					<pre class = "comment_pre comment_pre_top">{{留言.内容}}</pre>
-					<pre class = "comment_pre comment_pre_bot">	-- {{留言.留言者称呼}} </pre>
-					<div class = "right_line"></div>
-				</li>
-			{% endfor %}
-			</ol>
-		</div>
-
-		<!-- 右边栏的底部 -->
-		<div id = "right_down">
-
-		<!-- 这个标签可以通过点击type为submit的input按钮把内容提交给后台并刷新网页 -->
-		<form action = "submit_comment" method = "post">
-			{% csrf_token %}
-
-			留言内容：
-			<textarea class = "text_input" id = "comment_input" name = "content"></textarea>
-			称呼: <input type = "text" class = "text_input" name = "name"/>
-			邮箱: <input type = "text" class = "text_input" name = "email"/>
-			<input type = "submit" value = "提交留言" id = "comment_submit"/>
-
-		</form>
-		</div>
-
+	<div id = "right_part">
+		{% include "Article_Zone/default/comment_area.html" %}
 	</div>
+	
 
 
 	<div id = "left_line"></div>
 	<div id  = "right_line"></div>
 
+	{% if '帅' in 强化标签 %}
+		<div id = "enter_anime">
+			{% include "./cool_in.html" %}
+		</div>
+	{% endif %}
+
 </body>
 </html>
 
+<!-- TODO -->
+{% if 'pdf文件' in 强化标签 %}
+<script type="text/javascript" charset="utf-8">
+	target_color = [0xFF,0xFF,0xFF]
+
+	function triple2color(col)
+	{
+		str = "#"
+		for(var i = 0;i < 4;i++)
+		{
+			var s = col[i].toString(16)
+			while(s.length < 2)
+				s = '0' + s
+			str = str + s
+		}
+		return str
+	}
+
+	function color2triple(col)
+	{
+		col = col.replace(/[^0-9]/ig," ")
+		col = col.split(" ")
+		y = []
+		for(var i = 0;i < col.length;i++)
+		{
+			if(col[i] != "")
+				y[y.length] = parseInt(col[i])
+		}
+		while(y.length > 4)
+			y.pop()
+		while(y.length < 4)
+			y[y.length] = 255
+		return y
+	}
+
+	var ele_lis = document.querySelectorAll('*');
+	for (var i = 0 ; i < ele_lis.length ; i++) 
+	{
+		var ele = ele_lis[i];
+
+		var bgcol = window.getComputedStyle(ele , "none").backgroundColor
+		var col = window.getComputedStyle(ele , "none").color
+		//var bgcol = ele.style.backgroundColor
+		//var col = ele.style.color
+		bgcol = color2triple(bgcol)
+		col = color2triple(col)
+
+		for(var j = 0;j < 3;j++)
+		{
+			col[j] = target_color[j] - col[j]
+			bgcol[j] = target_color[j] - bgcol[j]
+		}
+
+		ele.style.backgroundColor = triple2color(bgcol)
+		ele.style.color = triple2color(col)
+	}
+
+
+</script>
+{% endif %}

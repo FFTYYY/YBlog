@@ -1,0 +1,42 @@
+{% load universe_extras %}
+{% load article_zone_extras %}
+{% load static %}
+
+<div id = "comment_area">
+
+	<link rel = "stylesheet" href = {% static "default/comment_area.css"|make_static:"this" %} type = "text/css" />
+
+	<div id = "right_title">
+		<p style="text-align:center;">留言区</p>
+	</div>
+
+	<!-- 右边栏的列表部分，也就是留言列表 -->
+	<div id = "right_list">
+		<ol class = "right_list_whole">
+		{% for 留言 in 留言列表 %}
+			<li class = "right_list">
+				<pre class = "comment_pre comment_pre_top">{{留言.内容}}</pre>
+				<pre class = "comment_pre comment_pre_bot">	-- {{留言.留言者称呼}} </pre>
+				<div class = "right_line"></div>
+			</li>
+		{% endfor %}
+		</ol>
+	</div>
+
+	<!-- 右边栏的底部 -->
+	<div id = "right_down">
+
+	<!-- 这个标签可以通过点击type为submit的input按钮把内容提交给后台并刷新网页 -->
+	<form action = "submit_comment" method = "post">
+		{% csrf_token %}
+
+		留言内容：
+		<textarea class = "text_input" id = "comment_input" name = "content"></textarea>
+		称呼: <input type = "text" class = "text_input" name = "name"/>
+		邮箱: <input type = "text" class = "text_input" name = "email"/>
+		<input type = "submit" value = "提交留言" id = "comment_submit"/>
+
+	</form>
+	</div>
+
+</div>
