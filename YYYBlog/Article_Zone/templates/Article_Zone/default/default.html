@@ -12,24 +12,27 @@
 	{% if 启用MathJax %}
 			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
 	{% endif %}
+
+	<script src = {% static "jquery-3.3.1.min.js"|make_static:"universe" %}></script>
+
 </head>
 
 <body>
 
 	<!-- 左边栏部分 -->
 	<div id = "left_part">
-		{% include "Article_Zone/default/nodelist_area.html" %}
+		{% include "../components/nodelist_area/nodelist_area.html" %}
 	</div>
 
 	<!-- 中间部分 -->
 	<div id = "inner_part">
-		{% include "Article_Zone/default/content_area.html" %}
+		{% include "../components/content_area/content_area.html" %}
 	</div>
 
 
 	<!-- 右边栏部分 -->
 	<div id = "right_part">
-		{% include "Article_Zone/default/comment_area.html" %}
+		{% include "../components/comment_area/comment_area.html" %}
 	</div>
 	
 
@@ -39,7 +42,7 @@
 
 	{% if '帅' in 强化标签 %}
 		<div id = "enter_anime">
-			{% include "./cool_in.html" %}
+			{% include "../components/cool_in/cool_in.html" %}
 		</div>
 	{% endif %}
 
@@ -48,61 +51,10 @@
 
 <!-- TODO -->
 {% if 'pdf文件' in 强化标签 %}
-<script type="text/javascript" charset="utf-8">
-	target_color = [0xFF,0xFF,0xFF]
-
-	function triple2color(col)
-	{
-		str = "#"
-		for(var i = 0;i < 4;i++)
-		{
-			var s = col[i].toString(16)
-			while(s.length < 2)
-				s = '0' + s
-			str = str + s
-		}
-		return str
-	}
-
-	function color2triple(col)
-	{
-		col = col.replace(/[^0-9]/ig," ")
-		col = col.split(" ")
-		y = []
-		for(var i = 0;i < col.length;i++)
-		{
-			if(col[i] != "")
-				y[y.length] = parseInt(col[i])
-		}
-		while(y.length > 4)
-			y.pop()
-		while(y.length < 4)
-			y[y.length] = 255
-		return y
-	}
-
-	var ele_lis = document.querySelectorAll('*');
-	for (var i = 0 ; i < ele_lis.length ; i++) 
-	{
-		var ele = ele_lis[i];
-
-		var bgcol = window.getComputedStyle(ele , "none").backgroundColor
-		var col = window.getComputedStyle(ele , "none").color
-		//var bgcol = ele.style.backgroundColor
-		//var col = ele.style.color
-		bgcol = color2triple(bgcol)
-		col = color2triple(col)
-
-		for(var j = 0;j < 3;j++)
-		{
-			col[j] = target_color[j] - col[j]
-			bgcol[j] = target_color[j] - bgcol[j]
-		}
-
-		ele.style.backgroundColor = triple2color(bgcol)
-		ele.style.color = triple2color(col)
-	}
-
-
-</script>
+	<script 
+		src = {% static "components/deal_pdf.js"|make_static:"this" %} 
+		type="text/javascript" 
+		charset="utf-8"
+	>
+	</script>
 {% endif %}

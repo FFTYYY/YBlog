@@ -4,8 +4,12 @@
 
 <div id = "content_area">
 
-	<link rel = "stylesheet" href = {% static "default/content_area.css"|make_static:"this" %} type = "text/css" />
-
+	<link 
+		rel = "stylesheet" 
+		href = {% static "components/content_area/content_area.css"|make_static:"this" %} 
+		type = "text/css" 
+	/>
+	
 	<div id = "inner_title">
 		<p id = "inner_title_p">{{此节点.名}}</p>
 	</div>

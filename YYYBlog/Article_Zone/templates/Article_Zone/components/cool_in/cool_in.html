@@ -3,8 +3,13 @@
 {% load static %}
 
 <div id = "cool_in">
-	<link rel = "stylesheet" href = {% static "default/cool_in.css"|make_static:"this" %} type = "text/css" />
 
+	<link 
+		rel = "stylesheet" 
+		href = {% static "components/cool_in/cool_in.css"|make_static:"this" %} 
+		type = "text/css" 
+	/>
+	
 	<div id  = "tri"></div>
 	<div id  = "irt1"></div>
 	<div id  = "irt2"></div>
