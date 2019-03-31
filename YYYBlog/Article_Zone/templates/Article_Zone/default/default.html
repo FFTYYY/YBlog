@@ -51,10 +51,53 @@
 
 <!-- TODO -->
 {% if 'pdf文件' in 强化标签 %}
+
 	<script 
 		src = {% static "components/deal_pdf.js"|make_static:"this" %} 
-		type="text/javascript" 
-		charset="utf-8"
-	>
+		type = "text/javascript"
+	></script>
+
+
+	<script 
+		src = {% static "pdfjs/build/pdf.js"|make_static:"universe" %} 
+		type = "text/javascript" 
+	></script>
+
+	<script 
+		src = {% static "pdfjs/build/pdf.worker.js"|make_static:"universe" %} 
+		type = "text/javascript" 
+	></script>
+
+	<script type = "text/javascript" >
+
+		can_lis_init_done = function(){
+			var can_lis = document.getElementById("_canvas_list");
+
+			var clis = [0,0,0];
+			for(var i = 0;i < can_lis.children.length;i++)
+			{
+				var can = can_lis.children[i];
+				got_lis = get_mean_color(can);
+
+				clis[0] += got_lis[0];
+				clis[1] += got_lis[1];
+				clis[2] += got_lis[2];
+			}
+
+			clis[0] /= can_lis.children.length;
+			clis[1] /= can_lis.children.length;
+			clis[2] /= can_lis.children.length;
+
+ 
+			clis[0] = Math.round(clis[0]);
+			clis[1] = Math.round(clis[1]);
+			clis[2] = Math.round(clis[2]);
+
+			console.log(clis);
+
+			change_color( clis );
+		}
 	</script>
+
+
 {% endif %}

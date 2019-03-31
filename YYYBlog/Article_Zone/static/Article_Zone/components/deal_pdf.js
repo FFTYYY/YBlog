@@ -39,18 +39,21 @@ function color_transform(col , make_same , target_color)
 
 	for(var j = 0;j < 3;j++)
 	{
+		var c1 = Math.abs(col[j] - target_color[j]);
+		var c2 = col[j] - target_color[j];
 		if(make_same)
 		{
 			//改了颜色要更不明显
-			//如果注释掉这个if，等于说强制反色，效果不一定好
-			if(Math.abs(col[j] - target_color[j]) > Math.abs(col[j]))
-				col[j] = target_color[j] - col[j]
+			if(Math.abs(c1 - target_color[j]) < Math.abs(c2 - target_color[j]))
+				col[j] = c1;
+			else col[j] = c2;
 		}
 		else
 		{
 			//改了颜色要更明显
-			if(Math.abs(col[j] - target_color[j]) < Math.abs(col[j]))
-				col[j] = target_color[j] - col[j]
+			if(Math.abs(c1 - target_color[j]) > Math.abs(c2 - target_color[j]))
+				col[j] = c2;
+			else col[j] = c1;
 		}
 	}
 
@@ -102,5 +105,52 @@ function change_color(target_color)
 	}
 }
 
-//setInterval(change_color, 20)
-change_color( [0xFF,0xFF,0xFF] );
+function deal_with_unclear_canvas(canvas , ctx)
+{//网上找的代码
+	var  devicePixelRatio = window.devicePixelRatio || 1;  
+
+	var backingStoreRatio = ctx.webkitBackingStorePixelRatio || 
+		ctx.mozBackingStorePixelRatio 	|| 
+		ctx.msBackingStorePixelRatio 	|| 
+		ctx.oBackingStorePixelRatio 	|| 
+		ctx.backingStorePixelRatio 		|| 1;
+
+	var ratio = devicePixelRatio / backingStoreRatio;
+
+	var oldWidth = canvas.width; 
+	var oldHeight = canvas.height; 
+	canvas.width = oldWidth * ratio; 
+	canvas.height = oldHeight * ratio; 
+	canvas.style.width = oldWidth + 'px'; 
+	canvas.style.height = oldHeight + 'px'; 
+	ctx.scale(ratio, ratio);
+}
+
+
+function get_mean_color(canvas)
+{
+	var ctx = canvas.getContext("2d");
+
+	var width = canvas.width;
+	var height = canvas.height;
+
+	var r = 0;
+	var g = 0;
+	var b = 0;
+
+	var data = ctx.getImageData(0, 0, width, height).data;
+ 
+	for (var row = 0; row < height; row++) {
+		for (var col = 0; col < width; col++) {
+			r += data[((width * row) + col) * 4];
+			g += data[((width * row) + col) * 4 + 1];
+			b += data[((width * row) + col) * 4 + 2];
+		}
+	}
+ 
+	r /= (width * height);
+	g /= (width * height);
+	b /= (width * height);
+
+	return [r,g,b]
+}

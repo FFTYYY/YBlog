@@ -51,7 +51,6 @@
 
 #node_list_area .left_list:hover
 {
-	color : #0F0F0FFF;
 	background-color: #B2B2B2FF;
 	-webkit-animation : left_list_hover 1s;
 	-webkit-animation-timing-function: ease-out;
