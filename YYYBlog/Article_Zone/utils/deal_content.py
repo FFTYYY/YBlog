@@ -69,10 +69,14 @@ def deal_pdf(内容 , 上下文):
 		创建元素_canvas_list，其中添加一系列canvas，并且用于显示pdf图片
 	'''
 	内容 = '''
+		{%% load static %%}
+		{%% load universe_extras %%}
+		{%% load article_zone_extras %%}
+
 		<!--保存canvas的容器-->
 		<div id="_canvas_list" style="width:100%%;height:100%%"></div>
 
-		<script src="/static/universe/pdfjs/build/pdf.js"></script>
+		<script src = {%% static "pdfjs/build/pdf.js"|make_static:"universe" %%} ></script>
 
 		<script type = "text/javascript">
 
@@ -85,7 +89,9 @@ def deal_pdf(内容 , 上下文):
 
 			var url = "%s";
 
-			pdfjsLib.GlobalWorkerOptions.workerSrc = "/static/universe/pdfjs/build/pdf.worker.js";
+			pdfjsLib.GlobalWorkerOptions.workerSrc = 
+					" {%% static "pdfjs/build/pdf.worker.js"|make_static:"universe" %%} ";
+
 			var loadingTask = pdfjsLib.getDocument(url);
 
 			loadingTask.promise.then
@@ -103,7 +109,6 @@ def deal_pdf(内容 , 上下文):
 
 								var ctx = canvas.getContext("2d");
 
-
 								var page_wid = page._pageInfo.view[2] - page._pageInfo.view[0];
 								var page_hei = page._pageInfo.view[3] - page._pageInfo.view[1];
 
@@ -116,7 +121,6 @@ def deal_pdf(内容 , 上下文):
 
 								//防止canvas绘图模糊
 								deal_with_unclear_canvas(canvas , ctx);
-
 
 								var renderContext = 
 								{
@@ -138,6 +142,7 @@ def deal_pdf(内容 , 上下文):
 		</script>
 		''' % (内容)
 
+	内容 = Template(内容).render(Context(上下文))
 
 	上下文["强化标签"].append("pdf文件")
 	return 内容

@@ -19,23 +19,21 @@ import Entry.models
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import url
+from django.views.static import serve
 
 urlpatterns = [
 	path('入口/', include('Entry.urls')),
 	path('admin/', admin.site.urls),
 	path('ckeditor/', include('ckeditor_uploader.urls')),
+	url(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
 ]
 
-if settings.DEBUG == True:
+try:
 	for zone in Entry.models.空间.objects.all():
 		urlpatterns.append( path(zone.地址 + "/", include(zone.位置 + ".urls")) )
-else:
-	try:
-		for zone in Entry.models.空间.objects.all():
-			urlpatterns.append( path(zone.地址 + "/", include(zone.位置 + ".urls")) )
-	except Exception:
-		pass
+except Exception:
+	pass
 
-urlpatterns.append( path('<str:输入>/', Entry.views.default , name = "default") )
-urlpatterns.append( path('', Entry.views.default , name = "default") )
+#urlpatterns.append( path('<str:输入>/', Entry.views.index) )
+urlpatterns.append( path('', Entry.views.index) )
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

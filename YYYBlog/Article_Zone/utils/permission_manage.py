@@ -17,8 +17,12 @@ def 权限查询(request):
 	'''
 		查询来访ip的最高访问等级
 	'''
-	ip地址 = request.META['REMOTE_ADDR']
-	访问人 = 访问者.objects.filter(IP地址 = ip地址)
+	cookie = request.COOKIES.get("YYYBLOG_VISITOR")
+	
+	if cookie is None:
+		return 0
+
+	访问人 = 访问者.objects.filter(cookie_value = cookie)
 
 	if len(访问人) == 0:
 		return 0
@@ -28,6 +32,7 @@ def 权限查询(request):
 		if 更新权限(人):
 			continue
 		最高访问等级 = max(最高访问等级 , 人.访问等级)
+	#print (最高访问等级)
 	return 最高访问等级
 
 def 节点许可查询(request , 此节点):
