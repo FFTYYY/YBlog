@@ -24,7 +24,7 @@ def 获取节点(request , 节点地址):
 
 	上下文 = {}
 
-	子节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 此节点.子.order_by("排序依据"))
+	子节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 重排列(此节点.子))
 	祖先节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 获取祖先节点列表(此节点))
 	兄弟节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 获取兄弟节点列表(此节点))
 

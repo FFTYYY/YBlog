@@ -73,6 +73,9 @@ def deal_pdf(内容 , 上下文):
 		{%% load universe_extras %%}
 		{%% load article_zone_extras %%}
 
+
+		<script src = {%% static "components/deal_pdf.js"|make_static:"this" %%} ></script>
+
 		<!--保存canvas的容器-->
 		<div id="_canvas_list" style="width:100%%;height:100%%"></div>
 
@@ -131,8 +134,7 @@ def deal_pdf(内容 , 上下文):
 
 								if(page.pageIndex + 1 == pdf._pdfInfo.numPages)
 								{
-									//TODO : 这个间隔太显眼了
-									setTimeout( can_lis_init_done , 600 );
+									setTimeout( can_lis_init_done , Math.max(60 * pdf._pdfInfo.numPages,400) );
 								}
 							}
 						);

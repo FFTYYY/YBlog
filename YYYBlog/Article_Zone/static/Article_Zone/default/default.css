@@ -114,28 +114,53 @@ body
 	}
 }
 
+/*左数第二条*/
 #left_line
 {
 	position : absolute;
 	top : 0;
 	height : 100%;
 	width : 0.2%;
-	left : 14.8%;
+	left : 14.3%;
 
 	-webkit-animation : left_line_in 2s;
 }
 
+/*左数第三条*/
 #right_line
 {
 	position : absolute;
 	bottom : 0;
 	height : 100%;
 	width : 0.2%;
-	right : 15%;
+	right : 14.5%;
 	-webkit-animation : right_line_in 2s;
 }
 
-.right_line,#left_line,#right_line,hr
+/*左数第一条*/
+#left_line_2
+{
+	position : absolute;
+	top : 0;
+	height : 100%;
+	width : 0.2%;
+	left : 0.3%;
+
+	-webkit-animation : left_line_in 2s;
+}
+
+/*左数第四条*/
+#right_line_2
+{
+	position : absolute;
+	bottom : 0;
+	height : 100%;
+	width : 0.2%;
+	right : 0.5%;
+	-webkit-animation : right_line_in 2s;
+}
+
+.right_line,#left_line,#right_line,#left_line_2,#right_line_2,hr
 {
 	background-color : #6C6C6CFF;
 }

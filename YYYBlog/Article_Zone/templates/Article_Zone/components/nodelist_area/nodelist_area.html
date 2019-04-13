@@ -21,11 +21,17 @@
 		<ol>
 			<!-- ..而左边的left_list则是只的列表元素（右边则是comment_list） -->
 		{% for 节点 in 子节点列表 %}
-			<li class = "left_list">
-				<a class = "left_list_a" href = "../{{节点.地址}}" >
-					{{节点.名}}
-				</a>
-			</li>
+
+			{% if 节点.节点类型 is 3 %}		<!--集和文章的分界线-->
+				<hr />
+			{% else %}
+				<li class = "left_list">
+					<a class = "left_list_a" href = "../{{节点.地址}}" >
+						{{节点.名}}
+					</a>
+				</li>
+			{% endif %}
+
 		{% endfor %}
 		</ol>
 	</div>
@@ -46,11 +52,15 @@
 	<div class = "left_list_div" id = "left_list_brothers">
 		<ol>
 		{% for 节点 in 兄弟节点列表 %}
-			<li class = "left_list">
-				<a class = "left_list_a" href = "../{{节点.地址}}">
-					{{节点.名}}
-				</a>
-			</li>
+			{% if 节点.节点类型 is 3 %}		<!--集和文章的分界线-->
+				<hr />
+			{% else %}
+				<li class = "left_list">
+					<a class = "left_list_a" href = "../{{节点.地址}}" >
+						{{节点.名}}
+					</a>
+				</li>
+			{% endif %}
 		{% endfor %}
 		</ol>
 	</div>
