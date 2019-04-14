@@ -60,13 +60,21 @@
 #content_area *
 {
 	color : #E0E0E0FF;
-	font-size : 15px;
-	font-family : "YouYuan";
-	line-height : 18px;
+	font-size : 16px;
+	font-family : serif;
+	line-height : 21px;
+
+}
+
+#content_area br
+{
+	content: "	";
+	display: block;
+	margin-top : 5px;
 }
 
 #content_area img
 {
 	margin-top : 6px;
-	margin-bottom : 6px
+	margin-bottom : 6px;
 }
