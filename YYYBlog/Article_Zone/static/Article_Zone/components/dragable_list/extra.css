@@ -1,0 +1,53 @@
+
+@-webkit-keyframes com_in
+{
+	from 
+	{
+		left : 0;
+		opacity: 0;
+	}
+	to 
+	{
+	}
+}
+
+@-webkit-keyframes com_out
+{
+	from 
+	{
+		opacity : 0.95;
+	}
+	to 
+	{
+		left : 200%;
+		opacity : 0;
+	}
+}
+.hidden
+{
+	display : none;
+}
+
+.unshowing
+{
+	display : none;
+}
+
+.dragble_list_element
+{	
+	position : absolute;
+	opacity : 0.95;
+}
+
+.ining
+{
+	-webkit-animation : com_in 0.5s;
+	opacity : 0.95;
+}
+
+.leaving
+{
+	-webkit-animation : com_out 0.5s;
+	opacity : 0;
+	left : 200%;
+}

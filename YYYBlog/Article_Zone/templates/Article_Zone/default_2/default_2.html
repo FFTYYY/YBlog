@@ -27,15 +27,16 @@
 
 
 	<!-- 可拖动按钮 -->
+	
 	<div id = "dragble_button">
 		{% include "../components/dragable_list/dragable_list.html" %}
 
 
-		<div id = "node_list" class = "hidden unshowing">
+		<div id = "node_list" class = "hidden unshowing dragble_list_element">
 			{% include "../components/nodelist_area/nodelist_area.html" %}
 		</div>
 
-		<div id = "comment_list" class = "hidden unshowing">
+		<div id = "comment_list" class = "hidden unshowing dragble_list_element">
 			{% include "../components/comment_area/comment_area.html" %}
 		</div>
 
