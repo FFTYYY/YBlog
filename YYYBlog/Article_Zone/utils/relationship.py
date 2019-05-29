@@ -1,7 +1,7 @@
 from Article_Zone.models import *
 
 def 重排列(列表):
-	列表 = list(列表.order_by("排序依据"))
+	列表 = list(列表.order_by("排序依据").reverse())
 	集 = [x for x in filter(lambda x:x.节点类型==1,列表)]
 	文 = [x for x in filter(lambda x:x.节点类型==0,列表)]
 

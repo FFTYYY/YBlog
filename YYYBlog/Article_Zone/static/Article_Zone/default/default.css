@@ -52,6 +52,16 @@ body
 	-webkit-animation : right_in 1s;
 }
 
+
+#right_part #comment_area
+{	
+	background-color:#00000000;
+}
+#left_part #node_list_area
+{	
+	background-color:#00000000;
+}
+
 #inner_part
 {	
 	position : absolute;

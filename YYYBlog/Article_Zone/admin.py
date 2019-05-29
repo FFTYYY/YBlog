@@ -34,7 +34,7 @@ class 按深度查找(admin.SimpleListFilter):
 class 节点Admin(admin.ModelAdmin):
 	list_filter = ["节点类型" , 按深度查找 , ]
 	list_display = ["名" , "子节点" , "父节点" , "节点类型" , "深度" , ]
-	raw_id_fields = ["父" , ]
+	raw_id_fields = ["父" ,]
 	search_fields = ["名" , ]
 
 	def 子节点(self , 对象):
@@ -84,3 +84,4 @@ class 留言Admin(admin.ModelAdmin):
 
 admin.site.register(节点 , 节点Admin)
 admin.site.register(留言 , 留言Admin)
+admin.site.register(界面模板)

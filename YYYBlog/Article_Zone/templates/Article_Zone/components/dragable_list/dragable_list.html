@@ -1,0 +1,41 @@
+{% load universe_extras %}
+{% load article_zone_extras %}
+{% load static %}
+
+<script src = {% static "components/make_dragable.js"|make_static:"this" %} ></script>
+<script src = {% static "components/dragable_list/dragable_list.js"|make_static:"this" %}></script>
+
+<div id = "dragable_list">
+
+	<link rel = "stylesheet" 
+		href = {% static "components/dragable_list/dragable_list.css"|make_static:"this" %} 
+		type = "text/css" 
+	/>
+	
+	<!--标尺和离开判断-->
+	<div id = "hidden_main_cont"></div>
+
+	<div id = "main_cont" class = "main_cont">
+		<div id = "mc_inner">
+			<p id = "mc_txt">
+				控制
+			</p>
+		</div>
+	</div>
+
+</div>
+
+<script>
+	//因为一般会把整个元素封到一个div内方便管理，这个函数要求把div传进来以获取全局位置信息之类的
+	function get_div(div)
+	{
+		make_dragable(
+			div,
+			function(e){	//只有在按钮上拖动才能真的拖动
+				return e.path[0].classList.contains("main_cont")
+			}
+		)
+		the_div = div
+	}
+
+</script>

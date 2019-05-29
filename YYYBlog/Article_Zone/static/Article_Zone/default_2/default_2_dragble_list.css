@@ -1,0 +1,29 @@
+/*可拖动按钮部分*/
+
+.hidden
+{
+	display : none;
+}
+
+.unshowing
+{
+	display : none;
+}
+
+
+#node_list
+{	
+	position : absolute;
+	opacity : 0.95;
+}
+
+#comment_list
+{	
+	position : absolute;
+	opacity : 0.95;
+}
+
+#comment_list *
+{	
+	-webkit-animation : none !important;
+}

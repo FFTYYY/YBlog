@@ -29,4 +29,3 @@ class 访问者(models.Model):
 		if self.cookie_value == "":
 			self.cookie_value = make_cookie_value()
 		super(访问者 , self).save(*args, **kwargs)
-

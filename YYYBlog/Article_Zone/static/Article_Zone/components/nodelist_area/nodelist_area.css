@@ -8,6 +8,10 @@
 	width : 100%;
 	height : 100%;
 	overflow : hidden;
+
+	background-color: #404040;
+	
+	user-select: none;
 }
 
 @-webkit-keyframes left_list_hover
@@ -88,7 +92,7 @@
 #node_list_area .left_button_active
 {
 	background-color : #A5A5A5FF;
-	color : #000000FF;
+	color : #000000FF!important;
 }
 
 #node_list_area #left_title
@@ -138,7 +142,7 @@
 
 #node_list_area *
 {
-	color : #E0E0E0FF;
+	color : #F5F4F4FF;
 	font-size : 15px;
 	font-family : "YouYuan";
 	line-height : 18px;
