@@ -28,11 +28,6 @@
 	display : none;
 }
 
-.unshowing
-{
-	display : none;
-}
-
 .dragble_list_element
 {	
 	position : absolute;
@@ -45,7 +40,7 @@
 	opacity : 0.95;
 }
 
-.leaving
+.outing
 {
 	-webkit-animation : com_out 0.5s;
 	opacity : 0;

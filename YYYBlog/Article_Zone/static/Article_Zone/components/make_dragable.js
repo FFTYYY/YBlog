@@ -5,7 +5,7 @@ var rag_start_y = 0
 var drag_start_top = 0
 var drag_start_left = 0
 var now_dragging = ""		//当前谁在被拖动
-aaa = 0;
+
 //监听鼠标移动事件
 document.addEventListener('mousemove', function(e) {
 	mouse_pos_x = e.clientX

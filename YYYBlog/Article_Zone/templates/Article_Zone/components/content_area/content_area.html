@@ -14,39 +14,10 @@
 		<p id = "inner_title_p">{{此节点.名}}</p>
 	</div>
 
-	{% if 'html文件' in 强化标签%}
-		<style type="text/css">
-			#content_area q
-			{
-				/*background-color : #333333FF;*/
-				padding-top : 5px;
-				padding-left : 5px;
-				padding-bottom : 5px;
-				padding-right : 5px;
-				margin : 8px;
-				display : inline-block;
-				width:auto;
-				font-family : "STKaiti" !important; 
-				font-size : 120%;
-				line-height : 100%;
-				quotes : none;
-			}
-			#content_area .marker
-			{
-				font-family : "Kaiti" !important;
-				color : #C1C1C1FF;
-				margin-left: 3px;
-			}
-			#content_area .marker>strong
-			{
-				font-family : "Kaiti" !important;
-				color : #C9C9C9FF;
-				font-weight : 120%;
-			}
-			
-		</style>
-	{% endif %}
-
+	<style type="text/css">
+		{{额外样式|safe}}
+	</style>
+	
 	<!-- 中间的内容 -->
 	<div id = "inner_text">
 		{{内容|safe}}
