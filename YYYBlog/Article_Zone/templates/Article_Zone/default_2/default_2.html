@@ -13,20 +13,17 @@
 	{% if 启用MathJax %}
 			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
 	{% endif %}
-
-	<script src = {% static "jquery-3.3.1.min.js"|make_static:"universe" %}></script>
+	<!--script src = {% static "jquery-3.3.1.min.js"|make_static:"universe" %}></script-->
 
 </head>
 
 <body>
-
 	<!-- 中间部分 -->
+
 	<div id = "inner_part">
-		{% include "../components/content_area/content_area.html" %}
+		{% include "../components/content_area_unlim/content_area.html" %}
 	</div>
 
-
-	<!-- 可拖动按钮 -->
 	
 	<div id = "dragble_button">
 		{% include "../components/dragable_list/dragable_list.html" %}
@@ -42,10 +39,8 @@
 
 	</div>
 	<script>
-		//传入div
 		get_div(document.getElementById("dragble_button"))
 
-		//初始化可选项
 		main_cont = document.getElementById("main_cont")
 		node_list = document.getElementById("node_list")
 		comment_list = document.getElementById("comment_list")
@@ -62,7 +57,6 @@
 </body>
 </html>
 
-<!--pdf的颜色变换-->
 {% if 'pdf文件' in 强化标签 %}
 
 	<script 
@@ -109,3 +103,19 @@
 		}
 	</script>
 {% endif %}
+
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src = {% static "minimap/jquery.minimap.js"|make_static:"universe" %}></script>
+<link rel = "stylesheet" href = {% static "minimap/jquery.minimap.css"|make_static:"universe" %} type = "text/css" />
+
+<script>
+	//$('#content_area').minimap();
+
+	$(document).ready( function() {
+			$('#inner_part').minimap()
+		}
+	)
+
+</script>
