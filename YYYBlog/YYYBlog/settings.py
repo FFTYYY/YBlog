@@ -138,7 +138,7 @@ CKEDITOR_CONFIGS = {
 		'toolbar': 'Custom',
 		'toolbar_Custom': [
 			['Styles', 'Format', 'Bold', 'Italic', 'Underline', 'Strike', 'SpellChecker', 'Undo', 'Redo'],
-			['Image', 'Table', 'HorizontalRule' , 'Iframe' , 'Link'],
+			['Image', 'Table', 'HorizontalRule' , 'Iframe' , 'Link' , 'Anchor'],
 			['TextColor', 'BGColor'],
 			["Indent" , "Outdent"],
 			['Smiley', 'SpecialChar'], ['Source','Source Editing Area'],

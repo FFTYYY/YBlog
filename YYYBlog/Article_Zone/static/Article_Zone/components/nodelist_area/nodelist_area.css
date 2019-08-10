@@ -14,6 +14,11 @@
 	user-select: none;
 }
 
+#node_list_area *
+{
+	border : 0 !important;	
+}
+
 @-webkit-keyframes left_list_hover
 {
 	from 

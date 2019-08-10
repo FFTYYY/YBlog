@@ -7,6 +7,12 @@
 	background-color: #404040;
 }
 
+#comment_area *
+{
+	border : 0;
+}
+
+
 @-webkit-keyframes right_list_in
 {
 	from 
