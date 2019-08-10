@@ -5,10 +5,15 @@
 #node_list_area_flexible
 {
 	position : absolute;
-	width : 100%;
+	width : 180px;
 	height : 100%;
 }
 
+
+#node_list_area_flexible *
+{
+	border : 0 !important;	
+}
 
 .the_area
 {
@@ -104,7 +109,7 @@
 	color : #000000FF!important;
 }
 
-#node_list_area_flexible #left_title
+#node_list_area_flexible .left_title
 {	
 	position : absolute;
 	left : 0;
@@ -129,7 +134,7 @@
 	display : none;
 }
 
-#node_list_area_flexible #left_down
+#node_list_area_flexible .left_down
 {	
 	position : absolute;
 	left : 0;

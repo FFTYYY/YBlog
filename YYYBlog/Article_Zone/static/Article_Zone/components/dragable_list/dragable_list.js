@@ -11,6 +11,7 @@ the_div = 0;
 
 hidden_main_cont = document.getElementById("hidden_main_cont")
 
+now_inited = false
 
 function locate_elements()
 {//根据当前按钮位置变换列表的位置
@@ -45,6 +46,9 @@ function locate_elements()
 animing = false
 function flush()
 {
+	if(!now_inited)
+		return 
+	
 	if(!(now_showing_in || mc_in || hmc_in))
 		should_idx = -1;
 	
@@ -155,6 +159,8 @@ function dragble_list_init(main_cont , showing_lis)
 	}
 
 	switch_hidden_main_cont_state(false)
+
+	now_inited = true
 }
 
 function mouse_out(mx , my , who)
@@ -174,6 +180,12 @@ document.addEventListener('mousemove', function(e) {
 
 	if(now_idx >= 0)
 	{
+		if(now_showing_in && mouse_out(mx , my , showing_list[now_idx]))
+		{	
+			who = showing_list[now_idx]
+			leff = who.offsetLeft + the_div.offsetLeft
+			topp = who.offsetTop + the_div.offsetTop
+		}
 		now_showing_in = !mouse_out(mx , my , showing_list[now_idx]);
 	}
 

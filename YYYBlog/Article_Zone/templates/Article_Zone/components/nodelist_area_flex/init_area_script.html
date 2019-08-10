@@ -1,0 +1,65 @@
+<!-- 控制按钮行为的脚本 -->
+<script type="text/javascript" charset="utf-8">
+
+	div_son = the_now_element.getElementsByClassName("left_list_sons")[0]
+	div_fat = the_now_element.getElementsByClassName("left_list_fathers")[0]
+	div_bro = the_now_element.getElementsByClassName("left_list_brothers")[0]
+
+	but_son = the_now_element.getElementsByClassName("but_son")[0]
+	but_fat = the_now_element.getElementsByClassName("but_fat")[0]
+	but_bro = the_now_element.getElementsByClassName("but_bro")[0]
+
+	function hid_one(one_div , one_but)
+	{//取消某个按钮和其对应的列表
+		//通过控制其class来改变其css样式，从而达成显隐
+		one_div.classList.remove("left_list_div_active")
+		one_but.classList.remove("left_button_active")
+	}
+
+	function hid_all()
+	{//取消所有按钮和其对应的列表
+		
+		hid_one(div_son , but_son)
+		hid_one(div_fat , but_fat)
+		hid_one(div_bro , but_bro)
+	}
+	function show_one(one_div , one_but)
+	{//只激活某一个按钮和其对应的列表
+		hid_all();
+		one_div.classList.add("left_list_div_active")
+		one_but.classList.add("left_button_active")
+	}
+
+
+	/*
+		考虑到对于文章，一般没有下属节点，因此默认显示兄弟节点
+		而对于集，一般想要向下走，因此默认显示儿子节点
+	*/
+	{% if 此节点.节点类型 == 0 %}
+		show_one(div_bro , but_bro)
+	{% else %}
+		show_one(div_son , but_son)
+	{% endif %}
+
+	but_son.onclick = function(){ 
+		let ds = div_son
+		let bs = but_son
+		show_one(ds , bs); 
+	}
+	but_fat.onclick = function(){ 
+		let ds = div_fat
+		let bs = but_fat
+		show_one(ds , bs); 
+	}
+	but_bro.onclick = function(){ 
+		let ds = div_bro
+		let bs = but_bro
+		show_one(ds , bs); 
+	}
+
+	//双击上行键直接跳到父亲，方便使用
+	{% if 此节点.父 %}
+		but_fat.ondblclick = function(){ window.location.href = '../{{此节点.父.地址}}' }
+	{% endif %}
+
+</script>
