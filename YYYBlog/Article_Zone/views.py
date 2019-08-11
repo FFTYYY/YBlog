@@ -17,12 +17,12 @@ def 默认(request):
 	return http.HttpResponseRedirect("./root")
 
 def 获取全部信息(request , 此节点 , depth = 1):
-	if depth > 4:
+	if depth > 3:
 		return {}
 
-	子节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 重排列(此节点.子))
-	祖先节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 获取祖先节点列表(此节点))
-	兄弟节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 获取兄弟节点列表(此节点))
+	子节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 重排列(此节点.子)))
+	祖先节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 获取祖先节点列表(此节点)))
+	兄弟节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 获取兄弟节点列表(此节点)))
 
 	信息 = {}
 	信息[此节点.地址] = [[
@@ -45,9 +45,9 @@ def 获取节点(request , 节点地址):
 
 	上下文 = {}
 
-	子节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 重排列(此节点.子))
-	祖先节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 获取祖先节点列表(此节点))
-	兄弟节点列表 = filter(lambda 点 : 节点许可查询(request , 点) , 获取兄弟节点列表(此节点))
+	子节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 重排列(此节点.子)))
+	祖先节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 获取祖先节点列表(此节点)))
+	兄弟节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 获取兄弟节点列表(此节点)))
 
 	留言列表 = [言论 for 言论 in 此节点.留言.all()]
 	留言列表.reverse()

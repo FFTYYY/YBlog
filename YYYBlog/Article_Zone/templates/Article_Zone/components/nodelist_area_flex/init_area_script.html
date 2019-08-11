@@ -1,29 +1,30 @@
 <!-- 控制按钮行为的脚本 -->
 <script type="text/javascript" charset="utf-8">
+function active_button_{{此节点.地址}}(the_now_element)
+{
+	let div_son = the_now_element.getElementsByClassName("left_list_sons")[0]
+	let div_fat = the_now_element.getElementsByClassName("left_list_fathers")[0]
+	let div_bro = the_now_element.getElementsByClassName("left_list_brothers")[0]
 
-	div_son = the_now_element.getElementsByClassName("left_list_sons")[0]
-	div_fat = the_now_element.getElementsByClassName("left_list_fathers")[0]
-	div_bro = the_now_element.getElementsByClassName("left_list_brothers")[0]
+	let but_son = the_now_element.getElementsByClassName("but_son")[0]
+	let but_fat = the_now_element.getElementsByClassName("but_fat")[0]
+	let but_bro = the_now_element.getElementsByClassName("but_bro")[0]
 
-	but_son = the_now_element.getElementsByClassName("but_son")[0]
-	but_fat = the_now_element.getElementsByClassName("but_fat")[0]
-	but_bro = the_now_element.getElementsByClassName("but_bro")[0]
-
-	function hid_one(one_div , one_but)
+	let hid_one = function (one_div , one_but)
 	{//取消某个按钮和其对应的列表
 		//通过控制其class来改变其css样式，从而达成显隐
 		one_div.classList.remove("left_list_div_active")
 		one_but.classList.remove("left_button_active")
 	}
 
-	function hid_all()
+	let hid_all = function ()
 	{//取消所有按钮和其对应的列表
 		
 		hid_one(div_son , but_son)
 		hid_one(div_fat , but_fat)
 		hid_one(div_bro , but_bro)
 	}
-	function show_one(one_div , one_but)
+	let show_one = function (one_div , one_but)
 	{//只激活某一个按钮和其对应的列表
 		hid_all();
 		one_div.classList.add("left_list_div_active")
@@ -61,5 +62,8 @@
 	{% if 此节点.父 %}
 		but_fat.ondblclick = function(){ window.location.href = '../{{此节点.父.地址}}' }
 	{% endif %}
+}
+
+//active_button_{{此节点.地址}}(the_now_element)
 
 </script>

@@ -16,6 +16,7 @@
 	</div>
 	<script> the_now_element = document.getElementById("init_area") </script>
 	{%include "./init_area_script.html" %}
+	<script> active_button_{{此节点.地址}}(the_now_element) </script>
 
 
 	<script>
@@ -37,12 +38,12 @@
 		{%endfor%}
 
 		<script>
-			map_add_thing["{{地址}}"] = document.getElementById("the_area_of_{{地址}}")
+			map_add_thing["{{地址}}"] = active_button_{{此节点.地址}}
 		</script>
 	{%endfor%}
 
 	<script>
-		console.log(map_add_thing)
+		//console.log(map_add_thing)
 	</script>
 
 

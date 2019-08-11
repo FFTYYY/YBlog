@@ -16,7 +16,6 @@ function delete_a_child(x)
 	father.removeChild(x)
 	brother_count --;	
 	update_width()
-
 }
 
 function mouse_out(mx , my , who)
@@ -67,22 +66,15 @@ function get_last(a_address)
 
 function lls_ele_enter(_this , e)
 {
-	if(brother_count >= 4)
-		return 
 	if(the_wid == 0)
 		the_wid = init_area.offsetWidth
-
-	//new_area = $(init_area).clone(true)
-	new_address = get_last(_this.children[0].href)
-	console.log(new_address)
-	new_area = document.getElementById("the_area_of_" + new_address).cloneNode(true)
-	new_area.classList.remove("hidden")
 
 	this_father = _this.parentNode.parentElement.parentElement
 
 	this_number = this_father.my_number
 	new_number = this_number + 1
 
+	deleted = false
 	for(var _my_brother = 0;_my_brother < father.childElementCount;_my_brother ++)
 	{
 		var my_brother = father.children[_my_brother]
@@ -90,8 +82,20 @@ function lls_ele_enter(_this , e)
 		if(my_brother["my_number"] == new_number)
 		{
 			delete_a_child(my_brother)
+			deleted = true
 		}
 	}
+
+	if(brother_count >= 3)
+		return 
+
+	//new_area = $(init_area).clone(true)
+	new_address = get_last(_this.children[0].href)
+	new_area = document.getElementById("the_area_of_" + new_address).cloneNode(true)
+	new_area.classList.remove("hidden")
+	if(!deleted)	//from new
+		new_area.classList.add("sub_ining")
+	map_add_thing[new_address](new_area)
 
 	brother_count ++;
 
@@ -108,10 +112,27 @@ function lls_ele_enter(_this , e)
 	{
 		if(e.movementX || e.movementY)
 		{
-			if(this.my_number == brother_count) // I'm the last
-			{
-				delete_a_child(this)
-			}
+			let _thi = this
+			setTimeout(
+				function()
+				{
+					if(_thi.my_number == brother_count) // I'm the last
+					{
+						_thi.classList.add("sub_outing")
+						setTimeout(
+							function()
+							{
+								//console.log("delete because leave main")
+								_thi.classList.remove("sub_outing")
+								delete_a_child(_thi)
+							},
+							500,
+						)
+					}
+				},
+				501,
+			)
+
 		}
 	})
 
@@ -120,24 +141,39 @@ function lls_ele_enter(_this , e)
 
 function lls_ele_out(_this , e)
 {
-	mx = e.clientX
-	my = e.clientY
-
 	on_mouse_out_anime(_this);
 	let me = _this
 	let my_father = _this.parentNode.parentElement.parentElement
-	mouse_in = my_father.mouse_in_me
+	let now_my_new_area = me.my_new_area
 
 	setTimeout(
 		function()
 		{
-			if(my_father.mouse_in_me || (my_father.forward_father && my_father.forward_father.mouse_in_me))
+			if(me.my_new_area === now_my_new_area)
 			{
-				delete_a_child(me.my_new_area)
-				me.my_new_area = undefined
+				if(my_father.mouse_in_me || (my_father.forward_father && my_father.forward_father.mouse_in_me))
+				{
+					me.my_new_area.classList.add("sub_outing")
+				}
 			}
 		},
-		100
+		500
+	)
+	setTimeout(
+		function()
+		{
+			if(me.my_new_area === now_my_new_area)
+			{
+				if(my_father.mouse_in_me || (my_father.forward_father && my_father.forward_father.mouse_in_me))
+				{
+					//console.log("delete because leave button")
+					me.my_new_area.classList.remove("sub_outing")
+					delete_a_child(me.my_new_area)
+					me.my_new_area = undefined
+				}
+			}
+		},
+		1000
 	)
 	
 }

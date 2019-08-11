@@ -161,3 +161,39 @@
 	font-family : "YouYuan";
 	line-height : 18px;
 }
+
+@-webkit-keyframes _sub_ining
+{
+	from 
+	{
+		opacity: 0;
+	}
+	to 
+	{
+		opacity : 1;
+	}
+}
+
+@-webkit-keyframes _sub_outing
+{
+	from 
+	{
+		opacity : 1;
+	}
+	to 
+	{
+		opacity : 0;
+	}
+}
+.sub_ining
+{
+	-webkit-animation : _sub_ining 0.5s;
+	opacity : 1;
+}
+
+.sub_outing
+{
+	-webkit-animation : _sub_outing 0.5s;
+	opacity : 0;
+	left : 200%;
+}
