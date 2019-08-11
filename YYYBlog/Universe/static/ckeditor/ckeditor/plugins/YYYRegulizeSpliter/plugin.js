@@ -3,16 +3,16 @@
     var number2word = function(num)
     {
         s = "" + num
-        s = s.replace("0" , "〇")
-        s = s.replace("1" , "一")
-        s = s.replace("2" , "二")
-        s = s.replace("3" , "三")
-        s = s.replace("4" , "四")
-        s = s.replace("5" , "五")
-        s = s.replace("6" , "六")
-        s = s.replace("7" , "七")
-        s = s.replace("8" , "八")
-        s = s.replace("9" , "九")
+        s = s.replace( new RegExp("0" , "g") , "〇")
+        s = s.replace( new RegExp("1" , "g") , "一")
+        s = s.replace( new RegExp("2" , "g") , "二")
+        s = s.replace( new RegExp("3" , "g") , "三")
+        s = s.replace( new RegExp("4" , "g") , "四")
+        s = s.replace( new RegExp("5" , "g") , "五")
+        s = s.replace( new RegExp("6" , "g") , "六")
+        s = s.replace( new RegExp("7" , "g") , "七")
+        s = s.replace( new RegExp("8" , "g") , "八")
+        s = s.replace( new RegExp("9" , "g") , "九")
         return s
     }
 
