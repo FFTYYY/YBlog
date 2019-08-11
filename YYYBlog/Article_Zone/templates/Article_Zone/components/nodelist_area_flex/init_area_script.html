@@ -36,11 +36,17 @@ function active_button_{{此节点.地址}}(the_now_element)
 		考虑到对于文章，一般没有下属节点，因此默认显示兄弟节点
 		而对于集，一般想要向下走，因此默认显示儿子节点
 	*/
-	{% if 此节点.节点类型 == 0 %}
-		show_one(div_bro , but_bro)
-	{% else %}
+	if(force_set_son)
 		show_one(div_son , but_son)
-	{% endif %}
+	else
+	{
+		{% if 此节点.节点类型 == 0 %}
+			show_one(div_bro , but_bro)
+		{% else %}
+			show_one(div_son , but_son)
+		{% endif %}
+	}
+
 
 	but_son.onclick = function(){ 
 		let ds = div_son

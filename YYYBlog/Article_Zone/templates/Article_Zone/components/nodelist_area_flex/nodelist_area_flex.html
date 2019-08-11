@@ -14,13 +14,17 @@
 	<div id = "init_area"  class = "the_area">
 		{%include "./init_area.html" %}
 	</div>
-	<script> the_now_element = document.getElementById("init_area") </script>
+	<script> 
+		force_set_son = false
+		the_now_element = document.getElementById("init_area") 
+	</script>
 	{%include "./init_area_script.html" %}
 	<script> active_button_{{此节点.地址}}(the_now_element) </script>
 
 
 	<script>
 		map_add_thing = new Map()
+		force_set_son = true
 	</script>
 
 	{%for 地址,信息 in 子节点全部信息.items %}
