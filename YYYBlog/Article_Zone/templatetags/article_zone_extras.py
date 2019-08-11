@@ -7,8 +7,8 @@ register = template.Library()
 def make_static(路径 , 命令):
 	'''
 		命令:
-			"Universe" ： 表示使用通用的静态文件
-			"This" ： 表示使用通用的静态文件
+			"universe" ： 表示使用通用的静态文件
+			"this" ： 表示使用通用的静态文件
 
 	'''
 
