@@ -65,13 +65,6 @@
 	line-height : 21px;
 }
 
-#content_area br
-{
-	content: "	";
-	display: block;
-	margin-top : 5px;
-}
-
 #content_area img
 {
 	margin-top : 6px;

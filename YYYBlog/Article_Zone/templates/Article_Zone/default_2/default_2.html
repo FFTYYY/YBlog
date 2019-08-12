@@ -22,6 +22,7 @@
 
 	<div id = "inner_part">
 		{% include "../components/content_area_unlim/content_area.html" %}
+
 	</div>
 
 	
@@ -111,12 +112,9 @@
 <link rel = "stylesheet" href = {% static "minimap/jquery.minimap.css"|make_static:"universe" %} type = "text/css" />
 
 <script>
-	//$('#content_area').minimap();
-
 	$(document).ready( function() {
 			$('#inner_part').minimap()
 		}
 	)
-	//TODO : 在控制区滚动鼠标滚轮会让页面跟着滚
 
 </script>
