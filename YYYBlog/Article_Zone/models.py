@@ -49,15 +49,16 @@ class 节点(models.Model):
 
 	def save(self , *args , **kwargs):
 		self.最后修改时间 = timezone.now()
+
 		if self.父 and self.排序依据 == 0:
 			排序依据列表 = [x.排序依据 for x in self.父.子.all()]
 			if len(排序依据列表) == 0:
 				self.排序依据 = 1 
 			else : self.排序依据 = max( 排序依据列表 ) + 1
-			return super(节点 , self).save(*args , **kwargs)
 
 		if not self.地址:
 			self.地址 = "page_" + str(self.id)
+			
 		return super(节点 , self).save(*args , **kwargs)
 
 	@property
