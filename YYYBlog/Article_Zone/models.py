@@ -57,6 +57,7 @@ class 节点(models.Model):
 			else : self.排序依据 = max( 排序依据列表 ) + 1
 
 		if not self.地址:
+			super(节点 , self).save(*args , **kwargs)
 			self.地址 = "page_" + str(self.id)
 			
 		return super(节点 , self).save(*args , **kwargs)
