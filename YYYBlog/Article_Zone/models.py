@@ -15,7 +15,7 @@ class 界面模板(models.Model):
 		return self.名
 
 class 节点(models.Model):
-	名 = models.CharField(max_length = 短文本长度)
+	名 = models.CharField(max_length = 短文本长度 , default = "" , blank = True)
 	父 = models.ForeignKey("self", on_delete = models.SET_NULL , null = True , 
 			blank = True , related_name = "子")
 	地址 = models.CharField(max_length = 短文本长度 , default = "" , blank = True)
@@ -56,9 +56,12 @@ class 节点(models.Model):
 				self.排序依据 = 1 
 			else : self.排序依据 = max( 排序依据列表 ) + 1
 
+		super(节点 , self).save(*args , **kwargs)
+
 		if not self.地址:
-			super(节点 , self).save(*args , **kwargs)
 			self.地址 = "page_" + str(self.id)
+		if not self.名:
+			self.名 = "%04d-%02d-%02d" % (int(self.创建时间.year) , int(self.创建时间.month) , int(self.创建时间.day))
 			
 		return super(节点 , self).save(*args , **kwargs)
 
