@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 	'django_extensions',
 	'Entry.apps.EntryConfig',
 	'Article_Zone.apps.ArticleZoneConfig',
+	'Open_Discuss_Zone.apps.OpenDiscussZoneConfig',
 	'Universe.apps.UniverseConfig',
 	"ckeditor" ,
 	'ckeditor_uploader',

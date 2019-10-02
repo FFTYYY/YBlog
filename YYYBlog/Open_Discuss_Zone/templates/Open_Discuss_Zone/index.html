@@ -1,0 +1,20 @@
+<html>
+<head>
+</head>
+
+<body>
+	<p>
+		this is root!
+	</p>
+	<dev>
+		{% for 节点 in 子节点列表 %}
+
+			<a href = "../{{节点.地址}}">
+				{{节点.名}}
+			</a>
+			<p></p>
+
+		{% endfor %}
+	</dev>
+</body>
+</html>

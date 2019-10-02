@@ -1,0 +1,82 @@
+{% load universe_extras %}
+{% load open_discuss_zone_extras %}
+{% load static %}
+
+<html>
+
+<head>
+
+	<link rel = "stylesheet" href = {% static "default/area.css"|make_static:"this" %} type = "text/css" />
+	
+	<!-- 只对于特定类型的界面启动Mathjax，具体由view控制 -->
+	{% if 启用MathJax %}
+			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
+	{% endif %}
+	<!--script src = {% static "jquery-3.3.1.min.js"|make_static:"universe" %}></script-->
+
+</head>
+
+<body>
+	<div id = "main_area">
+		<!-- 标题 -->
+		<div id = "title">
+			<p class = "title_p">{{此讨论区.名}}</p>
+		</div>
+
+		<!-- 话题列表 -->
+		<div id = "topic_list">
+			{% for x in 话题列表 %}
+
+				<a href = {{x.地址}} class = "topic_a">▶ {{x.名}}</a>
+			{% endfor %}
+
+			<script type="text/javascript" charset="utf-8">
+
+				lls = document.getElementsByClassName("topic_a")
+				for(var i = 0;i < lls.length;i++)
+				{
+					lls[i].onmouseout = function (){
+						//移除的同时立刻获得动画
+						this.classList.add("topic_a_unhover_anime")
+						
+						//因为动画的执行时间是0.5s，在0.5s后移除动画
+						setTimeout(
+							function (){
+								this.classList.remove("topic_a_unhover_anime")
+							}.bind(this),
+							500
+						)
+					}
+				}
+			</script>
+		</div>
+
+	</div>
+
+	<div id = "create_area">
+		<form action = "newtopic_submit" method = "post">
+		{% csrf_token %}
+
+		话题名:
+		<textarea class = "text_input" id = "topic_name" name = "name"></textarea>
+
+		<input type = "submit" value = "新建话题" id = "submit_button"/>
+
+	</form>
+
+	</div>
+
+	<div id = "info_area">
+		<p>
+			类型：讨论区主页面<br/>
+		</p>
+		<p>
+			<br/>朋友列表：
+		</p>
+		{% for x in 朋友列表 %}
+			<a href = "../{{x.地址}}">{{x.名}}</a>
+		{% endfor %}
+	</div>
+
+</body>
+</html>

@@ -141,7 +141,7 @@
 {
 	background-color : #727272FF;
 }
-##comment_area comment_submit:active,.left_button:active
+#comment_area comment_submit:active,.left_button:active
 {
 	color : #000000FF;
 	background-color : #A5A5A5FF;

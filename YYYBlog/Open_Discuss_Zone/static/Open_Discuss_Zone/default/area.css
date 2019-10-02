@@ -1,0 +1,192 @@
+*
+{
+	border : 0;
+	margin : 0;
+	padding : 0;
+	outline : 0;
+}
+
+body 
+{
+	width : 100%;
+	height : 100%;
+
+	background-color : #CCCCCCFF;
+
+	overflow : visible;
+
+}
+
+::selection
+{
+	background : #3F3F3FFF; 
+	color : #CCCCCCFF;
+}
+
+body::-webkit-scrollbar 
+{
+	display : none;
+}
+
+#main_area
+{
+	position : absolute;
+	left : 0;
+	top : 0;
+	width : 80%;
+	height : 100%;
+	overflow : hidden;
+}
+
+.title_p
+{
+	text-align : center;
+	height : 100%;
+	font-size : 160%;
+	margin-top : 3px;
+	font-family : "FangSong";
+	cursor : default;
+}
+
+#title
+{
+	position : absolute;
+	left : 0;
+	top : 0;
+	width : 100%;
+	height : 10%;
+}
+#topic_list
+{
+	position : absolute;
+	left : 0;
+	top : 12%;
+	width : 100%;
+	height : 80%;
+}
+
+
+@-webkit-keyframes topic_a_hover
+{
+	from 
+	{
+		color : #0F0F0FFF;
+		background-color: #CCCCCCFF;
+	}
+	to 
+	{
+		color : #F5F4F4FF;
+		background-color: #4C4C4CFF;
+	}
+}
+
+@-webkit-keyframes topic_a_unhover
+{
+	from 
+	{
+		color : #F5F4F4FF;
+		background-color: #4C4C4CFF;
+	}
+	to 
+	{
+		color : #0F0F0FFF;
+		background-color: #CCCCCCFF;
+	}
+}
+
+.topic_a_unhover_anime
+{
+	-webkit-animation : topic_a_unhover 0.5s;
+}
+
+.topic_a:hover
+{
+	color : #F5F4F4FF;
+	background-color: #4C4C4CFF;
+	-webkit-animation : topic_a_hover 1s;
+	-webkit-animation-timing-function: ease-out;
+
+}
+
+.topic_a
+{
+	font-size: 18px;
+	text-decoration : none;
+	color : inherit;
+	font-family : "STXihei" ;
+	width : 100%;
+	display : block;
+
+	cursor : default;
+}
+
+#create_area
+{
+	position : absolute;
+	left : 80%;
+	top : 70%;
+	width : 20%;
+	height : 20%;
+	overflow : hidden;
+}
+#info_area
+{
+	position : absolute;
+	left : 80%;
+	top : 0%;
+	width : 20%;
+	height : 70%;
+	overflow : hidden;
+}
+
+.text_input
+{
+	color : #C9C9C9FF;
+	background-color : #848484FF;
+	margin-top : 1%;
+	margin-bottom : 1%;
+	width : 100%;
+	font-size : 13px;
+}
+
+ #comment_input
+{
+	height : 40%;
+	width : 100%;
+}
+
+ #submit_button
+{
+	margin-top : 1%;
+	width : 40%;
+	position : relative;
+	left : 30%;
+	top : 5%;
+	height : 20%;
+	cursor : default;
+}
+
+#submit_button
+{
+	background-color : #939393FF;
+}
+#submit_button:hover
+{
+	color : #D1D1D1FF;
+	background-color : #727272FF;
+}
+#submit_button:active
+{
+	color : #D1D1D1FF;
+	background-color : #111111FF;
+}
+
+textarea
+{
+	resize : none;
+}
+
+textarea::-webkit-scrollbar 
+{
+	display : none;
+}
