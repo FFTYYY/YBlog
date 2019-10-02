@@ -27,17 +27,19 @@ class 讨论区(models.Model):
 			default = 0 , null = True)
 	最低访问等级需求 = models.IntegerField(default = 0)
 
-	朋友 = models.ManyToManyField("讨论区")
+	朋友 = models.ManyToManyField("讨论区" , blank = True)
 
 	def __str__(self):
 		return self.名
 
 	def save(self , *args , **kwargs):
+
+		super(讨论区 , self).save(*args , **kwargs)
+		
 		for 朋 in self.朋友.all():
 			if len(朋.朋友.filter(id = self.id)) == 0:
 				朋.朋友.add(self)
 				朋.save()
-
 		super(讨论区 , self).save(*args , **kwargs)
 
 		if not self.地址:
