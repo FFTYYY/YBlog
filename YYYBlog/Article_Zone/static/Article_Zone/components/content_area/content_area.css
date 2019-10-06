@@ -43,10 +43,12 @@
 	font-family : "FangSong";
 }
 
+
 #content_area #inner_text::-webkit-scrollbar 
 {
 	display : none;
 }
+
 
 #content_area hr
 {

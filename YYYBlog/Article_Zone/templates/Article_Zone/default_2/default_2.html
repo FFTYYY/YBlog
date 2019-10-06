@@ -18,10 +18,11 @@
 </head>
 
 <body>
-	<!-- 中间部分 -->
 
+
+	<!-- 中间部分 -->	
 	<div id = "inner_part">
-		{% include "../components/content_area_unlim/content_area.html" %}
+		{% include "../components/content_area/content_area.html" %}
 
 	</div>
 
@@ -105,16 +106,29 @@
 	</script>
 {% endif %}
 
-
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<!-- script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src = {% static "minimap/jquery.minimap.js"|make_static:"universe" %}></script>
 <link rel = "stylesheet" href = {% static "minimap/jquery.minimap.css"|make_static:"universe" %} type = "text/css" />
 
 <script>
 	$(document).ready( function() {
-			$('#inner_part').minimap()
+			$("#inner_text").minimap({
+				map_col: "#minimap_map_col"
+			});
 		}
 	)
+
+</script -->
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src = {% static "jquery.nicescroll-3.7.6/jquery.nicescroll.js"|make_static:"universe" %}></script>
+<script>
+	
+	$(document).ready(
+		function() { 
+		$("#inner_text").niceScroll();
+		}
+	);
 
 </script>

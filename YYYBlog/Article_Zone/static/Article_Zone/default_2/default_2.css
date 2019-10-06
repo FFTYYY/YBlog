@@ -23,6 +23,18 @@ body
 
 }
 
+/*
+#minimap_map_col
+{
+	position : fixed;
+	left : 85%;
+	top : 2%;
+	width : 15%;
+	height : 96%;
+	background-color: #0A0A;
+}
+*/
+
 #inner_part
 {
 	position : absolute;
