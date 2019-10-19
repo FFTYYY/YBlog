@@ -15,12 +15,12 @@
 2. 在shell中输入：
 ```
 from Entry.models import 空间
-空间(名="文章",位置="Article_Zone","地址="文章").save()
+空间(名="文章",位置="Article_Zone",地址="文章").save()
 quit()
 ```
 3. 如果要打开讨论区功能，可以在shell中输入：
 ```
-空间(名="公开讨论",位置="Open_Discuss_Zone","地址="Discuss").save()
+空间(名="公开讨论",位置="Open_Discuss_Zone",地址="Discuss").save()
 ```
 
 ##### 可以运行本地服务了
