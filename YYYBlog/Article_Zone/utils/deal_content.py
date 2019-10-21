@@ -61,9 +61,8 @@ def deal_template(内容 , 上下文):
 
 def deal_pdf(内容 , 上下文):
 	#找到pdf文件的url
-	内容 = re.search("\"[\\s\\S]{0,}\\.pdf\"",内容).group(0)
-	内容 = 内容.replace("\"","")
 
+	内容 = re.search("\\(YYY\\)URL=\\[" + "([\\S\\s]{0,})" + "\\]" , 内容).group(1)
 
 	'''
 		创建元素_canvas_list，其中添加一系列canvas，并且用于显示pdf图片
@@ -132,10 +131,10 @@ def deal_pdf(内容 , 上下文):
 								};
 								page.render(renderContext);
 
-								if(page.pageIndex + 1 == pdf._pdfInfo.numPages)
-								{
-									setTimeout( can_lis_init_done , Math.max(60 * pdf._pdfInfo.numPages,400) );
-								}
+								//if(page.pageIndex + 1 == pdf._pdfInfo.numPages)
+								//{
+								//	setTimeout( can_lis_init_done , Math.max(60 * pdf._pdfInfo.numPages,400) );
+								//}
 							}
 						);
 					}
