@@ -7,7 +7,7 @@ from Article_Zone.models import *
 from django.template import Context, Template
 import re
 
-def deal_txt(内容 , 上下文):
+def process_txt(内容 , 上下文):
 	'''
 		处理txt文件
 	'''
@@ -35,7 +35,7 @@ def deal_txt(内容 , 上下文):
 
 	return 内容
 
-def deal_md(内容 , 上下文):
+def process_md(内容 , 上下文):
 	'''
 		处理.md文件
 	'''
@@ -45,21 +45,21 @@ def deal_md(内容 , 上下文):
 		转成html
 	'''
 	内容 = markdown.markdown(内容)
-	内容 = deal_html(内容)
+	内容 = process_html(内容)
 	上下文["强化标签"].append("md文件")
 	return 内容
 
-def deal_html(内容 , 上下文):
+def process_html(内容 , 上下文):
 	上下文["强化标签"].append("html文件")
 	return 内容
 
-def deal_template(内容 , 上下文):
-	内容 = deal_html(内容 , 上下文)
+def process_template(内容 , 上下文):
+	内容 = process_html(内容 , 上下文)
 	内容 = "{% load universe_extras %}\n{% load article_zone_extras %}\n" + 内容 
 	内容 = Template(内容).render(Context(上下文))
 	return 内容
 
-def deal_pdf(内容 , 上下文):
+def process_pdf(内容 , 上下文):
 	#找到pdf文件的url
 
 	内容 = re.search("\\(YYY\\)URL=\\[" + "([\\S\\s]{0,})" + "\\]" , 内容).group(1)
@@ -73,7 +73,7 @@ def deal_pdf(内容 , 上下文):
 		{%% load article_zone_extras %%}
 
 
-		<script src = {%% static "components/deal_pdf.js"|make_static:"this" %%} ></script>
+		<script src = {%% static "components/process_pdf.js"|make_static:"this" %%} ></script>
 
 		<!--保存canvas的容器-->
 		<div id="_canvas_list" style="width:100%%;height:100%%"></div>
@@ -149,7 +149,7 @@ def deal_pdf(内容 , 上下文):
 	return 内容
 
 
-def deal_content(内容 , 上下文 = {} , 类型 = 0):
+def process_content(内容 , 上下文 = {} , 类型 = 0):
 	'''
 		根据后缀名，把不同类型的文本处理成html
 
@@ -160,13 +160,13 @@ def deal_content(内容 , 上下文 = {} , 类型 = 0):
 	上下文["启用MathJax"] = (类型 == 0 or 类型 == 2)
 
 	if 类型 == 1:
-		内容 = deal_txt		(内容 , 上下文)
+		内容 = process_txt		(内容 , 上下文)
 	if 类型 == 2:
-		内容 = deal_md		(内容 , 上下文)
+		内容 = process_md		(内容 , 上下文)
 	if 类型 == 0:
-		内容 = deal_template(内容 , 上下文)
+		内容 = process_template(内容 , 上下文)
 	if 类型 == 3:
-		内容 = deal_html		(内容 , 上下文)
+		内容 = process_html		(内容 , 上下文)
 	if 类型 == 4:
-		内容 = deal_pdf		(内容 , 上下文)
+		内容 = process_pdf		(内容 , 上下文)
 	return 内容
