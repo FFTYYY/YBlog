@@ -62,7 +62,13 @@ def process_template(内容 , 上下文):
 def process_pdf(内容 , 上下文):
 	#找到pdf文件的url
 
-	内容 = re.search("\\(YYY\\)URL=\\[" + "([\\S\\s]{0,})" + "\\]" , 内容).group(1)
+	if 内容.match("_PDF_PROCESSOR_INTERNET_URL"): 
+		#尝试通过网址自动下载内容，并且储存到_PDF_PROCESSOR_LOCAL_URL中
+		网址 = re.search("_PDF_PROCESSOR_INTERNET_URL=\\[" + "([\\S\\s]{0,})" + "\\]" , 内容).group(1)
+	地址 = re.search("_PDF_PROCESSOR_LOCAL_URL=\\[" + "([\\S\\s]{0,})" + "\\]" , 内容).group(1)
+
+	根 = os.path.join("." , 内容)
+
 
 	'''
 		创建元素_canvas_list，其中添加一系列canvas，并且用于显示pdf图片
@@ -141,7 +147,7 @@ def process_pdf(内容 , 上下文):
 				}
 			);
 		</script>
-		''' % (内容)
+		''' % (地址)
 
 	内容 = Template(内容).render(Context(上下文))
 

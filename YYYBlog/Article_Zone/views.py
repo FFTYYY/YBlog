@@ -4,7 +4,7 @@ from django.http import Http404
 import django.http as http
 from .models import 节点 , 留言
 from .utils.relationship import *
-from .utils.deal_content import *
+from .utils.process_content import *
 from .utils.permission_manage import *
 import os
 import django.utils.timezone as timezone
@@ -79,7 +79,7 @@ def 获取节点(request , 节点地址):
 		"子节点全部信息" : 全部信息,
 	})
 
-	内容 = deal_content(此节点.内容 , 上下文 , 此节点.内容类型)
+	内容 = process_content(此节点.内容 , 上下文 , 此节点.内容类型)
 
 	上下文.update({
 		"内容" : 内容,
