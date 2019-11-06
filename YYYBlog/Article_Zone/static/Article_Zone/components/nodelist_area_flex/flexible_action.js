@@ -47,7 +47,7 @@ function show_mouse_env(ele)
 	)
 	ele.addEventListener("mouseleave" , 
 		function(e){
-			if(e.movementX || e.movementY)
+			//if(e.movementX || e.movementY)
 			{
 				//console.log("mouse leave:")
 				//console.log(this)
@@ -110,7 +110,7 @@ function lls_ele_enter(_this , e)
 
 	new_area.addEventListener("mouseleave" , function(e)
 	{
-		if(e.movementX || e.movementY)
+		//if(e.movementX || e.movementY)
 		{
 			let _thi = this
 			setTimeout(
@@ -122,7 +122,7 @@ function lls_ele_enter(_this , e)
 						setTimeout(
 							function()
 							{
-								//console.log("delete because leave main")
+								console.log("delete because leave main")
 								_thi.classList.remove("sub_outing")
 								delete_a_child(_thi)
 							},
@@ -146,6 +146,9 @@ function lls_ele_out(_this , e)
 	let my_father = _this.parentNode.parentElement.parentElement
 	let now_my_new_area = me.my_new_area
 
+	if(now_my_new_area == undefined)
+		return 
+
 	setTimeout(
 		function()
 		{
@@ -153,6 +156,8 @@ function lls_ele_out(_this , e)
 			{
 				if(my_father.mouse_in_me || (my_father.forward_father && my_father.forward_father.mouse_in_me))
 				{
+					//console.log("fuck!!!")
+					me.my_new_area["button_leaving"] = true
 					me.my_new_area.classList.add("sub_outing")
 				}
 			}
@@ -167,9 +172,14 @@ function lls_ele_out(_this , e)
 				if(my_father.mouse_in_me || (my_father.forward_father && my_father.forward_father.mouse_in_me))
 				{
 					//console.log("delete because leave button")
-					me.my_new_area.classList.remove("sub_outing")
-					delete_a_child(me.my_new_area)
-					me.my_new_area = undefined
+					if (me.my_new_area["button_leaving"])
+					{
+						me.my_new_area["button_leaving"] = false
+
+						me.my_new_area.classList.remove("sub_outing")
+						delete_a_child(me.my_new_area)
+						me.my_new_area = undefined
+					}
 				}
 			}
 		},
@@ -187,7 +197,7 @@ function give_all_lls_ele_event(element)
 			lls_ele_enter(this , e)
 		}
 
-		lls[i].onmouseout = function (e){				
+		lls[i].onmouseleave = function (e){				
 			lls_ele_out(this , e)
 		}
 		
