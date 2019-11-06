@@ -3,6 +3,8 @@ import os
 import sys
 
 if __name__ == '__main__':
+    os.chdir(os.path.dirname(os.path.abspath(__file__))) #运行目录为本文件所在目录
+
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'YYYBlog.settings')
     try:
         from django.core.management import execute_from_command_line
