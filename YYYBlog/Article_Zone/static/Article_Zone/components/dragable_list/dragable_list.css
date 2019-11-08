@@ -3,6 +3,7 @@
 	position : absolute;
 	width : 100%;
 	height : 100%;
+
 }
 
 #dragable_list #main_cont
@@ -13,20 +14,28 @@
 	width : 100%;
 	height : 100%;
 	background-color: #000000AA;
+
+	border : 1px;
+	border-style : solid;
+	border-color : #AAAAAA;
+	border-radius: 50%;
 }
 
 #dragable_list #mc_inner
 {	
 	position : absolute;
-	left : 3%;
+	left : 8%;
 	top : 8%;
-	right : 3%;
+	right : 8%;
 	bottom : 8%;
 	border : 1px;
 	border-style : solid;
 	border-color : #AAAAAA;
 	background-color: #00000000;
 	pointer-events: none;
+
+	border-radius: 50%;
+
 }
 
 #dragable_list #mc_txt
