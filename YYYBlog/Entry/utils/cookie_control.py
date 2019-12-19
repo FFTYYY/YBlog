@@ -9,6 +9,6 @@ def set_cookie_访问者(人 , response , domain = "127.0.0.1"):
 		key = "YYYBLOG_VISITOR" ,
 		value = 人.cookie_value ,
 		max_age = 60 * 60 * 24 * 365 * 100 , #每过一百年就得重新获取一次
-		domain =  domain,
-		path = "/" , 
+		#domain =  domain,
+		#path = "/" , 
 	)
