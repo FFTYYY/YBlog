@@ -32,7 +32,6 @@ def 权限查询(request):
 		if 更新权限(人):
 			continue
 		最高访问等级 = max(最高访问等级 , 人.访问等级)
-	#print (最高访问等级)
 	return 最高访问等级
 
 def 节点许可查询(request , 此节点):
