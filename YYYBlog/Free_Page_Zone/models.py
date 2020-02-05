@@ -27,3 +27,11 @@ class 页(models.Model):
 	def __str__(self):
 		return self.名
 
+class 页文件(models.Model):
+	名 = models.CharField(max_length = 短文本长度 , default = "" , blank = True)
+	父 = models.ForeignKey(页 , related_name = "页文件" , on_delete = models.CASCADE)
+
+	内容 = models.TextField(default = "" , blank = True)
+
+	def __str__(self):
+		return self.父.名 + "/" + self.名

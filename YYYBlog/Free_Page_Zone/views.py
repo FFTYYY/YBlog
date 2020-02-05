@@ -15,6 +15,8 @@ def 获取页(request , 页地址 , 其他参数 = ""):
 		variables = {
 			"param" : 其他参数 , 
 		}
+
+		variables.update({文件.名 : 文件.内容 for 文件 in 此页.页文件.all()})
 		run_func = {}
 		exec(此页.内容)
 
