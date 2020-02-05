@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 	'Entry.apps.EntryConfig',
 	'Article_Zone.apps.ArticleZoneConfig',
 	'Open_Discuss_Zone.apps.OpenDiscussZoneConfig',
+	'Free_Page_Zone.apps.FreePageZoneConfig',
 	'Universe.apps.UniverseConfig',
 	"ckeditor" ,
 	'ckeditor_uploader',
