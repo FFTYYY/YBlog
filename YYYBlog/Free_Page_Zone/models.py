@@ -9,6 +9,14 @@ class 页(models.Model):
 
 	内容 = models.TextField(default = "" , blank = True)
 
+	类型 = models.IntegerField(default = 0 , 
+		choices = (
+			(0 , "html"),
+			(1 , "python"),
+		)
+	)
+
+
 	def save(self , *pargs , **kwargs):
 		if not self.地址:
 			super().save(*pargs , **kwargs)
