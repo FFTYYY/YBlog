@@ -1,7 +1,9 @@
 from django.shortcuts import render , HttpResponse , Http404
 from .utils.permission_manage import 页许可查询
 from .models import 页
+from django.views.decorators.clickjacking import xframe_options_exempt
 
+@xframe_options_exempt
 def 获取页(request , 页地址 , 其他参数 = ""):
 
 	此页 = 页.objects.filter(地址 = 页地址)[0]
