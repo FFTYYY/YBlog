@@ -6,3 +6,6 @@
 *.pyc
 utils/Get_Article_From_isPrigrammer/
 sftp-config.json
+
+*.crt
+*.key
