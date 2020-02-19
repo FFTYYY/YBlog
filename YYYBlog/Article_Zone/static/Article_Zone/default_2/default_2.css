@@ -4,12 +4,13 @@
 	margin : 0;
 	padding : 0;
 	outline : 0;
+	color: #BBBBBB;
 }
 
 #inner_part *
 {
 
-	color : #000000FF !important;
+	color : #BBBBBB !important;
 }
 
 body 
@@ -17,7 +18,7 @@ body
 	width : 100%;
 	height : 100%;
 
-	background-color : #CCCCCCFF;
+	background-color : #252825;
 
 	overflow : visible;
 
@@ -59,8 +60,8 @@ body
 }
 ::selection
 {
-	background : #3F3F3FFF; 
-	color : #CCCCCCFF;
+	background : #AAAAAA; 
+	color : #BBBBBBFF;
 }
 
 body::-webkit-scrollbar 

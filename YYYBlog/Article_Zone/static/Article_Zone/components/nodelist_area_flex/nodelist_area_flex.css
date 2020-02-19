@@ -32,7 +32,7 @@
 {
 	from 
 	{
-		color : #F5F4F4FF;
+		color : #DDDDDD;
 		background-color: inherit;
 	}
 	to 
@@ -51,7 +51,7 @@
 	}
 	to 
 	{
-		color : #F5F4F4FF;
+		color : #DDDDDD;
 		background-color: inherit;
 	}
 }
@@ -156,7 +156,7 @@
 
 #node_list_area_flexible *
 {
-	color : #F5F4F4FF;
+	color : #DDDDDD;
 	font-size : 15px;
 	font-family : "YouYuan";
 	line-height : 18px;
