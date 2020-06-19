@@ -18,10 +18,14 @@
 
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 	<script src="https://cdn.bootcdn.net/ajax/libs/animejs/3.2.0/anime.min.js"></script>
+	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-	<link rel = "stylesheet" href = {% static "css/YUI.css"|make_static:"this" %} type = "text/css" />
-	<script src="{% static "YUI_toolbar.js"|make_static:"this" %}"></script>
-	<script src="{% static "YUI.js"|make_static:"this" %}"></script>
+
+	<link rel = "stylesheet" href = {% static "YUI/css/YUI.css"|make_static:"this" %} type = "text/css" />
+	<script src="{% static "YUI/YUI_toolbar.js"|make_static:"this" %}"></script>
+	<script src="{% static "YUI/YUI.js"|make_static:"this" %}"></script>
+	
+	<link rel = "stylesheet" href = {% static "default_2/main.css"|make_static:"this" %} type = "text/css" />
 
 </head>
 
@@ -29,22 +33,18 @@
 <div id = "main">
 
 	<y-page> 
-		<y-content>
-			{{内容|safe}}
+		<y-content id="y-content">
+			{% include "../content_area/content_area.html" %}
 		</y-content> 
 
 		<y-toolbar>
 
 			<y-tool>
-				{% include "../components/comment_area/comment_area.html" %}
+				{% include "../nodelist_area/nodelist_area.html" %}
 			</y-tool>
 
 			<y-tool>
-				{% include "../components/nodelist_area/nodelist_area.html" %}
-			</y-tool>
-
-			<y-tool>
-				333
+				{% include "../comment_area/comment_area.html" %}
 			</y-tool>
 
 		</y-toolbar>
@@ -81,4 +81,4 @@
 	var node_father_add = "{{此节点.父.地址}}"
 
 </script>
-<script src="{% static "components/nodelist_area/nodelist_area.js"|make_static:"this" %}"></script>
+<script src="{% static "nodelist_area/nodelist_area.js"|make_static:"this" %}"></script>
