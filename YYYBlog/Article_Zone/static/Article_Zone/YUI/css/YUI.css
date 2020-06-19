@@ -50,7 +50,6 @@
 /*工具背景*/
 .Y-color-tool{
 	background-color: #545454FF;
-	color: #D8D8D8FF;
 }
 
 /******************** 滚动条选项 ********************/
@@ -78,11 +77,3 @@
 }
 
 /******************** 动画 ********************/
-/*滑入*/
-.slide-in-enter-active, .slide-in-leave-active {
-	transition: .5s;
-}
-.slide-in-enter, .slide-in-leave-to {
-	opacity: 0;
-	left: -200px;
-}

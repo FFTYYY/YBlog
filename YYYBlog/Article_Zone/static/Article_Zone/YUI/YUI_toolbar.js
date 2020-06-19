@@ -4,8 +4,7 @@ YUI_mixins = {
 	//能够感知鼠标
 	sense_mouse: {
 		data: function () { return {
-			real_mouse_in 	: false , 	//鼠标是否在内（真实）
-			mouse_in 		: false , 	//鼠标是否在内（概念）
+			mouse_in 		: false , 	//鼠标是否在内
 
 			mouse_hold 		: false , 	//鼠标是否按下
 			mouse_hold_x 	: 0 ,		//鼠标按下的位置(clientX)
@@ -19,20 +18,22 @@ YUI_mixins = {
 		methods:{
 
 			mouseenter: function(e){//鼠标进入
-				this.real_mouse_in = true
 				this.mouse_in = true
 			},
 
 			mouseleave: function(e){//鼠标离开				
-				this.real_mouse_in = false
-				this.mouse_hold = false //同时也认为抬起了
+				
+				if(
+					e.toElement == null 
+					&& e.clientX >= 0 && e.clientX <= window.innerWidth
+					&& e.clientY >= 0 && e.clientY <= window.innerHeight
+				)
+				{//假离开
+					return 
+				}
 
-				//离开超过100ms才算离开
-				let me = this //这里非常坑，setTimeout里的function的this是window
-				setTimeout(function(){
-					if(!me.real_mouse_in)
-						me.mouse_in = false
-				} , 100)
+				this.mouse_hold = false //同时也认为抬起了
+				this.mouse_in = false
 			},
 
 			mouseup: function(e){//鼠标抬起
@@ -91,13 +92,12 @@ function YUI_toolbar_init(){
 	Vue.component("y-tool", {
 		delimiters: ['[[', ']]'],
 
-		mixins: [YUI_mixins.sense_mouse ] ,
-
 		data: function () { return {
 
 			//位置和大小，注意位置是相对于toolbar
 			height: 500,
 			width : 200,
+			opacity: 0.9,
 
 			idx: 0, //在父对象中的编号
 
@@ -132,7 +132,7 @@ function YUI_toolbar_init(){
 				anime({
 					targets: this.$el,
 					left: ["-50px" , this.x],
-					opacity: ["0" , "1"],
+					opacity: [0 , this.opacity],
 					duration: 500,
 					easing: "easeInOutQuad",
 				});
@@ -140,8 +140,7 @@ function YUI_toolbar_init(){
 			leave_anime: function(){
 				anime({
 					targets: this.$el,
-					left: [this.x , this.x + 50 + "px"],
-					opacity: ["1" , "0"],
+					opacity: [this.opacity , 0],
 					duration: 500,
 					easing: "easeInOutQuad",
 				});
@@ -150,24 +149,21 @@ function YUI_toolbar_init(){
 
 		template: `
 			<transition 
-				@enter="enter_anime"
-				@leave="leave_anime"
-				:duration="500"
+				@enter = enter_anime
+				@leave = leave_anime
+				:duration = 500
 			>
 			<div 
-				:class="classes"
-				:style="{
+				:class = classes
+				:style = "{
 					height: height + 'px',
 					width : width  + 'px',
 					left  : x + 'px',
-					top   : y + 'px',					
-					'z-index': '-1',
+					top   : y + 'px',
+					opacity: String(opacity),		
 				}"
 
-				@mouseenter.self  = mouseenter($event)
-				@mouseleave.self   = mouseleave($event)
-
-				v-show="show"
+				v-show = show
 			>
 				<slot></slot>
 			</div>
@@ -192,7 +188,7 @@ function YUI_toolbar_init(){
 
 			classes: ["Y-color-lightdark" , "Y-allow-overflow" , "Y-abs-position" , "Y-color-light-text"] , 
 
-			active_idx: 0,		//当前活跃的子对象编号
+			active_idx: 0, //当前活跃的子对象编号
 			children: [] , //所有子对象
 		}},
 
@@ -200,10 +196,6 @@ function YUI_toolbar_init(){
 			n_children   : function(e){ return this.children.length },
 			active_child : function(e){ return this.children[this.active_idx] },
 			tool_active  : function(e){
-				if(this.children.length > 0) // 有儿子
-				{
-					return this.mouse_in || this.children[this.active_idx].mouse_in 
-				}
 				return this.mouse_in
 			},
 		},
@@ -226,7 +218,6 @@ function YUI_toolbar_init(){
 					width : width  + 'px',
 					left  : x      + 'px',
 					top   : y      + 'px',					
-					'z-index': '2',
 				}"
 
 				@mouseenter.self  = mouseenter($event)
