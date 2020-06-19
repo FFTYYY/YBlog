@@ -1,3 +1,13 @@
+<!-- 此节点 -->
+<!-- 子节点列表 -->
+<!-- 祖先节点列表 -->
+<!-- 兄弟节点列表 -->
+<!-- 留言列表 -->
+<!-- 强化标签 -->
+<!-- 额外样式 -->
+<!-- 子节点全部信息 -->
+<!-- 内容 -->
+
 {% load universe_extras %}
 {% load article_zone_extras %}
 {% load static %}
@@ -6,131 +16,69 @@
 
 <head>
 
-	<link rel = "stylesheet" href = {% static "default_2/default_2.css"|make_static:"this" %} type = "text/css" />
-	<link rel = "stylesheet" href = {% static "default_2/default_2_dragble_list.css"|make_static:"this" %} type = "text/css" />
-	
-	<!-- 只对于特定类型的界面启动Mathjax，具体由view控制 -->
-	{% if 启用MathJax %}
-			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
-	{% endif %}
-	<script src = {% static "jquery-1.10.2.min.js"|make_static:"universe" %}></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.bootcdn.net/ajax/libs/animejs/3.2.0/anime.min.js"></script>
+
+	<link rel = "stylesheet" href = {% static "css/YUI.css"|make_static:"this" %} type = "text/css" />
+	<script src="{% static "YUI_toolbar.js"|make_static:"this" %}"></script>
+	<script src="{% static "YUI.js"|make_static:"this" %}"></script>
 
 </head>
 
 <body>
+<div id = "main">
+
+	<y-page> 
+		<y-content>
+			{{内容|safe}}
+		</y-content> 
+
+		<y-toolbar>
+
+			<y-tool>
+				{% include "../components/comment_area/comment_area.html" %}
+			</y-tool>
+
+			<y-tool>
+				{% include "../components/nodelist_area/nodelist_area.html" %}
+			</y-tool>
+
+			<y-tool>
+				333
+			</y-tool>
+
+		</y-toolbar>
 
 
-	<!-- 中间部分 -->	
-	<div id = "inner_part">
-		{% include "../components/content_area/content_area.html" %}
+	</y-page>
 
-	</div>
-
-	
-	<div id = "dragble_button">
-		{% include "../components/dragable_list/dragable_list.html" %}
-
-
-		<div id = "node_list" class = "hidden dragble_list_element">
-			{% include "../components/nodelist_area_flex/nodelist_area_flex.html" %}
-		</div>
-
-		<div id = "comment_list" class = "hidden dragble_list_element">
-			{% include "../components/comment_area/comment_area.html" %}
-		</div>
-
-	</div>
-	<script>
-		get_div(document.getElementById("dragble_button"))
-
-		main_cont = document.getElementById("main_cont")
-		node_list = document.getElementById("node_list")
-		comment_list = document.getElementById("comment_list")
-		dragble_list_init(main_cont , [node_list , comment_list])
-	</script>
-	
-	
-	{% if '帅' in 强化标签 %}
-		<!--div id = "enter_anime">
-			{% include "../components/cool_in/cool_in.html" %}
-		</div-->
-	{% endif %}
-
+</div>
 </body>
+
 </html>
 
-{% if 'pdf文件' in 强化标签 %}
-
-	<script 
-		src = {% static "components/deal_pdf.js"|make_static:"this" %} 
-		type = "text/javascript"
-	></script>
-
-	<script 
-		src = {% static "pdfjs/build/pdf.js"|make_static:"universe" %} 
-		type = "text/javascript" 
-	></script>
-
-	<script 
-		src = {% static "pdfjs/build/pdf.worker.js"|make_static:"universe" %} 
-		type = "text/javascript" 
-	></script>
-
-	<script type = "text/javascript" >
-
-		can_lis_init_done = function(){
-			var can_lis = document.getElementById("_canvas_list");
-
-			var clis = [0,0,0];
-			for(var i = 0;i < can_lis.children.length;i++)
-			{
-				var can = can_lis.children[i];
-				got_lis = get_mean_color(can);
-
-				clis[0] += got_lis[0];
-				clis[1] += got_lis[1];
-				clis[2] += got_lis[2];
-			}
-
-			clis[0] /= can_lis.children.length;
-			clis[1] /= can_lis.children.length;
-			clis[2] /= can_lis.children.length;
-
- 
-			clis[0] = Math.round(clis[0]);
-			clis[1] = Math.round(clis[1]);
-			clis[2] = Math.round(clis[2]);
-
-			change_color( clis );
-		}
-	</script>
-{% endif %}
-
-<!-- script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<script src = {% static "minimap/jquery.minimap.js"|make_static:"universe" %}></script>
-<link rel = "stylesheet" href = {% static "minimap/jquery.minimap.css"|make_static:"universe" %} type = "text/css" />
-
 <script>
-	$(document).ready( function() {
-			$("#inner_text").minimap({
-				map_col: "#minimap_map_col"
-			});
-		}
-	)
+	new Vue({
+		delimiters:['[[', ']]'],
+		el: '#main',
+	})
 
-</script -->
-
-<script src = {% static "jquery.nicescroll-3.7.6/jquery.nicescroll.js"|make_static:"universe" %}></script>
-<script>
-	
-	$(document).ready(
-		function() { 
-		//$("#inner_text").niceScroll();
-			$("#inner_text").niceScroll({cursorborder:"",cursorcolor:"#657899",boxzoom:false});
-
-
-			setInterval(function(){$("#inner_text").getNiceScroll().resize()} , 500)
-		}
-	);
 </script>
+
+
+<script>
+	var node_type = 1
+	{% if 此节点.类型 == 0 %}
+		node_type = 0
+	{% endif %}
+
+	{% if 此节点.父 %}
+		var node_has_father = true
+	{% else %}
+		var node_has_father = false
+	{% endif %}
+
+	var node_father_add = "{{此节点.父.地址}}"
+
+</script>
+<script src="{% static "components/nodelist_area/nodelist_area.js"|make_static:"this" %}"></script>
