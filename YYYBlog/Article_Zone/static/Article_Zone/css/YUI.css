@@ -1,0 +1,88 @@
+.Y-universe{
+
+}
+
+/******************** 位置 ********************/
+
+/*绝对位置*/
+.Y-abs-position{
+	position: absolute;
+}
+
+/*占满父对象*/
+.Y-full{
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+
+/******************** 颜色设置 ********************/
+
+/*浅色文字*/
+.Y-color-light-text{
+	color: #D8D8D8FF;
+}
+
+.Y-color-light-text::selection
+{
+	background : #AAAAAAFF; 
+	color : #111111FF;
+}
+
+
+/*深色背景*/
+.Y-color-dark{
+	background-color: #383838FF;
+}
+
+/*暗深色背景*/
+.Y-color-lowdark{
+	background-color: #3D3D3DFF;
+}
+
+/*浅深色背景*/
+.Y-color-lightdark{
+	background-color: #5B5B5BFF;
+}
+
+/*工具背景*/
+.Y-color-tool{
+	background-color: #545454FF;
+	color: #D8D8D8FF;
+}
+
+/******************** 滚动条选项 ********************/
+
+/*隐藏滚动条*/
+.Y-no-scrollbar{
+	overflow: hidden;
+}
+
+/*隐藏滚动条*/
+.Y-scroll{
+	overflow: auto;
+}
+
+/*不滚动，不限制*/
+.Y-allow-overflow{
+	overflow: show;
+}
+
+/******************** 其他 ********************/
+
+/*不可见*/
+.Y-unshow{
+	display: none;
+}
+
+/******************** 动画 ********************/
+/*滑入*/
+.slide-in-enter-active, .slide-in-leave-active {
+	transition: .5s;
+}
+.slide-in-enter, .slide-in-leave-to {
+	opacity: 0;
+	left: -200px;
+}
