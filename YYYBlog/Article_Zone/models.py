@@ -26,10 +26,7 @@ class 节点(models.Model):
 	内容类型 = models.IntegerField(default = 0 , 
 		choices = (
 			(0 , "html（Django模板）"),
-			(3 , "html（非Django模板）"),
-			(1 , "txt"),
-			(2 , "md"),
-			(4 , "pdf"),
+			(1 , "pdf"),
 		)
 	)
 	节点类型 = models.IntegerField(default = 0 , 
@@ -38,11 +35,9 @@ class 节点(models.Model):
 			(1 , "集"),
 		)
 	)
-	界面强化标签 = models.CharField(max_length = 短文本长度 , default = "" , blank = True)
 	排序依据 = models.IntegerField(default = 0)
 	最低访问等级需求 = models.IntegerField(default = 0)
 	内容 = RichTextUploadingField(default = "" , blank = True)
-	额外样式 = models.TextField(default = "" , blank = True)
 
 	def __str__(self):
 		return self.名
