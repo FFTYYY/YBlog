@@ -16,34 +16,6 @@ import copy
 def 默认(request):
 	return http.HttpResponseRedirect("./root")
 
-def 获取全部信息(request , 此节点 , 信息 = {} , depth = 1):
-	if depth >= 4:
-		return 信息
-	if 信息.get(此节点.地址) is not None:
-		return 信息 
-
-	子节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 重排列(此节点.子)))
-	祖先节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 获取祖先节点列表(此节点)))
-	兄弟节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 获取兄弟节点列表(此节点)))
-
-	信息[此节点.地址] = [[
-		此节点,
-		子节点列表,
-		祖先节点列表,
-		兄弟节点列表,
-	]]
-
-	for 子 in 子节点列表:
-		信息 = 获取全部信息(request , 子 , 信息 , depth + 1)
-	if 此节点.父:
-		信息 = 获取全部信息(request , 此节点.父 , 信息 , depth)
-
-		#父_子节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 重排列(此节点.父.子)))
-		#for 兄 in 父_子节点列表:
-		#	信息 = 获取全部信息(request , 兄 , 信息 , depth + 1)
-
-	return 信息
-
 
 def 获取节点(request , 节点地址):
 
@@ -54,6 +26,8 @@ def 获取节点(request , 节点地址):
 
 	上下文 = {}
 
+	上下文["启用MathJax"] = (此节点.内容类型 == 0)
+
 	子节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 重排列(此节点.子)))
 	祖先节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 获取祖先节点列表(此节点)))
 	兄弟节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 获取兄弟节点列表(此节点)))
@@ -61,28 +35,18 @@ def 获取节点(request , 节点地址):
 	留言列表 = [言论 for 言论 in 此节点.留言.all()]
 	留言列表.reverse()
 
-	def 非空(x):return x
-
-	强化标签 = [x for x in filter(非空 , 此节点.界面强化标签.split(","))]
+	内容 = 处理内容(此节点.内容 , 此节点.内容类型)
 
 	全部信息 = 获取全部信息(request , 此节点 , {} , 1)
 
 	上下文.update({
-		"此节点" : 此节点,
-		"子节点列表" : 子节点列表,
-		"祖先节点列表" : 祖先节点列表,
-		"兄弟节点列表" : 兄弟节点列表,
-		"留言列表" : 留言列表,
-		"强化标签" : 强化标签,
-		"额外样式" : 此节点.额外样式,
-
+		"此节点" 		: 此节点,
+		"子节点列表" 	: 子节点列表,
+		"祖先节点列表" 	: 祖先节点列表,
+		"兄弟节点列表" 	: 兄弟节点列表,
+		"留言列表" 		: 留言列表,
+		"内容"			: 内容 , 
 		"子节点全部信息" : 全部信息,
-	})
-
-	内容 = process_content(此节点.内容 , 上下文 , 此节点.内容类型)
-
-	上下文.update({
-		"内容" : 内容,
 	})
 
 

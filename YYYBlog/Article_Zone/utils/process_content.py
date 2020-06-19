@@ -8,59 +8,10 @@ from django.template import Context, Template
 import re
 import urllib
 
-def process_txt(内容 , 上下文):
-	'''
-		处理txt文件
-	'''
-	内容 = 内容.replace("<" , "&lt;")
-	内容 = 内容.replace(">" , "&gt;")
-
-	'''
-		把他处理成pre
-	'''
-	header = '''
-	<style type="text/css">
-		pre._txt_content_pre 
-		{ 
-			color : #F5F4F4FF;
-			font-size : 15px;
-			line-height : 17px;
-			letter-spacing : 1px;
-			font-family : "YouYuan";
-			white-space: pre-wrap;
-		}
-	</style>
-	'''
-
-	内容 = header + "<pre class = \"_txt_content_pre\">\n" + 内容 + "</pre>\n"
-
+def 处理html(内容):
 	return 内容
 
-def process_md(内容 , 上下文):
-	'''
-		处理.md文件
-	'''
-
-
-	'''
-		转成html
-	'''
-	内容 = markdown.markdown(内容)
-	内容 = process_html(内容)
-	上下文["强化标签"].append("md文件")
-	return 内容
-
-def process_html(内容 , 上下文):
-	上下文["强化标签"].append("html文件")
-	return 内容
-
-def process_template(内容 , 上下文):
-	内容 = process_html(内容 , 上下文)
-	内容 = "{% load universe_extras %}\n{% load article_zone_extras %}\n" + 内容 
-	内容 = Template(内容).render(Context(上下文))
-	return 内容
-
-def process_pdf(内容 , 上下文):
+def 处理pdf(内容):
 	#找到pdf文件的url
 
 	if 内容.find("_PDF_PROCESSOR_INTERNET_URL") >= 0: 
@@ -161,7 +112,7 @@ def process_pdf(内容 , 上下文):
 	return 内容
 
 
-def process_content(内容 , 上下文 = {} , 类型 = 0):
+def 处理内容(内容 , 类型 = 0):
 	'''
 		根据后缀名，把不同类型的文本处理成html
 
@@ -169,16 +120,8 @@ def process_content(内容 , 上下文 = {} , 类型 = 0):
 		参数 名：文件名
 	'''
 	
-	上下文["启用MathJax"] = (类型 == 0 or 类型 == 2)
-
-	if 类型 == 1:
-		内容 = process_txt		(内容 , 上下文)
-	if 类型 == 2:
-		内容 = process_md		(内容 , 上下文)
 	if 类型 == 0:
-		内容 = process_template	(内容 , 上下文)
-	if 类型 == 3:
-		内容 = process_html		(内容 , 上下文)
-	if 类型 == 4:
-		内容 = process_pdf		(内容 , 上下文)
+		内容 = 处理html	(内容)
+	if 类型 == 1:
+		内容 = 处理pdf	(内容)
 	return 内容

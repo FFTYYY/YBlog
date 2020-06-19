@@ -20,6 +20,9 @@
 	<script src="https://cdn.bootcdn.net/ajax/libs/animejs/3.2.0/anime.min.js"></script>
 	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+	{% if 启用MathJax %}
+			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
+	{% endif %}
 
 	<link rel = "stylesheet" href = {% static "YUI/css/YUI.css"|make_static:"this" %} type = "text/css" />
 	<script src="{% static "YUI/YUI_toolbar.js"|make_static:"this" %}"></script>
@@ -81,4 +84,16 @@
 	var node_father_add = "{{此节点.父.地址}}"
 
 </script>
+
 <script src="{% static "nodelist_area/nodelist_area.js"|make_static:"this" %}"></script>
+
+<script src = {% static "jquery.nicescroll-3.7.6/jquery.nicescroll.js"|make_static:"universe" %}></script>
+<script>
+	$(document).ready(
+		function() { 
+		//$("#inner_text").niceScroll();
+			$("#inner_text").niceScroll({cursorborder:"",cursorcolor:"#657899",boxzoom:false});
+			setInterval(function(){$("#inner_text").getNiceScroll().resize()} , 500)
+		}
+	);
+</script>
