@@ -91,7 +91,7 @@ function YUI_init(){
 
 	//工具
 	Vue.component("y-tool", {
-		delimiters: ['[[', ']]'],
+		delimiters: ["[[", "]]"],
 
 		data: function () { return {
 
@@ -176,7 +176,7 @@ function YUI_init(){
 
 	//这个是真正的y-toolbar
 	Vue.component("y-toolbar-real", {
-		delimiters: ['[[', ']]'],
+		delimiters: ["[[", "]]"],
 
 		mixins: [YUI_mixins.sense_mouse , YUI_mixins.dragble ] ,
 
@@ -237,7 +237,7 @@ function YUI_init(){
 
 	//为了实现常Prop，新加一个组件，用于传递所有从父到y-toolbar的信息
 	Vue.component("y-toolbar", {
-		delimiters: ['[[', ']]'],
+		delimiters: ["[[", "]]"],
 
 		template: `
 			<y-toolbar-real
@@ -252,7 +252,7 @@ function YUI_init(){
 
 	//主内容
 	Vue.component("y-content", {
-		delimiters: ['[[', ']]'],
+		delimiters: ["[[", "]]"],
 
 		data: function () { return {
 
@@ -267,8 +267,8 @@ function YUI_init(){
 
 		template: `
 			<div 
-				:class="classes"
-				:style="{
+				:class = classes
+				:style = "{
 					left  : left,
 					right : right,
 					top   : top,
@@ -283,7 +283,7 @@ function YUI_init(){
 
 	//容器
 	Vue.component("y-page", {
-		delimiters: ['[[', ']]'],
+		delimiters: ["[[", "]]"],
 
 		mixins: [YUI_mixins.sense_mouse] , 
 
@@ -294,13 +294,13 @@ function YUI_init(){
 
 		template: `
 			<div 
-				:class="classes"
+				:class = classes
 
-				@mouseenter.self  = mouseenter($event)
-				@mouseleave.self   = mouseleave($event)
-				@mousedown  	= mousedown($event)
-				@mouseup    	= mouseup($event)
-				@mousemove  	= mousemove($event)
+				@mouseenter.self = mouseenter($event)
+				@mouseleave.self = mouseleave($event)
+				@mousedown  	 = mousedown($event)
+				@mouseup    	 = mouseup($event)
+				@mousemove  	 = mousemove($event)
 			>
 				<slot></slot>
 			</div> 
@@ -308,4 +308,14 @@ function YUI_init(){
 	})
 }
 
-YUI_init()
+var YUI_vm;
+function start_YUI(selector)
+{
+	YUI_init()
+
+	YUI_vm = new Vue({
+		delimiters:["[[", "]]"],
+		el: selector,
+	})
+}
+
