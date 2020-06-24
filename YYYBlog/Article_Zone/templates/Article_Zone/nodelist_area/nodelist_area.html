@@ -3,7 +3,7 @@
 {% load static %}
 
 <!-- 主要用于显示其他文章链接 -->
-<div id = "node_list_area">
+<div class = "node-list-area Y-full">
 
 	<link 
 		rel = "stylesheet" 
@@ -11,65 +11,28 @@
 		type = "text/css" 
 	/>
 
-	<div id = "left_title">
-		<p style="text-align:center;">相关页面列表</p>
+	<div class = "title Y-font-title Y-text-vertical-center">
+		相关页面列表
 	</div>
 
-	<!-- 左边栏的列表部分 -->
-	<!-- 注意左边栏和右边栏的命名是不对称的，左边是left_list_div，右边是right_list -->
-	<div class = "left_list_div" id = "left_list_sons">
-		<ol>
-			<!-- ..而左边的left_list则是只的列表元素（右边则是comment_list） -->
+	<!-- 左边的按钮栏 -->
+	<div class = "button-box Y-row-separate ">
+		<div class = "button Y-text-center Y-font-default Y-button" onclick = "left_but_click(1)"> 下行 </div>
+		<div class = "button Y-text-center Y-font-default Y-button" onclick = "left_but_click(2)"> 上行 </div>
+		<div class = "button Y-text-center Y-font-default Y-button" onclick = "left_but_click(3)"> 同列行 </div>
+	</div>
+
+	<div class = "option-box Y-colume-stack">
 		{% for 节点 in 子节点列表 %}
 
 			{% if 节点.节点类型 is 3 %}		<!--集和文章的分界线-->
 				<hr />
 			{% else %}
-				<li class = "left_list">
-					<a class = "left_list_a" href = "../{{节点.地址}}" >
-						{{节点.名}}
-					</a>
-				</li>
-			{% endif %}
-
-		{% endfor %}
-		</ol>
-	</div>
-
-	<!-- 左边呈现了三种列表，即儿子、祖先和兄弟，根据按钮来选择显示哪一个列表 -->
-	<div class = "left_list_div" id = "left_list_fathers">
-		<ol>
-		{% for 节点 in 祖先节点列表 %}
-			<li class = "left_list">
-				<a class = "left_list_a" href = "../{{节点.地址}}">
-					{{节点.名}}
+				<a class = "Y-option option" href = "../{{节点.地址}}" >
+					<p class = "option-text Y-text-vertical-center Y-font-default">{{节点.名}}</p>
 				</a>
-			</li>
-		{% endfor %}
-		</ol>
-	</div>
-
-	<div class = "left_list_div" id = "left_list_brothers">
-		<ol>
-		{% for 节点 in 兄弟节点列表 %}
-			{% if 节点.节点类型 is 3 %}		<!--集和文章的分界线-->
-				<hr />
-			{% else %}
-				<li class = "left_list">
-					<a class = "left_list_a" href = "../{{节点.地址}}" >
-						{{节点.名}}
-					</a>
-				</li>
 			{% endif %}
-		{% endfor %}
-		</ol>
-	</div>
 
-	<!-- 左边的按钮，原本设计在下方的，所以叫left_down，
-		后来发现下方可能被mathjax的加载框挡到，就放到上面了 -->
-	<div id = "left_down">
-		<button type = "button" class = "left_button" id = "but_son"> 下行 </button>
-		<button type = "button" class = "left_button" id = "but_fat"> 上行 </button>
-		<button type = "button" class = "left_button" id = "but_bro"> 同列行 </button>
+		{% endfor %}
 	</div>
 </div>

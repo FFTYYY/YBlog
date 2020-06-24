@@ -1,13 +1,3 @@
-<!-- 此节点 -->
-<!-- 子节点列表 -->
-<!-- 祖先节点列表 -->
-<!-- 兄弟节点列表 -->
-<!-- 留言列表 -->
-<!-- 强化标签 -->
-<!-- 额外样式 -->
-<!-- 子节点全部信息 -->
-<!-- 内容 -->
-
 {% load universe_extras %}
 {% load article_zone_extras %}
 {% load static %}
@@ -25,10 +15,12 @@
 	{% endif %}
 
 	<link rel = "stylesheet" href = {% static "YUI/css/YUI.css"|make_static:"this" %} type = "text/css" />
-	<script src="{% static "YUI/YUI_toolbar.js"|make_static:"this" %}"></script>
+	<script src="{% static "YUI/YUI-css-complement.js"|make_static:"this" %}"></script>
 	<script src="{% static "YUI/YUI.js"|make_static:"this" %}"></script>
 	
-	<link rel = "stylesheet" href = {% static "default_2/main.css"|make_static:"this" %} type = "text/css" />
+	<link rel = "stylesheet" href = {% static "default/main.css"|make_static:"this" %} type = "text/css" />
+
+	<script src="{% static "nodelist_area/nodelist_area.js"|make_static:"this" %}"></script>
 
 </head>
 
@@ -85,15 +77,6 @@
 
 </script>
 
-<script src="{% static "nodelist_area/nodelist_area.js"|make_static:"this" %}"></script>
 
 <script src = {% static "jquery.nicescroll-3.7.6/jquery.nicescroll.js"|make_static:"universe" %}></script>
-<script>
-	$(document).ready(
-		function() { 
-		//$("#inner_text").niceScroll();
-			$("#inner_text").niceScroll({cursorborder:"",cursorcolor:"#657899",boxzoom:false});
-			setInterval(function(){$("#inner_text").getNiceScroll().resize()} , 500)
-		}
-	);
-</script>
+<script src = {% static "content_area/content_area.js"|make_static:"this" %}></script>

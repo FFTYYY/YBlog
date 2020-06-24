@@ -18,7 +18,50 @@
 	height: 100%;
 }
 
-/******************** 颜色设置 ********************/
+/*（容器类）自动横排并排，自动把所有子元素排成一排，尽量占满，子元素需要长度一样*/
+.Y-row-separate{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+/*（容器类）自动竖排并排，自动把所有子元素排成一列，从上往下依次堆砌，需要子元素自己设置margin*/
+.Y-colume-stack{
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+
+/******************** 背景颜色设置 ********************/
+
+/*浅色背景*/
+.Y-color-light{
+	background-color: #D8D8D8;
+}
+
+
+/*深深色背景*/
+.Y-color-highdark{
+	background-color: #2A2A2A;
+}
+
+/*暗深色背景*/
+.Y-color-lowdark{
+	background-color: #333333;
+}
+
+/*深色背景*/
+.Y-color-dark{
+	background-color: #363636;
+}
+
+/*浅深色背景*/
+.Y-color-lightdark{
+	background-color: #5B5B5B;
+}
+
+/******************** 文字颜色设置 ********************/
 
 /*浅色文字*/
 .Y-color-light-text{
@@ -31,25 +74,26 @@
 	color : #111111FF;
 }
 
-
-/*深色背景*/
-.Y-color-dark{
-	background-color: #383838FF;
+/*深色文字*/
+.Y-color-dark-text{
+	color: #333333;
+}
+.Y-color-dark-text::selection
+{
+	background : #2D2D2DFF; 
+	color : #D6D6D6FF;
 }
 
-/*暗深色背景*/
-.Y-color-lowdark{
-	background-color: #3D3D3DFF;
+/******************** 字体设置 ********************/
+
+/*标题字体*/
+.Y-font-title{
+	font-family : "FangSong";
 }
 
-/*浅深色背景*/
-.Y-color-lightdark{
-	background-color: #5B5B5BFF;
-}
-
-/*工具背景*/
-.Y-color-tool{
-	background-color: #545454FF;
+/*正文字体*/
+.Y-font-default{
+	font-family : "DengXian";
 }
 
 /******************** 滚动条选项 ********************/
@@ -69,6 +113,20 @@
 	overflow: show;
 }
 
+/******************** 文字效果 ********************/
+
+/*文字只竖直居中*/
+.Y-text-vertical-center{
+	/*还有一个垂直居中的效果在js中实现*/
+	/*注意这种效果是不能嵌套的*/
+}
+
+/*文字居中*/
+.Y-text-center{
+	text-align: center;
+	/*还有一个垂直居中的效果在js中实现*/
+}
+
 /******************** 其他 ********************/
 
 /*不可见*/
@@ -76,4 +134,34 @@
 	display: none;
 }
 
-/******************** 动画 ********************/
+/******************** 常用组件 ********************/
+
+/*按钮*/
+.Y-button{
+	background-color: #2A2A2A;
+	color: #D8D8D8FF;
+	border: 0;
+	outline: 0;
+}
+
+.Y-button:hover{
+	background-color: #D8D8D8;
+	color: #333333;
+}
+
+
+/*选项*/
+.Y-option{
+	color: #D8D8D8FF;
+	background-color: #00000000; /*透明背景*/
+	border: 0;
+	outline: 0;
+	text-decoration: none;
+	transition: 0.5s ease-in;
+}
+
+.Y-option:hover{
+	background-color: #D8D8D8;
+	color: #333333;
+	transition: 0.5s ease-in;
+}
