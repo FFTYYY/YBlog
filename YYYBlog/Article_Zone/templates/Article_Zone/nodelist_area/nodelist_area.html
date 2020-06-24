@@ -17,9 +17,9 @@
 
 	<!-- 左边的按钮栏 -->
 	<div class = "button-box Y-row-separate ">
-		<div class = "button Y-text-center Y-font-default Y-button" onclick = "left_but_click(1)"> 下行 </div>
-		<div class = "button Y-text-center Y-font-default Y-button" onclick = "left_but_click(2)"> 上行 </div>
-		<div class = "button Y-text-center Y-font-default Y-button" onclick = "left_but_click(3)"> 同列行 </div>
+		<y-button class = "button Y-text-center Y-font-default" onclick = "left_but_click(1)"> 下行 </y-button>
+		<y-button class = "button Y-text-center Y-font-default" onclick = "left_but_click(2)"> 上行 </y-button>
+		<y-button class = "button Y-text-center Y-font-default" onclick = "left_but_click(3)"> 同列行 </y-button>
 	</div>
 
 	<div class = "option-box Y-colume-stack">
@@ -28,9 +28,9 @@
 			{% if 节点.节点类型 is 3 %}		<!--集和文章的分界线-->
 				<hr />
 			{% else %}
-				<a class = "Y-option option" href = "../{{节点.地址}}" >
+				<y-option class = "option" href = "../{{节点.地址}}" >
 					<p class = "option-text Y-text-vertical-center Y-font-default">{{节点.名}}</p>
-				</a>
+				</y-option>
 			{% endif %}
 
 		{% endfor %}

@@ -64,21 +64,21 @@
 /******************** 文字颜色设置 ********************/
 
 /*浅色文字*/
-.Y-color-light-text{
+.Y-color-text-light{
 	color: #D8D8D8FF;
 }
 
-.Y-color-light-text::selection
+.Y-color-text-light::selection
 {
 	background : #AAAAAAFF; 
 	color : #111111FF;
 }
 
 /*深色文字*/
-.Y-color-dark-text{
+.Y-color-text-dark{
 	color: #333333;
 }
-.Y-color-dark-text::selection
+.Y-color-text-dark::selection
 {
 	background : #2D2D2DFF; 
 	color : #D6D6D6FF;
@@ -132,36 +132,4 @@
 /*不可见*/
 .Y-unshow{
 	display: none;
-}
-
-/******************** 常用组件 ********************/
-
-/*按钮*/
-.Y-button{
-	background-color: #2A2A2A;
-	color: #D8D8D8FF;
-	border: 0;
-	outline: 0;
-}
-
-.Y-button:hover{
-	background-color: #D8D8D8;
-	color: #333333;
-}
-
-
-/*选项*/
-.Y-option{
-	color: #D8D8D8FF;
-	background-color: #00000000; /*透明背景*/
-	border: 0;
-	outline: 0;
-	text-decoration: none;
-	transition: 0.5s ease-in;
-}
-
-.Y-option:hover{
-	background-color: #D8D8D8;
-	color: #333333;
-	transition: 0.5s ease-in;
 }
