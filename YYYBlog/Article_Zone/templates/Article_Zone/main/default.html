@@ -14,7 +14,9 @@
 			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
 	{% endif %}
 
+	<link rel = "stylesheet" href = {% static "YUI/css/YUI-components.css"|make_static:"this" %} type = "text/css" />
 	<link rel = "stylesheet" href = {% static "YUI/css/YUI.css"|make_static:"this" %} type = "text/css" />
+	<script src="{% static "YUI/YUI-components.js"|make_static:"this" %}"></script>
 	<script src="{% static "YUI/YUI-css-complement.js"|make_static:"this" %}"></script>
 	<script src="{% static "YUI/YUI.js"|make_static:"this" %}"></script>
 	

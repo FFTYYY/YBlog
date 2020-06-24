@@ -102,7 +102,7 @@ function YUI_init(){
 
 			idx: 0, //在父对象中的编号
 
-			classes: ["Y-color-highdark" , "Y-scroll" , "Y-abs-position" , "Y-color-light-text"] , 
+			classes: ["Y-color-highdark" , "Y-scroll" , "Y-abs-position" , "Y-color-text-light"] , 
 			option_class: "Y-button" , 
 		}},
 
@@ -188,7 +188,7 @@ function YUI_init(){
 			x: 50, //left
 			y: 50, //top
 
-			classes: ["Y-color-lightdark" , "Y-allow-overflow" , "Y-abs-position" , "Y-color-light-text"] , 
+			classes: ["Y-color-lightdark" , "Y-allow-overflow" , "Y-abs-position" , "Y-color-text-light"] , 
 
 			active_idx: 0, //当前活跃的子对象编号
 			children: [] , //所有子对象
@@ -262,7 +262,7 @@ function YUI_init(){
 			top   : "10%",
 			bottom: "10%",
 
-			classes: ["Y-color-dark" , "Y-scroll" , "Y-abs-position" , "Y-color-light-text"]
+			classes: ["Y-color-dark" , "Y-scroll" , "Y-abs-position" , "Y-color-text-light"]
 		}},
 
 		template: `
@@ -289,7 +289,7 @@ function YUI_init(){
 
 		data: function () { return {
 
-			classes: ["Y-color-dark" , "Y-no-scrollbar" , "Y-full" , "Y-color-light-text"],
+			classes: ["Y-color-dark" , "Y-no-scrollbar" , "Y-full" , "Y-color-text-light"],
 		}},
 
 		template: `
