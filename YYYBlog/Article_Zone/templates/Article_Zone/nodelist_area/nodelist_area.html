@@ -11,25 +11,25 @@
 		type = "text/css" 
 	/>
 
-	<div class = "title Y-font-title Y-text-vertical-center">
+	<div class = "title Y-font-short Y-text-center Y-color-text-light">
 		相关页面列表
 	</div>
 
 	<!-- 左边的按钮栏 -->
-	<div class = "button-box Y-row-separate ">
-		<y-button class = "button Y-text-center Y-font-default" onclick = "left_but_click(1)"> 下行 </y-button>
-		<y-button class = "button Y-text-center Y-font-default" onclick = "left_but_click(2)"> 上行 </y-button>
-		<y-button class = "button Y-text-center Y-font-default" onclick = "left_but_click(3)"> 同列行 </y-button>
+	<div class = "button-box Y-row-separate">
+		<y-button class = "button" onclick = "left_but_click(1)"> 下行 </y-button>
+		<y-button class = "button" onclick = "left_but_click(2)"> 上行 </y-button>
+		<y-button class = "button" onclick = "left_but_click(3)"> 同列行 </y-button>
 	</div>
 
-	<div class = "option-box Y-colume-stack">
+	<div class = "option-box Y-column-stack">
 		{% for 节点 in 子节点列表 %}
 
 			{% if 节点.节点类型 is 3 %}		<!--集和文章的分界线-->
 				<hr />
 			{% else %}
 				<y-option class = "option" href = "../{{节点.地址}}" >
-					<p class = "option-text Y-text-vertical-center Y-font-default">{{节点.名}}</p>
+					<p class = "option-text">{{节点.名}}</p>
 				</y-option>
 			{% endif %}
 

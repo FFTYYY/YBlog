@@ -1,173 +1,60 @@
-#comment_area
-{
-	position : absolute;
-	width : 100%;
-	height : 100%;
+.comment-area *{
+	padding: 0;
+	margin: 0;
+	border: 0;
+}
+
+.comment-area{
 	overflow : hidden;
-	background-color: #404040;
 }
 
-#comment_area *
-{
-	border : 0;
-}
+.comment-area .title{
+	margin-top: 5px;
+	height: 20px;
+	left: 0;
+	width: 100%;
 
-
-@-webkit-keyframes right_list_in
-{
-	from 
-	{
-		opacity : 0.3;
-		top : 100%;
-	}
-	to 
-	{
-		opacity : 1;
-		top : 0;
-	}
-}
-
-#comment_area ol
-{
-	overflow : hidden;
-	position : absolute;
-	list-style-type : none;
-	left : 3px;
-
-	word-wrap: break-word;
-	word-break: break-all;
-	-webkit-animation : right_list_in 1s;
-
-	width : 99%;
-}
-
-#comment_area #right_title
-{	
-	position : absolute;
-	left : 0;
-	top : 1%;
-	width : 100%;
-	height : 5%;
-	
-	user-select: none;
-}
-
-#comment_area #right_list
-{	
-	position : absolute;
-	left : 0;
-	top : 6%;
-	width : 100%;
-	height : 53%;
-
-	overflow : auto;
-	/*-webkit-animation : right_list_in 1s;*/
-}
-#comment_area #right_list::-webkit-scrollbar 
-{
-	display : none;
-}
-
-#comment_area #right_down
-{	
-	position : absolute;
-	left : 5%;
-	top : 60%;
-	width : 90%;
-	height : 40%;
-	
-	user-select: none;
-}
-
-#comment_area .comment_pre
-{
-	white-space : pre-wrap; 
-	word-wrap: break-word; 
-	font-size : 13;
-	font-family: "NSimSun";
-}
-#comment_area .comment_pre_top
-{
-	padding-top : 5px;
-}
-#comment_area .comment_pre_bot
-{
-	padding-bottom : 5px;
-}
-#comment_area .right_list_whole
-{
-	padding-bottom : 10px;
-}
-
-#comment_area .right_line
-{
-	position : absolute;
-	left : -10px;
-	height : 2px;
-	right : -10px;
-}
-#comment_area .text_input
-{
-
-	background-color : #363636FF;
-	margin-top : 1%;
-	margin-bottom : 1%;
-	width : 100%;
-	font-size : 13px;
-}
-
-#comment_area #comment_input
-{
-	height : 40%;
-	width : 100%;
-}
-
-#comment_area #comment_submit
-{
-	margin-top : 1%;
-	width : 40%;
-	position : relative;
-	left : 30%;
-	top : 5%;
-	height : 10%;
-	cursor : default;
-}
-
-#comment_area #comment_submit,.left_button
-{
-	background-color : #00000000;
-}
-#comment_area #comment_submit:hover,.left_button:hover
-{
-	background-color : #727272FF;
-}
-#comment_area comment_submit:active,.left_button:active
-{
-	color : #000000FF;
-	background-color : #A5A5A5FF;
-}
-
-#comment_area textarea
-{
-	resize : none;
-}
-
-textarea::-webkit-scrollbar 
-{
-	display : none;
+	font-size: 17px;
 }
 
 
-#comment_area *
-{
-	color : #E0E0E0FF !important;
-	font-size : 15px;
-	font-family : "YouYuan";
-	line-height : 14px;
+.comment-area .down-side{
+	margin-top: 10px;
+	margin-bottom: 5px;
+	margin-left: 10px;
+	margin-right: 10px;
 }
 
-#comment_area ::selection
-{
-	background : #FFFFFFFF; 
-	color : #000000FF;
+.comment-area .comment-box{
+	height: 60%;
+}
+
+.comment-area .comment{
+	margin-bottom: 5px;
+}
+
+.comment-area .comment-content{
+	width: 100%;
+	font-size: 15px;
+}
+
+.comment-area .opration-box{
+	height: 40%;	
+}
+
+.comment-area .text-input{
+	margin-bottom: 8px;
+	width: 100%;
+}
+
+.comment-area .text-area{
+	height: 30%;
+}
+
+
+.comment-area .submit-button{
+	width: 40%;
+	font-size: 16px;
+	margin: 0 auto;
+	margin-top: 5px;
 }

@@ -1,56 +1,41 @@
-
-#content_area
-{	
-	position : absolute;
-	width : 100%;
-	height : 100%;	
+.content-area
+{
+	overflow: hidden;
 }
 
-#content_area #inner_text
+.content-area *
 {
-	position : absolute;
-	left : 0;
-	top : 6%;
+	margin: 0;
+	border: 0;
+	padding: 0;
+}
+
+.content-area .title
+{
+	width : 100%;
+	margin-top : 1%;
+	height : 3%;
+	font-size : 20px;
+}
+
+.content-area .content
+{
+	margin-top : 1%;
+	margin-left: 1%;
 	width : 98%;
-	height : 92%;
-	padding-left : 1%;
-	padding-right : 1%;
-	padding-top : 1%;
-	padding-bottom : 1%;
+	height: 91%;
 
-	overflow : scroll;
-
-	-webkit-animation : inner_in 1s;
+	overflow: auto;
 }
-
-#content_area #inner_title
+.content-area .inner-text
 {
-	position : absolute;
-	left : 0;
-	top : 0;
 	width : 100%;
-	height : 5%;
+	height: 100%;
 
-	-webkit-animation : inner_in 1s;
+	overflow: visible;
 }
 
-#content_area #inner_title_p
-{
-	text-align : center;
-	height : 100%;
-	font-size : 130%;
-	margin-top : 3px;
-	font-family : "FangSong";
-}
-
-
-#content_area #inner_text::-webkit-scrollbar 
-{
-	display : none;
-}
-
-
-#content_area hr
+.content-area hr
 {
 	border : none;
 	margin-top : 20px;
@@ -59,15 +44,7 @@
 	height : 1px;
 }
 
-#content_area *
-{
-	color : #E0E0E0FF;
-	font-size : 16px;
-	font-family : serif;
-	line-height : 21px;
-}
-
-#content_area img
+.content-area img
 {
 	margin-top : 6px;
 	margin-bottom : 6px;
