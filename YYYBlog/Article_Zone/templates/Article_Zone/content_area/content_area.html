@@ -2,7 +2,7 @@
 {% load article_zone_extras %}
 {% load static %}
 
-<div id = "content_area">
+<div class = "content-area Y-full">
 
 	<link 
 		rel = "stylesheet" 
@@ -10,13 +10,15 @@
 		type = "text/css" 
 	/>
 	
-	<div id = "inner_title">
-		<p id = "inner_title_p">{{此节点.名}}</p>
+	<div class = "title Y-text-center Y-font-title Y-color-text-light">
+		{{此节点.名}}
 	</div>
 	
 	<!-- 中间的内容 -->
-	<div id = "inner_text">
-		{{内容|safe}}
+	<div class = "content Y-font-default Y-color-text-light">
+		<div class = "inner-text">
+			{{内容|safe}}
+		</div>
 	</div>
 
 </div>

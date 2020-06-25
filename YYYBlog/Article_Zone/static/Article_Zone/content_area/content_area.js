@@ -1,6 +1,6 @@
 $(document).ready(
 	function() { 
-		$("#inner_text").niceScroll({cursorborder:"",cursorcolor:"#657899",boxzoom:false});
-		setInterval(function(){$("#inner_text").getNiceScroll().resize()} , 500)
+		$(".content-area .content").niceScroll({cursorborder:"",cursorcolor:"#657899",boxzoom:false});
+		setInterval(function(){$(".content-area .content").getNiceScroll().resize()} , 500)
 	}
 );

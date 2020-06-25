@@ -14,11 +14,10 @@
 			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
 	{% endif %}
 
-	<link rel = "stylesheet" href = {% static "YUI/css/YUI-components.css"|make_static:"this" %} type = "text/css" />
 	<link rel = "stylesheet" href = {% static "YUI/css/YUI.css"|make_static:"this" %} type = "text/css" />
+	<script src="{% static "YUI/YUI.js"|make_static:"this" %}"></script>
 	<script src="{% static "YUI/YUI-components.js"|make_static:"this" %}"></script>
 	<script src="{% static "YUI/YUI-css-complement.js"|make_static:"this" %}"></script>
-	<script src="{% static "YUI/YUI.js"|make_static:"this" %}"></script>
 	
 	<link rel = "stylesheet" href = {% static "default/main.css"|make_static:"this" %} type = "text/css" />
 
@@ -30,7 +29,7 @@
 <div id = "main">
 
 	<y-page> 
-		<y-content id="y-content">
+		<y-content id = "main-content">
 			{% include "../content_area/content_area.html" %}
 		</y-content> 
 
@@ -57,24 +56,6 @@
 <script>
 	start_YUI("#main")
 </script>
-
-
-<script>
-	var node_type = 1
-	{% if 此节点.类型 == 0 %}
-		node_type = 0
-	{% endif %}
-
-	{% if 此节点.父 %}
-		var node_has_father = true
-	{% else %}
-		var node_has_father = false
-	{% endif %}
-
-	var node_father_add = "{{此节点.父.地址}}"
-
-</script>
-
 
 <script src = {% static "jquery.nicescroll-3.7.6/jquery.nicescroll.js"|make_static:"universe" %}></script>
 <script src = {% static "content_area/content_area.js"|make_static:"this" %}></script>

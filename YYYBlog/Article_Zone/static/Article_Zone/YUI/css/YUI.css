@@ -26,7 +26,7 @@
 }
 
 /*（容器类）自动竖排并排，自动把所有子元素排成一列，从上往下依次堆砌，需要子元素自己设置margin*/
-.Y-colume-stack{
+.Y-column-stack{
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -35,11 +35,15 @@
 
 /******************** 背景颜色设置 ********************/
 
+/*透明背景*/
+.Y-color-transparent{
+	background-color: #00000000;
+}
+
 /*浅色背景*/
 .Y-color-light{
 	background-color: #D8D8D8;
 }
-
 
 /*深深色背景*/
 .Y-color-highdark{
@@ -48,17 +52,17 @@
 
 /*暗深色背景*/
 .Y-color-lowdark{
-	background-color: #333333;
+	background-color: #303030;
 }
 
 /*深色背景*/
 .Y-color-dark{
-	background-color: #363636;
+	background-color: #333333;
 }
 
 /*浅深色背景*/
 .Y-color-lightdark{
-	background-color: #5B5B5B;
+	background-color: #4B4B4B;
 }
 
 /******************** 文字颜色设置 ********************/
@@ -88,12 +92,22 @@
 
 /*标题字体*/
 .Y-font-title{
-	font-family : "FangSong";
+	font-family : "DengXian";
+}
+
+/*不正式标题字体*/
+.Y-font-shorttitle{
+	font-family : "STXihei";
+}
+
+/*短文本字体*/
+.Y-font-short{
+	font-family : "STXihei";
 }
 
 /*正文字体*/
 .Y-font-default{
-	font-family : "DengXian";
+	font-family : "FangSong";
 }
 
 /******************** 滚动条选项 ********************/
