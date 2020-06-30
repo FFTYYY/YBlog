@@ -51,8 +51,7 @@ class 话题(models.Model):
 	名 = models.TextField(default = "")
 	地址 = models.CharField(max_length = 短文本长度 , default = "" , blank = True)
 
-	模板 = models.ForeignKey("讨论_界面模板" , on_delete = models.SET_NULL , 
-			default = 0 , null = True)
+	模板 = models.ForeignKey("讨论_界面模板" , on_delete = models.SET_NULL , null = True)
 
 	def __str__(self):
 		return self.名
