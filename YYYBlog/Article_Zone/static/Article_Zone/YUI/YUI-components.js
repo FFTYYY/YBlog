@@ -1,21 +1,33 @@
-function YUI_components_init(){
+var YUI_mixins_components = {
+	activable: { //鼠标放上去时进入active状态，也可以通过props设置一直active
+		props: ["always_active"] , //always_active：是否保持active状态
+		mixins: [YUI_mixins.sense_mouse] , 
 
+		computed:{
+			active: function(){
+				return this.mouse_in || this.always_active
+			},
+		},
+	}
+}
+
+function YUI_components_init(){
 
 	//按钮
 	Vue.component("y-button", {
 		delimiters: ['[[', ']]'],
 
-		mixins: [YUI_mixins.sense_mouse] , 
+		mixins: [YUI_mixins_components.activable] , 
 
 		computed:  {
 			//用这种方式来实现hover效果
 			classes: function(){ return {
 				'Y-text-center' 		: true , 
 				'Y-font-short' 			: true , 
-				"Y-color-text-light"	: !this.mouse_in, 
-				"Y-color-highdark"		: !this.mouse_in,
-				"Y-color-text-dark"		: this.mouse_in, 
-				"Y-color-light"			: this.mouse_in,
+				"Y-color-text-light"	: ! this.active, 
+				"Y-color-highdark"		: ! this.active,
+				"Y-color-text-dark"		: this.active, 
+				"Y-color-light"			: this.active,
 			}},
 		},
 
@@ -24,6 +36,7 @@ function YUI_components_init(){
 				:class = classes
 				@mouseenter.self = mouseenter($event)
 				@mouseleave.self = mouseleave($event)
+				@click.self = "$emit('y-button-click' , this)"
 
 				:style = "{
 					border: '0',
@@ -39,17 +52,17 @@ function YUI_components_init(){
 	Vue.component("y-option", {
 		delimiters: ['[[', ']]'],
 
-		mixins: [YUI_mixins.sense_mouse] , 
+		mixins: [YUI_mixins_components.activable] , 
 
 		computed:  {
 			//用这种方式来实现hover效果
 			classes: function(){ return {
 				'Y-text-vertical-center': true , 
 				'Y-font-short' 			: true , 
-				"Y-color-text-light"	: !this.mouse_in, 
-				"Y-color-transparent"	: !this.mouse_in, 
-				"Y-color-text-dark"		: this.mouse_in, 
-				"Y-color-light"			: this.mouse_in,
+				"Y-color-text-light"	: !this.active, 
+				"Y-color-transparent"	: !this.active, 
+				"Y-color-text-dark"		: this.active, 
+				"Y-color-light"			: this.active,
 			}},
 		},
 

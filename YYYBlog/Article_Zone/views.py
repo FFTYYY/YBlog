@@ -16,6 +16,36 @@ import copy
 def 默认(request):
 	return http.HttpResponseRedirect("./root")
 
+def 获取周围节点(request , 节点地址):
+	'''响应一个ajax方法，返回各个节点的列表'''
+	此节点 = 节点.objects.get(地址 = 节点地址)
+
+	if not 节点许可查询(request , 此节点):
+		raise Http404
+
+	子节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 重排列(此节点.子)))
+	祖先节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 获取祖先节点列表(此节点)))
+	兄弟节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 获取兄弟节点列表(此节点)))
+
+	ret = """
+		var ret = {{}}
+		ret.son_nodes = {son_nodes}
+		ret.par_nodes = {par_nodes}
+		ret.bro_nodes = {bro_nodes}
+		return ret
+	""".format(
+		son_nodes = "[" + ",".join([
+			"{name: '%s', type: '%s', url: '%s'}" % (处理转义(x.名),x.节点类型,处理转义(x.地址)) for x in 子节点列表
+		]) + "]" , 
+		par_nodes = "[" + ",".join([
+			"{name: '%s', type: '%s', url: '%s'}" % (处理转义(x.名),x.节点类型,处理转义(x.地址)) for x in 祖先节点列表
+		]) + "]" , 
+		bro_nodes = "[" + ",".join([
+			"{name: '%s', type: '%s', url: '%s'}" % (处理转义(x.名),x.节点类型,处理转义(x.地址)) for x in 兄弟节点列表
+		]) + "]" , 
+	)
+
+	return HttpResponse( ret )
 
 def 获取节点(request , 节点地址):
 
@@ -37,7 +67,6 @@ def 获取节点(request , 节点地址):
 
 	内容 = 处理内容(此节点.内容 , 此节点.内容类型)
 
-	全部信息 = 获取全部信息(request , 此节点 , {} , 1)
 
 	上下文.update({
 		"此节点" 		: 此节点,
@@ -46,7 +75,6 @@ def 获取节点(request , 节点地址):
 		"兄弟节点列表" 	: 兄弟节点列表,
 		"留言列表" 		: 留言列表,
 		"内容"			: 内容 , 
-		"子节点全部信息" : 全部信息,
 	})
 
 

@@ -1,0 +1,16 @@
+{% load universe_extras %}
+{% load article_zone_extras %}
+{% load static %}
+
+<link rel = "stylesheet" type = "text/css" 
+	href = {% static "content_area/content_area.css"|make_static:"this" %} 
+/>
+
+<script src = {% static "content_area/content_area.js"|make_static:"this" %}></script>
+
+<script>
+Vue.component("content-area" , {
+	delimiters: ["[[", "]]"],
+	template:`{% include "./content_area.html"%}`,
+})
+</script>
