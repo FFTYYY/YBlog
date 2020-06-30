@@ -19,8 +19,8 @@ def get_cookie(request):
 
 	print (request.COOKIES)
 	if request.COOKIES.get("YYYBLOG_VISITOR") is not None:
-		res = HttpResponse("already have cookie!")
-		#res.delete_cookie("YYYBLOG_VISITOR")
+		res = HttpResponse("already have cookie! (deleted")
+		res.delete_cookie("YYYBLOG_VISITOR")
 		return res
 
 	名 = "我本人"
