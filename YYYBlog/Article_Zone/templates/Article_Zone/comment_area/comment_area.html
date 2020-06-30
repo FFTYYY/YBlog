@@ -7,7 +7,7 @@
 
 	<div class = "down-side">
 		<!-- 右边栏的列表部分，也就是留言列表 -->
-		<div class = "comment-box Y-column-stack">
+		<div class = "comment-box Y-column-stack Y-scroll">
 			{% for 留言 in 留言列表 %}
 				<div class = "comment">
 					<pre class = "comment-content Y-font-default Y-color-text-light">{{留言.内容}}</pre>

@@ -27,6 +27,8 @@
 
 .comment-area .comment-box{
 	height: 60%;
+
+	flex-wrap: wrap;
 }
 
 .comment-area .comment{
@@ -36,6 +38,7 @@
 .comment-area .comment-content{
 	width: 100%;
 	font-size: 15px;
+	line-height: 15px;
 }
 
 .comment-area .opration-box{
