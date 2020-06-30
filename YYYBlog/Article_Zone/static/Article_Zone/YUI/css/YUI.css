@@ -75,7 +75,7 @@
 .Y-color-text-light::selection
 {
 	background : #AAAAAAFF; 
-	color : #111111FF;
+	color : #BBBBBBFF;
 }
 
 /*深色文字*/
@@ -112,19 +112,25 @@
 
 /******************** 滚动条选项 ********************/
 
-/*隐藏滚动条*/
-.Y-no-scrollbar{
+/*隐藏滚动条，禁止滚动*/
+.Y-hide-overflow{
 	overflow: hidden;
 }
+.Y-hide-overflow-x{
+	overflow-x: hidden;
+}
+.Y-no-scrollbar::-webkit-scrollbar{
+	display: none;
+}
 
-/*隐藏滚动条*/
+/*使用滚动条*/
 .Y-scroll{
 	overflow: auto;
 }
 
-/*不滚动，不限制*/
+/*隐藏滚动条，可以滚动*/
 .Y-allow-overflow{
-	overflow: show;
+	overflow: visible;
 }
 
 /******************** 文字效果 ********************/

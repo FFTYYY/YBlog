@@ -1,15 +1,8 @@
-{% load universe_extras %}
-{% load article_zone_extras %}
-{% load static %}
-
 <!-- 主要用于显示其他文章链接 -->
-<div class = "node-list-area Y-full">
-
-	<link 
-		rel = "stylesheet" 
-		href = {% static "nodelist_area/nodelist_area.css"|make_static:"this" %} 
-		type = "text/css" 
-	/>
+<div class = "node-list-area Y-scroll Y-no-scrollbar"
+	@mouseenter.self = "$emit('page_enter' , my_id)"
+	@mouseleave.self = "$emit('page_leave' , my_id)"
+>
 
 	<div class = "title Y-font-short Y-text-center Y-color-text-light">
 		相关页面列表
@@ -17,22 +10,25 @@
 
 	<!-- 左边的按钮栏 -->
 	<div class = "button-box Y-row-separate">
-		<y-button class = "button" onclick = "left_but_click(1)"> 下行 </y-button>
-		<y-button class = "button" onclick = "left_but_click(2)"> 上行 </y-button>
-		<y-button class = "button" onclick = "left_but_click(3)"> 同列行 </y-button>
+		<y-button class="button" :always_active="nodeset_active==0" @y-button-click="but_click(0)">下行</y-button>
+		<y-button class="button" :always_active="nodeset_active==1" @y-button-click="but_click(1)">上行</y-button>
+		<y-button class="button" :always_active="nodeset_active==2" @y-button-click="but_click(2)">同列行</y-button>
 	</div>
 
-	<div class = "option-box Y-column-stack">
-		{% for 节点 in 子节点列表 %}
+	<div class = "option-box Y-column-stack Y-scroll Y-no-scrollbar">
+			<y-option class = "option" v-for = "node in nodeset_list[nodeset_active]"
+				:href = "'../' + node.url"
+				:key =  node.name
 
-			{% if 节点.节点类型 is 3 %}		<!--集和文章的分界线-->
-				<hr />
-			{% else %}
-				<y-option class = "option" href = "../{{节点.地址}}" >
-					<p class = "option-text">{{节点.名}}</p>
-				</y-option>
-			{% endif %}
+				@y-mouse-enter.self = "$emit('opt_enter' , my_id); new_page(node.url , node.type)"
+				@y-mouse-leave.self  = "$emit('opt_leave' , my_id)"
 
-		{% endfor %}
+				v-if = "node.type != '3'"
+			>
+				<p class = "option-text">[[node.name]]</p>
+			</y-option>
+			
+			<hr class = "option" v-else />
+		
 	</div>
 </div>

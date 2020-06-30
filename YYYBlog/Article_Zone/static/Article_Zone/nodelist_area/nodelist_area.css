@@ -1,3 +1,5 @@
+/*全局*/
+
 .node-list-area *{
 	padding: 0;
 	margin: 0;
@@ -6,11 +8,15 @@
 
 .node-list-area{
 	overflow : hidden;
+	background-color: inherit;
 }
 
+/*大组件（容器等）*/
 .node-list-area .title{
-	margin-top: 5px;
-	height: 20px;
+	position: absolute;
+	top: 1%;
+	height: 5%;
+
 	left: 0;
 	width: 100%;
 
@@ -18,35 +24,47 @@
 }
 
 .node-list-area .button-box{
-	margin-top: 5px;
-	margin-left: 10px;
-	margin-right: 10px;
-	height: 22px;
+	position: absolute;
+	top: 6%;
+	left: 10px;
+	right: 10px;
+
+	height: 4%;
 }
 
 .node-list-area .option-box{
-	margin-top: 5px;
-	margin-bottom: 5px;
-	margin-left: 5px;
-	margin-right: 5px;
+	position: absolute;
+	top: 11%;
+	left: 5px;
+	right: 5px;
+
+	height: 88%;
 }
 
+/*button-box内组件*/
 .node-list-area .button{
 	width: 55px;
-	height: 22px;
+	height: 100%;
 
 	font-size: 14px;
 }
+/*option-box内组件*/
 .node-list-area .option{
 	margin-top: 3px;
-	height: 20px;
+	margin-bottom: 3px;
 }
 
 .node-list-area .option-text{
 	margin-left: 2px;
 	margin-right: 2px;
 	font-size: 16px;
+	line-height: 16px;
 
 	color: inherit;
 	background-color: #00000000; /*透明*/
+}
+
+/*其他*/
+.node-list-area hr{
+	border: 0.5px solid #FFFFFF88;
 }

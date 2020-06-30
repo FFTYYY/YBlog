@@ -8,6 +8,9 @@ from django.template import Context, Template
 import re
 import urllib
 
+def 处理转义(内容):
+	return 内容.replace("\\" , "\\\\").replace("'" , "\\'").replace("\"" , "\\\"") #替换转移字符
+
 def 处理html(内容):
 	return 内容
 

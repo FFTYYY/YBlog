@@ -1,4 +1,4 @@
-YUI_mixins = {
+var YUI_mixins = {
 
 	//能够感知鼠标
 	sense_mouse: {
@@ -18,6 +18,8 @@ YUI_mixins = {
 
 			mouseenter: function(e){//鼠标进入
 				this.mouse_in = true
+
+				this.$emit("y-mouse-enter" , this)
 			},
 
 			mouseleave: function(e){//鼠标离开				
@@ -33,6 +35,7 @@ YUI_mixins = {
 
 				this.mouse_hold = false //同时也认为抬起了
 				this.mouse_in = false
+				this.$emit("y-mouse-leave" , this)
 			},
 
 			mouseup: function(e){//鼠标抬起
@@ -96,29 +99,48 @@ function YUI_init(){
 		data: function () { return {
 
 			//位置和大小，注意位置是相对于toolbar
-			height: 500,
-			width : 200,
-			opacity: 0.9,
+			height 		: 500,
+			
+			page_width 	: 200, //每页的宽度
+			n_pages 	: 1,   //同时显示多少页
+			width 		: 200,   //最终宽度
 
-			idx: 0, //在父对象中的编号
+			opacity 	: 0.9,
 
-			classes: ["Y-color-highdark" , "Y-scroll" , "Y-abs-position" , "Y-color-text-light"] , 
-			option_class: "Y-button" , 
+			idx 		: 0, //在父对象中的编号
+
+			classes: ["Y-color-highdark" , "Y-abs-position" , "Y-color-text-light" ,
+						"Y-scroll" , "Y-no-scrollbar"] , 
 		}},
 
 		computed: {
 			show: function(){ 
 				return this.$parent.tool_active && (this.$parent.active_idx == this.idx)
 			},
+			x_dir: function(){//x轴上的方向
+				return this.$parent.x < window.innerWidth  / 2 //true：向左发展
+			},
+			y_dir: function(){
+				return this.$parent.y < window.innerHeight / 2 //true：向下发展
+			},
 			x: function(){  //left
-				if(this.$parent.x < window.innerWidth / 2)
-					return this.$parent.width
-				return -this.width
+				return this.x_dir ? this.$parent.width : -this.width
 			},
 			y: function(){  // top
-				if(this.$parent.y < window.innerHeight / 2)
-					return 0
-				return -this.height+this.$parent.height
+				return this.y_dir ? 0 : -this.height+this.$parent.height
+			},
+		},
+
+		watch:{
+			n_pages: function(new_val , old_val){
+				//当n_pages变化时，控制宽度变化
+
+				anime({
+					targets: this,
+					width: this.page_width * new_val,
+					duration: 500,
+					easing: "easeInOutQuad",
+				});
 			},
 		},
 
@@ -147,8 +169,12 @@ function YUI_init(){
 					easing: "easeInOutQuad",
 				});
 			},
-		},
+			set_page_number: function(k){
+				this.n_pages = k
+			},
 
+		},
+		
 		template: `
 			<transition 
 				@enter = enter_anime
@@ -162,12 +188,12 @@ function YUI_init(){
 					width : width  + 'px',
 					left  : x + 'px',
 					top   : y + 'px',
-					opacity: String(opacity),		
+					opacity: String(opacity),	
 				}"
 
 				v-show = show
 			>
-				<slot v-bind:option_class=option_class></slot>
+				<slot></slot>
 			</div>
 			</transition>
 

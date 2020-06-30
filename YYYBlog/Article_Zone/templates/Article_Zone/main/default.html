@@ -6,22 +6,29 @@
 
 <head>
 
+	<!-- 外部库 -->
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 	<script src="https://cdn.bootcdn.net/ajax/libs/animejs/3.2.0/anime.min.js"></script>
 	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+	<script src = {% static "jquery.nicescroll-3.7.6/jquery.nicescroll.js"|make_static:"universe" %}></script>
 	{% if 启用MathJax %}
 			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
 	{% endif %}
 
+	<!-- YUI -->
 	<link rel = "stylesheet" href = {% static "YUI/css/YUI.css"|make_static:"this" %} type = "text/css" />
 	<script src="{% static "YUI/YUI.js"|make_static:"this" %}"></script>
 	<script src="{% static "YUI/YUI-components.js"|make_static:"this" %}"></script>
 	<script src="{% static "YUI/YUI-css-complement.js"|make_static:"this" %}"></script>
-	
+
+	<!-- 主界面样式 -->
 	<link rel = "stylesheet" href = {% static "default/main.css"|make_static:"this" %} type = "text/css" />
 
-	<script src="{% static "nodelist_area/nodelist_area.js"|make_static:"this" %}"></script>
+	<!-- 导入自定义组件 -->
+	{% include "../nodelist_area/init.html" %}
+	{% include "../comment_area/init.html" %}
+	<script src = {% static "content_area/content_area.js"|make_static:"this" %}></script>
+
 
 </head>
 
@@ -30,17 +37,18 @@
 
 	<y-page> 
 		<y-content id = "main-content">
+			<!-- 内容过多的节点不适合作为component -->
 			{% include "../content_area/content_area.html" %}
 		</y-content> 
 
 		<y-toolbar>
 
 			<y-tool>
-				{% include "../nodelist_area/nodelist_area.html" %}
+				<nodelist-area></nodelist-area>
 			</y-tool>
 
 			<y-tool>
-				{% include "../comment_area/comment_area.html" %}
+				<comment-area></comment-area>
 			</y-tool>
 
 		</y-toolbar>
@@ -57,5 +65,3 @@
 	start_YUI("#main")
 </script>
 
-<script src = {% static "jquery.nicescroll-3.7.6/jquery.nicescroll.js"|make_static:"universe" %}></script>
-<script src = {% static "content_area/content_area.js"|make_static:"this" %}></script>

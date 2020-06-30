@@ -2,13 +2,12 @@
 {% load article_zone_extras %}
 {% load static %}
 
-<div class = "content-area Y-full">
+<link rel = "stylesheet" type = "text/css" 
+	href = {% static "content_area/content_area.css"|make_static:"this" %} 
+/>
 
-	<link 
-		rel = "stylesheet" 
-		href = {% static "content_area/content_area.css"|make_static:"this" %} 
-		type = "text/css" 
-	/>
+
+<div class = "content-area Y-full">
 	
 	<div class = "title Y-text-center Y-font-title Y-color-text-light">
 		{{此节点.名}}
