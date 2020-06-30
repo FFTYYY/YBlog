@@ -127,6 +127,9 @@
 .Y-scroll{
 	overflow: auto;
 }
+.Y-scroll-y{
+	overflow-y: auto;
+}
 
 /*隐藏滚动条，可以滚动*/
 .Y-allow-overflow{
