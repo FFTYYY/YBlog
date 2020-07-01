@@ -7,11 +7,11 @@
 
 	<div class = "down-side">
 		<!-- 右边栏的列表部分，也就是留言列表 -->
-		<div class = "comment-box Y-column-stack Y-scroll">
+		<div class = "comment-box Y-column-stack Y-scroll-y Y-no-scrollbar">
 			{% for 留言 in 留言列表 %}
 				<div class = "comment">
 					<pre class = "comment-content Y-font-default Y-color-text-light">{{留言.内容}}</pre>
-					<pre class = "comment-content Y-font-default Y-color-text-light">	-- {{留言.留言者称呼}} </pre>
+					<pre class = "comment-name Y-font-default Y-color-text-light">	-- {{留言.留言者称呼}} </pre>
 					<!--div class = "line"></div-->
 				</div>
 			{% endfor %}
@@ -26,7 +26,7 @@
 
 				
 				<y-text-area  
-					class = "text-input text-area" name = "content" placeholder = "留言"
+					class = "text-input text-area Y-no-scrollbar" name = "content" placeholder = "留言"
 				></y-text-area>
 				
 				<y-text-input 
