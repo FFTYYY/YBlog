@@ -1,3 +1,5 @@
+
+/*总体*/
 .comment-area *{
 	padding: 0;
 	margin: 0;
@@ -8,9 +10,12 @@
 	overflow : hidden;
 }
 
+/*大框架*/
 .comment-area .title{
-	margin-top: 5px;
-	height: 20px;
+	position: absolute;
+	top: 1%;
+	height: 5%;
+
 	left: 0;
 	width: 100%;
 
@@ -19,30 +24,42 @@
 
 
 .comment-area .down-side{
-	margin-top: 10px;
-	margin-bottom: 5px;
-	margin-left: 10px;
-	margin-right: 10px;
+	position: absolute;
+	top: 6%;
+	height: 93%;
+	left: 10px;
+	right: 10px;
+	overflow: hidden;
 }
 
+/*内部部件*/
 .comment-area .comment-box{
-	height: 60%;
-
-	flex-wrap: wrap;
+	width: 100%;
+	height: 70%;
 }
 
 .comment-area .comment{
+	width: 100%;
 	margin-bottom: 5px;
 }
-
-.comment-area .comment-content{
+.comment-area .comment pre{
+	word-wrap: break-word;
+	white-space: pre-wrap;
 	width: 100%;
 	font-size: 15px;
 	line-height: 15px;
+	overflow: hidden;
+
+}
+
+.comment-area .comment-name{
+	margin-top: 3px;
+	margin-bottom: 7px;
 }
 
 .comment-area .opration-box{
-	height: 40%;	
+	margin-top: 2%;
+	height: 28%;	
 }
 
 .comment-area .text-input{
