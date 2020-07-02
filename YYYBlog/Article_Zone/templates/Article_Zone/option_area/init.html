@@ -1,0 +1,15 @@
+{% load universe_extras %}
+{% load article_zone_extras %}
+{% load static %}
+
+<link rel = "stylesheet"  type = "text/css" 
+	href = {% static "option_area/option_area.css"|make_static:"this" %} 
+/>
+
+
+<script>
+Vue.component("option-area" , {
+	delimiters: ["[[", "]]"],
+	template:`{% include "./option_area.html"%}`,
+})
+</script>

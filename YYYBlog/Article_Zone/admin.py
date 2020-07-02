@@ -2,6 +2,7 @@
 from .models import *
 from django.utils.html import format_html
 from .utils.relationship import *
+import re
 
 def 字符串截短(s , cut_len = 20):
 	if len(s) > cut_len:
@@ -32,13 +33,36 @@ class 按深度查找(admin.SimpleListFilter):
 		return queryset.filter(id__in = 符合条件的节点)
 
 class 节点Admin(admin.ModelAdmin):
-	list_filter = ["节点类型" , 按深度查找 , ]
-	list_display = ["名" , "子节点" , "父节点" , "节点类型" , "深度" , ]
-	raw_id_fields = ["父" ,]
-	search_fields = ["名" , ]
+	change_form_template = "Article_Zone/admin_customize/jiedian_change_form.html"
+	add_form_template = "Article_Zone/admin_customize/jiedian_add_form.html"
+
+	list_filter = ["节点类型" , 按深度查找 , ] #查找选项
+	list_display = ["名" , "子节点" , "父节点" , "节点类型" , "深度" , ] #缩略显示项
+	raw_id_fields = ["父" ,]  #可以快速选择对象
+	search_fields = ["名" , ] #搜索用的域
+
+	fieldsets = [
+		[ "基本" , {
+			"fields": [ ("名" , "父") , ("地址" , "模板")] , 
+		}] , 
+		[ "内容", {
+			"fields": ["内容"] , 
+		}] ,
+		[ "增强" , {
+			"fields": [("内容类型" , "节点类型") , "排序依据" , "最低访问等级需求"] , 
+		}] , 
+
+		[ "只读内容", {
+			"fields": ["创建时间" , "最后修改时间"] , 
+		}] ,
+	]
+
+	#只读字段
+	def get_readonly_fields(self , request , obj = None):
+			return ["创建时间" , "最后修改时间"]
 
 	def 子节点(self , 对象):
-		增加地址 = "?父__exact=%s"% (对象.id)
+		增加地址 = "?父__exact=%s" % (对象.id)
 		地址 = self.request.get_full_path()
 		if 地址.find("_popup=1") >= 0:
 			增加地址 += "&_popup=1"
@@ -48,9 +72,9 @@ class 节点Admin(admin.ModelAdmin):
 	def 父节点(self , 对象):
 		if not 对象.父:
 			return "无"
-		增加地址 = "?id__exact=%s"% (对象.父.id)
+		增加地址 = "?id__exact=%s" % (对象.父.id)
 		地址 = self.request.get_full_path()
-		if 地址.find("_popup=1") >= 0:
+		if 地址.find("_popup=1") >= 0: #当前在添加节点模式
 			增加地址 += "&_popup=1"
 		地址 = self.request.path + 增加地址
 		return format_html("<a href = %s>%s</a>" % (增加地址 , 对象.父))
@@ -58,14 +82,40 @@ class 节点Admin(admin.ModelAdmin):
 	def 深度(self , 对象):
 		return 节点深度(对象)
 
-	def change_view(self, request, object_id, form_url='', extra_context=None):
+	#添加识图
+	def add_view(self , request, form_url='', extra_context=None):
 		self.request = request
-		return super(节点Admin, self).change_view(request, object_id, form_url=form_url, extra_context=extra_context)
+		父_id = request.GET.get("父_id")
 
-	def changelist_view(self, request, extra_context=None):
+		extra_context = {
+			"父_id": 父_id , 
+		}
+
+		return super().add_view(
+			request, form_url = form_url, extra_context = extra_context
+		)
+
+	#修改识图
+	def change_view(self ,  request , object_id , form_url = '' , extra_context = None):
+		self.request = request #增加self.request，在获取子对象列表中用到
+
+		#从url中查找此节点id
+		此节点_id = None
+		节点id_搜索 = re.search("节点/(\\d+)/change" , request.path)
+		if 节点id_搜索:
+			此节点_id = 节点id_搜索.group(1)
+
+		extra_context = {
+			"此节点_id": 此节点_id , 
+		}
+
+		return super().change_view(
+			request , object_id , form_url = form_url, extra_context = extra_context
+		)
+	#列表识图
+	def changelist_view(self , request, extra_context = None):
 		self.request = request
-		return super(节点Admin,self).changelist_view(request, extra_context=extra_context)
-
+		return super().changelist_view(request , extra_context = extra_context)
 
 class 留言Admin(admin.ModelAdmin):
 	list_display = ["留言内容"  , "留言对象" , "留言者" , "留言者邮箱" , "创建时间"]

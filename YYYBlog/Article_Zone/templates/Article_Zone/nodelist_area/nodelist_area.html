@@ -1,11 +1,11 @@
 <!-- 主要用于显示其他文章链接 -->
-<div class = "node-list-area Y-scroll Y-no-scrollbar"
+<div class = "node-list-area Y-full Y-scroll Y-no-scrollbar"
 	@mouseenter.self = "$emit('page_enter' , my_id)"
 	@mouseleave.self = "$emit('page_leave' , my_id)"
 >
 
 	<div class = "title Y-font-short Y-text-center Y-color-text-light">
-		相关页面列表
+		相关页面
 	</div>
 
 	<!-- 左边的按钮栏 -->
