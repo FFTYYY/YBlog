@@ -1,0 +1,48 @@
+
+/*总体*/
+.option-area *{
+	padding: 0;
+	margin: 0;
+	border: 0;
+}
+
+.option-area{
+	overflow : hidden;
+}
+
+/*大框架*/
+.option-area .title{
+	position: absolute;
+	top: 1%;
+	height: 5%;
+
+	left: 0;
+	width: 100%;
+
+	font-size: 17px;
+}
+
+
+.option-area .option-box{
+	position: absolute;
+	top: 6%;
+	height: 93%;
+	left: 10px;
+	right: 10px;
+	overflow: hidden;
+}
+
+
+.option-area .option{
+	position: relative;
+	margin-top: 3px;
+	height: 20px;
+}
+
+.option-area .option-text{
+	height: inherit;
+	color: inherit;
+	background-color: inherit;
+	font-size: 17px;
+	line-height: 17px;
+}

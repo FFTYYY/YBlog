@@ -27,6 +27,7 @@
 	<!-- 导入自定义组件 -->
 	{% include "../nodelist_area/init.html" %}
 	{% include "../comment_area/init.html" %}
+	{% include "../option_area/init.html" %}
 	<script src = {% static "content_area/content_area.js"|make_static:"this" %}></script>
 
 
@@ -48,7 +49,11 @@
 			</y-tool>
 
 			<y-tool>
-				<comment-area></comment-area>
+				<comment-area> </comment-area>
+			</y-tool>
+
+			<y-tool>
+				<option-area>  </option-area>
 			</y-tool>
 
 		</y-toolbar>
