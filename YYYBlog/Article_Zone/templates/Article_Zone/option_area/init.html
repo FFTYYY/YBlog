@@ -2,6 +2,7 @@
 {% load article_zone_extras %}
 {% load static %}
 
+{% if 访问等级 > 0 %}
 <link rel = "stylesheet"  type = "text/css" 
 	href = {% static "option_area/option_area.css"|make_static:"this" %} 
 />
@@ -13,3 +14,5 @@ Vue.component("option-area" , {
 	template:`{% include "./option_area.html"%}`,
 })
 </script>
+
+{% endif %}
