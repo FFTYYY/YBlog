@@ -16,7 +16,6 @@ def get_cookie(request):
 	if ip地址 != "127.0.0.1":
 		raise Http404
 
-	print (request.COOKIES)
 	if request.COOKIES.get("YYYBLOG_VISITOR") is not None:
 		res = HttpResponse("already have cookie! (deleted")
 		res.delete_cookie("YYYBLOG_VISITOR")
