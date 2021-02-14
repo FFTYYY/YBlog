@@ -28,12 +28,12 @@ urlpatterns = [
 	url(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
 ]
 
-#try:
+# 添加在Entry中注册的空间入口
 for zone in Entry.models.空间.objects.all():
 	urlpatterns.append( path(zone.地址 + "/", include(zone.位置 + ".urls")) )
-#except Exception:
-#	pass
 
-#urlpatterns.append( path('<str:输入>/', Entry.views.index) )
+# 默认进入Entry
 urlpatterns.append( path('', Entry.views.index) )
+
+# 媒体文件入口 #TODO：真的需要吗？
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

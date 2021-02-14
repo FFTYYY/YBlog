@@ -5,9 +5,14 @@
 <li>
 	{% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
 	<a href="{% add_preserved_filters history_url %}" class="historylink">{% trans "History" %}</a>
+
+	<!-- YYY Change Begin-->
+	<!-- 增加一个新建子节点选项 -->
 	{% if 此节点_id is not None %}
 	<a href="/admin/Article_Zone/节点/add/?父_id={{此节点_id}}">新建子节点</a>
 	{% endif %}
+	<!-- YYY Change End-->
+
 </li>
 {% if has_absolute_url %}
 <li>

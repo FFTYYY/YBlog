@@ -1,7 +1,6 @@
 from django.db import models
 import django.utils.timezone as timezone
 import os
-#from simditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 
 短文本长度 = 200
