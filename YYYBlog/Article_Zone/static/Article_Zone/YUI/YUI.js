@@ -275,7 +275,6 @@ function YUI_init(){
 		`,
 	})
 
-
 	//主内容
 	Vue.component("y-content", {
 		delimiters: ["[[", "]]"],
@@ -332,6 +331,7 @@ function YUI_init(){
 			</div> 
 		`, 
 	})
+
 }
 
 var YUI_vm;
