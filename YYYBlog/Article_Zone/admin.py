@@ -11,20 +11,21 @@ def 字符串截短(s , cut_len = 20):
 
 
 class 按深度查找(admin.SimpleListFilter):
-	cut_len = 5
-	title = '深度'
-	parameter_name = 'depth'
+	'''admin界面的节点查找选项'''
+	上限 = 5
+	title = "深度"
+	parameter_name = "depth"
 
 	def 深度字符串(self , val):
-		if val > self.cut_len:
-			return "深于%d" % self.cut_len
+		if val > self.上限:
+			return "深于%d" % self.上限
 		return str(val)
 
 	def 节点深度(self , 点):
-		return 节点深度(点 , self.cut_len)
+		return 节点深度(点 , self.上限)
 
 	def lookups(self, request, model_admin):
-		return [ (x+1 , self.深度字符串(x+1)) for x in range(self.cut_len + 1)]
+		return [ (x+1 , self.深度字符串(x+1)) for x in range(self.上限 + 1)]
 
 	def queryset(self, request, queryset):
 		if self.value() is None:
@@ -36,10 +37,10 @@ class 节点Admin(admin.ModelAdmin):
 	change_form_template = "Article_Zone/admin_customize/jiedian_change_form.html"
 	add_form_template = "Article_Zone/admin_customize/jiedian_add_form.html"
 
-	list_filter = ["节点类型" , 按深度查找 , ] #查找选项
-	list_display = ["名" , "子节点" , "父节点" , "节点类型" , "深度" , ] #缩略显示项
-	raw_id_fields = ["父" ,]  #可以快速选择对象
-	search_fields = ["名" , ] #搜索用的域
+	list_filter 	= ["节点类型" , 按深度查找 , ] #查找选项
+	list_display 	= ["名" , "子节点" , "父节点" , "节点类型" , "深度" , ] #缩略显示项
+	raw_id_fields 	= ["父" ,]  #可以快速选择对象
+	search_fields 	= ["名" , ] #搜索用的域
 
 	fieldsets = [
 		[ "基本" , {
@@ -82,37 +83,30 @@ class 节点Admin(admin.ModelAdmin):
 	def 深度(self , 对象):
 		return 节点深度(对象)
 
-	#添加识图
-	def add_view(self , request, form_url='', extra_context=None):
+	#添加视图
+	def add_view(self , request, form_url = "", extra_context = None):
 		self.request = request
-		父_id = request.GET.get("父_id")
 
 		extra_context = {
-			"父_id": 父_id , 
+			"父_id": request.GET.get("父_id") , 
 		}
 
 		return super().add_view(
 			request, form_url = form_url, extra_context = extra_context
 		)
 
-	#修改识图
-	def change_view(self ,  request , object_id , form_url = '' , extra_context = None):
+	#修改视图
+	def change_view(self ,  request , object_id , form_url = "", extra_context = None):
 		self.request = request #增加self.request，在获取子对象列表中用到
 
-		#从url中查找此节点id
-		此节点_id = None
-		节点id_搜索 = re.search("节点/(\\d+)/change" , request.path)
-		if 节点id_搜索:
-			此节点_id = 节点id_搜索.group(1)
-
 		extra_context = {
-			"此节点_id": 此节点_id , 
+			"此节点_id": object_id , 
 		}
 
 		return super().change_view(
 			request , object_id , form_url = form_url, extra_context = extra_context
 		)
-	#列表识图
+	#列表视图
 	def changelist_view(self , request, extra_context = None):
 		self.request = request
 		return super().changelist_view(request , extra_context = extra_context)

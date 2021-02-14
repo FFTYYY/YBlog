@@ -3,12 +3,20 @@
 	overflow: hidden;
 }
 
+
 .content-area *
 {
 	margin: 0;
 	border: 0;
 	padding: 0;
 }
+
+/*段落间距*/
+.content-area p
+{
+	margin: 6px;
+}
+
 
 .content-area .title
 {

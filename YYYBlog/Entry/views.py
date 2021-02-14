@@ -12,7 +12,6 @@ def index(request , 输入 = ""):
 #具体的登录机制什么的暂时懒得做了，先这样吧
 def get_cookie(request):
 
-	this_domain = "127.0.0.1"
 	ip地址 = request.META['REMOTE_ADDR']
 	if ip地址 != "127.0.0.1":
 		raise Http404
@@ -34,7 +33,7 @@ def get_cookie(request):
 
 	res = HttpResponse("获取Cookie成功！")
 
-	set_cookie_访问者(访问人 , res , this_domain)
+	set_cookie_访问者(访问人 , res)
 
 	return res
 

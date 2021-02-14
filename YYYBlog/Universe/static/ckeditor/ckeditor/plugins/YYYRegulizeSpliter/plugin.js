@@ -37,14 +37,7 @@
 
             new_name = number2word(count)
 
-
-            //console.log("now " + sub_st + " " + sub_ed)
-            //console.log(text.substr(sub_st , mat[0].length))
-            //console.log(the_substr)
-
             the_substr = the_substr.replace(new RegExp(the_name,"g") , new_name)
-
-            //console.log(the_substr)
 
             text = text.substr(0,sub_st) + the_substr + text.substr(sub_ed)
 
