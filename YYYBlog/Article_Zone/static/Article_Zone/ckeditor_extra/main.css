@@ -7,6 +7,9 @@ p{
 	font-size: 16px;
 	color: #D2D2D8FF;
 } 
+*{
+	color: #D2D2D8FF;
+} 
 
 .cke_panel_listItem.cke_selected a,
 .cke_panel_listItem a:hover,
