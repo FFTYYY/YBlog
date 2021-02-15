@@ -140,7 +140,7 @@ CKEDITOR_CONFIGS = {
 		"disableObjectResizing" : False , 
 		"toolbar": "Custom",
 		"toolbar_Custom": [
-			["Bold","Italic","Underline","Strike","-","Subscript","Superscript"], 
+			["YStrong","Bold","Italic","Underline","Strike","-","Subscript","Superscript"], 
 			["Styles","Format","Font","FontSize"], 
 			["div","Source","-","Save","NewPage","Preview","-","Templates"], 
 			["Cut","Copy","Paste","PasteText","PasteFromWord"], 
@@ -151,7 +151,7 @@ CKEDITOR_CONFIGS = {
 			["Image","Flash","Table","HorizontalRule","Smiley","SpecialChar","PageBreak"], 
 			["Maximize","ShowBlocks",],
 			["NumberedList","BulletedList","-","Outdent","Indent","Blockquote"], 
-			["YYYSpliter" , "YYYRegulizeSpliter"] , 
+			["YSpliter" , "YRegulizeSpliter"] , 
 			
 			["Form","Checkbox","Radio","TextField","Textarea","Select","Button", "ImageButton","HiddenField"], 
 		],
