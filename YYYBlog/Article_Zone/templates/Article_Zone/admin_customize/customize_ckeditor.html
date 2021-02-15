@@ -31,8 +31,8 @@ CKEDITOR.editorConfig = function( config ) {
 	];
 
 	// RELATEDTO: ckeditor_extra/main.css
-	config.fontSize_defaultLabel = "16px"; 
-	config.font_defaultLabel     = "仿宋";
+	config.fontSize_defaultLabel = "16（默认）"; 
+	config.font_defaultLabel     = "仿宋（默认）";
 
 	CKEDITOR.stylesSet.add( "default", [
 		{//文本
@@ -64,7 +64,7 @@ CKEDITOR.editorConfig = function( config ) {
 		{ //相对于一般文段，被强调的
 			name: "强段",   
 			element: "p",    
-			styles: { 				
+			styles: { 
 				"margin-top": "10px",
 				"margin-bottom": "10px",
 				"font-family": "KaiTi",
@@ -77,7 +77,7 @@ CKEDITOR.editorConfig = function( config ) {
 		{ //相对于一般文段，被弱调的
 			name: "弱段",   
 			element: "p",    
-			styles: { 				
+			styles: { 
 				"margin-left": "40px",
 			},
 			attributes:{
@@ -88,27 +88,31 @@ CKEDITOR.editorConfig = function( config ) {
 
 		{ // 强调的引用文段
 			name: "大引言",   
-			element: "strong",    
+			element: "p",    
 			styles: { 
 				"font-family": "KaiTi",
 				"font-size"  : "20px" , 
+				"font-weight": "bold" , 
 			},
 		},		
 		{ // 注释
-			name: "自言",   
-			element: "em",    			
+			name: "自言",
+			element: "p",			
+			styles: { 				
+				"font-style" : "italic",
+			},
 			attributes:{
 				"class": "Y-color-text-light-low",
 			}
 
 		},
 		{ 
-			name: "格式文",   
-			element: "div",    
-			styles: { 
+			name: "格式文",
+			element: "div",
+			styles: {
 				"font-family": "Consolas",
 				"background-color": "#2A2A2A",
-				"margin-left": "20px",
+				"margin-left": "40px",
 			},
 			attributes: {
 			}
