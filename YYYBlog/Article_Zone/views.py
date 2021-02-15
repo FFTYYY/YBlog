@@ -10,7 +10,7 @@ import os
 import django.utils.timezone as timezone
 import copy
 
-应用名 = "Article_Zone"
+应用名 = __package__
 应用地址 = "/文章"
 
 def 默认(request):
