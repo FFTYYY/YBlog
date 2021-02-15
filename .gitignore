@@ -2,7 +2,7 @@
 *.sqlite3*
 /YYYBlog/YYYBlog/setting_secret_key.py
 /YYYBlog/media/
-
+/YYYBlog/Article_Zone/static/Article_Zone/YUI/fonts/font_files
 *.pyc
 utils/Get_Article_From_isPrigrammer/
 sftp-config.json

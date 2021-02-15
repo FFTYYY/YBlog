@@ -11,13 +11,16 @@
 	padding: 0;
 }
 
+
 /*段落间距*/
 .content-area p
 {
-	margin: 6px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+	margin-right: 6px;
+	margin-left:6px;
 	font-size: 16px;
 }
-
 
 .content-area .title
 {

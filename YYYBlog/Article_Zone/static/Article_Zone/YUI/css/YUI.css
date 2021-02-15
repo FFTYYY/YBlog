@@ -2,6 +2,13 @@
 
 }
 
+/******************** 字体 ********************/
+
+@font-face {
+	font-family: Hanyi-XDSXCB; /*汉仪新蒂苏孝慈杯*/
+	src: url(../fonts/HanyiSentySuciTablet.ttf);
+}
+
 /******************** 位置 ********************/
 
 /*绝对位置*/
@@ -67,15 +74,37 @@
 
 /******************** 文字颜色设置 ********************/
 
+/*更浅色文字*/
+.Y-color-text-lighter, .Y-color-text-lighter p{
+	color: #E8F8F8FF !important;
+}
+.Y-color-text-lighter::selection, .Y-color-text-lighter p::selection {
+	background : #AAAAAAFF; 
+	color : #EEEEEEFF !important;
+}
+
+/*较浅色文字*/
+.Y-color-text-light-low, .Y-color-text-light-low p{
+	color: #C2B8C2FF !important;
+}
+
+.Y-color-text-light-low::selection, .Y-color-text-light-low p::selection {
+	background : #AAAAAAFF; 
+	color : #BBBBBBFF !important;
+}
+
+
 /*浅色文字*/
 .Y-color-text-light, .Y-color-text-light p{
-	color: #D8D8D8FF;
+	color: #D2D2D8FF;
 }
 
 .Y-color-text-light::selection, .Y-color-text-light p::selection {
 	background : #AAAAAAFF; 
 	color : #BBBBBBFF;
 }
+
+
 
 /*深色文字*/
 .Y-color-text-dark, .Y-color-text-dark p{

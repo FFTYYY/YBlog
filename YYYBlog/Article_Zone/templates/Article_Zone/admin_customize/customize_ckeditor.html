@@ -11,21 +11,112 @@
 
 CKEDITOR.editorConfig = function( config ) {
 
-	config.extraPlugins = 'YYYSpliter,YYYRegulizeSpliter,' + config.extraPlugins
+	config.extraPlugins = "YYYSpliter,YYYRegulizeSpliter," + config.extraPlugins
 	config.font_names = ""
-		+ "宋体/宋体;黑体/黑体;仿宋/FangSong;楷体/KaiTi;隶书/隶书;幼圆/幼圆;微软雅黑/微软雅黑;" 
-		+ config.font_names
+		+ "仿宋/FangSong;宋体/宋体;黑体/黑体;楷体/KaiTi;"
+		+ "（书法）汉仪新蒂苏孝慈碑/Hanyi-XDSXCB;"
+		+ "（手写）Comic Sans MS/Comic Sans MS;" 
+		+ "（等宽）Consolas/Consolas;" 
+		+ "（等宽）Lucida Console/Lucida Console;" 
+		+ "（等宽）Courier/Courier;" 
+		+ "（等宽）Monaco/Monaco;" 
+		+ "（等宽）monospace/monospace;" 
+		// + config.font_names
 
 	config.contentsCss = [ 
 		"{% static 'default/main.css'|make_static:'this' %} " , 
+		"{% static 'ckeditor_extra/main.css'|make_static:'this' %} " , 
 		"{% static 'ckeditor_extra/fake_content_area.css'|make_static:'this' %} " , 
-		"{% static 'ckeditor_extra/main.css'|make_static:'this' %} "
-
+		"{% static 'YUI/css/YUI.css'|make_static:'this' %}" , 
 	];
-	
+
 	// RELATEDTO: ckeditor_extra/main.css
 	config.fontSize_defaultLabel = "16px"; 
 	config.font_defaultLabel     = "仿宋";
+
+	CKEDITOR.stylesSet.add( "default", [
+		{//文本
+			name: "文本",   
+			element: "p",    
+
+		},
+		{// 引用文段
+			name: "引言",   
+			element: "p",    
+			styles: { 
+				"font-family": "KaiTi"
+			},
+		},
+		{// 小标题
+			name: "次题",   
+			element: "p",    
+			styles: { 
+				"font-family": "Hanyi-XDSXCB",
+				"font-size": "20px",
+				"margin-top": "10px",
+				"margin-bottom": "10px",
+				"margin-left": "20px",
+			},
+			attributes:{
+				"class": "Y-color-text-lighter",
+			}
+		},
+		{ //相对于一般文段，被强调的
+			name: "强段",   
+			element: "p",    
+			styles: { 				
+				"margin-top": "10px",
+				"margin-bottom": "10px",
+				"font-family": "KaiTi",
+			},
+			attributes:{
+				"class": "Y-color-text-lighter",
+			}
+
+		},
+		{ //相对于一般文段，被弱调的
+			name: "弱段",   
+			element: "p",    
+			styles: { 				
+				"margin-left": "40px",
+			},
+			attributes:{
+				"class": "Y-color-text-light-low",
+			}
+
+		},
+
+		{ // 强调的引用文段
+			name: "大引言",   
+			element: "strong",    
+			styles: { 
+				"font-family": "KaiTi",
+				"font-size"  : "20px" , 
+			},
+		},		
+		{ // 注释
+			name: "自言",   
+			element: "em",    			
+			attributes:{
+				"class": "Y-color-text-light-low",
+			}
+
+		},
+		{ 
+			name: "格式文",   
+			element: "div",    
+			styles: { 
+				"font-family": "Consolas",
+				"background-color": "#2A2A2A",
+				"margin-left": "20px",
+			},
+			attributes: {
+			}
+		},
+
+
+	] );
+
 };
 
 </script>

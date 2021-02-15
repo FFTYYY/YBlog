@@ -1,0 +1,9 @@
+/* 注意因为可能有版权问题所以我没有上传字体文件，请自己下载吧 */
+/* 所用字体都是由个人免费使用许可的 */
+
+/* 汉仪新蒂苏孝慈杯 */
+/* 来源：http://www.hanyi.com.cn/productdetail?id=7045&type=0 */
+@font-face {
+    font-family: Hanyi-XDSXCB; 
+    src: url(./font_files/HanyiSentySuciTablet.ttf)
+}
