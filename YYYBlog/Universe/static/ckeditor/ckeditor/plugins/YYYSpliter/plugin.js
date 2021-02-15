@@ -67,18 +67,18 @@
             section_name = number2word(section_count + 1)
 
             ins_text = "<hr />【_n】<a id=\"_n\" name=\"_n\"></a>"
-            ins_text = ins_text.replace(new RegExp("_n", 'g') , section_name)
+            ins_text = ins_text.replace(new RegExp("_n", "g") , section_name)
 
             editor.insertHtml(ins_text);
         }
     },
 
-    b='YYYSpliter';
+    b="YYYSpliter";
     CKEDITOR.plugins.add(b, {
         init: function(editor) {
             editor.addCommand(b, a);
             editor.ui.addButton("YYYSpliter", {
-                label: '开启新段落', 
+                label: "开启新段落", 
                 icon: this.path+"icon.gif",
                 command: b
             });

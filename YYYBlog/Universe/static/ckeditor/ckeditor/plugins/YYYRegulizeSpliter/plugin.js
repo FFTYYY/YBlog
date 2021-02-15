@@ -64,12 +64,12 @@
         }
     },
 
-    b='YYYRegulizeSpliter';
+    b = "YYYRegulizeSpliter";
     CKEDITOR.plugins.add(b, {
         init: function(editor) {
             editor.addCommand(b, a);
             editor.ui.addButton("YYYRegulizeSpliter", {
-                label: '重设所有段落名', 
+                label: "重设所有段落名", 
                 icon: this.path+"icon.gif",
                 command: b
             });

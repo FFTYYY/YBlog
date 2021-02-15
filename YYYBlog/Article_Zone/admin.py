@@ -3,6 +3,7 @@ from .models import *
 from django.utils.html import format_html
 from .utils.relationship import *
 import re
+from .urls import app_name
 
 def 字符串截短(s , cut_len = 20):
 	if len(s) > cut_len:
@@ -34,8 +35,8 @@ class 按深度查找(admin.SimpleListFilter):
 		return queryset.filter(id__in = 符合条件的节点)
 
 class 节点Admin(admin.ModelAdmin):
-	change_form_template = "Article_Zone/admin_customize/jiedian_change_form.html"
-	add_form_template = "Article_Zone/admin_customize/jiedian_add_form.html"
+	change_form_template = "{app_name}/admin_customize/customize_jiedian_change.html".format(app_name = app_name)
+	add_form_template 	 = "{app_name}/admin_customize/customize_jiedian_add.html".format(app_name = app_name)
 
 	list_filter 	= ["节点类型" , 按深度查找 , ] #查找选项
 	list_display 	= ["名" , "子节点" , "父节点" , "节点类型" , "深度" , ] #缩略显示项
