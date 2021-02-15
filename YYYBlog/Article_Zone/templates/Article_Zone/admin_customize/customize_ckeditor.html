@@ -18,10 +18,14 @@ CKEDITOR.editorConfig = function( config ) {
 
 	config.contentsCss = [ 
 		"{% static 'default/main.css'|make_static:'this' %} " , 
-		"{% static 'ckeditor_extra/main.css'|make_static:'this' %} ",
-		"{% static 'ckeditor_extra/fake_content_area.css'|make_static:'this' %} "
+		"{% static 'ckeditor_extra/fake_content_area.css'|make_static:'this' %} " , 
+		"{% static 'ckeditor_extra/main.css'|make_static:'this' %} "
 
-	 ];
+	];
+	
+	// RELATEDTO: ckeditor_extra/main.css
+	config.fontSize_defaultLabel = "16px"; 
+	config.font_defaultLabel     = "仿宋";
 };
 
 </script>

@@ -1,2 +1,7 @@
 /* 对ckeditor后台编辑器的额外样式 */
+/* RELATEDTO: content.css, YUI default font */
 
+p{
+	font-family: FangSong;
+	font-size: 16px;
+} 
