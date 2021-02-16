@@ -6,7 +6,7 @@
 	margin: 0;
 	border: 0;
 	padding: 0;
-	color: inherit !important;
+	/*color: inherit !important;*/ /*在ckeditor中继承不到白色，反而是黑色*/
 }
 
 
