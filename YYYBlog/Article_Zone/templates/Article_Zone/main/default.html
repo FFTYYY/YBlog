@@ -15,11 +15,16 @@
 			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
 	{% endif %}
 
+	<!-- Vexflow，用于渲染乐谱 -->
+	<!-- TODO：换成min版本 -->
+	<script type="text/javascript" src="https://npmcdn.com/vexflow/releases/vexflow-debug.js"></script>
+
 	<!-- YUI -->
 	<link rel = "stylesheet" href = {% static "YUI/css/YUI.css"|make_static:"this" %} type = "text/css" />
 	<script src="{% static "YUI/YUI.js"|make_static:"this" %}"></script>
 	<script src="{% static "YUI/YUI-components.js"|make_static:"this" %}"></script>
 	<script src="{% static "YUI/YUI-css-complement.js"|make_static:"this" %}"></script>
+	<script src="{% static "YUI/music/YMusic.js"|make_static:"this" %}"></script>
 
 	<!-- 主界面样式 -->
 	<link rel = "stylesheet" href = {% static "default/main.css"|make_static:"this" %} type = "text/css" />
@@ -69,6 +74,7 @@
 <script>
 	//启动YUI
 	start_YUI("#main")
+	ymusic_parse()
 </script>
 
 <script>
