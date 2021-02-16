@@ -4,7 +4,7 @@ function draw_music(element , width , height , fillcolor , fillbackcolor)
 
 	var render_container = document.createElement("span") //在这个新建的span内画图
 	var renderer = new VF.Renderer(render_container, VF.Renderer.Backends.SVG)
-	renderer.resize(width , height)
+	renderer.resize(width != "auto" ? width : 400 , height)
 	context = renderer.getContext()
 	context.setFillStyle(fillcolor).setStrokeStyle(fillcolor).setBackgroundFillStyle(fillbackcolor)
 
@@ -19,6 +19,11 @@ function draw_music(element , width , height , fillcolor , fillbackcolor)
 	var num_lines  	= parseInt( meta_info[1].trim() ) //线数
 	var beat_value 	= parseInt( meta_info[2].trim() ) //时值
 	var beat_num   	= parseInt( meta_info[3].trim() ) //拍数
+
+	//计算宽度
+	if(width == "auto")
+		width = 400 * (beat_num / beat_value)
+	renderer.resize(width , height)
 
 	var stave_type = undefined // 0 for 五线谱，1 for 吉他谱
 	var clef_type  = undefined
@@ -116,7 +121,7 @@ function ymusic_parse(){
 		var h 				= ele.attributes.height
 		var fillcolor 		= ele.attributes.fillcolor
 		var backfillcolor 	= ele.attributes.backfillcolor
-		w = w ? w.value : 400
+		w = w ? w.value : "auto" // auto: 每个4分音符占50px
 		h = h ? h.value : 200
 		fillcolor 		= fillcolor 	? fillcolor.value 		: "#000000" //默认黑色
 		backfillcolor 	= backfillcolor ? backfillcolor.value 	: "#00000000" //默认透明
