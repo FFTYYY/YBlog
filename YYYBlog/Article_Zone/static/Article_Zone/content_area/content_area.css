@@ -3,12 +3,12 @@
 	overflow: hidden;
 }
 
-
 .content-area *
 {
 	margin: 0;
 	border: 0;
-	padding: 0;
+	padding: 0;	
+	color: inherit !important;
 }
 
 
@@ -21,6 +21,7 @@
 	margin-left:6px;
 	font-size: 16px;
 }
+
 
 .content-area .title
 {

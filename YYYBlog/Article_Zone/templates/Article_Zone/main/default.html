@@ -7,17 +7,16 @@
 <head>
 
 	<!-- 外部库 -->
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-	<script src="https://cdn.bootcdn.net/ajax/libs/animejs/3.2.0/anime.min.js"></script>
-	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src = "https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src = "https://cdn.bootcdn.net/ajax/libs/animejs/3.2.0/anime.min.js"></script>
+	<script src = "https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src = {% static "jquery.nicescroll-3.7.6/jquery.nicescroll.js"|make_static:"universe" %}></script>
 	{% if 启用MathJax %}
 			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
 	{% endif %}
 
 	<!-- Vexflow，用于渲染乐谱 -->
-	<!-- TODO：换成min版本 -->
-	<script type="text/javascript" src="https://npmcdn.com/vexflow/releases/vexflow-debug.js"></script>
+	<script src = {% static "vexflow/vexflow-min.js"|make_static:"universe" %}></script>
 
 	<!-- YUI -->
 	<link rel = "stylesheet" href = {% static "YUI/css/YUI.css"|make_static:"this" %} type = "text/css" />
