@@ -151,7 +151,7 @@ CKEDITOR_CONFIGS = {
 			["Image","Flash","Table","HorizontalRule","Smiley","SpecialChar","PageBreak"], 
 			["Maximize","ShowBlocks",],
 			["NumberedList","BulletedList","-","Outdent","Indent","Blockquote"], 
-			["YSpliter" , "YRegulizeSpliter"] , 
+			["YSpliter" , "YRegulizeSpliter" , "YMusic"] , 
 			
 			["Form","Checkbox","Radio","TextField","Textarea","Select","Button", "ImageButton","HiddenField"], 
 		],
