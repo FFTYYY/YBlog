@@ -22,7 +22,7 @@ function draw_music(element , width , height , fillcolor , fillbackcolor)
 
 	//计算宽度
 	if(width == "auto")
-		width = 400 * (beat_num / beat_value)
+		width = 500 * (beat_num / beat_value)
 	renderer.resize(width , height)
 
 	var stave_type = undefined // 0 for 五线谱，1 for 吉他谱
