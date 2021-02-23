@@ -8,7 +8,6 @@
 	margin: 0;
 	border: 0;
 	padding: 0;	
-	color: inherit !important;
 }
 
 
@@ -20,6 +19,20 @@
 	margin-right: 6px;
 	margin-left:6px;
 	font-size: 16px;
+}
+
+.content-area td
+{
+	border-left: 1px solid;
+	border-top: 1px solid;
+	border-color: #AAAAAA;
+}
+.content-area table
+{
+	border-right: 1px solid;
+	border-bottom: 1px solid;
+	border-color: #AAAAAA;	
+	margin: auto;
 }
 
 

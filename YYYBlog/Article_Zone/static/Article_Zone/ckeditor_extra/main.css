@@ -4,7 +4,7 @@
 
 /* 额外设置p的属性 */
 /* RELATEDTO: content.css, YUI default font */
-p{
+p, td{
 	font-family: FangSong;
 	font-size: 16px;
 	color: #D2D2D8FF;
