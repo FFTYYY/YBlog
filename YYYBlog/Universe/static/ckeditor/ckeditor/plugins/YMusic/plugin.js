@@ -4,7 +4,7 @@
 		exec: function(editor) {
 			var text = editor.getData()
 
-			var to_insert = "<span class=YMusic height=100 fillcolor='#CCCCCC'> 【吉他，4，4，4】【[1]|】 </span>"
+			var to_insert = "<span class=YMusic fillcolor='#CCCCCC'> 【吉他，4，4，4】【[1]|】 </span>"
 
 			editor.insertHtml(to_insert);
 		}
@@ -22,3 +22,4 @@
 		}
 	})
 })()
+
