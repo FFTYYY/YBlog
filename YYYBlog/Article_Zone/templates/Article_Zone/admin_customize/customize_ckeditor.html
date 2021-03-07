@@ -26,9 +26,9 @@ CKEDITOR.editorConfig = function( config ) {
 		// + config.font_names
 
 	config.contentsCss = [ 
-		"{% static 'default/main.css'|make_static:'this' %} " , 
 		"{% static 'ckeditor_extra/main.css'|make_static:'this' %} " , 
 		"{% static 'ckeditor_extra/fake_content_area.css'|make_static:'this' %} " , 
+		"{% static 'default/main.css'|make_static:'this' %} " , 
 		"{% static 'YUI/css/YUI.css'|make_static:'this' %}" , 
 	];
 
@@ -122,6 +122,15 @@ CKEDITOR.editorConfig = function( config ) {
 
 
 	] );
+
+	config.coreStyles_bold = {
+		element: "span",
+		attributes: { 
+			"class": "Y-color-text-lighter" ,
+			"style" : "font-weight: bold;" ,
+		}
+	};
+
 
 };
 
