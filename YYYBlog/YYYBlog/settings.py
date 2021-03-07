@@ -140,7 +140,7 @@ CKEDITOR_CONFIGS = {
 		"disableObjectResizing" : False , 
 		"toolbar": "Custom",
 		"toolbar_Custom": [
-			["YStrong","Bold","Italic","Underline","Strike","-","Subscript","Superscript"], 
+			["Bold","Italic","Underline","Strike","-","Subscript","Superscript"], 
 			["Styles","Format","Font","FontSize"], 
 			["div","Source","-","Save","NewPage","Preview","-","Templates"], 
 			["Cut","Copy","Paste","PasteText","PasteFromWord"], 

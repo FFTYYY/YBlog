@@ -1,9 +1,12 @@
+// this plugin is abandoned cause we can directly change the action of bold
 (function() {
 
 	var plugin_command = {
 		exec: function(editor) {
 			var text = editor.getData()
 			var selected = editor.getSelection().getSelectedText()
+
+			console.log(selected)
 
 			var to_insert = "<span class = Y-color-text-lighter style = 'font-weight: bold;'>" + selected + "</span>"
 
