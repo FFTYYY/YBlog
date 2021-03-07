@@ -15,8 +15,8 @@
 <p style = "background-color:#111111">
 这是一个四线谱：
 <span class = "YMusic" fillcolor = "#DDDDDD" backfillcolor = "#000000">
-	【吉他 ， 4 ， 8 ， 4】 【 3-2 、 4-3 [4] | 3-2 、 4-3 [8] |3-2 、 4-3 [8]】
-	【吉他 ， 4 ， 8 ， 4】 【 3-2 、 4-3 [4] | 3-2 、 4-3 [8] |3-2 、 4-3 [8]】
+	【吉他 ， 4-- ， 8 ， 4】 【 3-2 、 4-3、和：C [4] | 3-2 、 4-3 [8] |3-2 、 4-3 [8]】
+	【吉他 ， 4-- ， 8 ， 4】 【 3-2 、 4-3 [4] | 3-2 、 4-3 [8] |3-2 、 4-3 [8]】
 </span>
 <span class = "YMusic" fillcolor = "#DDDDDD" backfillcolor = "#000000">
 	【吉他 ， 4 ， 8 ， 1】 【 3-2 、 4-3 [8]】
@@ -28,10 +28,10 @@
 	<span class = "YMusic" >
 	【高，5--+，4，6】【
 		Cb/5、文：啊啊啊：2、和：C7 [8] | 
-		Bb/4 [8r] | 
-		Cb/4       [4] | 
-		Ab/4       [2] |
-		Ab/4       [2] |
+		B/4 [8r] | 
+		C/4：b       [4] | 
+		A/4：n       [2] |
+		A/4：#       [2] |
 	】
 	【高，5--+，4，4】【
 		A/3       [2] |
@@ -189,15 +189,16 @@ function ymusic_parse_notes(note_info , metas){
 
 		//解析所有提供的信息
 		keys = keys.split("、")
+		var note_cnt = 0 //当前是第几个音符
 		for(var key of keys){
 			key = key.trim()
+			key = key.split("：") //同一个音的多个描述用：隔开
 
-			if(key.startsWith("和")){ 					//是一个和弦描述
-				var chord = key.split("：")[1]
-				modifiers.push({"type": "chord" , "value": chord})
+			if(key[0].trim() == "和"){ 					//是一个和弦描述
+				var chord = key[1]
+				modifiers.push({type: "chord" , value: chord})
 			}
-			else if(key.startsWith("文")){ 				//是一个文本
-				key = key.split("：")
+			else if(key[0].trim() == "文"){ 				//是一个文本
 				var text = key[1]
 				parsed_text += text
 
@@ -208,16 +209,22 @@ function ymusic_parse_notes(note_info , metas){
 			}
 			else{										//是一个正常音符
 				if(metas.stave_type == "五线"){ 	//五线谱音符
-					parsed_note_keys.push(key)
+					parsed_note_keys.push(key[0])
+
+					if(key.length > 1){
+						modifiers.push({type: "accidental" , value: key[1].trim() , idx: note_cnt})
+					}
+
 				}
 				if(metas.stave_type == "吉他"){ 	//吉他音符
-					key = key.split("-")
+					key = key[0].trim().split("-")
 					var str  = parseInt(key[0].trim())  // 弦数
 					var fret = key[1].trim() 			// 品数
 
 					parsed_note_keys.push({str:str , fret:fret})
 				}
 			}
+			note_cnt += 1
 		}
 
 		parsed_notes.push({duration: duration , keys: parsed_note_keys , modifiers: modifiers})
@@ -339,9 +346,18 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset, last_meta)
 		for(var mod of nt.modifiers){
 			if(mod.type == "chord")
 			{
-				console.log(mod.value)
 				var chord = new VF.ChordSymbol().addGlyphOrText(mod.value)
-				the_note.addModifier(0,chord)
+
+				//这个库有点智障
+				if(meta.stave_type == "五线")
+					the_note.addModifier(0,chord)
+				if(meta.stave_type == "吉他")
+					the_note.addModifier(chord,0)
+			}
+			if(mod.type == "accidental")
+			{
+				var acc = new VF.Accidental(mod.value)
+				the_note.addAccidental(mod.idx , acc)
 			}
  
 		}
@@ -363,7 +379,7 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset, last_meta)
 				text 	: nt.text + " ", 
 				duration: nt.duration,
 			})
-			.setLine(nt.posi+3)
+			.setLine(nt.posi+3) // 为了让第一根线上方的空白刚好是0
 			.setStave(stave)
 			.setJustification(Vex.Flow.TextNote.Justification.LEFT)
 		)	
@@ -469,7 +485,7 @@ function ymusic_draw_music(element , width , height , fillcolor , backfillcolor)
 }
 
 
-function ymusic_run(){
+function start_ymusic(){
 	var elements = document.getElementsByClassName("YMusic")
 	for(var ele of elements){
 		var er = ele.attributes
@@ -482,6 +498,6 @@ function ymusic_run(){
 	}
 }
 
-ymusic_run()
+start_ymusic()
 
 </script>
