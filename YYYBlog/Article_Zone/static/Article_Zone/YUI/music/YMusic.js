@@ -156,7 +156,7 @@ function ymusic_play_music(bar_notes , bar_metas , speed){
 	for(var x of to_play){
 		if(x.duration <= 0)
 			continue
-		let true_duration = Math.min( Math.max(x.duration + 0.2 , 0.25) , semibreve) //实际演奏的时长
+		let true_duration = Math.min(x.duration + 0.2 , x.duration * 2)  * semibreve//实际演奏的时长
 		ymusic_sampler.triggerAttackRelease(x.keys , true_duration , now + time_cnt)
 		time_cnt += x.duration * semibreve
 	}
