@@ -309,14 +309,15 @@ function ymusic_parse_meta(meta_info , width , height){
 	}
 }
 
-function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset, last_meta){
+function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset_w , offset_h , last_meta){
 	/*给定各种解析好的信息，绘制一个小节的乐谱
 
 	参数：
 		ctx：绘图上下文
 		meta_info：当前小节的谱信息
 		note_info：当前小节的音符信息
-		offset：绘图的x坐标偏移
+		offset_w：绘图的x坐标偏移
+		offset_h：绘图的y坐标偏移
 		last_meta：上一个小节的谱信息（用来确定是否需要重新绘制谱号等）
 	*/
 	VF = Vex.Flow
@@ -324,10 +325,11 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset, last_meta)
 	// ---------- 画谱 ----------
 	var meta = meta_info
 
+
 	// 创建stave
 	stave = undefined
 	if(meta.stave_type == "五线"){
-		stave = new VF.Stave(offset, 0, meta.width, {num_lines : meta.num_lines})
+		stave = new VF.Stave(offset_w, offset_h, meta.width, {num_lines : meta.num_lines})
 
 		if(meta.clef_type != last_meta.clef_type) //跟前一个人不一样才绘制
 			stave.addClef(meta.clef_type)
@@ -335,7 +337,8 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset, last_meta)
 			stave.addTimeSignature(meta.beat_num + "/" + meta.beat_value)
 	}
 	if (meta.stave_type == "吉他"){
-		stave = new VF.TabStave(offset, 0, meta.width, {num_lines : meta.num_lines})
+		console.log(offset_w, offset_h)
+		stave = new VF.TabStave(offset_w, offset_h, meta.width, {num_lines : meta.num_lines})
 		if(meta.clef_type != last_meta.clef_type) //跟前一个人不一样才绘制
 			stave.addClef(meta.clef_type)
 	}

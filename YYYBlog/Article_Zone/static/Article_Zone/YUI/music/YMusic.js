@@ -402,7 +402,7 @@ function ymusic_parse_meta(meta_info , width , height){
 	}
 }
 
-function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset, last_meta){
+function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset_w , offset_h , last_meta){
 	/*给定各种解析好的信息，绘制一个小节的乐谱
 
 	参数：
@@ -420,7 +420,7 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset, last_meta)
 	// 创建stave
 	stave = undefined
 	if(meta.stave_type == "五线"){
-		stave = new VF.Stave(offset, 0, meta.width, {num_lines : meta.num_lines})
+		stave = new VF.Stave(offset_w , offset_h, meta.width, {num_lines : meta.num_lines})
 
 		if(meta.clef_type != last_meta.clef_type) //跟前一个人不一样才绘制
 			stave.addClef(meta.clef_type)
@@ -428,7 +428,7 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset, last_meta)
 			stave.addTimeSignature(meta.beat_num + "/" + meta.beat_value)
 	}
 	if (meta.stave_type == "吉他"){
-		stave = new VF.TabStave(offset, 0, meta.width, {num_lines : meta.num_lines})
+		stave = new VF.TabStave(offset_w , offset_h, meta.width, {num_lines : meta.num_lines})
 		if(meta.clef_type != last_meta.clef_type) //跟前一个人不一样才绘制
 			stave.addClef(meta.clef_type)
 	}
@@ -521,11 +521,21 @@ function ymusic_parse(innertext , width , height){
 	//提取所有小节信息
 	var meta_infos = []
 	var note_infos = []
+	var flags_list = [] //特殊记号
 	while(innertext.length > 0){
-		var content = innertext.trim().match(/【([\S\s]*?)】\s*【([\S\s]*?)】/)
+		flags = {
+			"换行": false
+		}
+		if (innertext.startsWith("换行")){
+			flags["换行"] = true //注意这里是在对应小节前面（而不是后面）换行
+		}
+		flags_list.push(flags)
+
+		var content = innertext.trim().match(/[\s\S]*?【([\S\s]*?)】\s*【([\S\s]*?)】/) //忽视中间无法匹配的东西
 
 		meta_infos.push(content[1])// 乐谱信息部分
 		note_infos.push(content[2])// 音符信息部分
+
 
 		innertext = innertext.substr(content[0].length , innertext.length) //删去匹配部分
 		innertext = innertext.trim()
@@ -535,6 +545,8 @@ function ymusic_parse(innertext , width , height){
 	for(var i in meta_infos){
 		meta_infos[i] = ymusic_parse_meta (meta_infos[i] , width , height) 
 		note_infos[i] = ymusic_parse_notes(note_infos[i] , meta_infos[i])
+
+		meta_infos[i].flags = flags_list[i] //额外添加特殊标记信息
 	}
 
 	return [meta_infos , note_infos]
@@ -560,14 +572,26 @@ function ymusic_draw(meta_infos , note_infos , fillcolor , backfillcolor){
 	
 	//算出总高度、总宽度
 	var height = 0
+	var now_height = 0
+	var now_width  = 0
 	var width  = 0
 	for(var meta of meta_infos){
-		height = Math.max(height , meta.height)
-		width  += meta.width
+		now_height = Math.max(now_height , meta.height)
+		now_width  += meta.width
+		if(meta.flags["换行"])
+		{
+			height += now_height
+			width  = Math.max(width , now_width)
+			now_height = 0
+			now_width = 0
+		}
 	}
+	height += now_height // 如果最后没换行，则要加一次，如果换行了，则反之是0
+	width  = Math.max(width , now_width)
 	renderer.resize(width , height) //必须在创建stave之前resize
 
-	var offset = 0
+	var offset_w = 0
+	var offset_h = 0
 	for(i in meta_infos){
 		var meta_info = meta_infos[i]
 		var note_info = note_infos[i]
@@ -576,10 +600,14 @@ function ymusic_draw(meta_infos , note_infos , fillcolor , backfillcolor){
 		if(i > 0)
 			last_meta = meta_infos[i-1]
 
-		ymusic_draw_music_onebar(ctx , meta_info , note_info , offset , last_meta)
-		offset += meta_info.width
-	}
+		if(meta_info.flags["换行"]){
+			offset_h += meta_info.height
+			offset_w = 0
+		}
 
+		ymusic_draw_music_onebar(ctx , meta_info , note_info , offset_w , offset_h , last_meta)
+		offset_w += meta_info.width
+	}
 	return render_container
 }
 
