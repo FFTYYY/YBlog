@@ -1,14 +1,14 @@
 
 var ymusic_sampler = new Tone.Sampler({
 			urls: {
-				A0: "A0.mp3",
-				A1: "A1.mp3",
-				A2: "A2.mp3",
-				A3: "A3.mp3",
-				A4: "A4.mp3",
-				A5: "A5.mp3",
-				A6: "A6.mp3",
-				A7: "A7.mp3",
+				A0: "A0.MP3",
+				A1: "A1.MP3",
+				A2: "A2.MP3",
+				A3: "A3.MP3",
+				A4: "A4.MP3",
+				A5: "A5.MP3",
+				A6: "A6.MP3",
+				A7: "A7.MP3",
 			},
 			baseUrl: "/static/Article_Zone/YUI/music/samples/", //TODO：解耦合
 		}).toDestination();
