@@ -76,3 +76,15 @@
 	margin-top : 6px;
 	margin-bottom : 6px;
 }
+
+/*YMusic生成的图片*/
+.content-area .YMusic svg:hover{ 
+	background-color: #182215;
+	transition: 0.3s ease-in;
+}
+
+
+.content-area .YMusic svg{ 
+	background-color: inherit;
+	transition: 0.3s ease-in;
+}

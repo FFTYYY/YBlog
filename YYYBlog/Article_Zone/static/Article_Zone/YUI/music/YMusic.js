@@ -1,3 +1,155 @@
+
+var ymusic_sampler = new Tone.Sampler({
+			urls: {
+				A0: "A0.mp3",
+				A1: "A1.mp3",
+				A2: "A2.mp3",
+				A3: "A3.mp3",
+				A4: "A4.mp3",
+				A5: "A5.mp3",
+				A6: "A6.mp3",
+				A7: "A7.mp3",
+			},
+			baseUrl: "/static/Article_Zone/YUI/music/samples/", //TODO：解耦合
+		}).toDestination();
+
+function get_default_str_key(){ 
+	/*默认的吉他调弦*/
+	return {
+		1: ["E" , "4"] , 
+		2: ["B" , "3"] , 
+		3: ["G" , "3"] , 
+		4: ["D" , "3"] , 
+		5: ["A" , "2"] , 
+		6: ["E" , "2"] , 
+	}
+}
+
+function pushkey(key , num){
+	/*key形如：['A' , '5'] ，生成提高num半音的音*/
+
+	var name2num = {
+		"C":0,"C#":1,"Db":1,
+		"D":2,"D#":3,"Eb":3,"E":4,"F":5,"F#":6,"Gb":6,
+		"G":7,"G#":8,"Ab":8,"A":9,"A#":10,"Bb":10,"B":11,
+	}
+	var num2name = {}
+	for(var x in name2num)
+		num2name[ name2num[x] ] = x
+
+	console.log()
+	var num_semitone = name2num[key[0].trim()] + parseInt( key[1].trim() ) * 12 //原来的半音数
+	num_semitone += num
+
+	var newheight = parseInt(num_semitone / 12)
+	var newname = num2name[num_semitone - 12 * newheight]
+
+	return [newname , newheight]
+}
+
+function ymusic_play_music(bar_notes , bar_metas){
+	/*播放一段音乐
+
+	参数：
+		bar_notes：[notes,...]，一小节已经解析好的音乐
+			notes: 一段解析好的音符描述
+				格式：
+				[ 
+					{
+						duration: 持续时间（几分音符）,
+						keys： [key,...]
+							对于五线谱，key是一个描述音高的字符串
+							对于吉他谱，key是 {str：弦数, fret: 品数}
+						modifiers: [modifier,...]
+							modifier：额外描述符（目前只有和弦名）
+					},
+					...
+				] ,
+			注意bar_notes要分小节给出，否则无法正确确定临时升降号的作用范围
+		bar_metas：解析好的每小节谱信息
+	*/
+
+	to_play = []
+
+	for(var bar_idx in bar_notes){
+	
+		var notes = bar_notes[bar_idx]
+		var metas = bar_metas[bar_idx]
+
+		accidentials = {} //维护当前时间哪些音要升降。比如 accidentials[["C","5"]] = "b"
+						  //在小节开头这个数组会被自动重置
+
+		for(var x of notes){
+			var keys = [] // 每一个key：[名字，高度]
+
+			if(metas.stave_type == "五线"){
+				for(var key of x.keys){
+					var name   = key.match(/[a-gA-G]/)[0]
+					var height = key.match(/\d+/)[0]
+					keys.push([name,height])
+				}
+			}
+			if(metas.stave_type == "吉他"){
+
+				if(metas.str_key == undefined){
+					if(bar_idx == 0)
+						metas.str_key = get_default_str_key() //用默认调弦
+					else
+						metas.str_key = bar_metas[bar_idx-1].str_key //用上一个小节的调弦
+				}
+
+				for(var key of x.keys){
+					var str  = parseInt(key.str)
+					var fret = parseInt(key.fret)
+
+					if(! (fret >= 0)) //不是个正常的音
+						continue
+
+					key = pushkey(metas.str_key[str] , fret) //找到这个音
+					keys.push(key) //加入列表
+				}
+			}
+
+
+			for(var mod of x.modifiers){
+				if(mod.type != "accidental") //不是临时升降号
+					continue
+				if(mod.value == "n")    //还原号
+					accidentials[keys[mod.idx]] = undefined
+				else 					//升降号
+					accidentials[keys[mod.idx]] = mod.value
+			}
+
+			//把至今为止所有的升降号作用这个音符上
+			for(var i in keys){
+				var key = keys[i]
+				var acc = accidentials[key] ? accidentials[key] : "" //这个位置的升降号
+				keys[i] = key[0] + acc + key[1] //类似C#5
+			}
+
+			if(x.duration.match("r")){ //休止符
+				keys = []
+			}
+
+			to_play.push({
+				keys: keys,
+				duration: 1.0 / parseInt(x.duration), //多少个全音符
+			})
+		}
+	}
+
+	semibreve = 1.0 //一个音符，一秒
+
+	const now = Tone.now()
+	let time_cnt = 0
+	for(var x of to_play){
+		let true_duration = Math.min(2*x.duration , 0.5) //实际演奏的时长
+		ymusic_sampler.triggerAttackRelease(x.keys , true_duration , now + time_cnt)
+		time_cnt += x.duration * semibreve
+	}
+
+}
+
 function ymusic_GetStaveClefType(clef){
 	/*将输入的谱号，转化为谱类型+谱号类型
 
@@ -9,23 +161,33 @@ function ymusic_GetStaveClefType(clef){
 
 	var stave_type = undefined
 	var clef_type  = undefined
+	var str_key    = undefined //调弦
 
 	if(clef == "高")
 	{
 		stave_type = "五线"
 		clef_type  = "treble"
 	}
-	else if (clef == "吉他")
+	else if (clef.startsWith("吉他"))
 	{
 		stave_type = "吉他"
 		clef_type  = "tab"
+
+		var str_info = clef.match(/吉他([\s\S]*)/)[1].trim() //除了开头的吉他之外的部分
+		if(str_info != ""){ // 没给出调弦信息则保留undefined
+			str_info = str_info.match(/：([\s\S]*)/)[1].trim().split("、")//挑出冒号，剩下以顿号隔开
+			str_key = {}
+			for(var i in str_info){
+				str_key[parseInt(i)+1] = str_info[i].trim().split("/") //从一弦开始。每个音形如A/5
+			}
+		}
 	}
 	else
 	{
 		throw "不支持的谱号！"
 	}
 
-	return [stave_type , clef_type]
+	return [stave_type , clef_type , str_key]
 
 }
 
@@ -191,7 +353,7 @@ function ymusic_parse_meta(meta_info , width , height){
 	var beat_value 	= parseInt( meta_info[2].trim() ) //时值
 	var beat_num   	= parseInt( meta_info[3].trim() ) //拍数
 													  // 类型
-	var [stave_type , clef_type] = ymusic_GetStaveClefType(clef)
+	var [stave_type , clef_type , str_key] = ymusic_GetStaveClefType(clef)
 													  //线数
 	var num_lines = meta_info[1].trim()
 	var [extra_topspace , extra_botspace] = ymusic_AutoTopBotspace(stave_type)
@@ -223,6 +385,7 @@ function ymusic_parse_meta(meta_info , width , height){
 		"botspace"   : extra_botspace , 
 		"height"     : height , 
 		"width"    	 : width , 
+		"str_key" 	 : str_key , 
 	}
 }
 
@@ -322,7 +485,7 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset, last_meta)
 			.setLine(nt.posi+3) // 为了让第一根线上方的空白刚好是0
 			.setStave(stave)
 			.setJustification(Vex.Flow.TextNote.Justification.LEFT)
-		)	
+		)
 	}
 
 	var voice_music = new VF.Voice({num_beats: meta.beat_num ,  beat_value: meta.beat_value})
@@ -418,10 +581,21 @@ function ymusic_draw_music(element , width , height , fillcolor , backfillcolor)
 		backfillcolor：音符背后的颜色（用来防止谱线遮挡音符），不需要的话可以直接设为透明
 	*/
 
-	var [meta_infos , note_infos] = ymusic_parse(element.innerText.trim() , width , height)
-	var render_container 		  = ymusic_draw(meta_infos , note_infos , fillcolor , backfillcolor)
+	let [meta_infos , note_infos] = ymusic_parse(element.innerText.trim() , width , height)
+	let render_container 		  = ymusic_draw(meta_infos , note_infos , fillcolor , backfillcolor)
 
+	//提取出音符
+	let music_notes = []
+	for(var [mnotes , tnotes] of note_infos){
+		music_notes.push(mnotes)
+	}
+
+	//创建元素
 	element.innerHTML = render_container.innerHTML
+
+	//创建播放音乐的按钮
+	element.onclick = function(){ymusic_play_music(music_notes , meta_infos)}
+	
 }
 
 
