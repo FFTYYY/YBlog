@@ -140,10 +140,23 @@ function ymusic_play_music(bar_notes , bar_metas){
 
 	semibreve = 1.0 //一个音符，一秒
 
+	for(var i = to_play.length-1;i >= 0;i--){
+		if(to_play[i].keys.length <= 0){
+			if(i > 0)
+			{
+				to_play[i-1].duration += to_play[i].duration
+				to_play[i].duration = 0
+			}
+		}
+
+	}
+
 	const now = Tone.now()
 	let time_cnt = 0
 	for(var x of to_play){
-		let true_duration = Math.min(2*x.duration , 0.5) //实际演奏的时长
+		if(x.duration <= 0)
+			continue
+		let true_duration = Math.min( Math.max(x.duration + 0.2 , 0.25) , semibreve) //实际演奏的时长
 		ymusic_sampler.triggerAttackRelease(x.keys , true_duration , now + time_cnt)
 		time_cnt += x.duration * semibreve
 	}
@@ -369,7 +382,7 @@ function ymusic_parse_meta(meta_info , width , height){
 
 	//计算宽高
 	if(width == "auto")
-		width = 30 + 300 * (beat_num / beat_value)
+		width = 30 + 280 * (beat_num / beat_value)
 	height = ymusic_AutoHeight(height , stave_type , num_lines + extra_botspace + extra_topspace)
 
 
