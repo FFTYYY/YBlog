@@ -47,7 +47,7 @@ function pushkey(key , num){
 	return [newname , newheight]
 }
 
-function ymusic_play_music(bar_notes , bar_metas){
+function ymusic_play_music(bar_notes , bar_metas , speed){
 	/*播放一段音乐
 
 	参数：
@@ -138,7 +138,7 @@ function ymusic_play_music(bar_notes , bar_metas){
 		}
 	}
 
-	semibreve = 1.0 //一个音符，一秒
+	semibreve = speed //一个音符，一秒
 
 	for(var i = to_play.length-1;i >= 0;i--){
 		if(to_play[i].keys.length <= 0){
@@ -583,7 +583,7 @@ function ymusic_draw(meta_infos , note_infos , fillcolor , backfillcolor){
 	return render_container
 }
 
-function ymusic_draw_music(element , width , height , fillcolor , backfillcolor){
+function ymusic_draw_music(element , width , height , fillcolor , backfillcolor , speed){
 	/*解析指定元素的内容，并将内容替换为绘制好的图像
 
 	参数：
@@ -607,7 +607,7 @@ function ymusic_draw_music(element , width , height , fillcolor , backfillcolor)
 	element.innerHTML = render_container.innerHTML
 
 	//创建播放音乐的按钮
-	element.onclick = function(){ymusic_play_music(music_notes , meta_infos)}
+	element.onclick = function(){ymusic_play_music(music_notes , meta_infos , speed)}
 	
 }
 
@@ -621,6 +621,7 @@ function start_ymusic(){
 		fillcolor 		= er.fillcolor 		? er.fillcolor.value 		: "#000000" //默认黑色
 		backfillcolor 	= er.backfillcolor  ? er.backfillcolor.value 	: "#00000000" //默认透明
 		topspace 		= er.topspace 		? parseInt(er.topspace.value) : "auto"
-		ymusic_draw_music(ele , width , height , fillcolor , backfillcolor)
+		speed   		= er.speed 			? parseInt(er.speed.value)  : 1.0
+		ymusic_draw_music(ele , width , height , fillcolor , backfillcolor , speed)
 	}
 }
