@@ -46,7 +46,6 @@ function ymusic_pushkey(key , num){
 	for(let x in name2num)
 		num2name[ name2num[x] ] = x
 
-	console.log()
 	let num_semitone = name2num[key[0].trim()] + parseInt( key[1].trim() ) * 12 //原来的半音数
 	num_semitone += num
 
@@ -745,7 +744,6 @@ function m_start_ymusic(element , config , target_tags , flag){
 			let ele = document.getElementsByClassName(classes[i])
 			if(ele.length != 1)
 				throw "有点不对..."
-			console.log(classes[i] , ele[0])
 			let p = play_infos[i]
 			ele[0].onclick = function(){ ymusic_play_music(p[0] , p[1] , p[2]) }
 		}
