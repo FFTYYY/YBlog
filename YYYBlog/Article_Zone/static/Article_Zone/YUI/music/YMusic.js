@@ -1,3 +1,14 @@
+function unsub_str(s,l,r){
+	//从一个字符串抠出来一个子串
+	return s.substr(0,l) + s.substr(r,s.length)
+}
+
+function ymusic_decode(content){
+	// 消除转义符号
+	var c = document.createElement("div");
+	c.innerHTML = content
+	return c.innerText
+}
 
 let ymusic_sampler = new Tone.Sampler({
 			urls: {
@@ -13,14 +24,11 @@ let ymusic_sampler = new Tone.Sampler({
 			baseUrl: "/static/Article_Zone/YUI/music/samples/", //TODO：解耦合
 		}).toDestination();
 
+
 function ymusic_warning(str = ""){
 	console.log("错误：" + str.toString())
 }
 
-function unsub_str(s,l,r){
-	//从一个字符串抠出来一个子串
-	return s.substr(0,l) + s.substr(r,s.length)
-}
 
 function ymusic_get_default_str_key(){ 
 	/*默认的吉他调弦*/
@@ -710,6 +718,7 @@ function m_start_ymusic(element , config , target_tags , flag){
 				break
 
 			let content = matched[1]
+			content = ymusic_decode(content) //消除诸如&nasp;之类的符号
 
 			let now_config = config
 			further_conf = content.match(/\{[\s\S]*?\}/) //匹配一段json格式数据
