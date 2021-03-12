@@ -542,7 +542,7 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset_w , offset_
 	voice_text .addTickables(texts_to_render)
 
 	let formatter = new VF.Formatter().joinVoices([voice_music , voice_text])
-	formatter.format([voice_music , voice_text], meta.width - 30)
+	formatter.format([voice_music , voice_text], meta.width - 30) //TODO: width_off
 	voice_music.draw(ctx, stave)	
 	voice_text .draw(ctx, stave)
 }
