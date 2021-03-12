@@ -1,5 +1,5 @@
 
-var ymusic_sampler = new Tone.Sampler({
+let ymusic_sampler = new Tone.Sampler({
 			urls: {
 				A0: "A0.MP3",
 				A1: "A1.MP3",
@@ -13,7 +13,16 @@ var ymusic_sampler = new Tone.Sampler({
 			baseUrl: "/static/Article_Zone/YUI/music/samples/", //TODO：解耦合
 		}).toDestination();
 
-function get_default_str_key(){ 
+function ymusic_warning(str = ""){
+	console.log("错误：" + str.toString())
+}
+
+function unsub_str(s,l,r){
+	//从一个字符串抠出来一个子串
+	return s.substr(0,l) + s.substr(r,s.length)
+}
+
+function ymusic_get_default_str_key(){ 
 	/*默认的吉他调弦*/
 	return {
 		1: ["E" , "4"] , 
@@ -25,24 +34,24 @@ function get_default_str_key(){
 	}
 }
 
-function pushkey(key , num){
+function ymusic_pushkey(key , num){
 	/*key形如：['A' , '5'] ，生成提高num半音的音*/
 
-	var name2num = {
+	let name2num = {
 		"C":0,"C#":1,"Db":1,
 		"D":2,"D#":3,"Eb":3,"E":4,"F":5,"F#":6,"Gb":6,
 		"G":7,"G#":8,"Ab":8,"A":9,"A#":10,"Bb":10,"B":11,
 	}
-	var num2name = {}
-	for(var x in name2num)
+	let num2name = {}
+	for(let x in name2num)
 		num2name[ name2num[x] ] = x
 
 	console.log()
-	var num_semitone = name2num[key[0].trim()] + parseInt( key[1].trim() ) * 12 //原来的半音数
+	let num_semitone = name2num[key[0].trim()] + parseInt( key[1].trim() ) * 12 //原来的半音数
 	num_semitone += num
 
-	var newheight = parseInt(num_semitone / 12)
-	var newname = num2name[num_semitone - 12 * newheight]
+	let newheight = parseInt(num_semitone / 12)
+	let newname = num2name[num_semitone - 12 * newheight]
 
 	return [newname , newheight]
 }
@@ -71,21 +80,21 @@ function ymusic_play_music(bar_notes , bar_metas , speed){
 
 	to_play = []
 
-	for(var bar_idx in bar_notes){
+	for(let bar_idx in bar_notes){
 	
-		var notes = bar_notes[bar_idx]
-		var metas = bar_metas[bar_idx]
+		let notes = bar_notes[bar_idx]
+		let metas = bar_metas[bar_idx]
 
 		accidentials = {} //维护当前时间哪些音要升降。比如 accidentials[["C","5"]] = "b"
 						  //在小节开头这个数组会被自动重置
 
-		for(var x of notes){
-			var keys = [] // 每一个key：[名字，高度]
+		for(let x of notes){
+			let keys = [] // 每一个key：[名字，高度]
 
 			if(metas.stave_type == "五线"){
-				for(var key of x.keys){
-					var name   = key.match(/[a-gA-G]/)[0]
-					var height = key.match(/\d+/)[0]
+				for(let key of x.keys){
+					let name   = key.match(/[a-gA-G]/)[0]
+					let height = key.match(/\d+/)[0]
 					keys.push([name,height])
 				}
 			}
@@ -93,25 +102,25 @@ function ymusic_play_music(bar_notes , bar_metas , speed){
 
 				if(metas.str_key == undefined){
 					if(bar_idx == 0)
-						metas.str_key = get_default_str_key() //用默认调弦
+						metas.str_key = ymusic_get_default_str_key() //用默认调弦
 					else
 						metas.str_key = bar_metas[bar_idx-1].str_key //用上一个小节的调弦
 				}
 
-				for(var key of x.keys){
-					var str  = parseInt(key.str)
-					var fret = parseInt(key.fret)
+				for(let key of x.keys){
+					let str  = parseInt(key.str)
+					let fret = parseInt(key.fret)
 
 					if(! (fret >= 0)) //不是个正常的音
 						continue
 
-					key = pushkey(metas.str_key[str] , fret) //找到这个音
+					key = ymusic_pushkey(metas.str_key[str] , fret) //找到这个音
 					keys.push(key) //加入列表
 				}
 			}
 
 
-			for(var mod of x.modifiers){
+			for(let mod of x.modifiers){
 				if(mod.type != "accidental") //不是临时升降号
 					continue
 				if(mod.value == "n")    //还原号
@@ -121,9 +130,9 @@ function ymusic_play_music(bar_notes , bar_metas , speed){
 			}
 
 			//把至今为止所有的升降号作用这个音符上
-			for(var i in keys){
-				var key = keys[i]
-				var acc = accidentials[key] ? accidentials[key] : "" //这个位置的升降号
+			for(let i in keys){
+				let key = keys[i]
+				let acc = accidentials[key] ? accidentials[key] : "" //这个位置的升降号
 				keys[i] = key[0] + acc + key[1] //类似C#5
 			}
 
@@ -140,7 +149,7 @@ function ymusic_play_music(bar_notes , bar_metas , speed){
 
 	semibreve = speed //一个音符，一秒
 
-	for(var i = to_play.length-1;i >= 0;i--){
+	for(let i = to_play.length-1;i >= 0;i--){
 		if(to_play[i].keys.length <= 0){
 			if(i > 0)
 			{
@@ -153,7 +162,7 @@ function ymusic_play_music(bar_notes , bar_metas , speed){
 
 	const now = Tone.now()
 	let time_cnt = 0
-	for(var x of to_play){
+	for(let x of to_play){
 		if(x.duration <= 0)
 			continue
 		let true_duration = Math.min(x.duration + 0.2 , x.duration * 2)  * semibreve//实际演奏的时长
@@ -172,9 +181,9 @@ function ymusic_GetStaveClefType(clef){
 		[谱类型,谱号类型]
 	*/
 
-	var stave_type = undefined
-	var clef_type  = undefined
-	var str_key    = undefined //调弦
+	let stave_type = undefined
+	let clef_type  = undefined
+	let str_key    = undefined //调弦
 
 	if(clef == "高")
 	{
@@ -186,31 +195,32 @@ function ymusic_GetStaveClefType(clef){
 		stave_type = "吉他"
 		clef_type  = "tab"
 
-		var str_info = clef.match(/吉他([\s\S]*)/)[1].trim() //除了开头的吉他之外的部分
+		let str_info = clef.match(/吉他([\s\S]*)/)[1].trim() //除了开头的吉他之外的部分
 		if(str_info != ""){ // 没给出调弦信息则保留undefined
 			str_info = str_info.match(/：([\s\S]*)/)[1].trim().split("、")//挑出冒号，剩下以顿号隔开
 			str_key = {}
-			for(var i in str_info){
+			for(let i in str_info){
 				str_key[parseInt(i)+1] = str_info[i].trim().split("/") //从一弦开始。每个音形如A/5
 			}
 		}
 	}
 	else
 	{
-		throw "不支持的谱号！"
+		ymusic_warning("不支持的谱号！")
+		stave_type = "五线"
+		clef_type  = "treble"
 	}
 
 	return [stave_type , clef_type , str_key]
 
 }
 
-function ymusic_AutoHeight(height , stave_type , num_lines){
+function ymusic_AutoHeight(height , stave_type){
 	/*根据输入的谱类型线数自动决定高度
 	
 	参数：
 		height：输入的高度，仅当height='auto'时本函数会运作。
 		stave_type：谱类型。
-		num_lines：线数。注意线数应包括隐藏的线数。
 	返回：
 		推荐的绘图高度
 
@@ -219,12 +229,12 @@ function ymusic_AutoHeight(height , stave_type , num_lines){
 		return parseInt(height)
 
 	if (stave_type == "五线")
-		return 10 * num_lines
+		return 10
 
 	if (stave_type == "吉他")
-		return 15 * num_lines
+		return 15
 
-	throw "错误！"
+	throw "哪里出错了吧..."
 }
 
 function ymusic_AutoTopBotspace(stave_type){
@@ -243,7 +253,7 @@ function ymusic_AutoTopBotspace(stave_type){
 	if (stave_type == "吉他")
 		return [1,1]
 
-	throw "错误！"
+	throw "哪里出错了吧..."
 
 }
 
@@ -277,44 +287,46 @@ function ymusic_parse_notes(note_info , metas){
 		]
 
 	*/
-	var parsed_notes = []
-	var parsed_texts = []
+	let parsed_notes = []
+	let parsed_texts = []
 
-	var notes = note_info.trim()
+	let notes = note_info.trim()
 	notes = notes.split("|")
-	for(var note of notes){
+	for(let note of notes){
 		note = note.trim()
-		if(note == "") //允许空串
-			continue
-		note = note.match(/([\s\S]*?)\[([\dr]*)\]/)
 
 		// 获得长度
-		var duration = note[2].trim()
+		let duration = note.match(/\[\s*?([\dr]*)\s*?\]/)
+		if(duration == undefined) //找不到长度标志，说明这不是个音符（比如，空串）
+			continue
+		note = unsub_str(note , duration.index , duration.index + duration[0].length) // 扣出匹配项
+		duration = duration[1]
 
 		// 这个位置的音符
-		var keys = note[1].trim()
-		var parsed_note_keys = [] // 对于五线谱是keys，对于吉他谱是positions
+		let parsed_note_keys = [] // 对于五线谱是keys，对于吉他谱是positions
 
 		// 这个位置的注释
-		var parsed_text 	 = "" // 所有文本
-		var parsed_text_pos = -1 
+		let parsed_text 	 = "" // 所有文本
+		let parsed_text_pos = -1 
 
 		// 这个位置的和弦描述
-		var modifiers = []
+		let modifiers = []
 
 		//解析所有提供的信息
-		keys = keys.split("、")
-		var note_cnt = 0 //当前是第几个音符
-		for(var key of keys){
+		keys = note.split("、")
+		let note_cnt = 0 //当前是第几个音符
+		for(let key of keys){
 			key = key.trim()
+			if(key == "") //key是空的
+				continue
 			key = key.split("：") //同一个音的多个描述用：隔开
 
 			if(key[0].trim() == "和"){ 					//是一个和弦描述
-				var chord = key[1]
+				let chord = key[1]
 				modifiers.push({type: "chord" , value: chord})
 			}
 			else if(key[0].trim() == "文"){ 				//是一个文本
-				var text = key[1]
+				let text = key[1]
 				parsed_text += text
 
 				if(key.length > 2){
@@ -324,6 +336,9 @@ function ymusic_parse_notes(note_info , metas){
 			}
 			else{										//是一个正常音符
 				if(metas.stave_type == "五线"){ 	//五线谱音符
+					if(key[0].match("/") == undefined) //五线谱音符一定有/隔开，找不到说明不是五线谱音符
+						continue
+
 					parsed_note_keys.push(key[0])
 
 					if(key.length > 1){
@@ -332,9 +347,23 @@ function ymusic_parse_notes(note_info , metas){
 
 				}
 				if(metas.stave_type == "吉他"){ 	//吉他音符
+					if(key[0].match("-") == undefined) //吉他音符一定有-隔开，找不到说明不是五线谱音符
+						continue	
+
 					key = key[0].trim().split("-")
-					var str  = parseInt(key[0].trim())  // 弦数
-					var fret = key[1].trim() 			// 品数
+					let str  = parseInt(key[0].trim())  // 弦数
+					let fret = key[1].trim() 			// 品数
+
+					//如果品数是以数字开头的，就将其解释为数字
+					if(fret.length > 0 && fret[0].match(/\d/) != undefined)
+						fret = parseInt(fret)
+
+					if(!(str == str)) //str是NaN
+					{
+						ymusic_warning("有一个品数不是数字：" + key[0])
+						str = 5
+						fret = "BUG"
+					}
 
 					parsed_note_keys.push({str:str , fret:fret})
 				}
@@ -350,26 +379,26 @@ function ymusic_parse_notes(note_info , metas){
 }
 
 
-function ymusic_parse_meta(meta_info , width , height){
+function ymusic_parse_meta(meta_info , width , width_off , height){
 	/*给定谱信息字符串，解析生成结构化的元信息描述
 
 	参数：
 		meta_info：谱信息字符串
-		width：用户要求的绘图宽度（如果是'auto'，则自动决策）
-		height：用户要求的绘图高度（如果是'auto'，则自动决策）
+		width：小节宽度
+		width_off：小节固定宽度
 	返回：
 		一个列表，描述各种谱相关的信息
 	*/
 	// 获取元信息
 	meta_info 		= meta_info.trim().split("，")
-	var clef 	   	= meta_info[0].trim() //谱号
-	var beat_value 	= parseInt( meta_info[2].trim() ) //时值
-	var beat_num   	= parseInt( meta_info[3].trim() ) //拍数
+	let clef 	   	= meta_info[0].trim() //谱号
+	let beat_value 	= parseInt( meta_info[2].trim() ) //时值
+	let beat_num   	= parseInt( meta_info[3].trim() ) //拍数
 													  // 类型
-	var [stave_type , clef_type , str_key] = ymusic_GetStaveClefType(clef)
+	let [stave_type , clef_type , str_key] = ymusic_GetStaveClefType(clef)
 													  //线数
-	var num_lines = meta_info[1].trim()
-	var [extra_topspace , extra_botspace] = ymusic_AutoTopBotspace(stave_type)
+	let num_lines = meta_info[1].trim()
+	let [extra_topspace , extra_botspace] = ymusic_AutoTopBotspace(stave_type)
 	extra_botspace -= 1 //好像Vexflow默认会在下面加一个，去掉之
 	while(num_lines.endsWith("+") || num_lines.endsWith("-")){// 检查末尾有多少个加减号
 		if(num_lines.endsWith("+")) //加号增加下方行数
@@ -381,9 +410,8 @@ function ymusic_parse_meta(meta_info , width , height){
 	num_lines = parseInt(num_lines) //把去掉加减号之后的部分转成数字
 
 	//计算宽高
-	if(width == "auto")
-		width = 30 + 280 * (beat_num / beat_value)
-	height = ymusic_AutoHeight(height , stave_type , num_lines + extra_botspace + extra_topspace)
+	width  = width_off + width * (beat_num / beat_value)
+	height = ymusic_AutoHeight(height , stave_type) * (num_lines + extra_botspace + extra_topspace)
 
 
 	return {
@@ -415,7 +443,7 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset_w , offset_
 	VF = Vex.Flow
 
 	// ---------- 画谱 ----------
-	var meta = meta_info
+	let meta = meta_info
 
 	// 创建stave
 	stave = undefined
@@ -438,12 +466,12 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset_w , offset_
 
 	// ---------- 画音符 ----------
 
-	var [ parsed_notes , parsed_texts ] = note_info
+	let [ parsed_notes , parsed_texts ] = note_info
 
 	//音符
-	var notes_to_render = []
-	for(var nt of parsed_notes){ //取出所有解析出的音符信息，转成VF音符
-		var the_note = undefined
+	let notes_to_render = []
+	for(let nt of parsed_notes){ //取出所有解析出的音符信息，转成VF音符
+		let the_note = undefined
 
 		if(meta.stave_type == "五线"){
 			the_note = new VF.StaveNote({
@@ -459,10 +487,10 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset_w , offset_
 			})
 		}
 
-		for(var mod of nt.modifiers){
+		for(let mod of nt.modifiers){
 			if(mod.type == "chord")
 			{
-				var chord = new VF.ChordSymbol().addGlyphOrText(mod.value)
+				let chord = new VF.ChordSymbol().addGlyphOrText(mod.value)
 
 				//这个库有点智障
 				if(meta.stave_type == "五线")
@@ -472,7 +500,7 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset_w , offset_
 			}
 			if(mod.type == "accidental")
 			{
-				var acc = new VF.Accidental(mod.value)
+				let acc = new VF.Accidental(mod.value)
 				the_note.addAccidental(mod.idx , acc)
 			}
  
@@ -482,8 +510,8 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset_w , offset_
 	}
 
 	//注释文本
-	var texts_to_render = []
-	for(var nt of parsed_texts){ //取出所有文本信息，转成TextNote
+	let texts_to_render = []
+	for(let nt of parsed_texts){ //取出所有文本信息，转成TextNote
 
 		texts_to_render.push(
 			new VF.TextNote({
@@ -501,29 +529,29 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset_w , offset_
 		)
 	}
 
-	var voice_music = new VF.Voice({num_beats: meta.beat_num ,  beat_value: meta.beat_value})
-	var voice_text  = new VF.Voice({num_beats: meta.beat_num ,  beat_value: meta.beat_value})
+	let voice_music = new VF.Voice({num_beats: meta.beat_num ,  beat_value: meta.beat_value})
+	let voice_text  = new VF.Voice({num_beats: meta.beat_num ,  beat_value: meta.beat_value})
 	voice_music.addTickables(notes_to_render)
 	voice_text .addTickables(texts_to_render)
 
-	var formatter = new VF.Formatter().joinVoices([voice_music , voice_text])
+	let formatter = new VF.Formatter().joinVoices([voice_music , voice_text])
 	formatter.format([voice_music , voice_text], meta.width - 30)
 	voice_music.draw(ctx, stave)	
 	voice_text .draw(ctx, stave)
 }
 
-function ymusic_parse(innertext , width , height){
+function ymusic_parse(innertext , width , width_off , height){
 	/*给定用户字符串，解析生成结构化的信息
 	
 	返回值：
 		[[第i小节的谱信息,...] , [第i小节的音符信息,...]]
 	*/
 	//提取所有小节信息
-	var meta_infos = []
-	var note_infos = []
-	var flags_list = [] //特殊记号
+	let meta_infos = []
+	let note_infos = []
+	let flags_list = [] //特殊记号
 	while(innertext.length > 0){
-		flags = {
+		let flags = {
 			"换行": false
 		}
 		if (innertext.startsWith("换行")){
@@ -531,19 +559,21 @@ function ymusic_parse(innertext , width , height){
 		}
 		flags_list.push(flags)
 
-		var content = innertext.trim().match(/[\s\S]*?【([\S\s]*?)】\s*【([\S\s]*?)】/) //忽视中间无法匹配的东西
+		let matched = innertext.match(/【([\S\s]*?)】\s*?【([\S\s]*?)】/) //忽视中间无法匹配的东西
+		if(matched == undefined) //找不到了
+			break
 
-		meta_infos.push(content[1])// 乐谱信息部分
-		note_infos.push(content[2])// 音符信息部分
+		meta_infos.push(matched[1])// 乐谱信息部分
+		note_infos.push(matched[2])// 音符信息部分
 
-
-		innertext = innertext.substr(content[0].length , innertext.length) //删去匹配部分
+		// assert matched.index == 0
+		innertext = innertext.substr(matched.index + matched[0].length , innertext.length) //删去匹配部分
 		innertext = innertext.trim()
 	}
 
 	//解析所有信息
-	for(var i in meta_infos){
-		meta_infos[i] = ymusic_parse_meta (meta_infos[i] , width , height) 
+	for(let i in meta_infos){
+		meta_infos[i] = ymusic_parse_meta (meta_infos[i] , width , width_off , height) 
 		note_infos[i] = ymusic_parse_notes(note_infos[i] , meta_infos[i])
 
 		meta_infos[i].flags = flags_list[i] //额外添加特殊标记信息
@@ -561,23 +591,21 @@ function ymusic_draw(meta_infos , note_infos , fillcolor , backfillcolor){
 		fillcolor：画图颜色
 		backfillcolor：音符背后的颜色（用来防止谱线遮挡音符），不需要的话可以直接设为透明
 	*/
-	var VF = Vex.Flow
+	let VF = Vex.Flow
 
 	//初始化绘图环境
-	var render_container = document.createElement("span") //在这个新建的span内画图
-	var renderer = new VF.Renderer(render_container, VF.Renderer.Backends.SVG)
-	var ctx = renderer.getContext()
+	let render_container = document.createElement("span") //在这个新建的span内画图
+	let renderer = new VF.Renderer(render_container, VF.Renderer.Backends.SVG)
+	let ctx = renderer.getContext()
 	ctx.setFillStyle(fillcolor).setStrokeStyle(fillcolor)
 	ctx.setBackgroundFillStyle(backfillcolor)
 	
 	//算出总高度、总宽度
-	var height = 0
-	var now_height = 0
-	var now_width  = 0
-	var width  = 0
-	for(var meta of meta_infos){
-		now_height = Math.max(now_height , meta.height)
-		now_width  += meta.width
+	let height = 0
+	let now_height = 0
+	let now_width  = 0
+	let width  = 0
+	for(let meta of meta_infos){
 		if(meta.flags["换行"])
 		{
 			height += now_height
@@ -585,18 +613,20 @@ function ymusic_draw(meta_infos , note_infos , fillcolor , backfillcolor){
 			now_height = 0
 			now_width = 0
 		}
+		now_height = Math.max(now_height , meta.height)
+		now_width  += meta.width
 	}
 	height += now_height // 如果最后没换行，则要加一次，如果换行了，则反之是0
 	width  = Math.max(width , now_width)
 	renderer.resize(width , height) //必须在创建stave之前resize
 
-	var offset_w = 0
-	var offset_h = 0
+	let offset_w = 0
+	let offset_h = 0
 	for(i in meta_infos){
-		var meta_info = meta_infos[i]
-		var note_info = note_infos[i]
+		let meta_info = meta_infos[i]
+		let note_info = note_infos[i]
 
-		var last_meta = {}
+		let last_meta = {}
 		if(i > 0)
 			last_meta = meta_infos[i-1]
 
@@ -611,45 +641,122 @@ function ymusic_draw(meta_infos , note_infos , fillcolor , backfillcolor){
 	return render_container
 }
 
-function ymusic_draw_music(element , width , height , fillcolor , backfillcolor , speed){
-	/*解析指定元素的内容，并将内容替换为绘制好的图像
+let ymusic_counter = 0
+function ymusic_draw_music(content , config){
+	/*解析指定元素的内容，并创建元素
 
 	参数：
-		element：用来提供绘图信息的元素
-		width：用户要求的宽度
-		height：用户要求的高度
-		fillcolor：画图颜色
-		backfillcolor：音符背后的颜色（用来防止谱线遮挡音符），不需要的话可以直接设为透明
+		content：匹配的描述乐谱信息的内容
+		config：用户配置
+			width        ：小节宽度
+			width_off    ：小节固定宽度
+			height       ：每行高度，如果为"auto"则自动设置
+			fillcolor    ：画图颜色
+			backfillcolor：音符背后的颜色（用来防止谱线遮挡音符），不需要的话可以直接设为透明
+			speed 		 ：每个全音符播放多长时间（秒数）
 	*/
+	let c = config
 
-	let [meta_infos , note_infos] = ymusic_parse(element.innerText.trim() , width , height)
-	let render_container 		  = ymusic_draw(meta_infos , note_infos , fillcolor , backfillcolor)
+	let [meta_infos , note_infos] = ymusic_parse(content.trim() , c.width , c.width_off , c.height)
+	let render_container 		  = ymusic_draw(meta_infos , note_infos , c.fillcolor , c.backfillcolor)
 
 	//提取出音符
 	let music_notes = []
-	for(var [mnotes , tnotes] of note_infos){
+	for(let [mnotes , tnotes] of note_infos){
 		music_notes.push(mnotes)
 	}
 
 	//创建元素
-	element.innerHTML = render_container.innerHTML
+	let element = document.createElement("span")
+	let special_class = "ymusic_" + ymusic_counter //给每个人一个专门的class
+	ymusic_counter ++
+	
+	element.innerHTML = `<span class = "ymusic ${special_class}">${render_container.innerHTML}</span>`
 
 	//创建播放音乐的按钮
-	element.onclick = function(){ymusic_play_music(music_notes , meta_infos , speed)}
-	
+	play = [music_notes , meta_infos , c.speed]
+
+	return [element , special_class , play]
 }
 
+function autoconfig(c){
+	c.width_off 	= c.width_off 		? parseInt(c.width_off) : 30
+	c.width 		= c.width 			? parseInt(c.width) 	: 280
+	c.height 		= c.height 			? parseInt(c.height) 	: "auto"
+	c.fillcolor 	= c.fillcolor 		? c.fillcolor 		 	: "#000000" //默认黑色
+	c.backfillcolor = c.backfillcolor   ? c.backfillcolor 	 	: "#00000000" //默认透明
+	c.speed   		= c.speed 			? parseInt(c.speed)    	: 2.0
+	return c
+}
 
-function start_ymusic(){
-	var elements = document.getElementsByClassName("YMusic")
-	for(var ele of elements){
-		var er = ele.attributes
-		width 			= er.w 				? parseInt(er.w.value) 		: "auto" // auto: 每个4分音符占50px
-		height 			= er.h 				? parseInt(er.h.value) 		: "auto"
-		fillcolor 		= er.fillcolor 		? er.fillcolor.value 		: "#000000" //默认黑色
-		backfillcolor 	= er.backfillcolor  ? er.backfillcolor.value 	: "#00000000" //默认透明
-		topspace 		= er.topspace 		? parseInt(er.topspace.value) : "auto"
-		speed   		= er.speed 			? parseInt(er.speed.value)  : 1.0
-		ymusic_draw_music(ele , width , height , fillcolor , backfillcolor , speed)
+function m_start_ymusic(element , config , target_tags , flag){
+	/*
+	参数：
+		flag：这一个元素是不是目标元素
+	*/
+
+	if(target_tags.includes(element.tagName))
+		flag = true
+
+	if(flag && element.innerHTML != undefined){
+		innerhtml = element.innerHTML
+
+		let classes = []
+		let play_infos = []
+
+		for(let i = 0;i < 100;i++){
+
+			let matched = innerhtml.match(/【乐谱开始】([\s\S]*?)【乐谱结束】/) //匹配一项
+			if(matched == undefined)
+				break
+
+			let content = matched[1]
+
+			let now_config = config
+			further_conf = content.match(/\{[\s\S]*?\}/) //匹配一段json格式数据
+			if(further_conf != undefined){
+				try{
+					further_conf = JSON.parse(further_conf[0])
+				}
+				catch(e){
+					ymusic_warning(e.toString())
+					further_conf = {}
+				}
+				now_config = Object.assign({} , config , further_conf)
+			}
+			
+			// 获得新建元素、新建元素的专门class，和播放信息，以便事后正确地创建元素
+			let [new_ele , new_ele_class , new_ele_play] = ymusic_draw_music(content , now_config)
+
+			//将新建元素添加替换匹配到的东西的位置
+			innerhtml = innerhtml.substr(0 , matched.index) + 
+						new_ele.innerHTML + 
+						innerhtml.substr(matched.index + matched[0].length , innerhtml.length) 
+
+			//记录class和播放使用的信息，事后使用
+			classes   .push(new_ele_class)
+			play_infos.push(new_ele_play)
+		}
+		//替换html代码
+		element.innerHTML = innerhtml
+
+		//给每个新建的对象添加onclick函数
+		for(let i in classes){
+			let ele = document.getElementsByClassName(classes[i])
+			if(ele.length != 1)
+				throw "有点不对..."
+			console.log(classes[i] , ele[0])
+			let p = play_infos[i]
+			ele[0].onclick = function(){ ymusic_play_music(p[0] , p[1] , p[2]) }
+		}
 	}
+
+	for(let x of element.children)
+		m_start_ymusic(x , config , target_tags , flag)
+}
+
+function start_ymusic(config , target_tags = ["P"]){
+
+	config = autoconfig(config)
+	m_start_ymusic(document , config , target_tags , false)
 }
