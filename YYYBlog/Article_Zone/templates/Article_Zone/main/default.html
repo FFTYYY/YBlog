@@ -77,11 +77,24 @@
 	//启动YUI
 	start_YUI("#main")
 
+	init_ymusic_sampler(
+		{
+			A0: "A0.MP3",
+			A1: "A1.MP3",
+			A2: "A2.MP3",
+			A3: "A3.MP3",
+			A4: "A4.MP3",
+			A5: "A5.MP3",
+			A6: "A6.MP3",
+			A7: "A7.MP3",
+		},
+		"{% static "YUI/music/samples/"|make_static:"this" %}"
+	)
+
 	start_ymusic(
 		{
 			"fillcolor" 	: "#DDDDDD",
 			"backfillcolor" : "#303030",
-			//"speed" 		: ,
 		} , 
 		["P" , "TD"]
 	)

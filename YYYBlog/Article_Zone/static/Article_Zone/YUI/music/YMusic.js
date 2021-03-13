@@ -10,20 +10,8 @@ function ymusic_decode(content){
 	return c.innerText
 }
 
-let ymusic_sampler = new Tone.Sampler({
-			urls: {
-				A0: "A0.MP3",
-				A1: "A1.MP3",
-				A2: "A2.MP3",
-				A3: "A3.MP3",
-				A4: "A4.MP3",
-				A5: "A5.MP3",
-				A6: "A6.MP3",
-				A7: "A7.MP3",
-			},
-			baseUrl: "/static/Article_Zone/YUI/music/samples/", //TODO：解耦合
-		}).toDestination();
 
+let ymusic_sampler = undefined
 
 function ymusic_warning(str = ""){
 	console.log("错误：" + str.toString())
@@ -84,6 +72,13 @@ function ymusic_play_music(bar_notes , bar_metas , speed){
 			注意bar_notes要分小节给出，否则无法正确确定临时升降号的作用范围
 		bar_metas：解析好的每小节谱信息
 	*/
+
+	// 如果没有初始化sampler，自动return
+	if(ymusic_sampler == undefined)
+	{
+		ymusic_warning("No sampler")
+		return
+	}
 
 	to_play = []
 
@@ -760,6 +755,13 @@ function m_start_ymusic(element , config , target_tags , flag){
 
 	for(let x of element.children)
 		m_start_ymusic(x , config , target_tags , flag)
+}
+
+function init_ymusic_sampler(files , baseurl){
+	ymusic_sampler = new Tone.Sampler({
+		urls: files,
+		baseUrl: baseurl,
+	}).toDestination()
 }
 
 function start_ymusic(config , target_tags = ["P"]){
