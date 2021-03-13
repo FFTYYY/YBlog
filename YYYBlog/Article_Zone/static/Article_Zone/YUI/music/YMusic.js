@@ -1,3 +1,5 @@
+//version：21-03-13
+
 function unsub_str(s,l,r){
 	//从一个字符串抠出来一个子串
 	return s.substr(0,l) + s.substr(r,s.length)
@@ -187,13 +189,15 @@ function ymusic_GetStaveClefType(clef){
 	let clef_type  = undefined
 	let str_key    = undefined //调弦
 
-	if(clef == "高")
-	{
+	if(clef == "高"){
 		stave_type = "五线"
 		clef_type  = "treble"
 	}
-	else if (clef.startsWith("吉他"))
-	{
+	else if(clef == "低"){
+		stave_type = "五线"
+		clef_type  = "bass"	
+	}
+	else if (clef.startsWith("吉他")){
 		stave_type = "吉他"
 		clef_type  = "tab"
 
