@@ -452,14 +452,14 @@ function ymusic_draw_music_onebar(ctx , meta_info, note_info, offset_w , offset_
 	if(meta.stave_type == "五线"){
 		stave = new VF.Stave(offset_w , offset_h, meta.width, {num_lines : meta.num_lines})
 
-		if(meta.clef_type != last_meta.clef_type) //跟前一个人不一样才绘制
+		if(meta.clef_type != last_meta.clef_type || meta.flags["换行"]) //跟前一个人不一样才绘制
 			stave.addClef(meta.clef_type)
-		if(meta.beat_num != last_meta.beat_num || meta.beat_value != last_meta.beat_value)
+		if(meta.beat_num != last_meta.beat_num || meta.beat_value != last_meta.beat_value || meta.flags["换行"])
 			stave.addTimeSignature(meta.beat_num + "/" + meta.beat_value)
 	}
 	if (meta.stave_type == "吉他"){
 		stave = new VF.TabStave(offset_w , offset_h, meta.width, {num_lines : meta.num_lines})
-		if(meta.clef_type != last_meta.clef_type) //跟前一个人不一样才绘制
+		if(meta.clef_type != last_meta.clef_type || meta.flags["换行"]) //跟前一个人不一样才绘制
 			stave.addClef(meta.clef_type)
 	}
 	stave.options.space_above_staff_ln = meta.topspace //上方预留的空间
