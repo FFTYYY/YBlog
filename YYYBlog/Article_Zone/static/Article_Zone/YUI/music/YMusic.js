@@ -1,4 +1,4 @@
-//version：21-03-13
+//version：21-03-17
 
 function unsub_str(s,l,r){
 	//从一个字符串抠出来一个子串
@@ -53,7 +53,7 @@ function ymusic_pushkey(key , num){
 	return [newname , newheight]
 }
 
-function ymusic_play_music(bar_notes , bar_metas , speed){
+function ymusic_play_music(bar_notes , bar_metas , speed , let_ring){
 	/*播放一段音乐
 
 	参数：
@@ -73,6 +73,8 @@ function ymusic_play_music(bar_notes , bar_metas , speed){
 				] ,
 			注意bar_notes要分小节给出，否则无法正确确定临时升降号的作用范围
 		bar_metas：解析好的每小节谱信息
+		speed：播放速度（一个全音符的持续时间）
+		let_ring：是否让所有的音都一直延长
 	*/
 
 	// 如果没有初始化sampler，自动return
@@ -169,7 +171,11 @@ function ymusic_play_music(bar_notes , bar_metas , speed){
 	for(let x of to_play){
 		if(x.duration <= 0)
 			continue
-		let true_duration = Math.min(x.duration + 0.2 , x.duration * 2)  * semibreve//实际演奏的时长
+		let true_duration = Math.min(x.duration + 0.2 , x.duration * 2)
+		if(let_ring)
+			true_duration = Math.max(true_duration , 1) //让他一直发声
+		console.log(true_duration)
+		true_duration = true_duration * semibreve//实际演奏的时长
 		ymusic_sampler.triggerAttackRelease(x.keys , true_duration , now + time_cnt)
 		time_cnt += x.duration * semibreve
 	}
@@ -378,7 +384,6 @@ function ymusic_parse_notes(note_info , metas){
 		parsed_notes.push({duration: duration , keys: parsed_note_keys , modifiers: modifiers})
 		parsed_texts.push({duration: duration , text: parsed_text , posi: parsed_text_pos})
 	}
-	console.log(parsed_notes)
 	return [ parsed_notes , parsed_texts ]
 }
 
@@ -680,13 +685,14 @@ function ymusic_draw_music(content , config){
 	return [element , special_class , play]
 }
 
-function autoconfig(c){
+function autoconfig(c){	
 	c.width_off 	= c.width_off 		? parseInt(c.width_off) : 30
 	c.width 		= c.width 			? parseInt(c.width) 	: 280
 	c.height 		= c.height 			? parseInt(c.height) 	: "auto"
 	c.fillcolor 	= c.fillcolor 		? c.fillcolor 		 	: "#000000" //默认黑色
 	c.backfillcolor = c.backfillcolor   ? c.backfillcolor 	 	: "#00000000" //默认透明
 	c.speed   		= c.speed 			? parseInt(c.speed)    	: 2.0
+	c.let_ring 		= c.let_ring        ? c.let_ring 			: false //蛮怪的，只能说统一写法吧
 	return c
 }
 
@@ -703,6 +709,7 @@ function m_start_ymusic(element , config , target_tags , flag){
 		let innerhtml = element.innerHTML
 
 		let classes = []
+		let configs = []
 		let play_infos = []
 
 		for(let i = 0;i < 100;i++){
@@ -714,6 +721,7 @@ function m_start_ymusic(element , config , target_tags , flag){
 			let content = matched[1]
 			content = ymusic_decode(content) //消除诸如&nasp;之类的符号
 
+			//----- 解析全局config -----
 			let now_config = config
 			let further_conf = content.match(/\{[\s\S]*?\}/) //匹配一段json格式数据
 			if(further_conf != undefined){
@@ -726,7 +734,9 @@ function m_start_ymusic(element , config , target_tags , flag){
 				}
 				now_config = Object.assign({} , config , further_conf)
 			}
-			
+
+			// ----- 创建乐谱 -----
+
 			// 获得新建元素、新建元素的专门class，和播放信息，以便事后正确地创建元素
 			let [new_ele , new_ele_class , new_ele_play] = ymusic_draw_music(content , now_config)
 
@@ -735,9 +745,10 @@ function m_start_ymusic(element , config , target_tags , flag){
 						new_ele.innerHTML + 
 						innerhtml.substr(matched.index + matched[0].length , innerhtml.length) 
 
-			//记录class和播放使用的信息，事后使用
+			//----- 记录各种信息，事后使用 -----
 			classes   .push(new_ele_class)
-			play_infos.push(new_ele_play)
+			play_infos.push(new_ele_play )
+			configs   .push(now_config)
 		}
 		//替换html代码
 		element.innerHTML = innerhtml
@@ -748,7 +759,8 @@ function m_start_ymusic(element , config , target_tags , flag){
 			if(ele.length != 1)
 				throw "有点不对..."
 			let p = play_infos[i]
-			ele[0].onclick = function(){ ymusic_play_music(p[0] , p[1] , p[2]) }
+			let c = configs[i]
+			ele[0].onclick = function(){ ymusic_play_music(p[0] , p[1] , p[2] , c.let_ring) }
 		}
 	}
 
