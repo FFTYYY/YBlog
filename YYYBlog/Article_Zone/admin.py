@@ -42,7 +42,7 @@ class 节点Admin(admin.ModelAdmin):
 	list_display 	= ["名" , "子节点" , "父节点" , "节点类型" , "深度" , ] #缩略显示项
 	raw_id_fields 	= ["父" ,]  #可以快速选择对象
 	search_fields 	= ["名" , ] #搜索用的域
-
+	filter_horizontal = ["附加内容" , ]
 	fieldsets = [
 		[ "基本" , {
 			"fields": [ ("名" , "父") , ("地址" , "模板")] , 
@@ -51,7 +51,7 @@ class 节点Admin(admin.ModelAdmin):
 			"fields": ["内容"] , 
 		}] ,
 		[ "增强" , {
-			"fields": [("内容类型" , "节点类型") , "排序依据" , "最低访问等级需求"] , 
+			"fields": [("内容类型" , "节点类型") , "排序依据" , "最低访问等级需求" , "附加内容"] , 
 		}] , 
 
 		[ "只读内容", {
@@ -130,3 +130,4 @@ class 留言Admin(admin.ModelAdmin):
 admin.site.register(节点 , 节点Admin)
 admin.site.register(留言 , 留言Admin)
 admin.site.register(界面模板)
+admin.site.register(附加)

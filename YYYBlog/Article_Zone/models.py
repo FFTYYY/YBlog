@@ -37,6 +37,7 @@ class 节点(models.Model):
 	排序依据 = models.IntegerField(default = 0)
 	最低访问等级需求 = models.IntegerField(default = 0)
 	内容 = RichTextUploadingField(default = "" , blank = True)
+	附加内容 = models.ManyToManyField(to = "附加" , related_name = "所在")
 
 	def __str__(self):
 		return self.名
@@ -67,6 +68,20 @@ class 节点(models.Model):
 		return self.模板.封底位置
 
 
+class 附加(models.Model):
+	名 = models.CharField(max_length = 短文本长度)
+	内容 = models.TextField(default = "")
+	类型 = models.IntegerField(default = 0 , 
+		choices = (
+			(0 , "HTML"),
+			(1 , "Python"),
+		)
+	)
+
+	def __str__(self):
+		return self.名
+
+
 class 留言(models.Model):
 	对象 = models.ForeignKey(节点 , on_delete = models.CASCADE  , related_name = "留言")
 	内容 = models.TextField(default = "")
@@ -75,4 +90,3 @@ class 留言(models.Model):
 	留言者邮箱 = models.CharField(max_length = 短文本长度 , blank = True)
 
 	创建时间 = models.DateTimeField(default = timezone.now)
-

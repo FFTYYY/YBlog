@@ -5,6 +5,7 @@ import django.http as http
 from .models import 节点 , 留言
 from .utils.relationship import *
 from .utils.permission_manage import *
+from .utils.process_content import * 
 import os
 import django.utils.timezone as timezone
 import copy
@@ -53,6 +54,9 @@ def 获取节点(request , 节点地址):
 	if not 节点许可查询(request , 此节点):
 		raise Http404
 
+	附加内容 = "\\n".join([附.内容 for 附 in 此节点.附加内容.all() if 附.类型 == 0]) #html
+	[exec(附.内容,{"节点":此节点} , {}) for 附 in 此节点.附加内容.all() if 附.类型 == 1 ] #python
+
 	上下文 = {}
 
 	上下文["启用MathJax"] = (此节点.内容类型 == 0)
@@ -64,6 +68,7 @@ def 获取节点(request , 节点地址):
 	留言列表 = [言论 for 言论 in 此节点.留言.all()]
 	留言列表.reverse()
 
+
 	上下文.update({
 		"此节点" 		: 此节点,
 		"子节点列表" 	: 子节点列表,
@@ -72,7 +77,7 @@ def 获取节点(request , 节点地址):
 		"留言列表" 		: 留言列表,
 		"内容"			: 此节点.内容 , 
 		"访问等级"		: 权限查询(request) , 
-		"额外脚本" 		: "" , 
+		"附加内容" 		: 附加内容 , 
 	})
 
 
@@ -85,9 +90,9 @@ def 提交留言(request , 节点地址):
 	此节点 = 节点.objects.get(地址 = 节点地址)
 
 	if request.POST:
-		称呼 = request.POST.get('name')
-		邮箱 = request.POST.get('email')
-		内容 = request.POST.get('content')
+		称呼 = request.POST.get("name")
+		邮箱 = request.POST.get("email")
+		内容 = request.POST.get("content")
 		if not 称呼:
 			称呼 = "匿名"
 		if 内容:
