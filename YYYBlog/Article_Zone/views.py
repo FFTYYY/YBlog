@@ -57,6 +57,9 @@ def 获取节点(request , 节点地址):
 	附加内容 = "\\n".join([附.内容 for 附 in 此节点.附加内容.all() if 附.类型 == 0]) #html
 	[exec(附.内容,{"节点":此节点} , {}) for 附 in 此节点.附加内容.all() if 附.类型 == 1 ] #python
 
+	if not 节点许可查询(request , 此节点): #权限有可能变动
+		raise Http404
+
 	上下文 = {}
 
 	上下文["启用MathJax"] = (此节点.内容类型 == 0)
