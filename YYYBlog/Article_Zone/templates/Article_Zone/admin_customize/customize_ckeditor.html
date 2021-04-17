@@ -11,7 +11,7 @@
 
 CKEDITOR.editorConfig = function( config ) {
 
-	config.extraPlugins = "YMusic,YStrong,YSpliter,YRegulizeSpliter," + config.extraPlugins
+	config.extraPlugins = "YPDF,YMusic,YStrong,YSpliter,YRegulizeSpliter," + config.extraPlugins
 
 	config.font_names = ""
 		+ "仿宋/FangSong;宋体/宋体;黑体/黑体;"
@@ -30,11 +30,11 @@ CKEDITOR.editorConfig = function( config ) {
 		"{% static 'ckeditor_extra/fake_content_area.css'|make_static:'this' %} " , 
 		"{% static 'default/main.css'|make_static:'this' %} " , 
 		"{% static 'YUI/css/YUI.css'|make_static:'this' %}" , 
-	];
+	]
 
 	// RELATEDTO: ckeditor_extra/main.css
-	config.fontSize_defaultLabel = "16（默认）"; 
-	config.font_defaultLabel     = "仿宋（默认）";
+	config.fontSize_defaultLabel = "16（默认）"
+	config.font_defaultLabel     = "仿宋（默认）"
 
 	CKEDITOR.stylesSet.add( "default", [
 		{//文本
@@ -121,7 +121,7 @@ CKEDITOR.editorConfig = function( config ) {
 		},
 
 
-	] );
+	] )
 
 	config.coreStyles_bold = {
 		element: "span",
@@ -129,9 +129,7 @@ CKEDITOR.editorConfig = function( config ) {
 			"class": "Y-color-text-lighter" ,
 			"style" : "font-weight: bold;" ,
 		}
-	};
-
-
-};
+	}
+}
 
 </script>

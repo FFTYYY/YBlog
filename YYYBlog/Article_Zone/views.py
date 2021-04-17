@@ -4,7 +4,6 @@ from django.http import Http404
 import django.http as http
 from .models import 节点 , 留言
 from .utils.relationship import *
-from .utils.process_content import *
 from .utils.permission_manage import *
 import os
 import django.utils.timezone as timezone
@@ -58,15 +57,12 @@ def 获取节点(request , 节点地址):
 
 	上下文["启用MathJax"] = (此节点.内容类型 == 0)
 
-	子节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 重排列(此节点.子)))
+	子节点列表   = list(filter(lambda 点 : 节点许可查询(request , 点) , 重排列(此节点.子)))
 	祖先节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 获取祖先节点列表(此节点)))
 	兄弟节点列表 = list(filter(lambda 点 : 节点许可查询(request , 点) , 获取兄弟节点列表(此节点)))
 
 	留言列表 = [言论 for 言论 in 此节点.留言.all()]
 	留言列表.reverse()
-
-	内容 , 脚本 = 处理内容(此节点.内容 , 此节点.内容类型)
-
 
 	上下文.update({
 		"此节点" 		: 此节点,
@@ -74,9 +70,9 @@ def 获取节点(request , 节点地址):
 		"祖先节点列表" 	: 祖先节点列表,
 		"兄弟节点列表" 	: 兄弟节点列表,
 		"留言列表" 		: 留言列表,
-		"内容"			: 内容 , 
+		"内容"			: 此节点.内容 , 
 		"访问等级"		: 权限查询(request) , 
-		"额外脚本" 		: 脚本 , 
+		"额外脚本" 		: "" , 
 	})
 
 

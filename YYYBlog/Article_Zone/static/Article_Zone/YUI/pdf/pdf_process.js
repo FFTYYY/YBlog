@@ -1,3 +1,4 @@
+/*一些可能以后会用到的方法*/
 function triple2color(col)
 {
 	str = "#"
