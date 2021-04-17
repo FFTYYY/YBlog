@@ -37,7 +37,7 @@ class 节点(models.Model):
 	排序依据 = models.IntegerField(default = 0)
 	最低访问等级需求 = models.IntegerField(default = 0)
 	内容 = RichTextUploadingField(default = "" , blank = True)
-	附加内容 = models.ManyToManyField(to = "附加" , related_name = "所在")
+	附加内容 = models.ManyToManyField(to = "附加" , related_name = "所在" , null = True)
 
 	def __str__(self):
 		return self.名
