@@ -9,10 +9,10 @@ import re
 import urllib
 
 def 处理转义(内容):
-	return 内容.replace("\\" , "\\\\").replace("'" , "\\'").replace("\"" , "\\\"") #替换转移字符
+	return 内容.replace("\\" , "\\\\").replace("'" , "\\'").replace("\"" , "\\\"") , "" #替换转移字符
 
 def 处理html(内容):
-	return 内容
+	return 内容 , ""
 
 def 处理pdf(内容):
 	#找到pdf文件的url
@@ -34,18 +34,16 @@ def 处理pdf(内容):
 		创建元素_canvas_list，其中添加一系列canvas，并且用于显示pdf图片
 	'''
 	内容 = '''
+		<!--保存canvas的容器-->
+		<div id="_canvas_list" style="width:100%%;height:100%%"></div>
+	'''
+	脚本 = '''
 		{%% load static %%}
 		{%% load universe_extras %%}
 		{%% load article_zone_extras %%}
 
-
-		<script src = {%% static "components/process_pdf.js"|make_static:"this" %%} ></script>
-
-		<!--保存canvas的容器-->
-		<div id="_canvas_list" style="width:100%%;height:100%%"></div>
-
+		<script src = {%% static "process_pdf.js"|make_static:"this" %%} ></script>
 		<script src = {%% static "pdfjs/build/pdf.js"|make_static:"universe" %%} ></script>
-
 		<script type = "text/javascript">
 
 			//会在执行完后调用，等待之后来赋值
@@ -109,10 +107,10 @@ def 处理pdf(内容):
 		</script>
 		''' % (地址)
 
-	内容 = Template(内容).render(Context(上下文))
+	内容 = Template(内容).render(Context({}))
+	脚本 = Template(脚本).render(Context({}))
 
-	上下文["强化标签"].append("pdf文件")
-	return 内容
+	return 内容 , 脚本
 
 
 def 处理内容(内容 , 类型 = 0):
@@ -124,7 +122,7 @@ def 处理内容(内容 , 类型 = 0):
 	'''
 	
 	if 类型 == 0:
-		内容 = 处理html	(内容)
+		内容 , 脚本 = 处理html	(内容)
 	if 类型 == 1:
-		内容 = 处理pdf	(内容)
-	return 内容
+		内容 , 脚本 = 处理pdf	(内容)
+	return 内容 , 脚本
