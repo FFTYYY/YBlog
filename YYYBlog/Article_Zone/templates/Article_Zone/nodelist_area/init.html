@@ -171,8 +171,6 @@ Vue.component("inner-nodelist-area" , {
 		new_page: function(url , type){
 			let me = this
 			$.ajax({url: "../" + url + "/get_node_list", success : function(response){
-				console.log(response)
-				fuck = response
 				var ret = (new Function(response))() // ajax获得下一级的内容
 				me.$emit("new_page" , [me.my_id , ret , type]) //传递内容给父对象创建新页面
 			}})
