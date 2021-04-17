@@ -16,9 +16,6 @@
 	{% endif %}
 	<script src = {% static "pdfjs/build/pdf.js"|make_static:"universe" %} ></script>
 
-	<!-- TODO: remove this?-->
-	<script src = {% static "process_pdf.js"|make_static:"this" %} ></script>
-
 	<!-- Vexflow，用于渲染乐谱 -->
 	<script src = {% static "vexflow/vexflow-min.js"|make_static:"universe" %}></script>
 
@@ -30,14 +27,17 @@
 	<script src="{% static "YUI/YUI.js"|make_static:"this" %}"></script>
 	<script src="{% static "YUI/YUI-components.js"|make_static:"this" %}"></script>
 	<script src="{% static "YUI/YUI-css-complement.js"|make_static:"this" %}"></script>
+	<!-- YMusic -->
 	<script src="{% static "YUI/music/YMusic.js"|make_static:"this" %}"></script>
+	<!-- YPDF -->
+	<script src = {% static "YUI/pdf/pdf_process.js"|make_static:"this" %}></script>
+	<script src = {% static "YUI/pdf/YPDF.js"|make_static:"this" %}></script>
 
 	<!-- 主界面样式 -->
 	<link rel = "stylesheet" href = {% static "default/main.css"|make_static:"this" %} type = "text/css" />
 
-	<!-- 导入自定义组件 -->
+	<!-- 导入自定义模块 -->
 
-	<script src = {% static "widgets/pdf_processer.js"|make_static:"this" %}></script>
 	{% include "../nodelist_area/init.html" %}
 	{% include "../comment_area/init.html" %}
 	{% include "../option_area/init.html" %}
@@ -112,15 +112,13 @@ $(document).ready(
 		)
 
 
+		// 开启pdf处理
+		start_ypdf(["P"] , "{% static "pdfjs/build/pdf.worker.js"|make_static:"universe" %}")
+
 		// 启动nice scroll
 		$(".content-area .content").niceScroll({cursorborder:"",cursorcolor:"#657899",boxzoom:false});
 		setInterval(function(){$(".content-area .content").getNiceScroll().resize()} , 500)
 		
-		// 开启pdf处理
-		pdfjsLib.GlobalWorkerOptions.workerSrc = 
-			"{% static "pdfjs/build/pdf.worker.js"|make_static:"universe" %}"
-
-		start_ypdf()
 	}
 
 );

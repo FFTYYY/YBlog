@@ -1,7 +1,21 @@
-function start_ypdf(){
+function start_ypdf(tags , pdfworker_path){
 
-	/*查找所有class = ypdf的div，查看其内容*/
-	$(".ypdf").each(function(){
+	// 初始化pdf.js worker
+	pdfjsLib.GlobalWorkerOptions.workerSrc = pdfworker_path
+
+	// 把所有标记替换class为_ypdf的div
+	for(let tagname of tags)
+	{
+		$(tagname).each(function(){
+			let t = $(this).html()
+			t = t.replace("【PDF开始】" , "<div class = '_ypdf'>")
+			t = t.replace("【PDF结束】" , "</div>")
+			$(this).html(t)
+		})
+	}
+
+	// 查找所有class = ypdf的div，查看其内容
+	$("._ypdf").each(function(){
 		let pre_h = $(this).height()
 		let pre_w = $(this).width()
 

@@ -143,7 +143,6 @@ CKEDITOR_CONFIGS = {
 			["Bold","Italic","Underline","Strike","-","Subscript","Superscript"], 
 			["Styles","Format","Font","FontSize"], 
 			["div","Source","-","Save","NewPage","Preview","-","Templates"], 
-			["Cut","Copy","Paste","PasteText","PasteFromWord"], 
 			["Undo","Redo","-","Find","Replace","-","SelectAll","RemoveFormat"], 
 			["TextColor","BGColor"], 
 			["JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock"], 
@@ -151,9 +150,10 @@ CKEDITOR_CONFIGS = {
 			["Image","Flash","Table","HorizontalRule","Smiley","SpecialChar","PageBreak"], 
 			["Maximize","ShowBlocks",],
 			["NumberedList","BulletedList","-","Outdent","Indent","Blockquote"], 
-			["YSpliter" , "YRegulizeSpliter" , "YMusic"] , 
+			["YSpliter" , "YRegulizeSpliter" , "YMusic" , "YPDF"] , 
 			
 			["Form","Checkbox","Radio","TextField","Textarea","Select","Button", "ImageButton","HiddenField"], 
+			["Cut","Copy","Paste","PasteText","PasteFromWord"], 
 		],
 		"enterMode" 		: 1, 	# 回车换p
 		"shiftEnterMode" 	: 2, 	# shift+回车软换行
