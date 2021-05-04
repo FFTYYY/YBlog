@@ -11,10 +11,6 @@
 	<script src = "https://cdn.bootcdn.net/ajax/libs/animejs/3.2.0/anime.min.js"></script>
 	<script src = "https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src = {% static "jquery.nicescroll-3.7.6/jquery.nicescroll.js"|make_static:"universe" %}></script>
-	{% if 启用MathJax %}
-			<script src = {% static "MathJax/MathJax.js"|make_static:"universe" %}></script>
-			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
-	{% endif %}
 	<script src = {% static "pdfjs/build/pdf.js"|make_static:"universe" %} ></script>
 
 	<!-- Vexflow，用于渲染乐谱 -->
@@ -130,3 +126,8 @@ $(document).ready(
 
 <!-- vue不允许scripts放在content内，因此需要额外放置 -->
 {{附加内容|safe}}
+
+{% if 启用MathJax %}
+		<script src = {% static "MathJax/MathJax.js"|make_static:"universe" %}></script>
+		<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
+{% endif %}
