@@ -12,6 +12,7 @@
 	<script src = "https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src = {% static "jquery.nicescroll-3.7.6/jquery.nicescroll.js"|make_static:"universe" %}></script>
 	{% if 启用MathJax %}
+			<script src = {% static "MathJax/MathJax.js"|make_static:"universe" %}></script>
 			<script src = {% static "import_mathjax.js"|make_static:"universe" %}></script>
 	{% endif %}
 	<script src = {% static "pdfjs/build/pdf.js"|make_static:"universe" %} ></script>
@@ -41,7 +42,7 @@
 	{% include "../nodelist_area/init.html" %}
 	{% include "../comment_area/init.html" %}
 	{% include "../option_area/init.html" %}
-	<script src = {% static "content_area/content_area.js"|make_static:"this" %}></script>
+	<!-- script src = {% static "content_area/content_area.js"|make_static:"this" %}></script -->
 
 </head>
 
