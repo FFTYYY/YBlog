@@ -81,6 +81,9 @@
 <script>
 $(document).ready(
 	function() { 
+		// 开启pdf处理
+		start_ypdf(["P"] , "{% static "pdfjs/build/pdf.worker.js"|make_static:"universe" %}")
+		
 		//启动YUI
 		start_YUI("#main")
 
@@ -108,9 +111,6 @@ $(document).ready(
 			["P" , "TD"]
 		)
 
-
-		// 开启pdf处理
-		start_ypdf(["P"] , "{% static "pdfjs/build/pdf.worker.js"|make_static:"universe" %}")
 
 		// 启动nice scroll
 		$(".content-area .content").niceScroll({cursorborder:"",cursorcolor:"#657899",boxzoom:false});
