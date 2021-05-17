@@ -1,4 +1,4 @@
-//version：21-03-17
+//version：21-05-17
 
 function unsub_str(s,l,r){
 	//从一个字符串抠出来一个子串
