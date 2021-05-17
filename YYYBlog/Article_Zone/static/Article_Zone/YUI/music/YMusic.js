@@ -174,7 +174,6 @@ function ymusic_play_music(bar_notes , bar_metas , speed , let_ring){
 		let true_duration = Math.min(x.duration + 0.2 , x.duration * 2)
 		if(let_ring)
 			true_duration = Math.max(true_duration , 1) //让他一直发声
-		console.log(true_duration)
 		true_duration = true_duration * semibreve//实际演奏的时长
 		ymusic_sampler.triggerAttackRelease(x.keys , true_duration , now + time_cnt)
 		time_cnt += x.duration * semibreve
