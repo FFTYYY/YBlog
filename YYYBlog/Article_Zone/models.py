@@ -20,24 +20,24 @@ class 节点(models.Model):
 	地址 = models.CharField(max_length = 短文本长度 , default = "" , blank = True)
 	模板 = models.ForeignKey("界面模板" , on_delete = models.SET_NULL , 
 			default = 0 , null = True)
-	创建时间 = models.DateTimeField(default = timezone.now)
+	创建时间 	= models.DateTimeField(default = timezone.now)
 	最后修改时间 = models.DateTimeField(default = timezone.now)
-	内容类型 = models.IntegerField(default = 0 , 
+	内容类型 	= models.IntegerField(default = 0 , 
 		choices = (
 			(0 , "html（Django模板）"),
 			(1 , "pdf"),
 		)
 	)
-	节点类型 = models.IntegerField(default = 0 , 
+	节点类型 	= models.IntegerField(default = 0 , 
 		choices = (
 			(0 , "文章"),
 			(1 , "集"),
 		)
 	)
-	排序依据 = models.IntegerField(default = 0)
-	最低访问等级需求 = models.IntegerField(default = 0)
-	内容 = RichTextUploadingField(default = "" , blank = True)
-	附加内容 = models.ManyToManyField(to = "附加" , related_name = "所在" , blank = True)
+	排序依据 		= models.IntegerField(default = 0)
+	最低访问等级需求 	= models.IntegerField(default = 0)
+	内容 			= RichTextUploadingField(default = "" , blank = True)
+	附加内容 		= models.ManyToManyField(to = "附加" , related_name = "所在" , blank = True)
 
 	def __str__(self):
 		return self.名
@@ -69,7 +69,7 @@ class 节点(models.Model):
 
 
 class 附加(models.Model):
-	名 = models.CharField(max_length = 短文本长度)
+	名 	 = models.CharField(max_length = 短文本长度)
 	内容 = models.TextField(default = "")
 	类型 = models.IntegerField(default = 0 , 
 		choices = (
