@@ -128,6 +128,9 @@ MEDIA_URL = "/media/"
 
 STATIC_URL = "/static/"
 
+
+# ----- CKEDITOR -----
+
 CKEDITOR_UPLOAD_PATH = "uploads"
 CKEDITOR_IMAGE_BACKEND = "pillow"
 
@@ -162,3 +165,6 @@ CKEDITOR_CONFIGS = {
 		"disallowedContent" : True, 		
 	},
 }
+# ----- CKEDITOR END -----
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
