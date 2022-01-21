@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 	"django.contrib.staticfiles",
 	"django_extensions",
 	"Entry.apps.EntryConfig",
+	"articlezone.apps.ArticlezoneConfig" , 
 	"Article_Zone.apps.ArticleZoneConfig",
 	"Open_Discuss_Zone.apps.OpenDiscussZoneConfig",
 	"Free_Page_Zone.apps.FreePageZoneConfig",
