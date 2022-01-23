@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "clean": "rmdir ..\\yblog\\articlezone\\templates /s /q && rmdir ..\\yblog\\articlezone\\static /s /q" ,
+    "build": "npm run clean && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
