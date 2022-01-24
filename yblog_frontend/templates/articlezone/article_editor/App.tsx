@@ -8,7 +8,7 @@ import ytext , {YEditor , EditorCore , OutRenderer} from "@ftyyy/ytext"
 import {DefaultEditor , group_prototype} from "@ftyyy/ytext"
 import {withAllStyles_Editor , withAllStyles_Output , withAllStyles_Interface} from "../components"
 import {Node} from "slate"
-
+import {csrftoken} from "../utils"
 interface App_Props{
 
 }
@@ -32,6 +32,8 @@ class App extends  React.Component<App_Props , App_State>{
 		this.output = withAllStyles_Output( new OutRenderer( this.core ) )
 
 		this.setState( {value: this.core.root.children} )
+
+		console.log(csrftoken)
 	}
 
 	on_fab_click(e:any){
