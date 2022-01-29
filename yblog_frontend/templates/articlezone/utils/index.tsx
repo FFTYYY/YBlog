@@ -1,4 +1,11 @@
-export {csrftoken}
+import axios from 'axios'
+export { csrftoken , root , axios}
+
+var root = "http://127.0.0.1:8000" // debug
+// var root = "/" // production
+
+axios.defaults.baseURL = root;
+
 
 function getCookie(name: string) {
     let cookieValue = null;
@@ -11,8 +18,9 @@ function getCookie(name: string) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
             }
+            console.log(cookie)
         }
     }
     return cookieValue;
 }
-const csrftoken = getCookie('csrftoken');
+const csrftoken = getCookie("csrftoken")

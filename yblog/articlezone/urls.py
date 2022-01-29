@@ -1,7 +1,8 @@
 from django.urls import path
-from .views.views import index 
+from .views.views import node_view 
+from functools import partial
 
 urlpatterns = [
-    path("" , index) , 
-    path("index/" , index) , 
+    path("" , partial(node_view,node_id = 0)) , 
+    path("<int:node_id>" , node_view) , 
 ]
