@@ -1,14 +1,12 @@
+/**
+ * TODO：这个文件中的一切操作都是debug模式。
+ */
+
 import axios from 'axios'
-export { csrftoken , root , axios}
-
-var root = "http://127.0.0.1:8000" // debug
-// var root = "/" // production
-
-axios.defaults.baseURL = root;
-
+export { axios , get_node_id }
 
 function getCookie(name: string) {
-    let cookieValue = null;
+    let cookieValue = ""
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
@@ -24,3 +22,15 @@ function getCookie(name: string) {
     return cookieValue;
 }
 const csrftoken = getCookie("csrftoken")
+
+
+var root = "http://127.0.0.1:8000" // DEBUG
+// var root = "/" // production
+
+axios.defaults.baseURL = root
+axios.defaults.headers.post["X-CSRFToken"] = csrftoken
+
+function get_node_id(){
+    return 1 // DEBUG
+}
+
