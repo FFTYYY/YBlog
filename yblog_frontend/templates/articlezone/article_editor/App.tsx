@@ -9,6 +9,8 @@ import {DefaultEditor , group_prototype} from "@ftyyy/ytext"
 import {withAllStyles_Editor , withAllStyles_Output , withAllStyles_Interface} from "../components"
 import {Node} from "slate"
 import {csrftoken} from "../utils"
+import { axios } from '../utils'
+import Cookie from "js-cookie"
 interface App_Props{
 
 }
@@ -32,12 +34,10 @@ class App extends  React.Component<App_Props , App_State>{
 		this.output = withAllStyles_Output( new OutRenderer( this.core ) )
 
 		this.setState( {value: this.core.root.children} )
-
-		console.log(csrftoken)
 	}
-
 	on_fab_click(e:any){
-		console.log(e)
+		axios.get("/").then(response => {console.log(response)})
+		axios.post("/" , {haha: "2333"}).then(response => {console.log(response)})
 	}
 
 	render(){
@@ -46,7 +46,7 @@ class App extends  React.Component<App_Props , App_State>{
 
 		return <Box><Grid container spacing={2}>
 			<Grid item xs={1} key={0}>
-				<Fab><AddIcon /></Fab>
+				<Fab onClick={me.on_fab_click}><AddIcon /></Fab>
 			</Grid>
 
 			<Grid item xs={5} key={1}>
