@@ -11,3 +11,4 @@ autoupdate.sh
 *.crt
 *.key
 node_modules
+tempprok.rar
