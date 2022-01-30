@@ -10,10 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@ftyyy/ytext": "^0.0.2",
+    "@ftyyy/ytext": "^0.0.3",
+    "@mui/lab": "^5.0.0-alpha.66",
+    "@mui/material": "^5.3.1",
+    "axios": "^0.25.0",
+    "jquery": "^3.6.0",
     "js-cookie": "^3.0.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-beautiful-dnd": "^13.1.0",
+    "react-dnd": "^14.0.5",
+    "react-dnd-html5-backend": "^14.1.0",
+    "react-dom": "^17.0.2",
+    "react-spring": "^9.4.2"
   },
   "devDependencies": {
     "@types/react": "^17.0.33",
