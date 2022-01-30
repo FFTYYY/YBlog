@@ -7,7 +7,6 @@ import pdb
 @allow_acess
 def get_node(request, node_id):
     node = Node.objects.get(id = node_id)
-    print (node.content)
     return JsonResponse({
         "content": node.content.replace("'",'"')
     })
@@ -17,10 +16,12 @@ def get_node(request, node_id):
 def post_node(request, node_id):
     print (request)
     node = Node.objects.get(id = node_id)
-    content = json.loads(request.body)["content"]
+    
+    if request.body != b"":
+        content = json.loads(request.body)["content"]
 
-    node.content = content
-    node.save()
+        node.content = content
+        node.save()
 
     return JsonResponse({})
 

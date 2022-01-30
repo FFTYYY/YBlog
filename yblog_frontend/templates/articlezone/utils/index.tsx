@@ -16,7 +16,6 @@ function getCookie(name: string) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
             }
-            console.log(cookie)
         }
     }
     return cookieValue;
