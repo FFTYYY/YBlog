@@ -2,7 +2,7 @@ import { brightwords_erenderer } from "./interface_renderer"
 import { brightwords_orenderer } from "./output_renderer"
 import { brightwords_style } from  "./styles"
 import { YEditor } from "@ftyyy/ytext"
-import { OutRenderer , EditorCore } from "@ftyyy/ytext"
+import { OutRenderer , EditorCore } from  "@ftyyy/ytext"
 
 export {withAllStyles_Editor , withAllStyles_Output , withAllStyles_Interface}
 
