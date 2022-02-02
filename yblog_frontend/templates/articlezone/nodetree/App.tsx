@@ -13,8 +13,12 @@ import { DndProvider , useDrag , useDrop , DropTargetMonitor} from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { node2path } from '@ftyyy/ytext/dist/lib';
 
+/** 每个 raw_info_item 是从后端获得的一组原始数据，这组数据稍后被解析成 info_item 树。
+ * 三个元素依次表示 id 、father_id 、idx_in_father。
+*/
+type raw_info_item = [number,number,number] // 树项 
 
-type raw_info_item = [number,number,number] // 树项 id,father,idx_in_father
+/**  info_item 用于描述节点树。 */
 interface info_item {
     my_id: number
     father_id: number 
@@ -23,8 +27,16 @@ interface info_item {
 }
 
 interface App_State{
+
+    /** 节点树的根。 
+     * 注意根节点被设为 my_id = -1 和 father_id = -1 。但凡 father_id = -1 就表示根节点的子节点。
+    */
     nodetree: info_item
+
+    /** 已经展开的节点，这是 mui TreeView 需要的状态。 */
     expanded: (string | number) [] 
+
+    /** 一个从节点编号映射到具体节点树中的节点的映射。注意这个状态只能在 setNodetree() 中更新。 永远不要用 setState() 更新这个状态。 */
     id2node: { [my_ids: number] : info_item}
 }
 
@@ -38,20 +50,30 @@ class App extends React.Component<{},App_State>{
         }
     }
 
-    /** 给定 nodetree，这个函数生成一个 id 到树节点的映射。 */
-    generate_id2node(node: info_item, id2node: {[id: number]: info_item}){
-        id2node[node.my_id] = node
-        for(let nd of node.sons)
-           this.generate_id2node(nd , id2node)
-        return id2node
+    /** 给定 nodetree，这个函数生成一个 id 到树节点的映射。 
+     * @param node 节点树的根。
+    */
+    generate_id2node(node: info_item){
+        function _generate_id2node(nownode: info_item, id2node: {[id: number]: info_item}){
+            id2node[nownode.my_id] = nownode
+            for(let nd of nownode.sons)
+                _generate_id2node(nd , id2node)
+            return id2node
+        }
+        return _generate_id2node(node , {})
     }
 
-    /** 约定：只能用这个函数更新 nodetree，永远不更新 id2node。 */
+    /** 
+     * 相当于 setState( {nodetree: nodetree} ) ，但是这个函数也会同时更新 id2node。
+     * 约定：只能用这个函数更新 nodetree，永远不更新 id2node。 
+     * @param nodetree 新的 nodetree。
+    */
     setNodetree(nodetree: info_item){
-        let id2node: {[id: number] : info_item} = this.generate_id2node(nodetree , {})
+        let id2node: {[id: number] : info_item} = this.generate_id2node(nodetree)
         this.setState( {nodetree: nodetree , id2node: id2node} )
     }
 
+    /** 生命周期钩子。这个函数在初始化时向后端询问节点树的信息。 */
     async componentDidMount(){
         let raw_nodetree = (await axios.get( "/get_nodetree_info" )).data.data as raw_info_item[]
         
@@ -59,7 +81,9 @@ class App extends React.Component<{},App_State>{
         this.setState({expanded: Object.values(raw_nodetree).map( (val:raw_info_item)=>val[1])})
     }
 
-    /** 这个函数将三元组形式的描述转换成树形的描述。 */
+    /** 这个函数将三元组形式的描述转换成树形的描述。 
+     * @param raw_nodetree （后端发来的）三元组形式的节点树描述。
+    */
     raw_to_processed(raw_nodetree: raw_info_item[]){
         raw_nodetree.sort(((x1: raw_info_item,x2: raw_info_item) => x1[2]<x2[2]?1:0)) // 按父节点内的顺序排序
 
@@ -78,12 +102,14 @@ class App extends React.Component<{},App_State>{
         }
     }
 
-    /** 这个函数将树形的描述转换成三元组的描述。 */
+    /** 这个函数将对节点树的树形的描述转换成三元组的描述。 
+     * @param nodetree 节点树的树形描述。
+    */
     processed_to_raw(nodetree: info_item){
 
         let _processed_to_raw = (node:info_item , idx_in_father: number): raw_info_item[] =>{
             let res = [ [node.my_id , node.father_id , idx_in_father] as raw_info_item ]
-            if(node.my_id >= 0) // 不要包含一个编号小于0的节点。
+            if(node.my_id < 0) // 不要包含一个编号小于0的节点。
                 res = []
 
             for(let idx in node.sons){
@@ -115,12 +141,17 @@ class App extends React.Component<{},App_State>{
         return false
     }
 
-    /** 暴力移动节点。我知道有更好的实现方式，但我懒得写了。 */
+    /** 在 nodetree 中移动节点的暴力实现。我知道有更好的实现方式，但我懒得写了。
+     * 注意这个函数会更新组件的 nodetree 状态。
+     * @param to_move 要移动的节点。
+     * @param new_father 要移动到父节点。
+     * @param new_idx 要移动到新的父节点下面的第几个位置。
+    */
     move_node(to_move: info_item , new_father: info_item, new_idx: number){
 
         
         let new_nodetree = JSON.parse( JSON.stringify( this.state.nodetree ) )
-        let new_id2node = this.generate_id2node(new_nodetree , {})
+        let new_id2node = this.generate_id2node(new_nodetree)
         
         let old_idx = to_move.idx_in_father as number // 待删除节点在父节点中的位置。
 
@@ -183,7 +214,10 @@ class App extends React.Component<{},App_State>{
         ></Box>
     }
 
-    /** 这个组件创建一个可以拖动的树节点。
+    /** 这个组件渲染一个节点树的节点。这个节点可以拖动也可以放置。
+     * 当拖动一个节点放到某个节点上，表示将这个节点移动到目标节点的最后一个儿子处。
+     * 也可以将一个节点拖到某个空隙（ DroppableSpace ）处。
+     * 
      * @param props.node 这个树节点对应的节点。
      * @param props.idx_in_father 这个树节点在父节点中的编号。
      * @param props.children 这个组件的子组件（由 React 自动创建）。
@@ -248,7 +282,8 @@ class App extends React.Component<{},App_State>{
     }
     
 
-    /** 渲染某个节点的全部子节点。 */
+    /** 渲染某个节点的全部子节点。 
+    */
     get_subtree(nownode: info_item){
         let me = this
         let DragableTreeItem = this.DragableTreeItem.bind(this)
@@ -256,12 +291,13 @@ class App extends React.Component<{},App_State>{
 
         //TODO： 做一个展开/折叠的样式，不然看起来像是有bug。
         return <>{Object.values(nownode.sons).map((subnode:info_item, idx:number)=>{
-            return <DragableTreeItem 
+            return <DragableTreeItem
                 key = {`${idx}`} 
                 node = {subnode} 
                 idx_in_father = {idx} 
-                children = {me.get_subtree(subnode)} 
-            />
+            >
+                {me.get_subtree(subnode)}
+            </DragableTreeItem>
         })}</>  
     }
 
