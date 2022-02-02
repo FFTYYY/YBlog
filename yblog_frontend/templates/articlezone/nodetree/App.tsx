@@ -19,6 +19,7 @@ interface info_item {
     my_id: number
     father_id: number 
     sons: info_item[]
+    idx_in_father? : number
 }
 
 interface App_State{
@@ -37,21 +38,18 @@ class App extends React.Component<{},App_State>{
         }
     }
 
+    /** 给定 nodetree，这个函数生成一个 id 到树节点的映射。 */
+    generate_id2node(node: info_item, id2node: {[id: number]: info_item}){
+        id2node[node.my_id] = node
+        for(let nd of node.sons)
+           this.generate_id2node(nd , id2node)
+        return id2node
+    }
+
     /** 约定：只能用这个函数更新 nodetree，永远不更新 id2node。 */
     setNodetree(nodetree: info_item){
-
-        let id2node: {[id: number] : info_item} = {}
-
-        function _search(node: info_item){
-            id2node[node.my_id] = node
-            for(let nd of node.sons)
-                _search(nd)
-        }
-
-        _search(nodetree)
-
+        let id2node: {[id: number] : info_item} = this.generate_id2node(nodetree , {})
         this.setState( {nodetree: nodetree , id2node: id2node} )
-
     }
 
     async componentDidMount(){
@@ -85,8 +83,8 @@ class App extends React.Component<{},App_State>{
 
         let _processed_to_raw = (node:info_item , idx_in_father: number): raw_info_item[] =>{
             let res = [ [node.my_id , node.father_id , idx_in_father] as raw_info_item ]
-            if(node.my_id < 0) // 不要包含一个编号小于0的节点。
-                res = []  
+            if(node.my_id >= 0) // 不要包含一个编号小于0的节点。
+                res = []
 
             for(let idx in node.sons){
                 let subid = parseInt(idx)
@@ -117,16 +115,59 @@ class App extends React.Component<{},App_State>{
         return false
     }
 
+    /** 暴力移动节点。我知道有更好的实现方式，但我懒得写了。 */
+    move_node(to_move: info_item , new_father: info_item, new_idx: number){
+
+        
+        let new_nodetree = JSON.parse( JSON.stringify( this.state.nodetree ) )
+        let new_id2node = this.generate_id2node(new_nodetree , {})
+        
+        let old_idx = to_move.idx_in_father as number // 待删除节点在父节点中的位置。
+
+        // 转换到新树
+        let old_father = new_id2node[to_move.father_id]
+        new_father = new_id2node[new_father.my_id] 
+        to_move = new_id2node[to_move.my_id]
+        
+        // 若是同子树移动，因为是先删除再插入，所以要将插入位置向前挪。
+        if(old_father.my_id == new_father.my_id && old_idx < new_idx){
+            new_idx --
+        }
+        
+        // 删除
+        let os = old_father.sons
+        old_father.sons = [...os.slice(0,old_idx), ...os.slice(old_idx+1,os.length)]
+        
+        // 添加
+        let ns = new_father.sons
+        new_father.sons = [...ns.slice(0,new_idx) , ...[to_move] , ...ns.slice(new_idx,ns.length)]
+
+        // 修改必要信息
+        to_move.father_id = new_father.my_id
+
+        this.setNodetree(new_nodetree)
+    }
+
+    /** 这个组件创建一个空白占位符，用于作为树节点之间的可放置位置。
+     * 
+     * @param props.node 这个占位符的父节点。
+     * @param props.expect_idx 如果放在这个占位符处，是第几个节点。
+     */
     DroppableSpace(props: {node: info_item, expect_idx: number}){
         let me = this
         let node = props.node
         let expect_idx = props.expect_idx
 
-        const [ { isOver } , drop] = useDrop(()=>({
+        const [ { is_over_can_drop } , drop] = useDrop(()=>({
             accept: "treeitem" , 
-            drop: ()=>{console.log("???")} , 
+            drop: (item: info_item , monitor: DropTargetMonitor)=>{
+                if(!monitor.isOver({shallow: true}))
+                    return
+
+                me.move_node(item , node , expect_idx)
+            } , 
             collect: (monitor) => ({
-                isOver: monitor.isOver({shallow: true}) && monitor.canDrop(), 
+                is_over_can_drop: monitor.isOver({shallow: true}) && monitor.canDrop(), 
             }) , 
             canDrop: (item: info_item)=>{
                 return (node.my_id != item.my_id) && !me.is_son( item , node ) // 被拖动对象不能是自身的严格祖先
@@ -136,14 +177,18 @@ class App extends React.Component<{},App_State>{
         return <Box
             ref = {drop}
             sx = {{
-                border: isOver ? "1px dashed grey" : "0" , 
-                height: "4px" , 
+                border: is_over_can_drop ? "1px dashed grey" : "0" , 
+                height: "6px" , 
             }}
         ></Box>
     }
 
-    
-    DragableTreeItem(props: {node: info_item, idx_in_father: number, children: any}){
+    /** 这个组件创建一个可以拖动的树节点。
+     * @param props.node 这个树节点对应的节点。
+     * @param props.idx_in_father 这个树节点在父节点中的编号。
+     * @param props.children 这个组件的子组件（由 React 自动创建）。
+     */
+    DragableTreeItem(props: {node: info_item, idx_in_father: number , children: any}){
         let me = this
         let node = props.node
         let my_id = node.my_id
@@ -151,30 +196,37 @@ class App extends React.Component<{},App_State>{
         let idx_in_father = props.idx_in_father
         let DroppableSpace = this.DroppableSpace.bind(this)
 
-        const [{ isDragging }, drag] = useDrag(() => ({
+        const [{ is_dragging }, drag] = useDrag(() => ({
             type: "treeitem",
-            item: node , 
+            item: {...node , ...{idx_in_father: idx_in_father}} , // 附加上 idx_in_father 的信息。
             collect: (monitor) => ({
-                isDragging: monitor.isDragging()
+                is_dragging: monitor.isDragging()
             })
         }))
         
-        const [ { isOver } , drop] = useDrop(()=>({
+        const [ { is_over , can_drop } , drop] = useDrop(()=>({
             accept: "treeitem" , 
-            drop: (item)=>{console.log("haha")} , 
+            drop: (item: info_item , monitor: DropTargetMonitor)=>{
+                if(!monitor.isOver({shallow: true}))
+                    return
+                
+                if(item.my_id == node.my_id) //不执行相同节点的移动。
+                    return 
+                me.move_node(item , node , node.sons.length)
+            } , 
             collect: (monitor) => ({
-                isOver: monitor.isOver({shallow: true}) && monitor.canDrop() , 
+                is_over: monitor.isOver({shallow: true}), 
+                can_drop: monitor.canDrop() , 
             }) , 
             canDrop: (item: info_item)=>{
                 return (node.my_id == item.my_id) || !me.is_son( item , node ) // 被拖动对象不能是自身的严格祖先
             } , 
         }))
-
         
         return <Box
-            ref = {drop}
+            ref = { drop }
             sx = {{
-                border: isOver ? "1px dashed grey" : "0" , 
+               border: (is_over && can_drop) ? "1px dashed grey" : "0" , 
             }}
         >
             <DroppableSpace node={ me.id2node(father_id) } expect_idx={idx_in_father} />
@@ -182,11 +234,11 @@ class App extends React.Component<{},App_State>{
                 label = {`node-${my_id}`}
                 nodeId = {`${my_id}`}
     
-                ref = {drag} 
+                ref = { drag } 
                 onFocusCapture = {e => e.stopPropagation()} // 防止选择
                 sx = {{
                     cursor: "move" , 
-                    opacity: isDragging ? 0.5 : 1,
+                    opacity: is_dragging ? 0.5 : 1,
                 }}
             >
                 {props.children}
@@ -201,10 +253,15 @@ class App extends React.Component<{},App_State>{
         let me = this
         let DragableTreeItem = this.DragableTreeItem.bind(this)
 
+
+        //TODO： 做一个展开/折叠的样式，不然看起来像是有bug。
         return <>{Object.values(nownode.sons).map((subnode:info_item, idx:number)=>{
-            return <DragableTreeItem key={idx} node={subnode} idx_in_father={idx}>
-                {me.get_subtree(subnode)}
-            </DragableTreeItem>
+            return <DragableTreeItem 
+                key = {`${idx}`} 
+                node = {subnode} 
+                idx_in_father = {idx} 
+                children = {me.get_subtree(subnode)} 
+            />
         })}</>  
     }
 
