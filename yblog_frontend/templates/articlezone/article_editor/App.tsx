@@ -10,6 +10,9 @@ import {DefaultEditor , group_prototype} from "@ftyyy/ytext"
 import {withAllStyles_Editor , withAllStyles_Output , withAllStyles_Interface} from "../components"
 import {Node , Transforms} from "slate"
 import { axios , get_node_id } from '../utils'
+import {FlexibleDrawer , FlexibleItem} from "../theme/framework"
+import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
 
 var node_id = get_node_id()
 interface App_Props{
@@ -38,7 +41,8 @@ class App extends  React.Component<App_Props , App_State>{
 		if(node_content != "")
 			node_value = JSON.parse(node_content)
 		
-		Transforms.insertNodes(this.editor.slate , node_value as Node[])
+		Transforms.removeNodes( this.editor.slate , {at: [0]}) // 删除遗留的节点
+		Transforms.insertNodes(this.editor.slate , node_value as Node[] , {at: [0]})
 	}
 	
 	on_click_save(e: any){
@@ -48,23 +52,29 @@ class App extends  React.Component<App_Props , App_State>{
 	render(){
 		let me = this
 
-		return <Box><Grid container spacing={2}>
-			<Grid item xs={1} key={0}>
-				<Button onClick={me.on_click_save.bind(me)}>Save</Button>
-			</Grid>
+		return <Box><Stack spacing={2} direction="row">
 
-			<Grid item xs={5} key={1}>
-				<DefaultEditor 
+			<FlexibleDrawer>
+				<FlexibleItem 
+					open_item = {"hahhahahahaa"}
+					close_item = {"ha"}
+				/>
+				<FlexibleItem 
+					open_item = {"Save"}
+					close_item = {"S"}
+					onClick = {me.on_click_save.bind(me)}
+				/>
+			</FlexibleDrawer>
+
+			<Grid container>
+				<Grid item xs={6}><DefaultEditor 
 					editor = {me.editor}
-				/>
-			</Grid>
-			<Grid item xs={5} key={2}>
-				<OutRenderer.Component
+				/></Grid>
+				<Grid item xs={6}><OutRenderer.Component
 					renderer = {me.output}
-				/>
+				/></Grid>
 			</Grid>
-
-		</Grid></Box>	
+		</Stack></Box>
 	}
 
 }
