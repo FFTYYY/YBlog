@@ -20,6 +20,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import Button from '@mui/material/Button';
 import { Stack } from '@mui/material';
 import Paper from '@mui/material/Paper';
+import Container from '@mui/material/Container';
 
 export {FlexibleItem , FlexibleDrawer}
 
@@ -69,7 +70,7 @@ class FlexibleDrawer extends React.Component<FlexibleDrawer_Props , FlexibleDraw
 
     render(){
         let me = this
-        return <Drawer variant="permanent">
+        return <Paper>
             <FlexibleOpen_Context.Provider value={me.state.open}>
                 <Stack>
                     <FlexibleItem
@@ -80,7 +81,7 @@ class FlexibleDrawer extends React.Component<FlexibleDrawer_Props , FlexibleDraw
                     {me.props.children}
                 </Stack>
             </FlexibleOpen_Context.Provider>
-        </Drawer>
+        </Paper>
     }
 }
 

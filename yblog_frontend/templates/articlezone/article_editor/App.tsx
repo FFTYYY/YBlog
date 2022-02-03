@@ -13,6 +13,8 @@ import { axios , get_node_id } from '../utils'
 import {FlexibleDrawer , FlexibleItem} from "../theme/framework"
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
+import Divider from '@mui/material/Divider';
+import Container from '@mui/material/Container';
 
 var node_id = get_node_id()
 interface App_Props{
@@ -49,8 +51,22 @@ class App extends  React.Component<App_Props , App_State>{
 		var data = {"content": this.core.root.children}
 		axios.post( `/post_node/${node_id}` , data)
 	}
+
+	mainpart(props: {}){
+		let me = this
+		return <Container><Grid container>
+			<Grid item xs={6} key={0}><DefaultEditor 
+				editor = {me.editor}
+			/></Grid>
+			<Grid item xs={6} key={1}><OutRenderer.Component
+				renderer = {me.output}
+			/></Grid>
+		</Grid></Container>
+	}
+
 	render(){
 		let me = this
+		let MainPart = this.mainpart.bind(this)
 
 		return <Box><Stack spacing={2} direction="row">
 
@@ -66,14 +82,8 @@ class App extends  React.Component<App_Props , App_State>{
 				/>
 			</FlexibleDrawer>
 
-			<Grid container>
-				<Grid item xs={6}><DefaultEditor 
-					editor = {me.editor}
-				/></Grid>
-				<Grid item xs={6}><OutRenderer.Component
-					renderer = {me.output}
-				/></Grid>
-			</Grid>
+			<MainPart></MainPart>
+			
 		</Stack></Box>
 	}
 

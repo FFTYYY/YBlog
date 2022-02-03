@@ -1,2 +1,2 @@
-export {brightwords_erenderer} from "./styles" 
+export {brightwords_erenderer , followwords_erenderer , mount_erenderer , display_erenderer} from "./styles" 
 
