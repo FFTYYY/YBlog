@@ -1,8 +1,8 @@
 import { brightwords_orenderer , followwords_orenderer , mount_orenderer , display_orenderer } from "./output_renderer"
-import { brightwords_erenderer , followwords_erenderer , mount_erenderer , display_erenderer } from "./interface_renderer"
-import { brightwords_style , followwords_style , dimwords_style , mount_style , display_style } from  "./styles"
-import { YEditor } from "@ftyyy/ytext"
-import { OutRenderer , EditorCore } from  "@ftyyy/ytext"
+import { brightwords_erenderer , followwords_erenderer , mount_erenderer , display_erenderer , newpara_erenderer } from "./interface_renderer"
+import { brightwords_style , followwords_style , dimwords_style , mount_style , display_style , newpara_style } from  "./styles"
+import { YEditor } from "../../../lib"
+import { OutRenderer , EditorCore } from  "../../../lib"
 
 export {withAllStyles_Editor , withAllStyles_Output , withAllStyles_Interface}
 
@@ -12,6 +12,7 @@ function withAllStyles_Editor(core:EditorCore): EditorCore{
     core.add_groupstyle(mount_style)
     core.add_groupstyle(display_style)
     core.add_abstractstyle(dimwords_style)
+    core.add_supportstyle(newpara_style)
     return core
 }
 
@@ -20,6 +21,7 @@ function withAllStyles_Interface(yeditor: YEditor): YEditor{
     yeditor.update_renderer(followwords_erenderer   , "group" , "随言")
     yeditor.update_renderer(mount_erenderer         , "group" , "裱示")
     yeditor.update_renderer(display_erenderer       , "group" , "彰示")
+    yeditor.update_renderer(newpara_erenderer       , "support" , "新段")
     return yeditor
 }
 

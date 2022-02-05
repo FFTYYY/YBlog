@@ -1,7 +1,19 @@
-import { GroupStyle , new_default_group , AbstractStyle} from "@ftyyy/ytext"
+import { GroupStyle , new_default_group , AbstractStyle , newparagraph} from "../../../lib"
+import { SupportNode , paragraph_prototype} from "../../../lib"
+import { SupportStyle , EditorCore} from "../../../lib"
+import type { EditorRenderer_Func , EditorRenderer_Props } from "../../../lib"
+import { YEditor } from "../../../lib"
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import { Transforms , Node } from "slate"
+import { non_selectable_prop , is_same_node} from"../../../lib"
+import { node2path } from "../../../lib"
+import SouthIcon from '@mui/icons-material/South';
+import NorthIcon from '@mui/icons-material/North';
+import Grid         from "@mui/material/Grid"
 
-export { brightwords_style , followwords_style , dimwords_style , mount_style , display_style }
-export { brightwords_erenderer , followwords_erenderer , mount_erenderer , display_erenderer }
+export { brightwords_style , followwords_style , dimwords_style , mount_style , display_style , newpara_style}
+export { brightwords_erenderer , followwords_erenderer , mount_erenderer , display_erenderer , newpara_erenderer}
 
 var [brightwords_style , brightwords_erenderer] = new_default_group(
     "昭言" , 
@@ -33,3 +45,4 @@ var [ display_style , display_erenderer] = new_default_group(
     } , 
 )
 
+var [newpara_style , newpara_erenderer] = newparagraph("新段")

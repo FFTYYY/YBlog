@@ -26,7 +26,6 @@ export {FlexibleItem , FlexibleDrawer}
 
 /** 用来提供伸缩元素是否展开的上下文。 */
 const FlexibleOpen_Context = React.createContext(false)
-FlexibleOpen_Context.displayName = "flexible_drawer_open"
 
 
 /** 这个组件提供一个可伸缩的元素，这个元素根据上下文提供的是否展开信息可以渲染两种不同的组件。
