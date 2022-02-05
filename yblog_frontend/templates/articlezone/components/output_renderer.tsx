@@ -1,4 +1,4 @@
-import { OutRenderer_Props , GroupNode } from "@ftyyy/ytext"
+import { OutRenderer_Props , GroupNode } from "../../../lib"
 import { Node } from "slate"
 import Paper from '@mui/material/Paper';
 

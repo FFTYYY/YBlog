@@ -5,10 +5,10 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
-import {YEditor , EditorCore , OutRenderer} from "@ftyyy/ytext"
-import {DefaultEditor , group_prototype} from "@ftyyy/ytext"
+import {YEditor , EditorCore , OutRenderer} from "../../../lib"
+import {DefaultEditor , group_prototype} from "../../../lib"
 import {withAllStyles_Editor , withAllStyles_Output , withAllStyles_Interface} from "../components"
-import {Node , Transforms} from "slate"
+import {Node , Transforms , Element} from "slate"
 import { axios , get_node_id } from '../utils'
 import {FlexibleDrawer , FlexibleItem} from "../theme/framework"
 import Stack from '@mui/material/Stack';
