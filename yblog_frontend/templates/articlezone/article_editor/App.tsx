@@ -8,13 +8,15 @@ import AddIcon from '@mui/icons-material/Add';
 import {YEditor , EditorCore , OutRenderer} from "../../../lib"
 import {DefaultEditor , group_prototype} from "../../../lib"
 import {withAllStyles_Editor , withAllStyles_Output , withAllStyles_Interface} from "../components"
-import {Node , Transforms , Element} from "slate"
+import {Node , Transforms , Element } from "slate"
+import {ReactEditor} from "slate-react"
 import { axios , get_node_id } from '../utils'
 import {FlexibleDrawer , FlexibleItem} from "../theme/framework"
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
+import { withAllPlugins } from "./plugins"
 
 var node_id = get_node_id()
 interface App_Props{
@@ -35,6 +37,8 @@ class App extends  React.Component<App_Props , App_State>{
 		this.core   = withAllStyles_Editor( new EditorCore() )
 		this.editor = withAllStyles_Interface( new YEditor( this.core ) )
 		this.output = withAllStyles_Output( new OutRenderer( this.core ) )
+
+		this.editor.slate = withAllPlugins( this.editor.slate ) as ReactEditor
 	}
 
 	async componentDidMount(){		
