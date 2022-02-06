@@ -1,14 +1,90 @@
 import { Editor , Node , Transforms } from "slate"
-import { GroupNode , get_node_type , SupportNode } from "../../../../lib"
-import { newpara_style } from "../../components/styles"
+import { GroupNode , get_node_type , SupportNode , type_and_name_is, paragraph_prototype } from "../../../../lib"
+import { newpara_style , sectioner_style , ender_style  } from "../../components/styles"
 
-export { set_force_new_paragraph }
+export { set_force_new_paragraph_in_group , set_force_new_para_in_sectioner , set_force_sectioner}
 
-/** 这个插件强迫每个 GroupNode （包括根节点）的开头结尾都是 『新段』 节点。 */
-function set_force_new_paragraph(editor:Editor): Editor{
+/** 这个插件强迫编辑器的开头恰好是小节线，结尾恰好是章节线。且章节线不能出现在结尾以外的位置。 */
+function set_force_sectioner(editor: Editor): Editor{
     const normalizeNode = editor.normalizeNode
-    const onChange = editor.onChange
+    editor.normalizeNode = (entry: [Node, number[]]) => {
+        let [_node , path] = entry
 
+        if(path.length == 0){
+            let node = _node as {children: Node[]} & typeof _node
+            let num_num = node.children.length
+
+            // 开头不是小节线的情况。
+            if(num_num == 0 || !type_and_name_is(node.children[0] ,  "support" , "小节线") ){
+                Transforms.insertNodes(editor , sectioner_style.makenode() , {at: [0]})
+                return 
+            }
+
+            // 结尾不是章节线的情况。
+            if(!type_and_name_is(node.children[num_num-1] ,  "support" , "章节线")){
+                Transforms.insertNodes(editor , ender_style.makenode() , {at: [num_num]})
+                return 
+            }
+        }
+
+        if(type_and_name_is(_node , "support" , "章节线")){
+            if(path.length != 1 || path[0] != editor.children.length-1){ // 不是最后一个节点
+                Transforms.removeNodes(editor , {at: path})
+                return 
+            }
+        }
+
+        normalizeNode(entry)
+    }
+    return editor
+}
+
+/** 这个插件强迫每个小节线上方都恰好是『新段』节点，下方恰好是一个空白段落。 */
+function set_force_new_para_in_sectioner(editor: Editor): Editor{
+    const normalizeNode = editor.normalizeNode
+
+    editor.normalizeNode = (entry: [Node, number[]]) => {
+        let [node , path] = entry
+
+        if("children" in node){
+            for(let [subidx, subnode] of node.children.entries()){
+                
+                // 不是小节线也不是章节线，我们不关心。
+                if(!(type_and_name_is(subnode,"support","小节线") || type_and_name_is(subnode,"support","章节线")))
+                    continue
+                
+                
+                if(subidx != 0){ // 前一个节点必须是新段，除非自己是第一个。
+                    let last_node = node.children[subidx - 1]
+                    if(!type_and_name_is(last_node , "support" , "新段")){
+                        Transforms.insertNodes(editor , newpara_style.makenode() , {at: [...path,subidx]})
+                        return 
+                    }
+
+                }
+                if(subidx != node.children.length-1){ // 后一个节点必须是新段，除非自己是最后一个。
+                    let next_node = node.children[subidx + 1]
+
+                    // flag: next_node 是否是一个空段落
+                    if( get_node_type(next_node) != "paragraph" || Node.string(next_node) != "" ){
+                        Transforms.insertNodes(editor , paragraph_prototype("") , {at: [...path,subidx+1]})
+                        return 
+                    }
+                }
+            }
+        }
+
+        normalizeNode(entry)
+    }
+
+    return editor
+}
+
+/** 这个插件强迫每个 GroupNode （不包括根节点）的开头结尾都是 『新段』 节点。 */
+function set_force_new_paragraph_in_group(editor:Editor): Editor{
+    const normalizeNode = editor.normalizeNode
+
+    // 检查这个节点是否是新段节点。
     function goodson(subnode: Node){
         return get_node_type(subnode) == "support" && (subnode as SupportNode).name == newpara_style.name
     }
@@ -28,21 +104,13 @@ function set_force_new_paragraph(editor:Editor): Editor{
     editor.normalizeNode = (entry: [Node, number[]]) => {
         let [node , path] = entry
 
-        if(get_node_type(node) == "group"){
+        if(get_node_type(node) == "group" && path.length != 0){
             let check = goodfather(node as GroupNode)
             if(check >= 0)
                 Transforms.insertNodes( editor , newpara_style.makenode() , {at: [...path,check]} )
         }
 
         normalizeNode(entry)
-    }
-    /** slate 的 normalizeNode 不会上溯到 editor 本身，所以这里修改 onChange 来规范 editor 。 */
-    editor.onChange = ()=>{
-        let check = goodfather(editor as GroupNode)
-        if(check >= 0)
-            Transforms.insertNodes( editor , newpara_style.makenode() , {at: [check]} )
-
-        onChange()
     }
 
     return editor

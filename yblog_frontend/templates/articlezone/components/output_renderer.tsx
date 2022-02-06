@@ -1,8 +1,9 @@
-import { OutRenderer_Props , GroupNode } from "../../../lib"
+import { OutRenderer_Props , GroupNode , SupportNode } from "../../../lib"
 import { Node } from "slate"
 import Paper from '@mui/material/Paper';
+import Divider from '@mui/material/Divider';
 
-export {brightwords_orenderer , followwords_orenderer , mount_orenderer , display_orenderer}
+export {brightwords_orenderer , followwords_orenderer , mount_orenderer , display_orenderer , sectioner_orenderer, ender_orenderer}
 
 function brightwords_orenderer(props: OutRenderer_Props){
     let node = props.element as GroupNode
@@ -23,4 +24,13 @@ function mount_orenderer(props: OutRenderer_Props){
 function display_orenderer(props: OutRenderer_Props){
     let node = props.element as GroupNode
     return <Paper {...props.attributes}>彰：{props.children}</Paper>
+}
+
+function sectioner_orenderer(props: OutRenderer_Props){
+    let node = props.element as SupportNode
+    return <Divider>{node.parameters.title}</Divider>
+}
+
+function ender_orenderer(props: OutRenderer_Props){
+    return <Divider />
 }

@@ -46,7 +46,7 @@ import { YEditor } from "../editor_interface"
 
 import { non_selectable_prop , is_same_node , node2path } from "../utils"
 import { DefaultHidden } from "./hidden"
-import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer} from "./universe"
+import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawerWithButton} from "./universe"
 
 export {new_default_group}
 
@@ -117,8 +117,8 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
 
         }
     
-        return <div
-            style={{
+        return <Box
+            sx={{
                 marginLeft: "1%",
                 marginRight: "1%",
             }}
@@ -128,19 +128,15 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
             <AppBar {...non_selectable_prop} position="static">
                 <Toolbar>
                     <Typography>{title}</Typography>
-                    <IconButton onClick={e=>set_open(true)}>  <SettingsIcon/> </IconButton>          
+                    <DefaultParameterWithEditorWithDrawerWithButton editor={editor} element={element}/>         
                     <DefaultHidden editor={editor} element={element} />
 
                     <Switch checked={checked} onChange={switch_check_change}></Switch>
                 </Toolbar>
             </AppBar >
-            <div style={{marginLeft: "1%", marginRight: "1%",}}>{props.children}</div>
-            
-            <DefaultParameterWithEditorWithDrawer open={open} editor={editor} element={element}
-                onClose = { (e)=>{set_open(false)}}
-            />
+            <Box sx={{marginLeft: "1%", marginRight: "1%",}}>{props.children}</Box>
         </Card>
-        </div>
+        </Box>
     }
 }
 
