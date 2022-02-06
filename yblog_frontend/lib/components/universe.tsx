@@ -15,8 +15,11 @@ import { YEditor } from "../editor_interface"
 import { HiveTwoTone } from "@mui/icons-material"
 import { non_selectable_prop , is_same_node , node2path } from "../utils"
 import { Transforms, Node, Editor } from "slate"
+import IconButton from '@mui/material/IconButton';
 
-export { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer}
+import SettingsIcon from '@mui/icons-material/Settings';
+
+export { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer , DefaultParameterWithEditorWithDrawerWithButton}
 
 interface DefaultParameterContainer_Props{
     initval: any
@@ -186,8 +189,33 @@ function DefaultParameterWithEditorWithDrawer(props: {
                 props.editor.apply_all()
             }
         }}
-
+        PaperProps  = {{sx: { width: "40%" }}}
     >
         <DefaultParameterWithEditor editor={props.editor} element={props.element}/>
     </Drawer>
+}
+
+/**
+ * 这个组件向具体的编辑器和具体的节点提供 DefaultParameterContainer ，同时还提供一个按钮。
+ * @param props.editor 这个组件所服务的编辑器。
+ * @param props.element 这个组件所服务的节点。
+ * @param props.open 抽屉是否打开。
+ * @param props.onClose 抽屉关闭时的行为。
+ */
+ function DefaultParameterWithEditorWithDrawerWithButton(props: {
+    editor: YEditor , 
+    element: StyledNode , 
+    onClose?: (e:any)=>void
+}){
+    let [ open , set_open ] = useState(false) // 抽屉是否打开
+    let onClose = props.onClose || ((e:any)=>{})
+    return <>
+        <IconButton onClick={e=>set_open(true)}>  <SettingsIcon/> </IconButton>       
+        <DefaultParameterWithEditorWithDrawer 
+            editor = {props.editor} 
+            element = {props.element} 
+            open = {open} 
+            onClose={e=>{ onClose(e); set_open(false); }} 
+        />
+    </>
 }

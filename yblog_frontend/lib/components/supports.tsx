@@ -16,10 +16,16 @@ import { node2path } from "../utils"
 import SouthIcon from '@mui/icons-material/South';
 import NorthIcon from '@mui/icons-material/North';
 import Grid         from "@mui/material/Grid"
+import Paper         from "@mui/material/Paper"
+import Box         from "@mui/material/Box"
+import { Renderer_Props_base } from "..";
+import Divider from '@mui/material/Divider';
+import {DefaultParameterWithEditorWithDrawerWithButton} from "./universe"
+import Stack from '@mui/material/Stack';
 
+export { newparagraph , new_splitter}
 
-export { newparagraph }
-
+/** 这个函数返回一个用来新建段落的辅助节点。 */
 function newparagraph(name:string = "newparagraph"): [SupportStyle,EditorRenderer_Func]{
     let style = new SupportStyle(name , {})
 
@@ -59,10 +65,36 @@ function newparagraph(name:string = "newparagraph"): [SupportStyle,EditorRendere
                 startIcon={<SouthIcon fontSize="small" />}
                 fullWidth
             ></Button>
+            {props.children}
         </ButtonGroup >
     }
     
     return [style , renderer]
 }
 
+/** 这个函数返回一个默认的分界符组件。 */
+function new_splitter(name: string = "splitter", init_parameters:any = {}): [SupportStyle,EditorRenderer_Func]{
+    let style = new SupportStyle(name , init_parameters)
 
+    let renderer = (props: EditorRenderer_Props) => {
+        return <Divider   
+            {...non_selectable_prop}
+            {...props.attributes} 
+            sx = {{
+                marginLeft: "2%" , 
+                marginRight: "2%" , 
+                marginTop: "1%" , 
+                marginBottom: "1%" , 
+            }}
+        >
+            <Paper><Stack direction="row">
+                <Box>{name}</Box>
+                <DefaultParameterWithEditorWithDrawerWithButton editor={props.editor} element={props.element as SupportNode} />
+                </Stack></Paper>
+            {props.children /* 对于一个void组件，其children也必须被渲染，否则会报错。*/} 
+
+        </Divider>
+    }
+
+    return [style , renderer]
+}

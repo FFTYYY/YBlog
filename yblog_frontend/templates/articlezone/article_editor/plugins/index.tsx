@@ -1,9 +1,13 @@
 import { Editor , Node , Transforms } from "slate"
-import { set_force_new_paragraph } from "./constraints"
+import * as C from "./constraints"
 
 export { withAllPlugins }
 
-let plugins = [ set_force_new_paragraph ]
+let plugins = [ 
+    C.set_force_new_paragraph_in_group , 
+    C.set_force_new_para_in_sectioner , 
+    C.set_force_sectioner ,
+]
 
 function withAllPlugins(editor: Editor): Editor{
     for(let plugin of plugins){
