@@ -5,7 +5,7 @@
 
 import React, {useState , createRef} from "react"
 
-import { Transforms, Node, Editor } from "slate"
+import { Node, Editor } from "slate"
 
 import Button       from "@mui/material/Button"
 import Card         from "@mui/material/Card"
@@ -37,6 +37,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SettingsIcon from '@mui/icons-material/Settings';
+
 import Switch from '@mui/material/Switch';
 
 import { GroupStyle , EditorCore} from "../core/editor_core"
@@ -44,9 +45,10 @@ import { GroupNode , StyledNode , paragraph_prototype , get_node_type } from "..
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../editor_interface"
 import { YEditor } from "../editor_interface"
 
+import { add_nodes , set_node , add_nodes_before , move_node } from "../behaviours"
 import { non_selectable_prop , is_same_node , node2path } from "../utils"
 import { DefaultHidden } from "./hidden"
-import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawerWithButton} from "./universe"
+import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawerWithButton , DefaultCloseButton} from "./universe"
 
 export {new_default_group}
 
@@ -73,25 +75,12 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
             set_checked(checked)
 
             if(checked == false){ // 从开到关
-                Transforms.insertNodes(
-                    editor.slate , 
-                    paragraph_prototype() , 
-                    {at: node2path(editor.slate , element)} , 
-                )
-                Transforms.setNodes<GroupNode>(
-                    editor.slate , 
-                    { relation: "separating" } , 
-                    {at: node2path(editor.slate , element)} , 
-                )
+                add_nodes_before(editor , paragraph_prototype() , element)
+                set_node(editor , element , { relation: "separating" })
             }
             if(checked == true){ // 从关到开
                 
-                Transforms.setNodes<GroupNode>(
-                    editor.slate , 
-                    { relation: "chaining" } , 
-                    {at: node2path(editor.slate , element)} , 
-                )
-
+                set_node( editor , element , { relation: "chaining" } )
 
                 let node_path = node2path(editor.slate , element)
                 let depth = node_path.length - 1
@@ -108,10 +97,7 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
                 }
                 if(bro_path != undefined){
                     bro_path[depth] ++
-                    Transforms.moveNodes(editor.slate, {
-                        at: node_path , 
-                        to: bro_path , 
-                    })
+                    move_node(editor , element , bro_path)
                 }
             }
 
@@ -130,7 +116,7 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
                     <Typography>{title}</Typography>
                     <DefaultParameterWithEditorWithDrawerWithButton editor={editor} element={element}/>         
                     <DefaultHidden editor={editor} element={element} />
-
+                    <DefaultCloseButton editor={editor} element={element} />
                     <Switch checked={checked} onChange={switch_check_change}></Switch>
                 </Toolbar>
             </AppBar >

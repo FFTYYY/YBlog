@@ -9,7 +9,7 @@ import type { EditorRenderer_Func , EditorRenderer_Props } from "../editor_inter
 import { YEditor } from "../editor_interface"
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import { Transforms , Node } from "slate"
+import { Node } from "slate"
 import { non_selectable_prop , is_same_node} from "../utils"
 import { warning } from "../exceptions/warning";
 import { node2path } from "../utils"
@@ -22,6 +22,8 @@ import { Renderer_Props_base } from "..";
 import Divider from '@mui/material/Divider';
 import {DefaultParameterWithEditorWithDrawerWithButton} from "./universe"
 import Stack from '@mui/material/Stack';
+
+import { add_nodes } from "../behaviours"
 
 export { newparagraph , new_splitter}
 
@@ -48,7 +50,7 @@ function newparagraph(name:string = "newparagraph"): [SupportStyle,EditorRendere
                     let my_path = node2path(editor.core.root , element) // 获取本节点的位置
                     if(my_path == undefined)
                         warning("节点不在节点树中！")
-                    Transforms.insertNodes(editor.slate , paragraph_prototype() , {at: my_path})
+                    add_nodes(editor , paragraph_prototype() , my_path)
                 }}
                 startIcon={<NorthIcon fontSize="small" />}
                 fullWidth
@@ -59,7 +61,7 @@ function newparagraph(name:string = "newparagraph"): [SupportStyle,EditorRendere
                     if(my_path == undefined)
                         warning("节点不在节点树中！")
                     my_path[my_path.length - 1] ++ // 在下一个节点处插入
-                    Transforms.insertNodes(editor.slate , paragraph_prototype() , {at: my_path})
+                    add_nodes(editor , paragraph_prototype() , my_path)
                 }}
                 
                 startIcon={<SouthIcon fontSize="small" />}

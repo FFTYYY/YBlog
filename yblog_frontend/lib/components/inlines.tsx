@@ -5,7 +5,7 @@
 
 import React, {useState} from "react"
 
-import { Transforms, Node, Editor } from "slate"
+import { Node, Editor } from "slate"
 
 import Button       from "@mui/material/Button"
 import Card         from "@mui/material/Card"
@@ -29,7 +29,7 @@ import { YEditor } from "../editor_interface"
 
 import { non_selectable_prop , is_same_node} from "../utils"
 import { DefaultHidden } from "./hidden"
-import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer} from "./universe"
+import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer , DefaultCloseButton} from "./universe"
 
 export { new_default_iniline }
 
@@ -54,6 +54,7 @@ function new_default_iniline(name:string = "strong" , init_parameters:{title?:st
                 <ButtonGroup variant="text" {...non_selectable_prop}>
                     <IconButton onClick = {e=>set_open(true)}><CodeIcon sx={{ fontSize: 10 }}/></IconButton >
                     <DefaultHidden editor = {editor} element = {element}/>
+                    <DefaultCloseButton editor={editor} element={element} />
                 </ButtonGroup>
             </Stack>
             <DefaultParameterWithEditorWithDrawer open={open} editor={editor} element={element}

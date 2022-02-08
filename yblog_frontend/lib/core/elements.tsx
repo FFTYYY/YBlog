@@ -42,6 +42,7 @@ interface _BaseStyledNode{
     hiddens: GroupNode[] 
     name: string
     parameters: any
+    children: Node[]
 }
 type BaseStyledNode = _BaseStyledNode & Node
 
@@ -53,12 +54,10 @@ type InlineNode = _InlineNode & Node
 
 interface _GroupNode extends _BaseStyledNode{
     relation: GroupRelationType
-    children: Node[]
 }
 type GroupNode = _GroupNode & Node
 
 interface _StructNode extends _BaseStyledNode{
-    children: Node[]
 }
 type StructNode = _StructNode & Node
 
