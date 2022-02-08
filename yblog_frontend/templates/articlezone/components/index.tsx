@@ -15,6 +15,7 @@ function withAllStyles_Editor(core:EditorCore): EditorCore{
     core.add_supportstyle(S.newpara_style)
     core.add_supportstyle(S.sectioner_style)
     core.add_supportstyle(S.ender_style)
+    core.add_inlinestyle(S.strong_style)
     return core
 }
 
@@ -26,6 +27,7 @@ function withAllStyles_Interface(yeditor: YEditor): YEditor{
     yeditor.update_renderer(E.newpara_erenderer       , "support" , S.newpara_style.name)
     yeditor.update_renderer(E.sectioner_erenderer     , "support" , S.sectioner_style.name)
     yeditor.update_renderer(E.ender_erenderer         , "support" , S.ender_style.name)
+    yeditor.update_renderer(E.strong_erenderer        , "inline" , S.strong_style.name)
     return yeditor
 }
 

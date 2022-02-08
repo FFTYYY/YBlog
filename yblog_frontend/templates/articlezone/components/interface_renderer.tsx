@@ -5,6 +5,7 @@ export {
     display_erenderer , 
     newpara_erenderer , 
     sectioner_erenderer , 
-    ender_erenderer
+    ender_erenderer , 
+    strong_erenderer , 
 } from "./styles" 
 
