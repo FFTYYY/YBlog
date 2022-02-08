@@ -7,7 +7,7 @@ import { Transforms, Element, Node , Editor } from "slate"
 import { get_node_type , GroupNode , paragraph_prototype , text_prototype, InlineNode , inline_prototype } from "../core/elements"
 import { is_same_node } from "../utils"
 
-export { constraint_group , constraint_inline }
+export { constraint_group }
 
 /**
  * 这个插件修复 group relation 相关的错误。具体来说，任何 relation 为 separating 的 group 节点之前都必须是 paragraph，而
@@ -50,58 +50,5 @@ function constraint_group(editor: Editor): Editor{
         }
         normalizeNode(entry)
     }
-    return editor
-}
-
-
-/** 
- * 这个插件修复与 inline 节点相关的错误。具体来说， inline 节点有且只有一个子节点，且这个子节点必须是 text 节点。
- * @param editor 这个constraint服务的编辑器。
- * @returns editor
- */
-function constraint_inline(editor: Editor):Editor{
-    const normalizeNode = editor.normalizeNode
-
-    editor.normalizeNode = (entry:[Node, number[]]) => {
-        const [node , path]: [Node, number[]] = entry
-
-        if(get_node_type(node) == "inline"){
-            let now_node = node as InlineNode
-
-            // 修复没有子节点的情况
-            if(now_node.children.length <= 0){
-                Transforms.insertNodes(editor , text_prototype() , {at: [...path , 0]})
-                return
-            }
-
-            // 修复有若干子节点的情况
-            if(now_node.children.length > 1){
-                // 删除原来的节点。
-                Transforms.removeNodes(editor , {at: path})
-                // 在原位置插入一个节点
-                Transforms.insertNodes<InlineNode>(
-                    editor , 
-                    { ...now_node , children: [ text_prototype(Node.string(now_node)) ] } , 
-                    { at: path }
-                )
-                return
-            }
-
-            //修复子节点不是text的情况
-            if(get_node_type(now_node.children[0]) != "text"){
-                // 删除原来的节点。
-                Transforms.removeNodes(editor , {at: path})
-                // 在原位置插入一个节点
-                Transforms.insertNodes<InlineNode>(
-                    editor , 
-                    { ...now_node , children: [ text_prototype(Node.string(now_node)) ] } , 
-                    { at: path }
-                )
-                return
-            }
-        }
-        normalizeNode(entry)
-    }
-
     return editor
 }

@@ -1,4 +1,4 @@
-import { GroupStyle , new_default_group , AbstractStyle , newparagraph , new_splitter} from "../../../lib"
+import { GroupStyle , new_default_group , AbstractStyle , newparagraph , new_splitter , new_default_iniline} from "../../../lib"
 import { SupportNode , paragraph_prototype} from "../../../lib"
 import { SupportStyle , EditorCore} from "../../../lib"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../../lib"
@@ -20,7 +20,8 @@ export {
     display_style , 
     newpara_style , 
     sectioner_style , 
-    ender_style
+    ender_style , 
+    strong_style , 
 }
 export { 
     brightwords_erenderer , 
@@ -29,7 +30,8 @@ export {
     display_erenderer , 
     newpara_erenderer , 
     sectioner_erenderer , 
-    ender_erenderer
+    ender_erenderer , 
+    strong_erenderer , 
 }
 
 var [brightwords_style , brightwords_erenderer] = new_default_group("昭言" , {
@@ -60,3 +62,5 @@ var [sectioner_style , sectioner_erenderer] = new_splitter("小节线" , {
 var [ender_style , ender_erenderer] = new_splitter("章节线" , {
     title: "" ,
 })
+
+var [strong_style , strong_erenderer] = new_default_iniline("强调")
