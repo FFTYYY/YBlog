@@ -20,6 +20,7 @@ class EditorCore{
     abstractstyles  : { [sty: string] : AbstractStyle   }
     root: GroupNode
     notifications: RootNotification_Function[]
+    init_parameters: any
 
     /**
      * 
@@ -35,25 +36,27 @@ class EditorCore{
         structstyles    : StructStyle   [] = [], 
         supportstyles   : SupportStyle  [] = [] ,
         abstractstyles  : AbstractStyle [] = [] , 
+        init_parameters: any = {} , 
     ){
         this.inlinestyles   = {}
         this.groupstyles    = {}
         this.structstyles   = {}
         this.supportstyles  = {}
         this.abstractstyles = {}
-
+        
         for(let style of inlinestyles)
-            this.add_inlinestyle(style)
+        this.add_inlinestyle(style)
         for(let style of groupstyles)
-            this.add_groupstyle(style)
+        this.add_groupstyle(style)
         for(let style of structstyles)
-            this.add_structstyle(style)
+        this.add_structstyle(style)
         for(let style of supportstyles)
-            this.add_supportstyle(style)
+        this.add_supportstyle(style)
         for(let style of abstractstyles)
-            this.add_abstractstyle(style)
-
-        this.root = group_prototype("root" , {}) //节点树
+        this.add_abstractstyle(style)
+        
+        this.init_parameters = init_parameters
+        this.root = group_prototype("root" , init_parameters) //节点树
         this.notifications = [] // 当root修改时要通知的人的列表
     }
 

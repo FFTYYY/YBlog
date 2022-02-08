@@ -4,7 +4,7 @@
 
 import React, {useState , createRef} from "react"
 
-import { Transforms , Node, Editor } from "slate"
+import { Node, Editor } from "slate"
 
 import Button from "@mui/material/Button"
 import Box from "@mui/material/Box"
@@ -20,6 +20,7 @@ import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
 import SwipeVerticalIcon from '@mui/icons-material/SwipeVertical';
 import IconButton from '@mui/material/IconButton';
 import ButtonGroup from '@mui/material/ButtonGroup';
+import { set_node , replace_nodes } from "../behaviours"
 
 
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../core/elements"
@@ -50,12 +51,7 @@ function DefaultNewHidden(props: {editor: YEditor, element: StyledNode, anchor_e
                 return 
             
             let new_hiddens = [...element.hiddens , ...[abstractstyles[choice].makehidden()]]
-
-            Transforms.setNodes<StyledNode>(
-                editor.slate , 
-                {...element, ...{hiddens: new_hiddens}} , // 向 hiddens 中添加节点。 
-                { at: node2path(editor.slate , element ) }
-            )
+            set_node(editor , element , {hiddens: new_hiddens})
         }
     }
 
@@ -135,11 +131,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
         
         // TODO：这里有个bug，slate的setNodes并不会立刻应用，这导致如果有多个setNodes，后面修改的会覆盖前面的。
         // 应用变换。
-        Transforms.setNodes<StyledNode>(
-            father_editor.slate , 
-            { hiddens: new_hiddens } , 
-            { at: node2path(father_editor.slate , father) }
-        )
+        set_node(father_editor , father , { hiddens: new_hiddens })
     }
 
 	render() {
@@ -160,8 +152,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             <DefaultEditor 
                 editor = { me.subeditor }
                 onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
-                    Transforms.removeNodes(me.subeditor.slate , {at: [0]})
-                    Transforms.insertNodes(me.subeditor.slate ,  me.props.son.children , {at: [0]})
+                    replace_nodes(me.subeditor , me.subeditor.core.root , me.props.son.children)
                     me.props.editor.add_suboperation(me.son.idx , me.sub_apply.bind(me))
                 }}
 
@@ -213,14 +204,16 @@ function DefaultHiddenEditorGroup(props: {editor:YEditor , element: StyledNode, 
  * @param props.button_edit 用来编辑一个抽象节点的按钮。
  * @returns 一个渲染了两个 Button 的 
 */
-function DefaultHidden(props: {editor: YEditor , element: StyledNode}){
+function DefaultHidden(props: {editor: YEditor , element: StyledNode , orientation?: "horizontal" | "vertical"}){
     let editor = props.editor
     let element = props.element
 
     let [menu_new_ae, set_menu_new_ae]   = useState<undefined | HTMLElement>(undefined)
     let [menu_edit_ae, set_menu_edit_ae] = useState<undefined | HTMLElement>(undefined)
 
-    return <ButtonGroup >
+    // TODO：root的hiddens不能正常更新。
+
+    return <>
         <Button onClick={e=>set_menu_new_ae(e.currentTarget)} variant="contained">New</Button>
         <Button onClick={e=>set_menu_edit_ae(e.currentTarget)} variant="contained">Edit</Button>
         <DefaultNewHidden 
@@ -237,6 +230,6 @@ function DefaultHidden(props: {editor: YEditor , element: StyledNode}){
             open = {menu_edit_ae != undefined} 
             onClose = {e=>{ set_menu_edit_ae(undefined) }}
         />
-    </ButtonGroup >
+    </>
 }
 

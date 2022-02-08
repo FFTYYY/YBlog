@@ -18,6 +18,7 @@ import { is_same_node , update_kth , get_hidden_idx } from "./utils"
 import { withAllYEditorPlugins } from "./plugins/apply_all"
 import { Renderer } from "./core/renderer"
 import { node2path } from ".";
+import { ThreeSixty } from "@mui/icons-material";
 
 export { YEditor }
 export type { EditorRenderer_Props , EditorRenderer_Func}
