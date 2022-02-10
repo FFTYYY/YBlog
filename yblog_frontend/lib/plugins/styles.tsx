@@ -4,7 +4,7 @@
  */
 
 import { Transforms, Element, Node , Editor } from "slate"
-import { get_node_type , GroupNode , paragraph_prototype } from "../core/elements"
+import { get_node_type , GroupNode , paragraph_prototype , is_styled , StyledNode } from "../core/elements"
 
 export { set_inline , set_support }
 
@@ -17,6 +17,13 @@ function set_inline(editor: Editor): Editor{
     const isInline = editor.isInline
 
     editor.isInline = (element: Element): boolean => {
+        if(is_styled(element)){
+            let node = element as StyledNode
+            if(node.flags.forceInline)
+                return true
+            if(node.flags.forceBlock)
+                return false
+        }
         return isInline(element) || get_node_type(element) == "inline"
     }
 
@@ -29,6 +36,12 @@ function set_support(editor: Editor): Editor{
     const isVoid = editor.isVoid
 
     editor.isVoid = (element: Element): boolean => {
+        if(is_styled(element)){
+            let node = element as StyledNode
+            if(node.flags.forceVoid)
+                return true
+        }
+
         return isVoid(element) || get_node_type(element) == "support"
     }
 

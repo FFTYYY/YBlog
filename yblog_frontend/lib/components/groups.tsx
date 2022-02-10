@@ -55,18 +55,19 @@ export {new_default_group}
 /** 这个函数返回一个默认的group组件。
  * 之所以再套一层函数，只是不想塞在一起让一个函数写得太长罢了。
  * @param name 这个组件的名称。
- * @param init_parameters 组件的初始参数列表。
+ * @param parameters 组件的参数列表。
  * @param title_key 要显示的标题在init_parameters中的名称，如果为undefined则没有标题。
  * 
  * @returns 一个用于渲染group的组件。
 */
-function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_key:string)
+function get_DefaultGroup(
+    name:string , 
+    title: string , 
+)
 {
     return (props: EditorRenderer_Props) => {
         let element = props.element as GroupNode
-        let title = (title_key != undefined) ? (element.parameters[title_key] || "") : ""
         let editor = props.editor
-        let [ open , set_open ] = useState(false) // 抽屉是否打开
         let [ checked , set_checked ] = useState(element.relation == "chaining") // 开关是否打开
 
         /** 处理开关的逻辑。 */
@@ -126,7 +127,11 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
     }
 }
 
-function new_default_group(name:string = "theorem" , init_parameters:{title?:string} & any = {} , title_key = "title")
+function new_default_group(
+    name:string = "theorem" , 
+    init_parameters:{title?:string} & any = {} , 
+    get_title:((parameters:any)=>string) = ((parameters:any)=>parameters.title)
+)
     : [GroupStyle,EditorRenderer_Func]
 {
 
@@ -135,7 +140,9 @@ function new_default_group(name:string = "theorem" , init_parameters:{title?:str
         
     // 渲染器
     let renderer = (props: EditorRenderer_Props) => {
-        let R = get_DefaultGroup(name , init_parameters , title_key)
+        let element = props.element as GroupNode
+        let title = get_title(element.parameters)
+        let R = get_DefaultGroup(name , title)
         return <R {...props}></R> //有病吧
     }
     
