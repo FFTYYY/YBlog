@@ -1,4 +1,4 @@
-from django.http import HttpResponse , JsonResponse
+from django.http import HttpResponse , JsonResponse , Http404
 import json
 from ..models import Node
 from .utils import allow_acess
@@ -14,6 +14,10 @@ def get_node_content(request, node_id):
 
 @allow_acess
 def post_node_content(request, node_id):
+    # 禁止未登录用户访问
+    if not request.user.is_authenticated:
+        return Http404()
+
     node = Node.objects.get(id = node_id)
     
     if request.body != b"":
