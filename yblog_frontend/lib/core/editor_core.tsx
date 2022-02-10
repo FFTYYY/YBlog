@@ -4,7 +4,7 @@
 */
 
 import { Editor , Node } from "slate"
-import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , } from "./elements"
+import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , StyledNodeFlag , } from "./elements"
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./elements"
 
 export {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle}
@@ -129,16 +129,16 @@ class Style<NT>{
 /** 描述一个内联样式的类 */
 class InlineStyle extends Style<InlineNode>{
 
-    constructor(name: string , parameter_prototype: any){
-        super(name, parameter_prototype, ()=>inline_prototype(name , parameter_prototype))
+    constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
+        super(name, parameter_prototype, ()=>inline_prototype(name , parameter_prototype , flags))
     }
 
 }
 
 /** 描述一个组样式的类 */
 class GroupStyle extends Style<GroupNode>{
-    constructor(name: string , parameter_prototype: any){
-        super(name, parameter_prototype, ()=>group_prototype(name , parameter_prototype))
+    constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
+        super(name, parameter_prototype, ()=>group_prototype(name , parameter_prototype , flags))
     }
 
 }
@@ -147,8 +147,8 @@ class GroupStyle extends Style<GroupNode>{
 class StructStyle extends Style<StructNode>{
     declare prototype: ()=>StructNode
 
-    constructor(name: string , parameter_prototype: any){
-        super(name, parameter_prototype, ()=>struct_prototype(name , parameter_prototype))
+    constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
+        super(name, parameter_prototype, ()=>struct_prototype(name , parameter_prototype , flags))
     }
 
 }
@@ -157,8 +157,8 @@ class StructStyle extends Style<StructNode>{
 class SupportStyle extends Style<SupportNode>{
     declare prototype: ()=>SupportNode
 
-    constructor(name: string , parameter_prototype: any){
-        super(name, parameter_prototype, ()=>support_prototype(name , parameter_prototype))
+    constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
+        super(name, parameter_prototype, ()=>support_prototype(name , parameter_prototype , flags))
     }
 
 }

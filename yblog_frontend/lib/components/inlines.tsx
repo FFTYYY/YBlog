@@ -29,7 +29,7 @@ import { YEditor } from "../editor_interface"
 
 import { non_selectable_prop , is_same_node} from "../utils"
 import { DefaultHidden } from "./hidden"
-import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer , DefaultCloseButton} from "./universe"
+import { DefaultParameterWithEditorWithDrawerWithButton , DefaultCloseButton} from "./universe"
 
 export { new_default_iniline }
 
@@ -41,7 +41,6 @@ function new_default_iniline(name:string = "strong" , init_parameters:{title?:st
     let renderer = (props: EditorRenderer_Props) => {
         let element = props.element as InlineNode
         let editor  = props.editor
-        let [ open , set_open ] = useState(false) // 抽屉是否打开
 
         return <Box component="span" {...props.attributes}><Card 
             style={{
@@ -52,14 +51,11 @@ function new_default_iniline(name:string = "strong" , init_parameters:{title?:st
             <Stack direction="row" spacing={1}>
                 {props.children}
                 <ButtonGroup variant="text" {...non_selectable_prop}>
-                    <IconButton onClick = {e=>set_open(true)}><CodeIcon sx={{ fontSize: 10 }}/></IconButton >
+                    <DefaultParameterWithEditorWithDrawerWithButton editor={editor} element={element}/>
                     <DefaultHidden editor = {editor} element = {element}/>
                     <DefaultCloseButton editor={editor} element={element} />
                 </ButtonGroup>
             </Stack>
-            <DefaultParameterWithEditorWithDrawer open={open} editor={editor} element={element}
-                onClose = { (e)=>{set_open(false)} }
-            />
         </Card></Box>
     }
     

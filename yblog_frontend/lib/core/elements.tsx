@@ -25,6 +25,7 @@ export type {
 
     StyleType , 
     NodeType , 
+    StyledNodeFlag , 
 }
 
 /** 所有可能的有样式的节点类型。 */
@@ -36,6 +37,11 @@ type NodeType = "text" | "paragraph" | "inline" | "group" | "struct" | "support"
 /** 所有可能的段组连接方式。 */
 type GroupRelationType = "chaining" | "separating"
 
+interface StyledNodeFlag{
+    forceInline?: boolean , 
+    forceBlock?: boolean , 
+    forceVoid?: boolean , 
+}
 interface _BaseStyledNode{
     idx: number 
     type: StyleType 
@@ -43,6 +49,7 @@ interface _BaseStyledNode{
     name: string
     parameters: any
     children: Node[]
+    flags: StyledNodeFlag
 }
 type BaseStyledNode = _BaseStyledNode & Node
 
@@ -84,7 +91,7 @@ function paragraph_prototype(text:string = ""): Node{
 }
 
 /** 新建一个行内样式。 */
-function inline_prototype(name: string, parameter_proto: any): InlineNode{
+function inline_prototype(name: string, parameter_proto: any, flags:StyledNodeFlag = {}): InlineNode{
     return {
         idx: gene_idx() , 
         type: "inline" , 
@@ -92,11 +99,12 @@ function inline_prototype(name: string, parameter_proto: any): InlineNode{
         parameters: parameter_proto , 
         children: [ text_prototype("") ] , 
         hiddens: [] , 
+        flags: flags , 
     }
 }
 
 /** 新建一个组节点。 */
-function group_prototype(name: string , parameter_proto: any): GroupNode{
+function group_prototype(name: string , parameter_proto: any, flags: StyledNodeFlag = {}): GroupNode{
     return {
         idx: gene_idx() , 
         type: "group" , 
@@ -107,11 +115,12 @@ function group_prototype(name: string , parameter_proto: any): GroupNode{
 
         children: [paragraph_prototype()] , 
         hiddens: [] , 
+        flags: flags , 
     }
 }
 
 /** 新建一个结构节点。 */
-function struct_prototype(name: string , parameter_proto: any): StructNode{
+function struct_prototype(name: string , parameter_proto: any , flags: StyledNodeFlag = {}): StructNode{
     return {
         idx: gene_idx() , 
         type: "struct" , 
@@ -121,11 +130,12 @@ function struct_prototype(name: string , parameter_proto: any): StructNode{
 
         children: [] , 
         hiddens: [] , 
+        flags: {} , 
     }
 }
 
 /** 新建一个辅助节点。 */
-function support_prototype(name: string , parameter_proto: any): SupportNode{
+function support_prototype(name: string , parameter_proto: any , flags: StyledNodeFlag = {}): SupportNode{
     return {
         idx: gene_idx() , 
         type: "support" , 
@@ -133,6 +143,7 @@ function support_prototype(name: string , parameter_proto: any): SupportNode{
         parameters: parameter_proto , 
         children: [ text_prototype() ],
         hiddens: [] , 
+        flags: flags , 
     }
 }
 
