@@ -20,25 +20,25 @@ function withAllStyles_Editor(core:EditorCore): EditorCore{
 }
 
 function withAllStyles_Interface(yeditor: YEditor): YEditor{
-    yeditor.update_renderer(E.brightwords_erenderer   , "group" , S.brightwords_style.name)
-    yeditor.update_renderer(E.followwords_erenderer   , "group" , S.followwords_style.name)
-    yeditor.update_renderer(E.mount_erenderer         , "group" , S.mount_style.name)
-    yeditor.update_renderer(E.display_erenderer       , "group" , S.display_style.name)
-    yeditor.update_renderer(E.newpara_erenderer       , "support" , S.newpara_style.name)
-    yeditor.update_renderer(E.sectioner_erenderer     , "support" , S.sectioner_style.name)
-    yeditor.update_renderer(E.ender_erenderer         , "support" , S.ender_style.name)
-    yeditor.update_renderer(E.strong_erenderer        , "inline" , S.strong_style.name)
+    yeditor.update_renderer(E.brightwords_editor   , "group" , S.brightwords_style.name)
+    yeditor.update_renderer(E.followwords_editor   , "group" , S.followwords_style.name)
+    yeditor.update_renderer(E.mount_editor         , "group" , S.mount_style.name)
+    yeditor.update_renderer(E.display_editor       , "group" , S.display_style.name)
+    yeditor.update_renderer(E.newpara_editor       , "support" , S.newpara_style.name)
+    yeditor.update_renderer(E.sectioner_editor     , "support" , S.sectioner_style.name)
+    yeditor.update_renderer(E.ender_editor         , "support" , S.ender_style.name)
+    yeditor.update_renderer(E.strong_editor        , "inline" , S.strong_style.name)
     return yeditor
 }
 
 
 function withAllStyles_Output(output_renderer: OutRenderer): OutRenderer{
-    output_renderer.update_renderer( O.brightwords_orenderer  , "group" , S.brightwords_style.name )
-    output_renderer.update_renderer( O.followwords_orenderer  , "group" , S.followwords_style.name )
-    output_renderer.update_renderer( O.mount_orenderer        , "group" , S.mount_style.name )
-    output_renderer.update_renderer( O.display_orenderer      , "group" , S.display_style.name )
-    output_renderer.update_renderer( O.sectioner_orenderer    , "support" , S.sectioner_style.name)
-    output_renderer.update_renderer( O.ender_orenderer        , "support" , S.ender_style.name)
+    output_renderer.update_renderer( O.brightwords_renderer  , "group" , S.brightwords_style.name )
+    output_renderer.update_renderer( O.followwords_renderer  , "group" , S.followwords_style.name )
+    output_renderer.update_renderer( O.mount_renderer        , "group" , S.mount_style.name )
+    output_renderer.update_renderer( O.display_renderer      , "group" , S.display_style.name )
+    output_renderer.update_renderer( O.sectioner_renderer    , "support" , S.sectioner_style.name)
+    output_renderer.update_renderer( O.ender_renderer        , "support" , S.ender_style.name)
 
     return output_renderer
 }

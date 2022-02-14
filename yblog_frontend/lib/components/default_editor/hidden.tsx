@@ -4,31 +4,29 @@
 
 import React, {useState , createRef} from "react"
 
+
+import {
+    Button ,
+    Menu , 
+    MenuItem , 
+    Drawer , 
+    IconButton , 
+} from "@mui/material"
+import { 
+    AddBox as AddBoxIcon , 
+    FilterNone as FilterNoneIcon , 
+} from "@mui/icons-material"
 import { Node, Editor } from "slate"
 
-import Button from "@mui/material/Button"
-import Box from "@mui/material/Box"
-import Card from "@mui/material/Card"
-import TextField from "@mui/material/TextField"
-import Grid from "@mui/material/Grid"
-import CardHeader from "@mui/material/CardHeader"
-import Menu from "@mui/material/Menu"
-import MenuItem from "@mui/material/MenuItem"
-import Drawer from "@mui/material/Drawer"
-import { makeStyles , styled } from "@material-ui/styles"
-import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
-import SwipeVerticalIcon from '@mui/icons-material/SwipeVertical';
-import IconButton from '@mui/material/IconButton';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import { set_node , replace_nodes } from "../behaviours"
+import { set_node , replace_nodes } from "../../behaviours"
 
 
-import { StyledNode , NodeType , StyleType ,  GroupNode } from "../core/elements"
-import { YEditor } from "../editor_interface"
-import { non_selectable_prop , is_same_node , node2path , update_kth , get_hidden_idx } from "../utils"
+import { AutoTooltip , ForceContain , AutoStackedPopper } from "./universe"
+import { StyledNode , NodeType , StyleType ,  GroupNode } from "../../core/elements"
+import { YEditor } from "../../editor_interface"
+import { non_selectable_prop , is_same_node , node2path , update_kth , get_hidden_idx } from "../../utils"
+import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../../core/editor_core"
 import { DefaultEditor } from "./editor"
-import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../core/editor_core"
-import { editor } from "."
 
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
 
@@ -142,26 +140,28 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             open        = {me.props.open}
             onClose     = {me.props.onClose}
             ModalProps  = {{keepMounted: true}}
-            PaperProps  = {{sx: { width: "40%" }}}
+            PaperProps  = {{sx: { width: "60%"}}}
             SlideProps = {{
                 onExited: () => {
                     me.father_editor.apply_all()
                 }
             }}
         >
-            <DefaultEditor 
-                editor = { me.subeditor }
-                onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
-                    replace_nodes(me.subeditor , me.subeditor.core.root , me.props.son.children)
-                    me.props.editor.add_suboperation(me.son.idx , me.sub_apply.bind(me))
-                }}
-
-            />
+            <ForceContain.Provider value={true}>
+                <DefaultEditor 
+                    
+                    editor = { me.subeditor }
+                    onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
+                        replace_nodes(me.subeditor , me.subeditor.core.root , me.props.son.children)
+                        me.props.editor.add_suboperation(me.son.idx , me.sub_apply.bind(me))
+                    }}
+                />
+            </ForceContain.Provider>
         </Drawer>
 	}
 }
 
-/** 这个组件是一个点开按钮展开的菜单，菜单的每项是编辑一个 hidden 属性的按钮。 */
+/** 这个组件是一个菜单，菜单的每项是编辑一个 hidden 属性的按钮。 */
 function DefaultHiddenEditorGroup(props: {editor:YEditor , element: StyledNode, anchor_element: any, open: boolean, onClose?: (e:any)=>void}){
 
     let element = props.element 
@@ -197,14 +197,12 @@ function DefaultHiddenEditorGroup(props: {editor:YEditor , element: StyledNode, 
     </>  
 }
 
-/** 如果目标节点有hidden，则这个节点提供编辑界面，否则提供选择hidden的界面。
+/** 这个组件提供两个按钮，分别是新建抽象和编辑抽象。
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.element 这个组件所服务的节点。
- * @param props.button_new 用来新建抽象节点的按钮。
- * @param props.button_edit 用来编辑一个抽象节点的按钮。
  * @returns 一个渲染了两个 Button 的 
 */
-function DefaultHidden(props: {editor: YEditor , element: StyledNode , orientation?: "horizontal" | "vertical"}){
+function DefaultHidden(props: {editor: YEditor , element: StyledNode}){
     let editor = props.editor
     let element = props.element
 
@@ -214,8 +212,8 @@ function DefaultHidden(props: {editor: YEditor , element: StyledNode , orientati
     // TODO：root的hiddens不能正常更新。
 
     return <>
-        <Button onClick={e=>set_menu_new_ae(e.currentTarget)} variant="contained">New</Button>
-        <Button onClick={e=>set_menu_edit_ae(e.currentTarget)} variant="contained">Edit</Button>
+        <AutoTooltip title="新建抽象"><IconButton onClick={e=>set_menu_new_ae(e.currentTarget)}><AddBoxIcon/></IconButton></AutoTooltip>
+        <AutoTooltip title="编辑抽象"><IconButton onClick={e=>set_menu_edit_ae(e.currentTarget)}><FilterNoneIcon/></IconButton></AutoTooltip>
         <DefaultNewHidden 
             editor = {editor} 
             element = {element} 

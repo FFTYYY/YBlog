@@ -11,6 +11,7 @@ export {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , Abs
 
 type RootNotification_Function = (new_root: GroupNode)=>void
 
+
 /** 描述一个抽象的编辑器，维护节点树和使用的样式 */
 class EditorCore{
     inlinestyles    : { [sty: string] : InlineStyle     }

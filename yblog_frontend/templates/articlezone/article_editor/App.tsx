@@ -1,21 +1,24 @@
 import React , { useState } from "react"
-import Drawer from "@mui/material/Drawer"
-import Fab from '@mui/material/Fab';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
+import {
+	Drawer , 
+	Fab , 
+	Box , 
+	Grid , 
+	Button , 
+	Stack , 
+	Paper , 
+	Divider , 
+	Container , 
+} from "@mui/material"
+
 import AddIcon from '@mui/icons-material/Add';
-import {YEditor , EditorCore , OutRenderer} from "../../../lib"
+import {YEditor , EditorCore , OutRenderer , DefaultRenderer} from "../../../lib"
 import {DefaultEditor , group_prototype} from "../../../lib"
 import {withAllStyles_Editor , withAllStyles_Output , withAllStyles_Interface} from "../components"
 import {Node , Transforms , Element } from "slate"
 import {ReactEditor} from "slate-react"
 import { axios , get_node_id } from '../utils'
-import {FlexibleDrawer , FlexibleItem} from "../theme/framework"
-import Stack from '@mui/material/Stack';
-import Paper from '@mui/material/Paper';
-import Divider from '@mui/material/Divider';
-import Container from '@mui/material/Container';
+import { FlexibleDrawer , FlexibleItem } from "../theme/framework"
 import { withAllPlugins } from "./plugins"
 
 var node_id = get_node_id()
@@ -58,14 +61,30 @@ class App extends  React.Component<App_Props , App_State>{
 
 	mainpart(props: {}){
 		let me = this
-		return <Container><Grid container>
-			<Grid item xs={6} key={0}><DefaultEditor 
-				editor = {me.editor}
-			/></Grid>
-			<Grid item xs={6} key={1}><OutRenderer.Component
-				renderer = {me.output}
-			/></Grid>
-		</Grid></Container>
+
+		return <React.Fragment>
+			<Box sx = {{
+				position: "absolute" , 
+				width: "50%" ,
+				left: "0" , 
+				height: "100%" , 
+			}}>
+				<DefaultEditor editor = {me.editor}/>
+			</Box>
+
+			<Box sx = {{
+					position: "absolute" , 
+					width: "50%" ,
+					left: "50%" , 
+					height: "100%" , 
+					backgroundColor: "#AABBCC" , 
+					overflow: "auto" , 
+			}}>
+				<DefaultRenderer
+					outer = {me.output}
+				/>
+			</Box>
+		</React.Fragment>
 	}
 
 	render(){
@@ -86,7 +105,7 @@ class App extends  React.Component<App_Props , App_State>{
 				/>
 			</FlexibleDrawer>
 
-			<MainPart></MainPart>
+			<MainPart />
 			
 		</Stack></Box>
 	}

@@ -1,13 +1,11 @@
+import { Node } from "slate"
+import React from "react"
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./core/elements"
 import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode  } from "./core/elements"
 import type { StyleType , NodeType } from "./core/elements"
 import { get_node_type , is_styled } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
-import Card from "@mui/material/Card"
 import { Renderer , default_renderer } from "./core/renderer"
-import { Editor } from "slate"
-import { Node , BaseText , BaseElement} from "slate"
-import React from "react"
 
 export { OutRenderer , make_out_renderer}
 export type { OutRenderer_Props }
@@ -131,7 +129,6 @@ class _OutRendererComponent extends React.Component<OutRendererComponent_Props ,
         this.env_enters = {} // 初始化环境
         this.env_exits  = {} // 初始化环境
         this.build_envs(me.state.root)
-        console.log(this.env_enters)
 
         return <R element={me.state.root}></R>
     }
