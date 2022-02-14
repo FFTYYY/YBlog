@@ -11,6 +11,15 @@ function get_hidden_idx(fathernode: StyledNode, sonnode: GroupNode){
     return -1
 }
 
+/** 对对象的每个值进行操作，返回一个新的对象。 */
+function object_foreach(obj: any , func: (o:any)=>any){
+    let ret = {}
+    for(let k in obj){
+        ret[k] = func(obj[k])
+    }
+    return ret
+}
+
 /** 返回一个 list 修改了第 k 个元素后的版本。 */
 function update_kth(li: any[], k: number, new_k: any){
     return [...li.slice(0,k) , ...[new_k] , ...li.slice(k+1,li.length)]
@@ -40,4 +49,4 @@ function node2path(root: Node, node: Node): Path{
     return undefined
 }
 
-export { non_selectable_prop , is_same_node , node2path , get_hidden_idx , update_kth}
+export { non_selectable_prop , is_same_node , node2path , get_hidden_idx , update_kth , object_foreach}

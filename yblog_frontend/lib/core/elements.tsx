@@ -15,6 +15,8 @@ export {
     get_node_type , 
     is_styled , 
     type_and_name_is , 
+
+    is_validleaf , 
 }
 export type {
     BaseStyledNode as StyledNode, 
@@ -26,6 +28,8 @@ export type {
     StyleType , 
     NodeType , 
     StyledNodeFlag , 
+    ValidLeaf , 
+    ValidParameters , 
 }
 
 /** 所有可能的有样式的节点类型。 */
@@ -37,6 +41,14 @@ type NodeType = "text" | "paragraph" | "inline" | "group" | "struct" | "support"
 /** 所有可能的段组连接方式。 */
 type GroupRelationType = "chaining" | "separating"
 
+/** 参数可以接受的叶子类型。 */
+type ValidLeaf = string | number | boolean
+function is_validleaf(o:any): o is ValidLeaf{
+    return typeof(o) == "string" || typeof(o) == "number" || typeof(o) == "boolean"
+}
+/** 合法的参数对象。 */
+type ValidParameters = {[key:string]: ValidParameters | ValidLeaf}
+
 interface StyledNodeFlag{
     forceInline?: boolean , 
     forceBlock?: boolean , 
@@ -47,7 +59,7 @@ interface _BaseStyledNode{
     type: StyleType 
     hiddens: GroupNode[] 
     name: string
-    parameters: any
+    parameters: ValidParameters
     children: Node[]
     flags: StyledNodeFlag
 }
@@ -91,7 +103,7 @@ function paragraph_prototype(text:string = ""): Node{
 }
 
 /** 新建一个行内样式。 */
-function inline_prototype(name: string, parameter_proto: any, flags:StyledNodeFlag = {}): InlineNode{
+function inline_prototype(name: string, parameter_proto: ValidParameters, flags:StyledNodeFlag = {}): InlineNode{
     return {
         idx: gene_idx() , 
         type: "inline" , 
@@ -104,7 +116,7 @@ function inline_prototype(name: string, parameter_proto: any, flags:StyledNodeFl
 }
 
 /** 新建一个组节点。 */
-function group_prototype(name: string , parameter_proto: any, flags: StyledNodeFlag = {}): GroupNode{
+function group_prototype(name: string , parameter_proto: ValidParameters, flags: StyledNodeFlag = {}): GroupNode{
     return {
         idx: gene_idx() , 
         type: "group" , 
@@ -120,7 +132,7 @@ function group_prototype(name: string , parameter_proto: any, flags: StyledNodeF
 }
 
 /** 新建一个结构节点。 */
-function struct_prototype(name: string , parameter_proto: any , flags: StyledNodeFlag = {}): StructNode{
+function struct_prototype(name: string , parameter_proto: ValidParameters , flags: StyledNodeFlag = {}): StructNode{
     return {
         idx: gene_idx() , 
         type: "struct" , 
@@ -135,7 +147,7 @@ function struct_prototype(name: string , parameter_proto: any , flags: StyledNod
 }
 
 /** 新建一个辅助节点。 */
-function support_prototype(name: string , parameter_proto: any , flags: StyledNodeFlag = {}): SupportNode{
+function support_prototype(name: string , parameter_proto: ValidParameters , flags: StyledNodeFlag = {}): SupportNode{
     return {
         idx: gene_idx() , 
         type: "support" , 
