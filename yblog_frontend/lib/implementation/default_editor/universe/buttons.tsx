@@ -26,8 +26,8 @@ from "@mui/icons-material"
 
 
 import { delete_node } from "../../../behaviours"
-import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "./direction_control"
-import type { AutoStackedPopper_Props } from "./direction_control"
+import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "../../basic/direction_control"
+import type { AutoStackedPopper_Props } from "../../basic/direction_control"
 import { DefaultParameterWithEditorWithDrawer , UniversalComponent_Props } from "./parameter_container" 
 
 export {    
@@ -79,7 +79,7 @@ function DefaultParameterEditButton(props: UniversalComponent_Props & {
 /** 这个组件提供一个直接删除节点的按钮。 
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.element 这个组件所服务的节点。
-*/
+ */
 function DefaultCloseButton(props: UniversalComponent_Props){
     return <AutoIconButton onClick={e=>{delete_node(props.editor , props.element)}} title="删除组件" icon={CloseIcon} />
 }
@@ -116,7 +116,6 @@ function AutoStackedPopperWithButton(props: {
     }
     return poper
 }
-
 
 function MyImg(props: {img_url: string}){
     return <img src={props.img_url}></img>

@@ -23,6 +23,11 @@ import {
     Grid , 
     IconButton , 
     Divider  , 
+    Container , 
+} 
+from "@mui/material"
+import type {
+    PaperProps
 } 
 from "@mui/material"
 
@@ -34,27 +39,37 @@ import {
 import { Node, Editor } from "slate"
 
 import { GroupNode , StyledNode , paragraph_prototype , get_node_type } from "../../core/elements"
-import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor_interface"
-import { YEditor } from "../../editor_interface"
-
+import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
+import { YEditor } from "../../editor"
 import { add_nodes , set_node , add_nodes_before , move_node } from "../../behaviours"
-import { non_selectable_prop , is_same_node , node2path } from "../../utils"
+
+import { is_same_node , node2path } from "../../utils"
+
 import { DefaultParameterEditButton , DefaultCloseButton , AutoStackedPopperWithButton } from "./universe/buttons"
-import { ComponentStyle } from "./universe"
 import { DefaultHidden } from "./hidden"
-import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "./universe/direction_control"
-import type { UniversalComponent_Props } from "./universe/parameter_container" 
+
+import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "../basic"
+import { ComponentPaper , ComponentEditorBox , UnselecableBox} from "./basic"
+
+import type { UniversalComponent_Props } from "./universe" 
 
 export { get_DefaultGroup_with_AppBar , get_DefaultGroup_with_RightBar}
+
+/** 为 Group 类型的节点定制的 Paper ，在节点前后相连时会取消前后距离。 */
+let GroupPaper = (props: PaperProps & {element: GroupNode}) => <ComponentPaper {...props} 
+    sx = { props.element.relation == "chaining" ? { marginTop: "0" } : {} }
+/>
 
 /** 这个函数返回一个默认的带应用栏的 group 组件。用于比较大的 group 组件。
  * @param get_title 从参数列表获得 title 的方法。
  * @param appbar_extra 要额外向 appbar 里添加的组件。
+ * @param surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
-*/
+ */
 function get_DefaultGroup_with_AppBar(
     get_title:((parameters:any)=>string) = ((parameters:any)=>parameters.title) , 
-    appbar_extra: (props: UniversalComponent_Props) => any = (props:UniversalComponent_Props) => <></>
+    appbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
+    surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <>{props.children}</>
 ): EditorRenderer_Func{
     // 渲染器
     return (props: EditorRenderer_Props) => {
@@ -62,35 +77,39 @@ function get_DefaultGroup_with_AppBar(
         let title = get_title(element.parameters)
         let editor = props.editor
         let E = appbar_extra
+        let SUR = surrounder
 
-        return <Paper
-            sx={ComponentStyle}
-            {...props.attributes}
-            variant = "outlined"
-        >
-            <AppBar {...non_selectable_prop} position="static" color="primary">
-                <Toolbar><AutoStack force_direction="row">
-                    <Typography>{title}</Typography>
-                    <DefaultParameterEditButton editor={editor} element={element}/>         
-                    <DefaultHidden              editor={editor} element={element} />
-                    <DefaultGroupSwicth         editor={editor} element={element} />
-                    <DefaultCloseButton         editor={editor} element={element} />
-                    <E                          editor={editor} element={element}/>
-                </AutoStack></Toolbar>
-            </AppBar >
-            <Box sx={{marginLeft: "1%", marginRight: "1%",}}>{props.children}</Box>
-        </Paper>
+        return <GroupPaper element={element}>
+            <AutoStack force_direction="column">
+                <UnselecableBox>
+                    <Toolbar><AutoStack>
+                        <Typography>{title}</Typography>
+                        <DefaultParameterEditButton editor={editor} element={element}/>         
+                        <DefaultHidden              editor={editor} element={element} />
+                        <DefaultGroupSwicth         editor={editor} element={element} />
+                        <DefaultCloseButton         editor={editor} element={element} />
+                        <E                          editor={editor} element={element}/>
+                    </AutoStack></Toolbar>
+                </UnselecableBox >
+                <Divider />
+                <ComponentEditorBox autogrow>
+                    <SUR editor={editor} element={element}>{props.children}</SUR>
+                </ComponentEditorBox>
+            </AutoStack>
+        </GroupPaper>
     }
 }
 
 /** 这个函数返回一个默认的group组件，但是各种选项等都被折叠在右侧的一个小按钮内。用于比较小的group。
  * @param get_title 从参数列表获得title的方法。
  * @param rightbar_extra 要额外向添加的组件。
+ * @param surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
 */
 function get_DefaultGroup_with_RightBar(
     get_title:((parameters:any)=>string) = ((parameters:any)=>parameters.title) , 
-    rightbar_extra: (props: UniversalComponent_Props) => any = (props:UniversalComponent_Props) => <></>
+    rightbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
+    surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <>{props.children}</>
 ): EditorRenderer_Func{
 
     return (props: EditorRenderer_Props) => {
@@ -98,20 +117,16 @@ function get_DefaultGroup_with_RightBar(
         let title = get_title(element.parameters)
         let editor = props.editor
         let E = rightbar_extra
+        let SUR = surrounder
 
-
-        return <Paper
-            sx = {ComponentStyle}
-            {...props.attributes}
-            variant = "outlined"
-            color = "secondary"
-        >
-            <Box>
-                <Grid container columns={24}>
-                <Grid item xs={21} md={22} xl={23}><Box>{props.children}</Box></Grid>
-                <Grid item xs={3}  md={2}  xl={1}>
-                    <Box {...non_selectable_prop}><SimpleAutoStack force_direction="column">
-                        <Typography>{title}</Typography>
+        return <GroupPaper element={element}>
+            <AutoStack force_direction="row">
+                <ComponentEditorBox autogrow>
+                    <SUR editor={editor} element={element}>{props.children}</SUR>
+                </ComponentEditorBox>                
+                <UnselecableBox>
+                    <SimpleAutoStack>
+                        <Typography variant="overline">{title}</Typography>
                         <E editor={editor} element={element}/>
                         <AutoStackedPopperWithButton
                             close_on_otherclick
@@ -127,11 +142,10 @@ function get_DefaultGroup_with_RightBar(
                             <DefaultGroupSwicth editor={editor} element={element} />
                             <DefaultCloseButton editor={editor} element={element} />
                         </AutoStackedPopperWithButton>
-                    </SimpleAutoStack></Box>
-                </Grid>
-                </Grid>
-            </Box>
-        </Paper>
+                    </SimpleAutoStack>
+                </UnselecableBox>
+            </AutoStack>
+        </GroupPaper>
     }
 }
 

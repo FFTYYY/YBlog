@@ -3,22 +3,22 @@
  */
 
 import React from "react";
-import { createEditor , Node , BaseEditor , Path} from "slate"
+import { createEditor , Node , BaseEditor , Path , BaseElement } from "slate"
 import { Slate, Editable, withReact, ReactEditor} from "slate-react"
 import { Editor, Transforms , Point , Text } from "slate"
 
-import Card from "@mui/material/Card"
+import {
+    Card , 
+    Box , 
+    Container , 
+} from "@mui/material"
 
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./core/elements"
-import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , } from "./core/elements"
-import type { StyleType , NodeType } from "./core/elements"
-import { get_node_type , is_styled } from "./core/elements"
+import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , StyleType , NodeType } from "./core/elements"
+import { get_node_type , is_styled  } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
-import { is_same_node , update_kth , get_hidden_idx } from "./utils"
 import { withAllYEditorPlugins } from "./plugins/apply_all"
-import { Renderer ,default_renderer } from "./core/renderer"
-import { node2path } from ".";
-import { ThreeSixty } from "@mui/icons-material";
+import { Renderer } from "./core/renderer"
 
 export { YEditor }
 export type { EditorRenderer_Props , EditorRenderer_Func}
@@ -28,7 +28,9 @@ interface YEditorComponent_Props{
     editor: YEditor                 // 目标YEditor对象
     onUpdate?: (newval:any)=>any    // 当节点改变时的回调函数
 }
-interface YEditorComponent_RenderElement_Props{
+
+/** Slate 需要的渲染函数的 props 。 */
+interface SlateRenderer_Props{
     attributes: any
     children: Node[]
 
@@ -74,9 +76,9 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
      * @param props.children 下层节点，这是slate要求的。
      * @private
      */
-     renderElement(props: YEditorComponent_RenderElement_Props){
+     renderElement(props: SlateRenderer_Props){
         let me = this
-        let element = props.element || props.leaf
+        let element = props.element  as BaseElement
 
         let type = get_node_type(element)
         let name = undefined // 如果name是undefined，则get_renderer会返回默认样式。
@@ -84,13 +86,41 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
             name = element.name
         }
         
+        // 取得的子渲染器。
         let R = this.editor.get_renderer(type , name)
-        return <R {...props} editor={me.editor}></R>
+
+        // 需要给 slate 提供的顶层属性。
+        let slate_attributes = props.attributes
+
+        // 子渲染器需要的 props 。
+        let subprops = {
+            element: element ,
+            editor: me.editor , 
+            children: props.children , 
+        }
+
+        // 如果这是个 inline 元素，就添加一个额外 style 。
+        let extra_style = {}
+        if(me.editor.slate.isInline(element))
+            extra_style = {display: "inline-block"}
+
+        return <div {...slate_attributes} style={extra_style}><R {...subprops}/></div>
     }
-    renderLeaf(props: YEditorComponent_RenderElement_Props){
+    renderLeaf(props: SlateRenderer_Props){
         let me = this
         let R = this.editor.get_renderer("text")
-        return <R {...props} editor={me.editor}></R>
+
+        // 需要给 slate 提供的顶层属性。
+        let slate_attributes = props.attributes
+
+        // 子渲染器需要的 props 。
+        let subprops = {
+            element: props.leaf ,
+            editor: me.editor , 
+            children: props.children , 
+        }
+
+        return <span {...slate_attributes}><R {...subprops}></R></span>
     }
     render(){
         let me = this
@@ -111,17 +141,14 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
 
 /** Editor 的 renderer 可以接受的参数列表。 */
 interface EditorRenderer_Props{
-    attributes: any
-    children: any[]
     editor: YEditor
-    element?: Node
-    leaf?: Node
+    element: Node
+    children: any[]
 }
 
 
 /** Editor 的子渲染组件的类型。*/
 type EditorRenderer_Func = (props: EditorRenderer_Props) => any
-
 
 /** 这个组件定义一个编辑器。 */
 class YEditor extends Renderer<EditorRenderer_Func>{
@@ -137,12 +164,12 @@ class YEditor extends Renderer<EditorRenderer_Func>{
     constructor(core: EditorCore){
         super(core , 
             {
-                text      : (props: EditorRenderer_Props)=><span {...props.attributes}>{props.children}</span> , 
-                inline    : (props: EditorRenderer_Props)=><span {...props.attributes}>{props.children}</span> , 
-                paragraph : (props: EditorRenderer_Props)=><div {...props.attributes}>{props.children}</div> , 
-                group     : default_renderer , 
-                struct    : default_renderer , 
-                support   : default_renderer , 
+                text      : (props: EditorRenderer_Props)=><span>{props.children}</span> , 
+                inline    : (props: EditorRenderer_Props)=><span>{props.children}</span> , 
+                paragraph : (props: EditorRenderer_Props)=><div>{props.children}</div> , 
+                group     : (props: EditorRenderer_Props)=><div>{props.children}</div> , 
+                struct    : (props: EditorRenderer_Props)=><div>{props.children}</div> , 
+                support   : (props: EditorRenderer_Props)=><div>{props.children}</div> , 
             }
         )
 
@@ -176,7 +203,7 @@ class YEditor extends Renderer<EditorRenderer_Func>{
         let root = me.core.root
         if(nodetype == "group")
         {        
-            let style = me.core.groupstyles[stylename]
+            let style = me.core.get_style("group" , stylename)
             if(style == undefined)
                 return (e:any) => undefined
 
@@ -186,7 +213,7 @@ class YEditor extends Renderer<EditorRenderer_Func>{
             }
         }
         if(nodetype == "inline"){
-            let style = me.core.inlinestyles[stylename]
+            let style = me.core.get_style("inline" , stylename)
             if(style == undefined)
                 return (e:any) => undefined
 
@@ -206,7 +233,7 @@ class YEditor extends Renderer<EditorRenderer_Func>{
         }
         if(nodetype == "support")
         {        
-            let style = me.core.supportstyles[stylename]
+            let style = me.core.get_style("support",stylename)
             if(style == undefined)
                 return (e:any) => undefined
 
