@@ -1,181 +1,180 @@
-/** 这个文件定义一个抽象的编辑器，主要包括这个编辑器可以使用的所有样式。
- * 只包含样式的名称和原型描述，而具体如何渲染则在interface中定义。
+/** 
+ * 这个文件定义一个抽象的编辑器，描述了一个编辑器可以使用的所有样式，以及具体的节点树。
+ * 注意，这个文件只描述抽象的样式，不涉及具体如何渲染。
  * @module
 */
 
-import { Editor , Node } from "slate"
-import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , StyledNodeFlag , } from "./elements"
+import { Node } from "slate"
+import type { 
+    StyleType , 
+    StyledNodeFlag , 
+    ValidParameter ,
+
+    StyledNode , 
+    GroupNode ,
+    InlineNode , 
+    SupportNode , 
+    StructNode ,  
+} from "./elements"
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./elements"
 
 export {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle}
 
 type RootNotification_Function = (new_root: GroupNode)=>void
 
+/** 将样式类型映射为节点类型。 */
+interface StyleType2NodeType{
+    inline: InlineNode
+    group: GroupNode
+    struct: StructNode
+    support: SupportNode
+    abstract: Node
+}
 
-/** 描述一个抽象的编辑器，维护节点树和使用的样式 */
+/** 描述一个抽象的编辑器，维护节点树和使用的样式 
+ * `EditorCore`可以接受一系列『通知函数』，当节点树改变时进行广播。
+ */
 class EditorCore{
-    inlinestyles    : { [sty: string] : InlineStyle     }
-    groupstyles     : { [sty: string] : GroupStyle      }
-    structstyles    : { [sty: string] : StructStyle     }
-    supportstyles   : { [sty: string] : SupportStyle    }
-    abstractstyles  : { [sty: string] : AbstractStyle   }
+
+    /** 
+     * 这个编辑器所使用的所有样式。 
+     * 用类型+名称来检索。
+     */
+    styles: { [ST in StyleType]: {[name: string]: Style<ST> } }
+    
+    /** 这个文档的具体的树结构。 */
     root: GroupNode
+
+    /** 当树结构改变时需要通知谁。 */
     notifications: RootNotification_Function[]
-    init_parameters: any
 
     /**
-     * 
-     * @param inlinestyles 初始的内联样式列表，也可以稍后通过 add_inlinestyle() 添加。
-     * @param groupstyles 初始的组样式列表。
-     * @param structstyles 初始的结构样式列表。
-     * @param supportstyles 初始的辅助节点样式列表。
-     * @param abstractstyles 初始的抽象节点样式列表。
+     * @param styles 初始的样式列表。
+     * @param root_parameters 根节点的参数列表。
      */
-    constructor(
-        inlinestyles    : InlineStyle   [] = [], 
-        groupstyles     : GroupStyle    [] = [], 
-        structstyles    : StructStyle   [] = [], 
-        supportstyles   : SupportStyle  [] = [] ,
-        abstractstyles  : AbstractStyle [] = [] , 
-        init_parameters: any = {} , 
-    ){
-        this.inlinestyles   = {}
-        this.groupstyles    = {}
-        this.structstyles   = {}
-        this.supportstyles  = {}
-        this.abstractstyles = {}
+    constructor(styles: Style<StyleType>[] , root_parameters: ValidParameter){
+        this.styles = {
+            "inline": {},
+            "group": {}, 
+            "struct": {},
+            "support": {} ,  
+            "abstract": {} , 
+        }
         
-        for(let style of inlinestyles)
-        this.add_inlinestyle(style)
-        for(let style of groupstyles)
-        this.add_groupstyle(style)
-        for(let style of structstyles)
-        this.add_structstyle(style)
-        for(let style of supportstyles)
-        this.add_supportstyle(style)
-        for(let style of abstractstyles)
-        this.add_abstractstyle(style)
-        
-        this.init_parameters = init_parameters
-        this.root = group_prototype("root" , init_parameters) //节点树
+        for(let style of styles){
+            this.add_style(style)
+        }
+
+        this.root = group_prototype("root" , root_parameters) //节点树
         this.notifications = [] // 当root修改时要通知的人的列表
     }
 
-    /** 等价于 update_root({children: children}) */
-    update_children(children: Node[]){
+    /** 
+     * 这个函数直接修改`root.children`。
+     * 等价于`update_root({children: children})`。
+     */
+    public update_children(children: Node[]){
         return this.update_root({children: children})
     }
 
-    /** 这个函数是外部改变 root 的唯一方式。 */
-    update_root(new_root: any){
+    /** 
+     * 这个函数是外部改变 root 的唯一方式。 
+     */
+    public update_root(new_root: any){
         this.root = {...this.root, ...new_root}
         for(let notif of this.notifications)
             notif(this.root)
     }
 
     /** 添加一个通知函数。 */
-    add_notificatioon(notif: RootNotification_Function){
+    public add_notificatioon(notif: RootNotification_Function){
         this.notifications.push(notif)
     }
 
-    add_inlinestyle(style: InlineStyle){
-        this.inlinestyles[style.name] = style
+    /** 添加一个样式。 */
+    public add_style<ST extends StyleType>(style: Style<ST>){
+        (this.styles[style.type] as {[name: string]: Style<ST>})[style.name] = style // 日了狗了。
     }
 
-    add_groupstyle(style: GroupStyle){
-        this.groupstyles[style.name] = style
-    }
-
-    add_structstyle(style: StructStyle){
-        this.structstyles[style.name] = style
-    }
-
-    add_supportstyle(style: SupportStyle){
-        this.supportstyles[style.name] = style
-    }
-    add_abstractstyle(style: AbstractStyle){
-        this.abstractstyles[style.name] = style
+    /** 获得一个样式。 */
+    public get_style<ST extends StyleType>(type: ST, name: string): Style<ST>{
+        return this.styles[type][name] as Style<ST>
     }
 }
 
-/** 编辑器所使用的样式描述的基类 。*/
-class Style<NT>{
+/** 一个样式的接口。 */
+interface Style<ST extends StyleType>{
+
+    /** 这个样式的类型。 */
+    type: ST
+
+    /** 这个样式的名称。 */
     name: string
-    parameter_prototype: any
-    prototype: ()=>NT
-    
-    /** 
-     * @param name 这个样式的名称。
-     * @param parameter_prototype 这个样式的参数的原型。
-     * @param prototype 一个函数，调用返回这个样式的原型。
-     */
-    constructor(name: string, parameter_prototype: any, prototype: ()=>NT){
+
+    /** 新建一个这个样式的节点。 */
+    makenode?: () => StyleType2NodeType[ST]
+
+    /** 如果这是一个抽象节点，那这个函数就是新建一个抽象节点。 */
+    makehidden?: () => GroupNode
+}
+
+
+/** 描述一个内联样式的类。 */
+class InlineStyle implements Style<"inline">{
+    type: "inline" = "inline"
+    name: string
+    makenode: ()=>InlineNode
+    constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
         this.name = name
-        this.parameter_prototype = parameter_prototype
-        this.prototype = prototype
+        this.makenode = ()=>inline_prototype(name , parameter_prototype , flags)
     }
-
-    /** 根据所拥有的原型信息生成一个原型节点 */
-    makenode(): NT{
-        return this.prototype()
-    }
-
-    /** 给prototype赋值 */
-    update_prototype(prototype:()=>NT){
-        this.prototype = prototype
-    }
-
 }
 
-/** 描述一个内联样式的类 */
-class InlineStyle extends Style<InlineNode>{
 
+/** 描述一个内段组样式的类。 */
+class GroupStyle implements Style<"group">{
+    type: "group" = "group"
+    name: string
+    makenode: ()=>GroupNode
     constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
-        super(name, parameter_prototype, ()=>inline_prototype(name , parameter_prototype , flags))
+        this.name = name
+        this.makenode = ()=>group_prototype(name , parameter_prototype , flags)
     }
-
 }
 
-/** 描述一个组样式的类 */
-class GroupStyle extends Style<GroupNode>{
+
+/** 描述一个结构样式的类。 */
+class StructStyle implements Style<"struct">{
+    type: "struct" = "struct"
+    name: string
+    makenode: ()=>StructNode
     constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
-        super(name, parameter_prototype, ()=>group_prototype(name , parameter_prototype , flags))
+        this.name = name
+        this.makenode = ()=>struct_prototype(name , parameter_prototype , flags)
     }
-
 }
 
-/** 描述一个结构样式的类 */
-class StructStyle extends Style<StructNode>{
-    declare prototype: ()=>StructNode
-
-    constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
-        super(name, parameter_prototype, ()=>struct_prototype(name , parameter_prototype , flags))
-    }
-
-}
 
 /** 描述一个辅助节点的类 */
-class SupportStyle extends Style<SupportNode>{
-    declare prototype: ()=>SupportNode
-
+class SupportStyle implements Style<"support">{
+    type: "support" = "support"
+    name: string
+    makenode: ()=>SupportNode
     constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
-        super(name, parameter_prototype, ()=>support_prototype(name , parameter_prototype , flags))
+        this.name = name
+        this.makenode = ()=>support_prototype(name , parameter_prototype , flags)
     }
-
 }
 
 /** 描述一个抽象节点的样式。注意抽象节点不使用makenode()而是makehidden() */
-class AbstractStyle{
+class AbstractStyle implements Style<"abstract">{
+    type: "abstract" = "abstract"
     name: string
-    parameter_prototype: any
+    makehidden: () => GroupNode
 
     constructor(name: string , parameter_prototype: any){
         this.name = name
-        this.parameter_prototype = parameter_prototype
-    }
-
-    /** 生成一个下级抽象节点。 */
-    makehidden(){
-        return group_prototype(this.name , this.parameter_prototype)    
+        
+        this.makehidden = ()=>group_prototype(name , parameter_prototype)  
     }
 }

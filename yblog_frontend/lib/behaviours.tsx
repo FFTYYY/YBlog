@@ -1,10 +1,10 @@
 /** 这个模块定义所有修改文档的外部行为。 
  * @module
 */
-import { non_selectable_prop , is_same_node , node2path } from "./utils"
+import { is_same_node , node2path } from "./utils"
 import { StyledNode } from "./core/elements"
 import { Transforms, Node, Editor } from "slate"
-import { YEditor } from "./editor_interface"
+import { YEditor } from "./editor"
 
 export { set_node , replace_nodes , add_nodes , add_nodes_before , move_node , delete_node }
 

@@ -26,18 +26,29 @@ import { ThemeProvider } from "@mui/material/styles"
 
 import { Node } from "slate"
 
-import { YEditor } from "../../editor_interface"
+import { YEditor } from "../../editor"
 import { object_foreach } from "../../utils"
 import type { StyleType , NodeType } from "../../core/elements"
 
 import { DefaultHidden } from "./hidden"
-import { AutoStack , AutoTooltip , AutoStackedPopper , AutoStackButtons , FilledStyle , DefaultParameterEditButton , 
-	AutoStackedPopperWithButton
+import { 
+	DefaultParameterEditButton , 
+	AutoStackedPopperWithButton , 
 } from "./universe"
+import { 
+	AutoStack , 
+	AutoTooltip , 
+	AutoStackedPopper , 
+	AutoStackButtons , 
+} from "../basic"
 
-import { my_theme } from "../theme"
+import { default_editor_theme } from "./basic"
+import { EditorBackgroundPaper , ComponentEditorBox } from "./basic"
 
 export { DefaultEditor }
+
+// TODO 从参数中接受一个theme，并用来扩充 default_editor_theme
+
 interface DefaultEditor_State{
 }
 
@@ -86,13 +97,23 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 		let number2percent = (obj: {[k:string]:number}) => object_foreach(obj , x=>`${Math.floor(x*100)%100}%`)
 
 		let me = this
-		return <ThemeProvider theme={my_theme}><Paper sx={FilledStyle}>
+		return <ThemeProvider theme={default_editor_theme}><EditorBackgroundPaper>
 
-			<Box sx={{position: "absolute" , height: "100%" , width:  complement_width, overflow: "auto"}}>
+			<Box sx = {{ 
+				position: "absolute", 
+				height: "100%", 
+				width: complement_width, 
+				overflow: "auto", 
+			}}><ComponentEditorBox>
 				<YEditor.Component editor={me.editor} onUpdate={me.onUpdate}/>
-			</Box>
+			</ComponentEditorBox></Box>
 
-			<Box sx={{position: "absolute" , height: "100%" , left: number2percent(complement_width), width: toolbar_width}}>
+			<Box sx = {{
+				position: "absolute", 
+				height: "100%", 
+				left: number2percent(complement_width), 
+				width: toolbar_width
+			}}>
 
 				<AutoStack force_direction="column">
 					<DefaultParameterEditButton editor = {me.editor} element = {me.editor.core.root} />
@@ -113,7 +134,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 								}}
 								title = {typename}
 							>{
-								Object.keys(me.editor.core[`${typename}styles`]).map( (stylename) => 
+								Object.keys(me.editor.core.styles[typename]).map( (stylename) => 
 									<Button 
 										key = {stylename}
 										onClick = {e => me.editor.get_onClick(typename , stylename)(e)}
@@ -125,6 +146,6 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 				</AutoStack>
 			</Box>
 
-			</Paper></ThemeProvider>
+			</EditorBackgroundPaper></ThemeProvider>
 	}
 }

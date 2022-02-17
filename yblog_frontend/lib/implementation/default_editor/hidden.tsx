@@ -21,12 +21,12 @@ import { Node, Editor } from "slate"
 import { set_node , replace_nodes } from "../../behaviours"
 
 
-import { AutoTooltip , ForceContain , AutoStackedPopper } from "./universe"
+import { AutoTooltip , ForceContain , AutoStackedPopper } from "../basic"
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../../core/elements"
-import { YEditor } from "../../editor_interface"
-import { non_selectable_prop , is_same_node , node2path , update_kth , get_hidden_idx } from "../../utils"
+import { YEditor } from "../../editor"
+import { is_same_node , node2path , update_kth , get_hidden_idx } from "../../utils"
 import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../../core/editor_core"
-import { DefaultEditor } from "./editor"
+import { DefaultEditor } from "./main"
 
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
 
@@ -38,7 +38,7 @@ function DefaultNewHidden(props: {editor: YEditor, element: StyledNode, anchor_e
 
     let element = props.element 
     let editor = props.editor
-    let abstractstyles = editor.core.abstractstyles 
+    let abstractstyles = editor.core.styles.abstract
     let onClose = props.onClose || ((e:any)=>{})
 
     function get_onClick(choice: string | undefined){
@@ -102,13 +102,13 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             drawer_open: false
         }
         
-        this.subeditor = new YEditor(new EditorCore(
-            Object.values(props.editor.core.inlinestyles    ) , 
-            Object.values(props.editor.core.groupstyles     ) , 
-            Object.values(props.editor.core.structstyles    ) , 
-            Object.values(props.editor.core.supportstyles   ) , 
-            Object.values(props.editor.core.abstractstyles  ) , 
-        ))
+        this.subeditor = new YEditor(new EditorCore([
+            ...Object.values(props.editor.core.styles.inline    ) , 
+            ...Object.values(props.editor.core.styles.group     ) , 
+            ...Object.values(props.editor.core.styles.struct    ) , 
+            ...Object.values(props.editor.core.styles.support   ) , 
+            ...Object.values(props.editor.core.styles.abstract  ) , 
+        ] , {}))
         
         this.subeditor.default_renderers = props.editor.default_renderers
         this.subeditor.style_renderers   = props.editor.style_renderers

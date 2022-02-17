@@ -86,7 +86,7 @@ function AutoStackButtons(props: {
  * @param force_direction 强制设置一个当前方向。
  * @param children 子元素。由 React 自动提供。
  * @param simple 是否为一个小堆叠，如果为 true ，则子组件不会转向。
-*/
+ */
 function AutoStack(props: {
     force_direction?: DirectionValues
     children?: any
@@ -112,7 +112,7 @@ function AutoStack(props: {
  * 相当于 <AutoStack simple>
  * @param force_direction 强制设置一个当前方向。
  * @param children 子元素。由 React 自动提供。
-*/
+ */
 function SimpleAutoStack(props: {
     force_direction?: DirectionValues
     children?: any
@@ -148,7 +148,7 @@ class AutoStackedPopper extends React.Component<AutoStackedPopper_Props>{
      * @param props.anchorEl 定位元素。
      * @param props.open 是否打开。
      * @param props.component 用什么元素来作为弹出框的实体。默认为 Paper 。
-    */
+     */
     constructor(props: AutoStackedPopper_Props){
         super(props)
     }

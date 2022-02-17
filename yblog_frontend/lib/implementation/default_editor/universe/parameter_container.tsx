@@ -26,10 +26,10 @@ import {
 
 import { Node, Editor } from "slate"
 
-import { StyledNode , is_validleaf} from "../../../core/elements"
-import type { ValidParameters , ValidLeaf } from "../../../core/elements"
-import { YEditor } from "../../../editor_interface"
-import { non_selectable_prop , is_same_node , node2path } from "../../../utils"
+import { StyledNode , is_valid_parameter_leaf} from "../../../core/elements"
+import type { ValidParameter , ValidParameterLeaf } from "../../../core/elements"
+import { YEditor } from "../../../editor"
+import { is_same_node , node2path } from "../../../utils"
 import { set_node , delete_node } from "../../../behaviours"
 
 
@@ -42,8 +42,8 @@ export type {
 }
 
 interface DefaultParameterContainer_Props{
-    initval: ValidParameters
-    onUpdate?: (newval: ValidParameters) => void
+    initval: ValidParameter
+    onUpdate?: (newval: ValidParameter) => void
 }
 
 
@@ -75,7 +75,7 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
         let ret = []
         for(let key in parameters){
             let subname = [...name , key]
-            if(!is_validleaf(parameters[key])){
+            if(!is_valid_parameter_leaf(parameters[key])){
                 ret.push(subname)
                 ret = [...ret , ...me.get_all_treenodes(subname , parameters[key])]
             }
@@ -89,7 +89,7 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
      * @param props.val 参数的当前值。
      * @param onChange 当值改变时的回调函数。
      */
-    renderValue(props: {name: string, val: ValidLeaf , onChange: (newval:ValidLeaf)=>void}){
+    renderValue(props: {name: string, val: ValidParameterLeaf , onChange: (newval:ValidParameterLeaf)=>void}){
 
         let name = props.name
         let val = props.val
@@ -135,7 +135,7 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
      * @param props.val 参数项的当前值。应该是一个字典。
      * @param props.onChange 当值改变时的回调函数。
      */
-    renderDict(props: {name: string, val: ValidParameters, father_names:string[], onChange: (newval:object)=>void}){
+    renderDict(props: {name: string, val: ValidParameter, father_names:string[], onChange: (newval:object)=>void}){
         let newval = {...props.val}
 
         let RV = this.renderValue.bind(this)   // 渲染一个文本框。
@@ -155,12 +155,12 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
                 let subval = props.val[subname]
 
                 // 如果是基本类型，就渲染一个输入框。
-                if(is_validleaf(subval)){
+                if(is_valid_parameter_leaf(subval)){
                     return <RV 
                         key     = {subname}
                         name    = {subname} 
                         val     = {subval} 
-                        onChange = {(newsubval:ValidLeaf)=>{
+                        onChange = {(newsubval:ValidParameterLeaf)=>{
                             newval[subname] = newsubval
                             props.onChange(newval)
                         }} 
@@ -173,7 +173,7 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
                     name    = {subname} 
                     val     = {subval} 
                     father_names = {my_names}
-                    onChange = {(newsubval:ValidParameters)=>{
+                    onChange = {(newsubval:ValidParameter)=>{
                         newval[subname] = newsubval
                         props.onChange(newval)
                     }} 
@@ -206,7 +206,7 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
             val = {me.parameters}
             father_names = {[]}
             
-            onChange = {(newval:ValidParameters)=>{
+            onChange = {(newval:ValidParameter)=>{
                 me.parameters = newval
                 me.onUpdate(newval) // 向父组件通知自己的更新
             }}
@@ -226,7 +226,7 @@ interface UniversalComponent_Props{
  */
 function DefaultParameterWithEditor(props: UniversalComponent_Props){
 
-    function temp_update_value(newval: ValidParameters){
+    function temp_update_value(newval: ValidParameter){
 
         props.editor.add_suboperation( props.element.idx , (father_editor: YEditor) => {
             set_node( father_editor , props.element , { parameters: newval })
@@ -253,7 +253,6 @@ function DefaultParameterWithEditorWithDrawer(props: UniversalComponent_Props & 
 }){
     let onClose = props.onClose || ((e:any)=>{})
     return <Drawer 
-        {...non_selectable_prop} 
         anchor = {"left"}
         open = {props.open}
         onClose={onClose}
