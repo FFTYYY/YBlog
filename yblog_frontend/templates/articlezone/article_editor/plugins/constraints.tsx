@@ -1,5 +1,5 @@
 import { Editor , Node , Transforms } from "slate"
-import { GroupNode , get_node_type , SupportNode , type_and_name_is, paragraph_prototype } from "../../../../lib"
+import { GroupNode , get_node_type , SupportNode , is_certain_style, paragraph_prototype } from "../../../../lib"
 import { newpara_style , sectioner_style , ender_style  } from "../../components/styles"
 
 export { set_force_new_paragraph_in_group , set_force_new_para_in_sectioner , set_force_sectioner}
@@ -15,19 +15,19 @@ function set_force_sectioner(editor: Editor): Editor{
             let num_num = node.children.length
 
             // 开头不是小节线的情况。
-            if(num_num == 0 || !type_and_name_is(node.children[0] ,  "support" , "小节线") ){
+            if(num_num == 0 || !is_certain_style(node.children[0] ,  "support" , "小节线") ){
                 Transforms.insertNodes(editor , sectioner_style.makenode() , {at: [0]})
                 return 
             }
 
             // 结尾不是章节线的情况。
-            if(!type_and_name_is(node.children[num_num-1] ,  "support" , "章节线")){
+            if(!is_certain_style(node.children[num_num-1] ,  "support" , "章节线")){
                 Transforms.insertNodes(editor , ender_style.makenode() , {at: [num_num]})
                 return 
             }
         }
 
-        if(type_and_name_is(_node , "support" , "章节线")){
+        if(is_certain_style(_node , "support" , "章节线")){
             if(path.length != 1 || path[0] != editor.children.length-1){ // 不是最后一个节点
                 Transforms.removeNodes(editor , {at: path})
                 return 
@@ -50,13 +50,13 @@ function set_force_new_para_in_sectioner(editor: Editor): Editor{
             for(let [subidx, subnode] of node.children.entries()){
                 
                 // 不是小节线也不是章节线，我们不关心。
-                if(!(type_and_name_is(subnode,"support","小节线") || type_and_name_is(subnode,"support","章节线")))
+                if(!(is_certain_style(subnode,"support","小节线") || is_certain_style(subnode,"support","章节线")))
                     continue
                 
                 
                 if(subidx != 0){ // 前一个节点必须是新段，除非自己是第一个。
                     let last_node = node.children[subidx - 1]
-                    if(!type_and_name_is(last_node , "support" , "新段")){
+                    if(!is_certain_style(last_node , "support" , "新段")){
                         Transforms.insertNodes(editor , newpara_style.makenode() , {at: [...path,subidx]})
                         return 
                     }

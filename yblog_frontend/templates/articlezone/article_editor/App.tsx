@@ -12,9 +12,9 @@ import {
 } from "@mui/material"
 
 import AddIcon from '@mui/icons-material/Add';
-import {YEditor , EditorCore , OutRenderer , DefaultRenderer} from "../../../lib"
+import {YEditor , EditorCore , Printer , DefaultPrinter} from "../../../lib"
 import {DefaultEditor , group_prototype} from "../../../lib"
-import {withAllStyles_Editor , withAllStyles_Output , withAllStyles_Interface} from "../components"
+import {withAllStyles , withAllEditors , withAllPrinters} from "../components"
 import {Node , Transforms , Element } from "slate"
 import {ReactEditor} from "slate-react"
 import { axios , get_node_id } from '../utils'
@@ -32,19 +32,19 @@ interface App_State{
 class App extends  React.Component<App_Props , App_State>{
 	editor: YEditor
 	core: EditorCore
-	output: OutRenderer
+	printer: Printer
 
 	constructor(props: App_Props){
 		super(props)
 
-		this.core   = withAllStyles_Editor( new EditorCore() )
-		this.editor = withAllStyles_Interface( new YEditor( this.core ) )
-		this.output = withAllStyles_Output( new OutRenderer( this.core ) )
+		this.core    = withAllStyles		( new EditorCore([] , {}) )
+		this.editor  = withAllEditors	( new YEditor( this.core ) )
+		this.printer = withAllPrinters	( new Printer( this.core ) )
 
 		this.editor.slate = withAllPlugins( this.editor.slate ) as ReactEditor
 	}
 
-	async componentDidMount(){		
+	async componentDidMount(){
 		var node_content = (await axios.get(`/get_node/${node_id}`)).data.content
 		var node_value = {}
 		if(node_content != "")
@@ -65,8 +65,8 @@ class App extends  React.Component<App_Props , App_State>{
 		return <React.Fragment>
 			<Box sx = {{
 				position: "absolute" , 
-				width: "50%" ,
-				left: "0" , 
+				width: "45%" ,
+				left: "10%" , 
 				height: "100%" , 
 			}}>
 				<DefaultEditor editor = {me.editor}/>
@@ -74,14 +74,14 @@ class App extends  React.Component<App_Props , App_State>{
 
 			<Box sx = {{
 					position: "absolute" , 
-					width: "50%" ,
-					left: "50%" , 
+					width: "45%" ,
+					left: "55%" , 
 					height: "100%" , 
 					backgroundColor: "#AABBCC" , 
 					overflow: "auto" , 
 			}}>
-				<DefaultRenderer
-					outer = {me.output}
+				<DefaultPrinter
+					printer = {me.printer}
 				/>
 			</Box>
 		</React.Fragment>

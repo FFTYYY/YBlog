@@ -13,7 +13,7 @@ export {
 }
 
 var brightwords_style = new GroupStyle   ("昭言"   , { title: "昭言" , alias: "" , })
-var followwords_style = new GroupStyle   ("随言"   , {})
+var followwords_style = new GroupStyle   ("随言"   , { beginning: "" , ending: "" })
 var mount_style       = new GroupStyle   ("裱示"   , {})
 var display_style     = new GroupStyle   ("彰示"   , {})
 var newpara_style     = new SupportStyle ("新段"   , {})
