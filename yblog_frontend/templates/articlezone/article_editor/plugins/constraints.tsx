@@ -39,7 +39,9 @@ function set_force_sectioner(editor: Editor): Editor{
     return editor
 }
 
-/** 这个插件强迫每个小节线上方都恰好是『新段』节点，下方恰好是一个空白段落。 */
+/** 这个插件强迫每个小节线上方都恰好是『新段』节点，下方恰好是一个空白段落。 
+ * TODO 现在不需要了。
+*/
 function set_force_new_para_in_sectioner(editor: Editor): Editor{
     const normalizeNode = editor.normalizeNode
 
@@ -80,7 +82,9 @@ function set_force_new_para_in_sectioner(editor: Editor): Editor{
     return editor
 }
 
-/** 这个插件强迫每个 GroupNode （不包括根节点）的开头结尾都是 『新段』 节点。 */
+/** 这个插件强迫每个 GroupNode （不包括根节点）的开头结尾都是 『新段』 节点。 
+ * TODO 现在也不需要了
+*/
 function set_force_new_paragraph_in_group(editor:Editor): Editor{
     const normalizeNode = editor.normalizeNode
 

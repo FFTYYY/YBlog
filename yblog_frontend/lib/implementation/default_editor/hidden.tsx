@@ -24,11 +24,11 @@ import { set_node , replace_nodes } from "../../behaviours"
 import { AutoTooltip , ForceContain , AutoStackedPopper } from "../basic"
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../../core/elements"
 import { YEditor } from "../../editor"
-import { is_same_node , node2path , update_kth , get_hidden_idx } from "../../utils"
+import { is_same_node , node2path , update_kth , get_hidden_idx } from "../utils"
 import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../../core/editor_core"
 import { DefaultEditor } from "./main"
 
-export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
+export {DefaultNewHidden , DefaultHiddenEditor , DefaultHiddenEditorButtons}
 
 /** 这个组件提供一个按钮，让 element 选择其 hidden style 。
  * @param props.editor 这个组件所服务的编辑器。
@@ -153,7 +153,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
                     editor = { me.subeditor }
                     onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
                         replace_nodes(me.subeditor , me.subeditor.core.root , me.props.son.children)
-                        me.props.editor.add_suboperation(me.son.idx , me.sub_apply.bind(me))
+                        me.props.editor.add_suboperation(`${me.son.idx}-hidden` , me.sub_apply.bind(me))
                     }}
                 />
             </ForceContain.Provider>
@@ -202,7 +202,7 @@ function DefaultHiddenEditorGroup(props: {editor:YEditor , element: StyledNode, 
  * @param props.element 这个组件所服务的节点。
  * @returns 一个渲染了两个 Button 的 
 */
-function DefaultHidden(props: {editor: YEditor , element: StyledNode}){
+function DefaultHiddenEditorButtons(props: {editor: YEditor , element: StyledNode}){
     let editor = props.editor
     let element = props.element
 

@@ -5,13 +5,14 @@
 
 import { Editor } from "slate"
 
-import { constraint_group } from "./constraints"
+import { constraint_struct , constraint_relation } from "./constraints"
 import { set_inline , set_support } from "./styles"
 
 export {withAllYEditorPlugins}
 
 var plugins: ((editor: Editor)=>Editor)[] = [
-    constraint_group , 
+    constraint_struct , 
+    constraint_relation , 
     set_inline , 
     set_support , 
 ]

@@ -11,15 +11,26 @@ import {
 	Container , 
 } from "@mui/material"
 
-import AddIcon from '@mui/icons-material/Add';
-import {YEditor , EditorCore , Printer , DefaultPrinter} from "../../../lib"
-import {DefaultEditor , group_prototype} from "../../../lib"
-import {withAllStyles , withAllEditors , withAllPrinters} from "../components"
-import {Node , Transforms , Element } from "slate"
-import {ReactEditor} from "slate-react"
+import {
+	YEditor , 
+	EditorCore , 
+	Printer , 
+	DefaultPrinter , 
+	DefaultEditor , 
+	AutoStack , 
+
+} from "../../../lib"
+
+
+import { withAllStyles , withAllEditors , withAllPrinters} from "../components"
+import { Node , Transforms , Element } from "slate"
+import { ReactEditor } from "slate-react"
 import { axios , get_node_id } from '../utils'
-import { FlexibleDrawer , FlexibleItem } from "../theme/framework"
+import { FlexibleDrawer , FlexibleItem } from "../construction/framework"
+import { my_theme } from "../construction/theme"
+import { SaveButton } from "../construction/buttons"
 import { withAllPlugins } from "./plugins"
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 
 var node_id = get_node_id()
 interface App_Props{
@@ -33,15 +44,18 @@ class App extends  React.Component<App_Props , App_State>{
 	editor: YEditor
 	core: EditorCore
 	printer: Printer
+	printer_ref: any
 
 	constructor(props: App_Props){
 		super(props)
 
-		this.core    = withAllStyles		( new EditorCore([] , {}) )
+		this.core    = withAllStyles	( new EditorCore([] , {}) )
 		this.editor  = withAllEditors	( new YEditor( this.core ) )
 		this.printer = withAllPrinters	( new Printer( this.core ) )
 
 		this.editor.slate = withAllPlugins( this.editor.slate ) as ReactEditor
+
+		this.printer_ref = React.createRef()
 	}
 
 	async componentDidMount(){
@@ -50,64 +64,81 @@ class App extends  React.Component<App_Props , App_State>{
 		if(node_content != "")
 			node_value = JSON.parse(node_content)
 		
-		Transforms.removeNodes( this.editor.slate , {at: [0]}) // 删除遗留的节点
-		Transforms.insertNodes(this.editor.slate , node_value as Node[] , {at: [0]})
-	}
+			Transforms.insertNodes(this.editor.slate , node_value as Node[] , {at: [0]})
+		}
 	
-	on_click_save(e: any){
+	async on_click_save(e: any){
 		var data = {"content": this.core.root.children}
-		axios.post( `/post_node/${node_id}` , data)
+		let ret = await axios.post( `/post_node/${node_id}` , data)
+		return ret.data.status
 	}
 
-	mainpart(props: {}){
+	mainpart(props: {sx: any}){
 		let me = this
 
-		return <React.Fragment>
+		return <Box sx={props.sx}>
 			<Box sx = {{
 				position: "absolute" , 
-				width: "45%" ,
-				left: "10%" , 
+				width: "49%" ,
+				left: "0%" , 
+				top: "0" , 
 				height: "100%" , 
 			}}>
-				<DefaultEditor editor = {me.editor}/>
+				<DefaultEditor 
+					editor = {me.editor}
+					theme = {my_theme}
+					onFocusChange = {()=>{
+						if(me.editor.slate.selection && me.printer_ref  && me.printer_ref.current){
+							let pathid = JSON.stringify(me.editor.slate.selection.focus.path)
+							me.printer_ref.current.scroll_to(pathid)
+						}
+					}}
+				/>
 			</Box>
 
 			<Box sx = {{
-					position: "absolute" , 
-					width: "45%" ,
-					left: "55%" , 
-					height: "100%" , 
-					backgroundColor: "#AABBCC" , 
-					overflow: "auto" , 
+				position: "absolute" , 
+				width: "49%" ,
+				left: "51%" , 
+				top: "0" , 
+				height: "100%" , 
 			}}>
 				<DefaultPrinter
 					printer = {me.printer}
+					ref = {this.printer_ref}
+					theme = {my_theme}
 				/>
 			</Box>
-		</React.Fragment>
+		</Box>
 	}
 
 	render(){
 		let me = this
 		let MainPart = this.mainpart.bind(this)
 
-		return <Box><Stack spacing={2} direction="row">
+		return <ThemeProvider theme={createTheme(my_theme)}><Box sx={{
+				position: "absolute" , 
+				top: "2%" ,
+				left: "1%" , 
+				height: "96%" , 
+				width: "98%" , 
+				display: "flex" , 
+			}}>
 
-			<FlexibleDrawer>
-				<FlexibleItem 
-					open_item = {"hahhahahahaa"}
-					close_item = {"ha"}
-				/>
-				<FlexibleItem 
-					open_item = {"Save"}
-					close_item = {"S"}
-					onClick = {me.on_click_save.bind(me)}
-				/>
+			<FlexibleDrawer sx={{
+				marginRight: "1%"
+			}}>
+				<SaveButton save_func={me.on_click_save.bind(me)}/>
 			</FlexibleDrawer>
 
-			<MainPart />
+			<MainPart sx={{
+				position: "relative" , 
+				width: "100%" , 
+				height: "100%" , 
+				flex: 1 , 
+			}}/>
 			
-		</Stack></Box>
+		</Box></ThemeProvider>
 	}
 
 }

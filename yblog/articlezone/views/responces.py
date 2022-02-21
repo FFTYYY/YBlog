@@ -18,6 +18,8 @@ def post_node_content(request, node_id):
     # if not request.user.is_authenticated:
     #     return Http404()
 
+    flag = False
+
     node = Node.objects.get(id = node_id)
     
     if request.body != b"":
@@ -25,8 +27,9 @@ def post_node_content(request, node_id):
 
         node.content = content
         node.save()
+        flag = True
 
-    return JsonResponse({})
+    return JsonResponse({"status": flag})
 
 @allow_acess
 def get_nodetree_info(request):

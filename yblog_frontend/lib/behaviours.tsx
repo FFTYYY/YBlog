@@ -1,12 +1,12 @@
 /** 这个模块定义所有修改文档的外部行为。 
  * @module
 */
-import { is_same_node , node2path } from "./utils"
+import { is_same_node , node2path } from "./implementation/utils"
 import { StyledNode } from "./core/elements"
 import { Transforms, Node, Editor } from "slate"
 import { YEditor } from "./editor"
 
-export { set_node , replace_nodes , add_nodes , add_nodes_before , move_node , delete_node }
+export { set_node , replace_nodes , add_nodes , add_nodes_before , move_node , delete_node , add_nodes_after }
 
 /** 这个函数修改节点的某个属性。相当于 slate.Transforms.setNodes */
 function set_node<T extends Node = StyledNode>(editor: YEditor, node: T, new_val: Partial<T>){
@@ -40,6 +40,13 @@ function add_nodes(editor: YEditor , nodes: (Node[]) | Node, path: number[]){
 /** 这个函数在某个节点前面插入一个或者系列节点。 */
 function add_nodes_before(editor: YEditor , nodes: (Node[]) | Node, target_node: Node){
     Transforms.insertNodes(editor.slate , nodes, {at: node2path(editor.core.root,target_node)})
+}
+
+/** 这个函数在某个节点后面插入一个或者系列节点。 */
+function add_nodes_after(editor: YEditor , nodes: (Node[]) | Node, target_node: Node){
+    let path = node2path(editor.core.root,target_node)
+    path[path.length-1] ++
+    Transforms.insertNodes(editor.slate , nodes, {at: path})
 }
 
 /** 这个函数把某个节点的全部子节点替换成给定节点。 */

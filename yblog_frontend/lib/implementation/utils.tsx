@@ -1,5 +1,5 @@
 import { Node , Path } from "slate"
-import { is_styled , StyledNode , GroupNode } from "./core/elements"
+import { is_styled , StyledNode , GroupNode } from "../core/elements"
 import React from "react"
 
 export { 
@@ -7,7 +7,9 @@ export {
     node2path , 
     get_hidden_idx , 
     update_kth , 
-    object_foreach
+    object_foreach , 
+    merge_object , 
+    idx2path, 
 }
 
 /** 询问一个节点在另一个节点的 hidden 数组中的位置。 */
@@ -51,3 +53,37 @@ function node2path(root: Node, node: Node): Path{
     return undefined
 }
 
+// TODO 同上
+/** 获得一个节点在节点树中的路径。 */
+function idx2path(root: Node, idx: number | string): Path{
+    for(let [nd , path] of Node.descendants(root)){
+        if(is_styled(nd) && `${nd.idx}` == `${idx}`){
+            return path
+        }
+    }
+    return undefined
+}
+
+
+// 递归合并两个对象的每一项。
+function merge_object(obj_1: any, obj_2: any){
+    if(obj_1 == undefined)
+        return obj_2
+    if(obj_2 == undefined)
+        return obj_1
+    
+    // 但凡遇到叶子节点，优先以obj_2为准
+    if(typeof obj_2 == "string" || typeof obj_2 == "number" || typeof obj_2 == "boolean"){
+        return obj_2
+    }
+    // 但凡遇到叶子节点，就返回。
+    if(typeof obj_1 == "string" || typeof obj_1 == "number" || typeof obj_1 == "boolean"){
+        return obj_1
+    }
+
+    let ret = {}
+    for(let key in {...obj_1,...obj_2}){
+        ret[key] = merge_object(obj_1[key] , obj_2[key])
+    }
+    return ret
+}
