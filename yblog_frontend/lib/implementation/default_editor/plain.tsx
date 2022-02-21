@@ -11,11 +11,13 @@ import {
 } from "@mui/material"
 
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
-import { ParagraphBox , ComponentPaper} from "./basic"
+import { 
+    EditorParagraphBox as ParagraphBox , 
+} from "./basic"
 
-export { DefaultParagraph }
+export { DefaultParagraphEditor }
 
-function DefaultParagraph(props: EditorRenderer_Props){
+function DefaultParagraphEditor(props: EditorRenderer_Props){
     return <ParagraphBox>{props.children}</ParagraphBox>
 }
 

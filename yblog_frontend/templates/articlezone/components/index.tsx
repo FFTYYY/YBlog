@@ -28,6 +28,9 @@ function withAllEditors(yeditor: YEditor): YEditor{
     yeditor.update_renderer(E.sectioner_editor     , "support"  , S.sectioner_style.name)
     yeditor.update_renderer(E.ender_editor         , "support"  , S.ender_style.name)
     yeditor.update_renderer(E.strong_editor        , "inline"   , S.strong_style.name)
+
+    yeditor.update_renderer(E.paragraph_editor      , "paragraph" )
+
     return yeditor
 }
 
@@ -41,6 +44,8 @@ function withAllPrinters(printer: Printer): Printer{
     printer.update_renderer(O.sectioner_printer     , "support"  , S.sectioner_style.name)
     printer.update_renderer(O.ender_printer         , "support"  , S.ender_style.name)
     printer.update_renderer(O.strong_printer        , "inline"   , S.strong_style.name)
+    
+    printer.update_renderer(O.paragraph_printer      , "paragraph")
 
     return printer
 }

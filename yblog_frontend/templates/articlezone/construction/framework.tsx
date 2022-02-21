@@ -1,26 +1,23 @@
-import * as React from 'react';
-import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import Button from '@mui/material/Button';
-import { Stack } from '@mui/material';
-import Paper from '@mui/material/Paper';
-import Container from '@mui/material/Container';
+import * as React from "react"
+import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles"
+import {
+    AutoStack , 
+    AutoTooltip , 
+} 
+from "../../../lib"
+
+import {
+    Box , 
+    Button , 
+    IconButton , 
+} from "@mui/material"
+import {
+    Save as SaveIcon , 
+	ChevronRightRounded as ChevronRightIcon , 
+	ChevronLeftRounded as ChevronLeftIcon , 
+	Add as AddIcon , 
+} 
+from "@mui/icons-material"
 
 export {FlexibleItem , FlexibleDrawer}
 
@@ -47,7 +44,7 @@ function FlexibleItem(props: {close_item: any, open_item: any, no_button?: boole
 }
 
 interface FlexibleDrawer_Props{
-
+    sx?: any
 }
 
 interface FlexibleDrawer_State{
@@ -69,18 +66,28 @@ class FlexibleDrawer extends React.Component<FlexibleDrawer_Props , FlexibleDraw
 
     render(){
         let me = this
-        return <Paper>
+
+        return <Box 
+                sx = {{
+                    ...me.props.sx , 
+                }}
+            >
             <FlexibleOpen_Context.Provider value={me.state.open}>
-                <Stack>
+                <AutoStack force_direction="column">
                     <FlexibleItem
-                        close_item = {">"}
-                        open_item  = {"<"}
-                        onClick = {(e:any)=>{me.setState({open:!me.state.open})}}
+                        close_item = {
+                            <AutoTooltip title="展开"><IconButton size="small">
+                                <ChevronRightIcon fontSize="small" color="primary"/>
+                            </IconButton></AutoTooltip>
+                        }
+                        open_item = {<Button startIcon={<ChevronLeftIcon/>} color="primary">收敛</Button>}
+                        onClick = {()=>{me.setState({open:!me.state.open})}}
+                        no_button
                     />
                     {me.props.children}
-                </Stack>
+                </AutoStack>
             </FlexibleOpen_Context.Provider>
-        </Paper>
+        </Box>
     }
 }
 

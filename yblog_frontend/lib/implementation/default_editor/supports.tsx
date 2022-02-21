@@ -27,21 +27,22 @@ from "@mui/icons-material"
 import { Node } from "slate"
 
 import { SupportNode , paragraph_prototype} from "../../core/elements"
-import { SupportStyle , EditorCore} from "../../core/editor_core"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
-import { YEditor } from "../../editor"
-import { warning } from "../../exceptions/warning"
-import { node2path } from "../../utils"
 
 import {  AutoStack , AutoTooltip , Direction } from "../basic"
-import {  UnselecableBox , ComponentBox , ComponentPaper} from "./basic"
-import {  DefaultCloseButton , DefaultParameterEditButton , AutoStackedPopperWithButton } from "./universe"
-import { add_nodes } from "../../behaviours"
+import {  DefaultCloseButton , DefaultParameterEditButton , AutoStackedPopperWithButton , NewParagraphButton } from "./universe"
+import { add_nodes , add_nodes_after , add_nodes_before } from "../../behaviours"
+import { 
+    EditorComponentPaper as ComponentPaper , 
+    EditorUnselecableBox as UnselecableBox , 
+    EditorComponentBox as ComponentBox , 
+} from "./basic"
 
-export { DefaultNewParagraph , get_DefaultSplitter , get_DefaultDisplayer}
+
+export { DefaultNewParagraphEditor , get_DefaultSplitterEditor , get_DefaultDisplayerEditor}
 
 /** 这个函数返回一个用来新建段落的辅助节点。 */
-function DefaultNewParagraph(props: EditorRenderer_Props){
+function DefaultNewParagraphEditor(props: EditorRenderer_Props){
     let element = props.element as SupportNode
     let editor = props.editor
 
@@ -58,12 +59,7 @@ function DefaultNewParagraph(props: EditorRenderer_Props){
                 >{(()=>{
                     if(left_active)
                         return <AutoTooltip title="向上添加段落"><Button 
-                            onClick = { e => {
-                                let my_path = node2path(editor.core.root , element) // 获取本节点的位置
-                                if(my_path == undefined)
-                                    warning("节点不在节点树中！")
-                                add_nodes(editor , paragraph_prototype() , my_path)
-                            }}
+                            onClick = { e => { add_nodes_before(editor , paragraph_prototype() , element) }}
                             size = "small"
                             variant = "outlined"
                             fullWidth
@@ -78,13 +74,7 @@ function DefaultNewParagraph(props: EditorRenderer_Props){
                 >{(()=>{
                     if(right_active)
                         return <AutoTooltip title="向下添加段落"><Button 
-                            onClick = { e => {
-                                let my_path = node2path(editor.core.root , element) // 获取本节点的位置
-                                if(my_path == undefined)
-                                    warning("节点不在节点树中！")
-                                my_path[my_path.length - 1] ++ // 在下一个节点处插入
-                                add_nodes(editor , paragraph_prototype() , my_path)
-                            }}
+                            onClick = { e => { add_nodes_after(editor , paragraph_prototype() , element) }}
                             size = "small"
                             variant = "outlined"
                             fullWidth
@@ -97,7 +87,7 @@ function DefaultNewParagraph(props: EditorRenderer_Props){
 }
 
 /** 这个函数返回一个默认的分界符组件。 */
-function get_DefaultSplitter(get_title: (parameters:any)=>string = (parameters:any)=>parameters.name){
+function get_DefaultSplitterEditor(get_title: (parameters:any)=>string = (parameters:any)=>parameters.name){
     return (props: EditorRenderer_Props) => {
 
         let editor = props.editor
@@ -118,6 +108,7 @@ function get_DefaultSplitter(get_title: (parameters:any)=>string = (parameters:a
                             title = "展开"
                         >
                             <DefaultParameterEditButton editor={props.editor} element={props.element as SupportNode} />
+                            <NewParagraphButton         editor={editor} element={element} />
                             <DefaultCloseButton         editor={editor} element={element} />
                         </AutoStackedPopperWithButton>
                     </AutoStack>
@@ -134,24 +125,39 @@ function get_DefaultSplitter(get_title: (parameters:any)=>string = (parameters:a
  * @param get_url 如何从参数中获得要显示元素的url，默认为取 url 这个参数。
  * @param render_element 如何在编辑视图中渲染元素。默认为用 <img> 来渲染。
 */
-function get_DefaultDisplayer(
-    get_url:((parameters: any)=>string)=((p)=>p.url) , 
-    render_element: ((props: {url: string, parameters?: any})=>any) = ((props: {url: string})=><img src={props.url}/> ), 
+function get_DefaultDisplayerEditor(
+    name?: string , 
+    is_empty:((parameters: any)=>boolean)=((p)=>!!(p["url"])) , 
+    render_element: ((props: {parameters: any})=>any) = ((props)=><img src={props.parameters.url}/> ), 
 ){
     return (props: EditorRenderer_Props) => {
         let editor = props.editor
         let element = props.element as SupportNode
-        let url = get_url(element.parameters)
+        let parameters = element.parameters
         let R = render_element
 
-        return <UnselecableBox><ComponentPaper is_inline>{props.children}
+        return <ComponentPaper is_inline>{props.children}<UnselecableBox>
             <AutoStack force_direction="row">
-                <R url={url} />
-                <ButtonGroup variant="text">
+                {is_empty(parameters) ? <R parameters={parameters} /> : name }
+                <AutoStackedPopperWithButton
+                    close_on_otherclick
+                    button_class = {IconButton}
+                    button_props = {{
+                        sx: {
+                            height: "1rem" , 
+                            width: "1rem" , 
+                            margin: "0",
+                        } , 
+                        children: <KeyboardArrowDownIcon sx={{height: "1rem"}}/> ,
+                    }} 
+                    title = {"展开" + (name ? ` / ${name}` : "") }
+                >
+                    <Typography>{name}</Typography>
                     <DefaultParameterEditButton editor={editor} element={element} />
+                    <NewParagraphButton         editor={editor} element={element} />
                     <DefaultCloseButton editor={editor} element={element} />
-                </ButtonGroup>
+                </AutoStackedPopperWithButton>
             </AutoStack>
-        </ComponentPaper></UnselecableBox>    
+        </UnselecableBox></ComponentPaper>
     }
 }

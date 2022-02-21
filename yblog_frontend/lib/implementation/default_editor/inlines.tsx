@@ -25,18 +25,29 @@ import { InlineNode , StyledNode } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
 
-import { is_same_node} from "../../utils"
-import { DefaultHidden } from "./hidden"
+import { is_same_node} from "../utils"
+import { DefaultHiddenEditorButtons } from "./hidden"
 import { DefaultParameterEditButton , DefaultCloseButton } from "./universe"
 import { UniversalComponent_Props , } from "./universe"
 import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "../basic"
 import { AutoStackedPopperWithButton } from "./universe"
-import { UnselecableBox , ComponentEditorBox , ComponentPaper } from "./basic"
+import { 
+    EditorComponentPaper as ComponentPaper , 
+    EditorParagraphBox as ParagraphBox , 
+    EditorBackgroundPaper as BackgroundPaper , 
+    EditorComponentEditingBox as ComponentEditorBox , 
+    EditorUnselecableBox as UnselecableBox , 
+    EditorComponentBox as ComponentBox , 
+    EditorStructureTypography as StructureTypography , 
+} from "./basic"
 
-export { get_DefaultInline }
+export { get_DefaultInlineEditor }
 
-
-function get_DefaultInline(
+/** 默认的内联样式渲染器。
+ * @remark 现在有个bug，在内联节点的末尾输入中文的时候会出错。
+ * 见https://github.com/ianstormtaylor/slate/issues/4811
+ */
+function get_DefaultInlineEditor(
     name: string = "" , 
     surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <React.Fragment>{props.children}</React.Fragment> , 
     rightbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
@@ -51,7 +62,7 @@ function get_DefaultInline(
             <AutoStack force_direction="row">
                 <ComponentEditorBox>
                     <SUR editor={editor} element={element}>{props.children}</SUR>
-                </ComponentEditorBox>        
+                </ComponentEditorBox>
                 <UnselecableBox>
                     <AutoStack force_direction="row">
                         <Extra editor={editor} element={element}/>
@@ -70,7 +81,7 @@ function get_DefaultInline(
                         >
                             <Typography>{element.name}</Typography>
                             <DefaultParameterEditButton editor={editor} element={element}/>
-                            <DefaultHidden      editor={editor} element={element} />
+                            <DefaultHiddenEditorButtons      editor={editor} element={element} />
                             <DefaultCloseButton editor={editor} element={element} />
                         </AutoStackedPopperWithButton>
                     </AutoStack>

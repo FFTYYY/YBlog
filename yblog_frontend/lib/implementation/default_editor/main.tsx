@@ -22,15 +22,16 @@ import {
 	Settings as SettingsIcon , 
 	QrCode as QrCodeIcon , 
 } from "@mui/icons-material"
-import { ThemeProvider } from "@mui/material/styles"
+import { ThemeProvider , createTheme , styled } from "@mui/material/styles"
+import type { Theme , ThemeOptions } from "@mui/material/styles"
 
 import { Node } from "slate"
 
 import { YEditor } from "../../editor"
-import { object_foreach } from "../../utils"
+import { object_foreach , merge_object } from "../utils"
 import type { StyleType , NodeType } from "../../core/elements"
 
-import { DefaultHidden } from "./hidden"
+import { DefaultHiddenEditorButtons } from "./hidden"
 import { 
 	DefaultParameterEditButton , 
 	AutoStackedPopperWithButton , 
@@ -40,10 +41,10 @@ import {
 	AutoTooltip , 
 	AutoStackedPopper , 
 	AutoStackButtons , 
+	default_theme , 
 } from "../basic"
 
-import { default_editor_theme } from "./basic"
-import { EditorBackgroundPaper , ComponentEditorBox } from "./basic"
+import { EditorBackgroundPaper , EditorComponentEditingBox } from "./basic"
 
 export { DefaultEditor }
 
@@ -55,7 +56,9 @@ interface DefaultEditor_State{
 interface DefaultEditor_Props{
 	editor: YEditor
 	onUpdate?: (newval: Node[]) => void
+	onFocusChange?: ()=>void
 	onMount?: () => void
+	theme?: ThemeOptions
 }
 
 /** 
@@ -65,6 +68,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 	editor: YEditor
 	onUpdate: (newval: Node[]) => void
 	onMount: ()=>void
+	onFocusChange: ()=>void
 
 	constructor(props: DefaultEditor_Props) {
 		super(props)
@@ -72,6 +76,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 		this.editor = props.editor
 		this.onUpdate = props.onUpdate || ((newval: Node[])=>{})
 		this.onMount  = props.onMount || (()=>{})
+		this.onFocusChange  = props.onFocusChange || (()=>{})
     }
 	componentDidMount(): void {
 		this.onMount()	
@@ -96,17 +101,18 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 		// number2percent 用来将小数形式的表示转为字符串形式。MUI的sx的left属性不接受小数点表示。
 		let number2percent = (obj: {[k:string]:number}) => object_foreach(obj , x=>`${Math.floor(x*100)%100}%`)
 
-		let me = this
-		return <ThemeProvider theme={default_editor_theme}><EditorBackgroundPaper>
+		let theme = merge_object(default_theme , this.props.theme)
 
+		let me = this
+		return <ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
 			<Box sx = {{ 
 				position: "absolute", 
 				height: "100%", 
 				width: complement_width, 
 				overflow: "auto", 
-			}}><ComponentEditorBox>
-				<YEditor.Component editor={me.editor} onUpdate={me.onUpdate}/>
-			</ComponentEditorBox></Box>
+			}}><EditorComponentEditingBox>
+				<YEditor.Component editor={me.editor} onUpdate={me.onUpdate} onFocusChange={me.onFocusChange}/>
+			</EditorComponentEditingBox></Box>
 
 			<Box sx = {{
 				position: "absolute", 
@@ -114,10 +120,9 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 				left: number2percent(complement_width), 
 				width: toolbar_width
 			}}>
-
 				<AutoStack force_direction="column">
 					<DefaultParameterEditButton editor = {me.editor} element = {me.editor.core.root} />
-					<DefaultHidden editor={me.editor} element={me.editor.core.root} />
+					<DefaultHiddenEditorButtons editor={me.editor} element={me.editor.core.root} />
 					<Divider />
 					{["group" , "inline" , "support" , "struct"].map ( (typename: StyleType)=>{
 						let Icon = icons[typename]
@@ -126,7 +131,8 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 
 							<AutoStackedPopperWithButton
 								poper_props = {{
-									stacker: AutoStackButtons , 
+									stacker: AutoStackButtons ,
+									component: styled(Paper)({backgroundColor: "#aabbdd55" , }) ,  
 								}}
 								button_class = {IconButton}
 								button_props = {{
@@ -135,10 +141,15 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 								title = {typename}
 							>{
 								Object.keys(me.editor.core.styles[typename]).map( (stylename) => 
-									<Button 
-										key = {stylename}
-										onClick = {e => me.editor.get_onClick(typename , stylename)(e)}
-									>{stylename}</Button>
+									<React.Fragment key={stylename}>
+										<Button 
+											onClick = {e => me.editor.get_onClick(typename , stylename)(e)}
+											variant = "text"
+										>
+											{stylename}
+										</Button>
+										<Divider orientation="vertical" flexItem/>
+									</React.Fragment>
 								)
 							}</AutoStackedPopperWithButton>
 						</React.Fragment>

@@ -63,13 +63,14 @@ function AutoStackButtons(props: {
     force_direction?: DirectionValues
     children?: any
     simple?: boolean
+    buttongroup_props?: any
 }){
     let flip_direction = ! props.simple // 如果是简单版本，就不翻转方向，否则翻转
 
     let subcomponent = (nowdir: DirectionValues) => {
         let orientation: "horizontal"|"vertical" = (nowdir == "row") ? "horizontal" : "vertical"
         let newdir = flip_direction ? (nowdir == "row" ? "column" : "row") : nowdir
-        return <Direction.Provider value={newdir}><ButtonGroup orientation={orientation}>{
+        return <Direction.Provider value={newdir}><ButtonGroup orientation={orientation} {...props.buttongroup_props}>{
             props.children
         }</ButtonGroup></Direction.Provider>
     }

@@ -14,6 +14,7 @@ import {
     Box , 
     Switch , 
     MenuItem  , 
+    Divider , 
 } from "@mui/material"
 import { 
     TreeItem , 
@@ -29,9 +30,9 @@ import { Node, Editor } from "slate"
 import { StyledNode , is_valid_parameter_leaf} from "../../../core/elements"
 import type { ValidParameter , ValidParameterLeaf } from "../../../core/elements"
 import { YEditor } from "../../../editor"
-import { is_same_node , node2path } from "../../../utils"
+import { is_same_node , node2path } from "../../utils"
 import { set_node , delete_node } from "../../../behaviours"
-
+import { EditorStructureTypography as StructureTypography } from "../basic"
 
 export { 
     DefaultParameterContainer , 
@@ -266,6 +267,8 @@ function DefaultParameterWithEditorWithDrawer(props: UniversalComponent_Props & 
         }}
         PaperProps  = {{sx: { width: "40%" }}}
     >
+        <Box><StructureTypography>idx: {props.element.idx}</StructureTypography></Box>
+        <Divider />
         <DefaultParameterWithEditor editor={props.editor} element={props.element}/>
     </Drawer>
 }

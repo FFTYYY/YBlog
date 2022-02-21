@@ -27,6 +27,7 @@ export {
 	is_paragraph , 
 	get_node_type , 
 	is_certain_style , 
+    new_struct_child , 
 }
 export type {
 	StyledNodeType , 
@@ -112,6 +113,12 @@ type GroupNode = Node & StyledNodeBase & {
 /** 结构节点。 */
 type StructNode = Node & StyledNodeBase & {
 	type: "struct"
+
+	/** 结构节点也有一个额外的`relation`属性。 */
+    relation: GroupRelationType 
+
+    /** 子节点数量。 */
+    num_children: number
 }
 
 /** 辅助节点。 */
@@ -128,7 +135,7 @@ type StyledNode = InlineNode | GroupNode | StructNode | SupportNode
  * @internal
 */
 function gene_idx(){
-    return Math.random() * 23333333
+    return Math.floor( Math.random() * 23333333 )
 }
 
 /** 总之新建一个text node。*/
@@ -181,9 +188,11 @@ function struct_prototype(name: string , parameter_proto: ValidParameter , flags
         type: "struct" , 
         name: name , 
 
+        num_children: 1,
+        relation: "separating" , 
         parameters: parameter_proto , 
 
-        children: [] , 
+        children: [new_struct_child()] , 
         hiddens: [] , 
         flags: {} , 
     }
@@ -243,3 +252,8 @@ function is_certain_style(node: Node , type: StyleType, name: string):boolean{
     return get_node_type(node) == type && (node as StyledNode).name == name
 }
 
+/** 这个函数新建一个`StructNode`的子节点。 */
+function new_struct_child(){
+    let node = group_prototype("struct-child" , {} , {})
+    return node
+}
