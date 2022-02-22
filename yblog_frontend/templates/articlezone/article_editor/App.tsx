@@ -59,13 +59,15 @@ class App extends  React.Component<App_Props , App_State>{
 	}
 
 	async componentDidMount(){
-		var node_content = (await axios.get(`/get_node/${node_id}`)).data.content
-		var node_value = {}
-		if(node_content != "")
-			node_value = JSON.parse(node_content)
+		var node_value = (await axios.get(`/get_node/${node_id}`)).data.content
+		Transforms.insertNodes(this.editor.slate , node_value as Node[] , {at: [0]})
+
+		var node_components = (await axios.get(`/get_node_components/${node_id}`)).data.components
+		// TODO 应用这个。
+
+		console.log(node_components)
 		
-			Transforms.insertNodes(this.editor.slate , node_value as Node[] , {at: [0]})
-		}
+	}
 	
 	async on_click_save(e: any){
 		var data = {"content": this.core.root.children}

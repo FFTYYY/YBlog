@@ -1,6 +1,6 @@
 
 
-def allow_acess(response_func):
+def debug_convenient(response_func):
 
     def warp_response_func(request , *args , **kwargs):
         response = response_func(request , *args , **kwargs)

@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse , Http404
-from .utils import allow_acess
+from .utils import debug_convenient
 
-@allow_acess
+@debug_convenient
 def edit_node_view(request , node_id):
 
     # 禁止未登录用户访问
@@ -13,6 +13,6 @@ def edit_node_view(request , node_id):
         "node_id": node_id , 
     })
 
-@allow_acess
+@debug_convenient
 def edit_nodetree_view(request , node_id = None):
     return render(request , "articlezone/nodetree_index.html" , {})

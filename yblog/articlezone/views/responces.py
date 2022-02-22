@@ -1,18 +1,36 @@
 from django.http import HttpResponse , JsonResponse , Http404
 import json
 from ..models import Node
-from .utils import allow_acess
+from .utils import debug_convenient
 import pdb
 
-@allow_acess
+def JSONDecode(s):
+    s = s.strip()
+    if s == "":
+        return {}
+    return json.loads(s)
+
+@debug_convenient
+def get_node_components(request , node_id):
+    node = Node.objects.get(id = node_id) 
+    return JsonResponse({
+        "components": [
+            [c.name , c.meta , JSONDecode(c.fixed_params) , JSONDecode(c.default_params) , JSONDecode(c.extra_params)]
+            for c in node.get_all_components()
+        ]
+    })
+
+@debug_convenient
 def get_node_content(request, node_id):
     node = Node.objects.get(id = node_id)
+    print (node.content)
+    print (JSONDecode( node.content ))
     return JsonResponse({
-        "content": node.content.replace("'",'"')
+        "content": JSONDecode( node.content )
     })
 
 
-@allow_acess
+@debug_convenient
 def post_node_content(request, node_id):
     # 禁止未登录用户访问
     # if not request.user.is_authenticated:
@@ -23,15 +41,14 @@ def post_node_content(request, node_id):
     node = Node.objects.get(id = node_id)
     
     if request.body != b"":
-        content = json.loads(request.body)["content"]
-
-        node.content = content
+        content = JSONDecode(request.body)["content"]
+        node.content = json.dumps( content )
         node.save()
         flag = True
 
     return JsonResponse({"status": flag})
 
-@allow_acess
+@debug_convenient
 def get_nodetree_info(request):
     return JsonResponse({
         "data": [ [x.id, x.father.id if x.father is not None else -1, x.index_in_father] for x in Node.objects.all()]
