@@ -1,6 +1,6 @@
 from django.urls import path
 from .views.views import edit_node_view , edit_nodetree_view
-from .views.responces import get_node_content , post_node_content , get_nodetree_info
+from .views.responces import get_node_content , post_node_content , get_nodetree_info , get_node_components
 from functools import partial
 
 urlpatterns = [
@@ -9,6 +9,7 @@ urlpatterns = [
     path("edit/structure/<int:node_id>" , edit_nodetree_view) , 
 
     path("get_node/<int:node_id>" , get_node_content) , 
+    path("get_node_components/<int:node_id>" , get_node_components) , 
     path("post_node/<int:node_id>" , post_node_content) , 
 
     path("get_nodetree_info" , get_nodetree_info) , 
