@@ -2,7 +2,9 @@
  * TODO：这个文件中的一切操作都是debug模式。
  */
 
-import axios from 'axios'
+import axios from "axios"
+import * as $ from "jquery"
+
 export { axios , get_node_id }
 
 function getCookie(name: string) {
@@ -30,6 +32,6 @@ axios.defaults.baseURL = root
 axios.defaults.headers.post["X-CSRFToken"] = csrftoken
 
 function get_node_id(){
-    return 1 // DEBUG
+    return parseInt($("#_data_nodeid").html()) // DEBUG
 }
 

@@ -243,6 +243,5 @@ class Printer extends Renderer<PrinterRenderer>{
             }
         )
     }
-
 }
 

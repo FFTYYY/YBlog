@@ -23,10 +23,13 @@ def get_node_components(request , node_id):
 @debug_convenient
 def get_node_content(request, node_id):
     node = Node.objects.get(id = node_id)
-    print (node.content)
-    print (JSONDecode( node.content ))
+    content = node.content.strip()
+    if content == "":
+        content = json.dumps([])
+    print (content)
+    print (JSONDecode( content ))
     return JsonResponse({
-        "content": JSONDecode( node.content )
+        "content": JSONDecode( content )
     })
 
 
@@ -49,7 +52,31 @@ def post_node_content(request, node_id):
     return JsonResponse({"status": flag})
 
 @debug_convenient
-def get_nodetree_info(request):
+def get_nodetree_info(request , node_id):
+
+    if node_id == 0:
+        lis = Node.objects.all()
+    else:
+        lis = Node.objects.get(id = node_id).get_sons()
+
     return JsonResponse({
-        "data": [ [x.id, x.father.id if x.father is not None else -1, x.index_in_father] for x in Node.objects.all()]
+        "data": [ [x.id, x.father.id if x.father is not None else -1, x.index_in_father] for x in lis]
     })
+
+@debug_convenient
+def post_nodetree_info(request , node_id):
+
+    if request.body == b"":
+        return JsonResponse({"status": False})
+
+    nodetree = JSONDecode(request.body)["nodetree"]
+
+    for my_id , father_id , idx_in_father in nodetree:
+        if my_id == node_id: # 豁免根节点
+            continue
+        node = Node.objects.get(id = my_id)
+        node.father = Node.objects.get(id = father_id)
+        node.index_in_father = idx_in_father
+        node.save()
+
+    return JsonResponse({"status": True})
