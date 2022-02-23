@@ -229,7 +229,7 @@ function DefaultParameterWithEditor(props: UniversalComponent_Props){
 
     function temp_update_value(newval: ValidParameter){
 
-        props.editor.add_suboperation( props.element.idx , (father_editor: YEditor) => {
+        props.editor.add_suboperation( `${props.element.idx}-parameter` , (father_editor: YEditor) => {
             set_node( father_editor , props.element , { parameters: newval })
         })
     }

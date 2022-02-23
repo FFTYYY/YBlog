@@ -1,17 +1,18 @@
-import * as React from 'react';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
-import { alpha, styled } from '@mui/material/styles';
+import * as React from "react"
+import {
+    Box , 
+    Divider , 
+} from "@mui/material"
+
 import TreeView from '@mui/lab/TreeView';
 import TreeItem, { TreeItemProps, treeItemClasses } from '@mui/lab/TreeItem';
-import Collapse from '@mui/material/Collapse';
-import Box from '@mui/material/Box';
-// web.cjs is required for IE11 support
-import { useSpring, animated } from 'react-spring';
-import { TransitionProps } from '@mui/material/transitions';
-import { axios } from "../utils"
+import { axios , get_node_id } from "../utils"
 import { DndProvider , useDrag , useDrop , DropTargetMonitor} from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { node2path } from '@ftyyy/ytext/dist/lib';
+import { FlexibleDrawer , FlexibleItem } from "../construction/framework"
+import { SaveButton } from "../construction/buttons"
+
+var node_id = get_node_id()
 
 /** 每个 raw_info_item 是从后端获得的一组原始数据，这组数据稍后被解析成 info_item 树。
  * 三个元素依次表示 id 、father_id 、idx_in_father。
@@ -75,7 +76,7 @@ class App extends React.Component<{},App_State>{
 
     /** 生命周期钩子。这个函数在初始化时向后端询问节点树的信息。 */
     async componentDidMount(){
-        let raw_nodetree = (await axios.get( "/get_nodetree_info" )).data.data as raw_info_item[]
+        let raw_nodetree = (await axios.get( `/get_nodetree_info/${node_id}` )).data.data as raw_info_item[]
         
         this.setNodetree(this.raw_to_processed(raw_nodetree))
         this.setState({expanded: Object.values(raw_nodetree).map( (val:raw_info_item)=>val[1])})
@@ -86,6 +87,12 @@ class App extends React.Component<{},App_State>{
     */
     raw_to_processed(raw_nodetree: raw_info_item[]){
         raw_nodetree.sort(((x1: raw_info_item,x2: raw_info_item) => x1[2]<x2[2]?1:0)) // 按父节点内的顺序排序
+
+        // 总之把`node_id`视为根。
+        if(node_id > 0){
+            let raw_root_node = raw_nodetree.filter(x=>x[0] == node_id)[0] // `node_id`对应的节点。
+            raw_root_node[1] = -1 // 根节点的前一个节点设为`-1`
+        }
 
         let _raw_to_processed = (father_id: number): info_item[] => {
             return Object.values( raw_nodetree.filter(x=>x[1] == father_id) ).map((val:raw_info_item)=>{ return {
@@ -301,14 +308,43 @@ class App extends React.Component<{},App_State>{
         })}</>  
     }
 
+    async save_nodetree(){
+        let raw = this.processed_to_raw(this.state.nodetree)
+
+        var data = {"nodetree": raw}
+		let ret = await axios.post( `/post_nodetree_info/${node_id}` , data)
+		return ret.data.status
+    }
+
     render(){
         let me = this
-        return <div><p>haha</p>
-            <DndProvider backend={HTML5Backend}><TreeView
-            expanded     = { Object.values(me.state.expanded).map(value=>`${value}`) } // 将 me.state.expanded 转成字符串数组。
-            onNodeToggle = { (e:any,nodeIds: string[])=>{me.setState({expanded:nodeIds})} } // 直接设置 me.state.expanded。
-        >{me.get_subtree(me.state.nodetree)}</TreeView></DndProvider>
-        <p>haha</p></div>
+        return <Box sx={{
+                position: "absolute" , 
+				top: "2%" ,
+				left: "2%" , 
+				height: "96%" , 
+				width: "96%" , 
+				display: "flex" ,
+            }}>
+            <FlexibleDrawer sx={{
+				marginRight: "1%"
+			}}>
+				
+				<SaveButton save_func={me.save_nodetree.bind(me)}/>
+			</FlexibleDrawer>
+            <Box sx={{
+                position: "relative" ,
+                width: "100%" , 
+                flex: 1 , 
+            }}>
+                <Divider/>
+                <DndProvider backend={HTML5Backend}><TreeView
+                    expanded     = { Object.values(me.state.expanded).map(value=>`${value}`) } // 将 me.state.expanded 转成字符串数组。
+                    onNodeToggle = { (e:any,nodeIds: string[])=>{me.setState({expanded:nodeIds})} } // 直接设置 me.state.expanded。
+                >{me.get_subtree(me.state.nodetree)}</TreeView></DndProvider>
+                <Divider/>
+            </Box>
+        </Box>
     }
 }
 

@@ -25,6 +25,15 @@ class Node(models.Model):
 	create_time = models.DateTimeField(default = timezone.now)
 	update_time = models.DateTimeField(default = timezone.now)
 
+	def get_sons(self):
+		'''返回所有子节点，包括自己。'''
+
+		all_sons = set()
+		for son in Node.objects.filter(father_id = self.id):
+			all_sons = all_sons | son.get_sons()
+		all_sons.add(self)
+		return all_sons
+
 	def get_all_components(self):
 		'''收集自己到根的所有组件。'''
 		ret = set()
