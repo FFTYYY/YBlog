@@ -108,7 +108,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             ...Object.values(props.editor.core.styles.struct    ) , 
             ...Object.values(props.editor.core.styles.support   ) , 
             ...Object.values(props.editor.core.styles.abstract  ) , 
-        ] , {}))
+        ] , props.editor.core.root.parameters))
         
         this.subeditor.default_renderers = props.editor.default_renderers
         this.subeditor.style_renderers   = props.editor.style_renderers

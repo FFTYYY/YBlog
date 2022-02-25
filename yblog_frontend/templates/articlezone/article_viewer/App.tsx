@@ -30,6 +30,7 @@ import { FlexibleDrawer , FlexibleItem } from "../construction/framework"
 import { my_theme } from "../construction/theme"
 import { SaveButton } from "../construction/buttons"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
+import { LeftBox } from "./cards"
 
 var node_id = get_node_id()
 
@@ -40,7 +41,9 @@ class App extends  React.Component{
 	constructor(props){
 		super(props)
 
-		this.core    = withNecessaryStyle( new EditorCore([] , {}) )
+		this.core    = withNecessaryStyle( new EditorCore([] , {
+			title: ""
+		}) )
         this.printer = withNecessaryPrinter( new Printer( this.core ) )
 	}
 
@@ -63,29 +66,41 @@ class App extends  React.Component{
 	render(){
 		let me = this
 
-		return <ThemeProvider theme={createTheme(my_theme)}><Box sx={{
+		return <ThemeProvider theme={createTheme(my_theme)}>
+			
+			<Box sx={{
 				position: "absolute" , 
 				top: "2%" ,
 				left: "1%" , 
 				height: "96%" , 
-				width: "98%" , 
-				display: "flex" , 
+				width: "17%" , 
 			}}>
-			<Box sx = {{
-				position: "absolute" , 
-				width: "98%" ,
-				left: "1%" , 
-				top: "0" , 
-				height: "100%" , 
-			}}>
-				<DefaultPrinter
-					printer = {me.printer}
-					theme = {my_theme}
-				/>
+				<LeftBox></LeftBox>
 			</Box>
 
+			<Box sx={{
+				position: "absolute" , 
+				top: "2%" ,
+				left: "20%" , 
+				height: "96%" , 
+				width: "60%" , 
+				display: "flex" , 
+			}}>
+				<Box sx = {{
+					position: "absolute" , 
+					width: "98%" ,
+					left: "1%" , 
+					top: "0" , 
+					height: "100%" , 
+				}}>
+					<DefaultPrinter
+						printer = {me.printer}
+						theme = {my_theme}
+					/>
+				</Box>
+			</Box>
 			
-		</Box></ThemeProvider>
+		</ThemeProvider>
 	}
 
 }
