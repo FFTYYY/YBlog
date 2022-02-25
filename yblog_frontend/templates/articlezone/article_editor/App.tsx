@@ -50,7 +50,9 @@ class App extends  React.Component<App_Props , App_State>{
 	constructor(props: App_Props){
 		super(props)
 
-		this.core    = withNecessaryStyle( new EditorCore([] , {}) )
+		this.core    = withNecessaryStyle( new EditorCore([] , {
+			title: "" , 
+		}) )
 		this.state = {
 			editor: withNecessaryEditor( new YEditor( this.core ) ) , 
 			printer: withNecessaryPrinter( new Printer( this.core ) ) , 
@@ -74,12 +76,15 @@ class App extends  React.Component<App_Props , App_State>{
 		}
 		this.setState({editor: my_editor , printer: my_printer})
 
-		var node_value = (await axios.get(`/get_node/${node_id}`)).data.content
-		Transforms.insertNodes(this.state.editor.slate , node_value as Node[] , {at: [0]})
+		var root = (await axios.get(`/get_node/${node_id}`)).data.content
+		console.log(root)
+		Transforms.insertNodes(this.state.editor.slate , root.children , {at: [0]})
+		this.core.update_root({parameters: root.parameters})
+		console.log(this.core)
 	}
 	
 	async save_content(){
-		var data = {"content": this.core.root.children}
+		var data = {"content": this.core.root}
 		let ret = await axios.post( `/post_node/${node_id}` , data)
 		return ret.data.status
 	}
@@ -103,6 +108,9 @@ class App extends  React.Component<App_Props , App_State>{
 							let pathid = JSON.stringify(me.state.editor.slate.selection.focus.path)
 							me.printer_ref.current.scroll_to(pathid)
 						}
+					}}
+					onUpdate = {()=>{
+						console.log(me.core.root)
 					}}
 				/>
 			</Box>

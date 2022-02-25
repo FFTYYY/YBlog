@@ -45,6 +45,7 @@ export type {
 interface DefaultParameterContainer_Props{
     initval: ValidParameter
     onUpdate?: (newval: ValidParameter) => void
+    flag?: boolean , 
 }
 
 
@@ -68,6 +69,12 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
 
         this.parameters = this.props.initval
         this.onUpdate = props.onUpdate || ( (newval: any) => {} )
+    }
+
+    /** 不知道为什么，在组件更新时必须重新赋值。 */
+    componentDidUpdate(): void {
+        this.parameters = this.props.initval  
+        this.onUpdate = this.props.onUpdate || ( (newval: any) => {} )
     }
 
     /** 这个函数收集所有节点，作为树的初始展开项。 */
@@ -225,19 +232,33 @@ interface UniversalComponent_Props{
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.element 这个组件所服务的节点。
  */
-function DefaultParameterWithEditor(props: UniversalComponent_Props){
+class DefaultParameterWithEditor extends React.Component<UniversalComponent_Props>{
 
-    function temp_update_value(newval: ValidParameter){
+    constructor(props: UniversalComponent_Props){
+        super(props)
+    }
+
+    temp_update_value(newval: ValidParameter){
+        let props = this.props
 
         props.editor.add_suboperation( `${props.element.idx}-parameter` , (father_editor: YEditor) => {
             set_node( father_editor , props.element , { parameters: newval })
         })
     }
 
-    return <DefaultParameterContainer
-        initval = { props.element.parameters }
-        onUpdate = { newval=>temp_update_value(newval) }
-    />
+    componentDidUpdate(prevProps: Readonly<UniversalComponent_Props>, prevState: Readonly<{}>, snapshot?: any): void {
+        
+    }
+
+    render(){
+        let me = this
+        let props = this.props
+
+        return <DefaultParameterContainer
+            initval = { props.element.parameters }
+            onUpdate = { newval=>me.temp_update_value(newval) }
+        />
+    }
 }
 
 /**

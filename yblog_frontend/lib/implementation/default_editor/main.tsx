@@ -79,7 +79,11 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 		this.onFocusChange  = props.onFocusChange || (()=>{})
     }
 	componentDidMount(): void {
+		let me = this
 		this.onMount()	
+		this.editor.core.add_notificatioon(()=>{
+			me.forceUpdate()
+		})
 	}
 	render() {
 
