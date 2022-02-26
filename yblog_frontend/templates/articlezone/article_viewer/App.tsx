@@ -11,6 +11,9 @@ import {
 	Container , 
 } from "@mui/material"
 
+import { Node , Transforms , Element } from "slate"
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
+
 import {
 	YEditor , 
 	EditorCore , 
@@ -19,18 +22,26 @@ import {
 	DefaultEditor , 
 	AutoStack , 
 
+	PrinterDivider , 
+    PrinterWeakenText , 
+    PrinterDisplayText , 
+    PrinterTitleBoxText  , 
+    PrinterParagraphBox , 
+    PrinterPartBox , 
+    PrinterNewLevelBox , 
+    PrinterOldLevelBox , 
+    PrinterBackgroundPaper , 
+	get_DefaultStructPrinter , 
+
+
 } from "../../../lib"
 
 
 import { make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter , withNecessaryStyle} from "../components"
-import { Node , Transforms , Element } from "slate"
-import { ReactEditor } from "slate-react"
 import { axios , get_node_id } from '../utils'
-import { FlexibleDrawer , FlexibleItem } from "../construction/framework"
 import { my_theme } from "../construction/theme"
-import { SaveButton } from "../construction/buttons"
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 import { LeftBox } from "./cards"
+import { get_node_information , post_node_information } from "../utils/ineraction"
 
 var node_id = get_node_id()
 
@@ -50,11 +61,11 @@ class App extends  React.Component{
 	async componentDidMount(){
 
         /** 获得内容。 */
-		var node_value = (await axios.get(`/get_node/${node_id}`)).data.content
-		this.core.update_children(node_value)
+		var root = await get_node_information("get_node" , "content")
+		this.core.update_root(root)
 
         /** 获得样式。 */
-        var node_components = (await axios.get(`/get_node_components/${node_id}`)).data.components
+        var node_components = await get_node_information("get_node_components" , "components")
 		for(let [name , meta_name , fixed_params , default_params , extra_params] of node_components){
 			let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params , extra_params)
 			this.core.add_style(style)
@@ -75,7 +86,7 @@ class App extends  React.Component{
 				height: "96%" , 
 				width: "17%" , 
 			}}>
-				<LeftBox></LeftBox>
+				<LeftBox core={me.printer.core} />
 			</Box>
 
 			<Box sx={{
@@ -90,8 +101,17 @@ class App extends  React.Component{
 					position: "absolute" , 
 					width: "98%" ,
 					left: "1%" , 
-					top: "0" , 
-					height: "100%" , 
+					top: "1%" , 
+					height: "3%" , 
+				}}>
+					<PrinterTitleBoxText sx={{textAlign: "center"}}>{me.printer.core.root.parameters.title}</PrinterTitleBoxText>
+				</Box>
+				<Box sx = {{
+					position: "absolute" , 
+					width: "98%" ,
+					left: "1%" , 
+					top: "5%" , 
+					height: "94%" , 
 				}}>
 					<DefaultPrinter
 						printer = {me.printer}

@@ -3,29 +3,20 @@ import {
     Box , 
     Divider , 
 } from "@mui/material"
+import {
+    TreeItem , TreeView , 
+    TreeItemProps, treeItemClasses , 
+} from "@mui/lab"
+import { DndProvider , useDrag , useDrop , DropTargetMonitor} from "react-dnd"
+import { HTML5Backend } from "react-dnd-html5-backend"
 
-import TreeView from '@mui/lab/TreeView';
-import TreeItem, { TreeItemProps, treeItemClasses } from '@mui/lab/TreeItem';
-import { axios , get_node_id } from "../utils"
-import { DndProvider , useDrag , useDrop , DropTargetMonitor} from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
+import { get_node_information , post_node_information } from "../utils/ineraction"
+import { raw_to_processed , processed_to_raw } from "../utils/nodetree"
+import type { raw_info_item , info_item } from "../utils/nodetree"
+import { get_node_id } from "../utils"
 import { FlexibleDrawer , FlexibleItem } from "../construction/framework"
 import { SaveButton } from "../construction/buttons"
 
-var node_id = get_node_id()
-
-/** 每个 raw_info_item 是从后端获得的一组原始数据，这组数据稍后被解析成 info_item 树。
- * 三个元素依次表示 id 、father_id 、idx_in_father。
-*/
-type raw_info_item = [number,number,number] // 树项 
-
-/**  info_item 用于描述节点树。 */
-interface info_item {
-    my_id: number
-    father_id: number 
-    sons: info_item[]
-    idx_in_father? : number
-}
 
 interface App_State{
 
@@ -76,57 +67,10 @@ class App extends React.Component<{},App_State>{
 
     /** 生命周期钩子。这个函数在初始化时向后端询问节点树的信息。 */
     async componentDidMount(){
-        let raw_nodetree = (await axios.get( `/get_nodetree_info/${node_id}` )).data.data as raw_info_item[]
+        let raw_nodetree = await get_node_information("get_nodetree_info" , "data") as raw_info_item[]
         
-        this.setNodetree(this.raw_to_processed(raw_nodetree))
+        this.setNodetree(raw_to_processed(raw_nodetree))
         this.setState({expanded: Object.values(raw_nodetree).map( (val:raw_info_item)=>val[1])})
-    }
-
-    /** 这个函数将三元组形式的描述转换成树形的描述。 
-     * @param raw_nodetree （后端发来的）三元组形式的节点树描述。
-    */
-    raw_to_processed(raw_nodetree: raw_info_item[]){
-        raw_nodetree.sort(((x1: raw_info_item,x2: raw_info_item) => x1[2]<x2[2]?1:0)) // 按父节点内的顺序排序
-
-        // 总之把`node_id`视为根。
-        if(node_id > 0){
-            let raw_root_node = raw_nodetree.filter(x=>x[0] == node_id)[0] // `node_id`对应的节点。
-            raw_root_node[1] = -1 // 根节点的前一个节点设为`-1`
-        }
-
-        let _raw_to_processed = (father_id: number): info_item[] => {
-            return Object.values( raw_nodetree.filter(x=>x[1] == father_id) ).map((val:raw_info_item)=>{ return {
-                my_id: val[0],
-                father_id: father_id,
-                sons: _raw_to_processed(val[0])
-            }})
-        }
-
-        return {
-            my_id: -1,
-            father_id: -1,
-            sons: _raw_to_processed(-1)
-        }
-    }
-
-    /** 这个函数将对节点树的树形的描述转换成三元组的描述。 
-     * @param nodetree 节点树的树形描述。
-    */
-    processed_to_raw(nodetree: info_item){
-
-        let _processed_to_raw = (node:info_item , idx_in_father: number): raw_info_item[] =>{
-            let res = [ [node.my_id , node.father_id , idx_in_father] as raw_info_item ]
-            if(node.my_id < 0) // 不要包含一个编号小于0的节点。
-                res = []
-
-            for(let idx in node.sons){
-                let subid = parseInt(idx)
-                res = [...res , ... _processed_to_raw(node.sons[subid] , subid)]
-            }
-            return res
-        }
-
-        return _processed_to_raw( nodetree , -1 )
     }
 
     /** 将 id 转换为具体的 node。 */
@@ -309,11 +253,9 @@ class App extends React.Component<{},App_State>{
     }
 
     async save_nodetree(){
-        let raw = this.processed_to_raw(this.state.nodetree)
 
-        var data = {"nodetree": raw}
-		let ret = await axios.post( `/post_nodetree_info/${node_id}` , data)
-		return ret.data.status
+        let ret = await post_node_information("post_nodetree_info" , {"nodetree": processed_to_raw(this.state.nodetree)})
+		return ret
     }
 
     render(){
