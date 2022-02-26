@@ -34,8 +34,7 @@ function get_DefaultParagraphPrinter(){
 
     return {
         render_func: (props: PrinterRenderFunc_Props) => {
-
-            let extra =  consumer_effector.get_context(props.context) // 需要额外插入的元素。
+            let extra =  consumer_effector.get_context(props.context) || {} // 需要额外插入的元素。
 
             return <PrinterParagraphBox>
                 {Object.keys(extra).map((key)=><React.Fragment key={key}>{extra[key]}</React.Fragment>)}

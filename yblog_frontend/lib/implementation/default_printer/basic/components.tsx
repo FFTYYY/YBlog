@@ -114,13 +114,14 @@ const PrinterTitleBoxText = (props: TypographyProps & {inline?: boolean}) => <Ty
 />
 
 /** 一个用来包裹一个部分的组件。 */
-const PrinterPartBox = (props: BoxProps) => <Box 
-    {...props}
+const PrinterPartBox = (props: BoxProps & {subtitle_like?: boolean}) => <Box 
+    {...{...props , subtitle_like: undefined}}
     sx = {[
-        {
+        (theme)=>({
+            ...(props.subtitle_like ? theme.printer.typography.structure : {}) , 
             marginTop: (theme) => theme.printer.margins.special , 
             marginBottom: (theme) => theme.printer.margins.special , 
-        } , 
+        }) , 
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}
 />

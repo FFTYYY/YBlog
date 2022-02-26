@@ -2,19 +2,24 @@ import React from "react"
 
 import {
     Tabs , Tab , 
-    Box , Divider , 
+    Box , Divider , Typography
 } from "@mui/material"
 import {
     TabContext  , 
     TabList  , 
     TabPanel   , 
+    useTreeItem , 
+    TreeItemContentProps , 
 } from "@mui/lab"
 
 import {
     TreeItem , TreeView , 
     TreeItemProps, treeItemClasses , 
 } from "@mui/lab"
-
+import {
+    ExpandMore as ExpandMoreIcon , 
+    ChevronRight as ChevronRightIcon , 
+} from "@mui/icons-material"
 
 import {
 	YEditor , 
@@ -42,6 +47,8 @@ import type { raw_info_item , info_item } from "../../utils/nodetree"
 
 export { LeftBox }
 
+
+
 interface BasicInformation_Props{
     core: EditorCore
 }
@@ -52,7 +59,7 @@ interface BasicInformation_State{
     nodetree: any
 
     /** 已经展开的节点，这是 mui TreeView 需要的状态。 */
-    expanded: (string | number) [] 
+    expanded: string [] 
 }
 class BasicInformation extends React.Component<BasicInformation_Props , BasicInformation_State>{
     constructor(props: BasicInformation_Props){
@@ -65,23 +72,63 @@ class BasicInformation extends React.Component<BasicInformation_Props , BasicInf
             expanded: [] , 
         }
     }
+
+    get_my_treeitem(){
+        return React.forwardRef((props: TreeItemContentProps , ref) => {
+            const { classes, className, label, nodeId, icon: iconProp, expansionIcon, displayIcon } = props
+            const { disabled, expanded, selected, focused, handleExpansion, handleSelection, preventSelection } = useTreeItem(nodeId)
+            const icon = iconProp || expansionIcon || displayIcon
+
+            return <Box
+                className = {[
+                    className , 
+                    classes.root , 
+                    classes.expanded ? expanded : "" , 
+                    classes.selected ? selected : "" , 
+                    classes.focused ? focused : "" , 
+                    classes.disabled ? disabled : "" , 
+                ].join(" ")}            
+                ref = {ref}
+            >
+                <Box onClick = {(e)=>handleExpansion(e)} className={classes.iconContainer}>
+                    {icon}
+                </Box>
+                <a className = {classes.label} href="http://www.baidu.com">
+                    {label}
+                </a>
+            </Box>
+        })
+    }      
     /** 渲染某个节点的全部子节点。 
     */
-     get_subtree(nownode: info_item){
-        let me = this
+    get_subtree(nownode: info_item){
+        let me = this    
+        let MyTreeItem = this.get_my_treeitem()
 
-
-        return <>{Object.values(nownode.sons).map((subnode:info_item, idx:number)=>{
+        function SubTree(props: {subnode: info_item}){
+            let subnode = props.subnode
             let subid = subnode.my_id
-            return <TreeItem
-                key = {idx}
-                label = {`node-${subid}`}
-                nodeId = {`${subid}`}
 
-                onFocusCapture = {e => e.stopPropagation()} // 防止选择
+            let [title , set_title] = React.useState("")
+
+            React.useEffect(()=>{(async ()=>{
+                let root = await get_node_information("get_node" , "content" , subid)
+                set_title(root.parameters.title) 
+            })()} , [])
+            
+            return <TreeItem
+                label = {`${title}`}
+                nodeId = {`${subid}`}
+                ContentComponent = {MyTreeItem}
+                // onFocusCapture = {e => e.stopPropagation()} // 防止选择
             >
                 {me.get_subtree(subnode)}
             </TreeItem>
+
+        }
+
+        return <>{Object.values(nownode.sons).map((subnode:info_item, idx:number)=>{
+            return <SubTree subnode={subnode} key={idx}/>
         })}</>  
     }
 
@@ -92,9 +139,12 @@ class BasicInformation extends React.Component<BasicInformation_Props , BasicInf
             modify_time: time_info.modify_time , 
         })
 
-        let raw_nodetree = await get_node_information("get_nodetree_info" , "data")
+        let raw_nodetree = await get_node_information("get_nodetree_info" , "data") as raw_info_item[]
         let nodetree = raw_to_processed(raw_nodetree)
         this.setState({nodetree: nodetree})
+
+        let all_ids = raw_nodetree.map((x)=>`${x[0]}`)
+        this.setState({expanded: all_ids})
     }
 
     render(){
@@ -106,9 +156,13 @@ class BasicInformation extends React.Component<BasicInformation_Props , BasicInf
             <PrinterTitleBoxText>创建时间：{me.state.create_time}</PrinterTitleBoxText>
             <PrinterTitleBoxText>修改时间：{me.state.modify_time}</PrinterTitleBoxText>
             <TreeView
-                expanded     = { Object.values(me.state.expanded).map(value=>`${value}`) } // 将 me.state.expanded 转成字符串数组。
+                expanded     = { me.state.expanded } // 将 me.state.expanded 转成字符串数组。
                 onNodeToggle = { (e:any,nodeIds: string[])=>{me.setState({expanded:nodeIds})} } // 直接设置 me.state.expanded。
-            >{me.state.nodetree ? me.get_subtree(me.state.nodetree) : undefined}</TreeView>
+                defaultCollapseIcon={<ExpandMoreIcon />}
+                defaultExpandIcon={<ChevronRightIcon />}          
+            >
+                {me.state.nodetree ? me.get_subtree(me.state.nodetree) : undefined}
+            </TreeView>
         </Box>
     }
 }
