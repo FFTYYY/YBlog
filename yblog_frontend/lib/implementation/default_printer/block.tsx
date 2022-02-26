@@ -41,7 +41,7 @@ function get_DefaultBlockPrinter<NodeType extends StyledNode>({
 	extra_effectors = [] , 
 	inject_pre = (props)=><></>, 
 	inject_suf = (props)=><></>, 
-    outer = (props)=><PrinterPartBox>{props.children}</PrinterPartBox> , 
+    outer = (props)=><PrinterPartBox subtitle_like>{props.children}</PrinterPartBox> , 
     inner = (props)=><>{props.children}</>, 
 }:{
 	extra_effectors?: BasicEffector[] ,

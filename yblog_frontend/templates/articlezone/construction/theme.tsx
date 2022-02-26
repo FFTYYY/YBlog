@@ -13,7 +13,7 @@ const my_theme: ThemeOptions = {
     printer: {
         margins: {
             paragraph: "0.4rem" ,  
-            special: "0.8rem" ,  
+            special: "2rem" ,  
             colon: "1rem" ,  
             level: "2rem" ,  
         } , 
@@ -21,9 +21,12 @@ const my_theme: ThemeOptions = {
             body: {
                 fontFamily: "STXihei" , 
             },
-            structure: {
+            title: {
                 fontFamily: "DengXian" , 
                 fontWeight: 600 , 
+            } , 
+            structure: {
+                fontFamily: "DengXian" , 
             } , 
             display: {
                 fontFamily: "KaiTi" , 
