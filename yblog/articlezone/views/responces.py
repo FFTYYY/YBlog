@@ -26,12 +26,23 @@ def get_node_content(request, node_id):
     content = node.content.strip()
     if content == "":
         content = json.dumps([])
-    print (content)
-    print (JSONDecode( content ))
+
     return JsonResponse({
         "content": JSONDecode( content )
     })
 
+@debug_convenient
+def get_node_create_time(request , node_id):
+    node = Node.objects.get(id = node_id)
+    create_time = node.create_time
+    modify_time = node.update_time
+
+    print (create_time , modify_time)
+
+    return JsonResponse({
+        "create_time": create_time , 
+        "modify_time": modify_time , 
+    })
 
 @debug_convenient
 def post_node_content(request, node_id):
@@ -80,3 +91,4 @@ def post_nodetree_info(request , node_id):
         node.save()
 
     return JsonResponse({"status": True})
+    

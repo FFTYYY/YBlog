@@ -31,7 +31,7 @@ var root = "http://127.0.0.1:8000" // DEBUG
 axios.defaults.baseURL = root
 axios.defaults.headers.post["X-CSRFToken"] = csrftoken
 
-function get_node_id(){
-    return parseInt($("#_data_nodeid").html()) // DEBUG
+function get_node_id(): number{
+    return parseInt($("#_data_nodeid").html())
 }
 
