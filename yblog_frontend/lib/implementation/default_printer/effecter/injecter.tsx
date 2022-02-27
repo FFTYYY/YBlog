@@ -28,7 +28,10 @@ class InjectEffector<NT extends Node = Node> extends BasicEffector<NT>{
         suf_inject?: InjectFunction<NT> , 
     ){
         // env 是一个等待注入的元素序列。
-        super(env_key , context_key , [])
+        super(env_key , context_key , {
+            pre: [] , 
+            suf: [] , 
+        })
 
         this.pre_inject = pre_inject || ( (props)=><></>)
         this.suf_inject = suf_inject || ( (props)=><></>)
@@ -37,25 +40,20 @@ class InjectEffector<NT extends Node = Node> extends BasicEffector<NT>{
     enter_effect(element: NT, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {
         
         let PI = this.pre_inject
+        let SI = this.suf_inject
 
+        let old_list = this.get_env(env)
 
         // 将`to_inject`加入`env`。
-        env = this.set_env(env , [
-            ...this.get_env(env) , <PI element={element} context={context} />
-        ])
+        env = this.set_env(env , {
+            pre: [...old_list.pre , <PI element={element} context={context} />] ,
+            suf: [...old_list.suf , <SI element={element} context={context} />] ,
+        })
         
         return [env , context]
     }
     /** 在渲染自身之后注入。 */
-    exit_effct(element: NT, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {
-        
-        let SI = this.suf_inject
-
-        // 将 to_inject 加入 env。
-        env = this.set_env(env , [
-            ...this.get_env(env) , <SI element={element} context={context} />
-        ])
-        
+    exit_effect(element: NT, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {
         return [env , context]
     }
 
@@ -67,11 +65,14 @@ class ConsumeEffector<NT = Node> extends BasicEffector<NT>{
         env_key: string , 
         context_key: string , 
     ){
-        super(env_key , context_key , [])
+        super(env_key , context_key , {
+            pre: [] , 
+            suf: [] , 
+        })
     }
     enter_effect(element: NT, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {  
         let to_inject = this.get_env(env)
-        env = this.set_env(env , []) // 清空环境
+        env = this.set_env(env , { pre: [] , suf: [] }) // 清空环境
         return [env , this.make_context(to_inject)]
     }
 }

@@ -42,16 +42,16 @@ class DefaultPrinter extends React.Component <DefaultPrinter_Props> {
 		this.main = React.createRef()
     }
 
-	scroll_to(path_id: string){
+	scroll_to(path: number[]){
 		if(this.main.current != undefined)
-			this.main.current.scroll_to(path_id)
+			this.main.current.scroll_to(path)
 	}
 
     render() {
 		let theme = merge_object(default_theme , this.props.theme)
 		let main = this.main
 
-		return <ThemeProvider theme={createTheme(theme)}><PrinterBackgroundPaper id="haha">
+		return <ThemeProvider theme={createTheme(theme)}><PrinterBackgroundPaper>
             <Printer.Component
 				ref = {main}
 			    printer = {this.printer}

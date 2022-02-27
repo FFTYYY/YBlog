@@ -136,7 +136,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 							<AutoStackedPopperWithButton
 								poper_props = {{
 									stacker: AutoStackButtons ,
-									component: styled(Paper)({backgroundColor: "#aabbdd55" , }) ,  
+									component: styled(Paper)({backgroundColor: "#aabbddbb" , }) ,  
 								}}
 								button_class = {IconButton}
 								button_props = {{

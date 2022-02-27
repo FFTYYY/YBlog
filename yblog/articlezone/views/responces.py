@@ -25,7 +25,7 @@ def get_node_content(request, node_id):
     node = Node.objects.get(id = node_id)
     content = node.content.strip()
     if content == "":
-        content = json.dumps([])
+        content = json.dumps(None)
 
     return JsonResponse({
         "content": JSONDecode( content )

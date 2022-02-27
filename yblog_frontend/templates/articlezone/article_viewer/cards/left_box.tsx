@@ -32,7 +32,7 @@ import {
 	PrinterDivider , 
     PrinterWeakenText , 
     PrinterDisplayText , 
-    PrinterTitleBoxText  , 
+    PrinterStructureBoxText  , 
     PrinterParagraphBox , 
     PrinterPartBox , 
     PrinterNewLevelBox , 
@@ -152,9 +152,9 @@ class BasicInformation extends React.Component<BasicInformation_Props , BasicInf
         let title = this.props.core.root.parameters.title
             
         return <Box>
-            <PrinterTitleBoxText>题目：{title}</PrinterTitleBoxText>
-            <PrinterTitleBoxText>创建时间：{me.state.create_time}</PrinterTitleBoxText>
-            <PrinterTitleBoxText>修改时间：{me.state.modify_time}</PrinterTitleBoxText>
+            <PrinterStructureBoxText>题目：{title}</PrinterStructureBoxText>
+            <PrinterStructureBoxText>创建时间：{me.state.create_time}</PrinterStructureBoxText>
+            <PrinterStructureBoxText>修改时间：{me.state.modify_time}</PrinterStructureBoxText>
             <TreeView
                 expanded     = { me.state.expanded } // 将 me.state.expanded 转成字符串数组。
                 onNodeToggle = { (e:any,nodeIds: string[])=>{me.setState({expanded:nodeIds})} } // 直接设置 me.state.expanded。

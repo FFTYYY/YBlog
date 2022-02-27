@@ -23,7 +23,7 @@ export {
     PrinterDivider , 
     PrinterWeakenText , 
     PrinterDisplayText , 
-    PrinterTitleBoxText , 
+    PrinterStructureBoxText , 
     PrinterParagraphBox , 
     PrinterPartBox , 
     PrinterNewLevelBox , 
@@ -76,7 +76,6 @@ const PrinterDisplayText = (props: TypographyProps  & {inline?: boolean}) => <Ty
     ]}
 />
 
-
 /** 段落节点的默认输出方式。 */
 const PrinterParagraphBox = (props: TypographyProps) => <Typography 
     component = {Box}
@@ -97,30 +96,33 @@ const PrinterParagraphBox = (props: TypographyProps) => <Typography
 />
 
 /** 一个的标题，独占一行。这个样式同时包含字体和间距。 */
-const PrinterTitleBoxText = (props: TypographyProps & {inline?: boolean}) => <Typography 
+const PrinterStructureBoxText = (props: TypographyProps & {inline?: boolean , leftmargin?: boolean}) => <Typography 
     component = {props.inline ? "span" : Box}
-    {...{...props , inline: undefined}}
+    {...{...props , inline: undefined , leftmargin: undefined}}
     sx = {[
         (theme)=>({
             ...theme.printer.typography.structure, // 使用结构字体的样式
             ...(props.inline ? { // 如果是行内样式
-                marginRight: (theme) => theme.printer.margins.colon , 
+                ...(props.leftmargin ? { // 是否将空格放在左边。
+                    marginLeft: (theme) => theme.printer.margins.colon ,
+                }: {
+                    marginRight: (theme) => theme.printer.margins.colon ,
+                }) , 
                 display: "inline-block" , 
-            } : {
-            })
+            } : {})
         }),
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}
 />
 
 /** 一个用来包裹一个部分的组件。 */
-const PrinterPartBox = (props: BoxProps & {subtitle_like?: boolean}) => <Box 
-    {...{...props , subtitle_like: undefined}}
+const PrinterPartBox = (props: BoxProps & {subtitle_like?: boolean , small_margin?: boolean}) => <Box 
+    {...{...props , subtitle_like: undefined , small_margin: undefined}}
     sx = {[
         (theme)=>({
-            ...(props.subtitle_like ? theme.printer.typography.structure : {}) , 
-            marginTop: (theme) => theme.printer.margins.special , 
-            marginBottom: (theme) => theme.printer.margins.special , 
+            ...(props.subtitle_like ? theme.printer.typography.title : {}) , 
+            marginTop: props.small_margin ? theme.printer.margins.paragraph : theme.printer.margins.special , 
+            // marginBottom: (theme) => theme.printer.margins.special , // 下方的边距由下方的元素负责。
         }) , 
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}

@@ -14,9 +14,9 @@ import type {
 
 import { Node } from "slate"
 import type  { PrinterRenderFunc_Props } from "../../printer"
-import { GroupNode} from "../../core/elements"
+import { GroupNode , StyledNode} from "../../core/elements"
 import type { PrinterRenderer } from "../../printer"
-import { OrderEffector , InjectEffector , ConsumeEffector , BasicEffector} from "./effecter"
+import { OrderEffector , InjectEffector , ConsumeEffector , BasicEffector , BrotherEffector} from "./effecter"
 import type { ValidParameter } from "../../core/elements"
 import type { PrinterEnv , PrinterContext } from "../../printer"
 import { AutoStack } from "../basic"
@@ -31,14 +31,25 @@ function get_DefaultParagraphPrinter(){
 
     // 需要额外渲染的元素。
     let consumer_effector = new ConsumeEffector("global-injector" , "global-injector")
+    let brother_effector = new BrotherEffector("global-brother" , "global-brother")
 
     return {
         render_func: (props: PrinterRenderFunc_Props) => {
-            let extra =  consumer_effector.get_context(props.context) || {} // 需要额外插入的元素。
+            let extra = consumer_effector.get_context(props.context) // 需要额外插入在前面的元素。
+            let [ bro_ele , bro_info ] = brother_effector.get_context(props.context) as [ StyledNode , any ]
 
-            return <PrinterParagraphBox>
-                {Object.keys(extra).map((key)=><React.Fragment key={key}>{extra[key]}</React.Fragment>)}
+            let small_margin = bro_info["small_margin"] // 兄弟是否让自己设置一个小的margin。
+
+            let margin_flag = (bro_ele != undefined) && ( bro_ele.type == "group" || bro_ele.type == "struct" )
+            let margin_sx = {marginTop: small_margin ?
+                (theme)=>theme.printer.margins.paragraph : 
+                (theme)=>theme.printer.margins.special
+            }
+
+            return <PrinterParagraphBox sx={margin_flag ? margin_sx : {}}>
+                {Object.keys(extra.pre).map((key)=><React.Fragment key={key}>{extra.pre[key]}</React.Fragment>)}
                 {props.children}
+                {Object.keys(extra.suf).map((key)=><React.Fragment key={key}>{extra.suf[key]}</React.Fragment>)}
                 <br/>
             </PrinterParagraphBox>
         } , 
@@ -46,6 +57,7 @@ function get_DefaultParagraphPrinter(){
             let ret: [PrinterEnv , PrinterContext] = [ env , {} ]
             
             ret = consumer_effector.enter_fuse(element , ret[0] , ret[1])
+            ret = brother_effector.enter_fuse(element , ret[0] , ret[1])
     
             return ret
         } , 
@@ -53,6 +65,7 @@ function get_DefaultParagraphPrinter(){
             let ret: [PrinterEnv , PrinterContext] = [ env , context ]
     
             ret = consumer_effector.exit_fuse(element , ret[0] , ret[1])
+            ret = brother_effector.exit_fuse(element , ret[0] , ret[1])
     
             return ret
         } , 
@@ -63,7 +76,7 @@ function get_DefaultInlinePrinter<NodeType extends Node>({
     extra_effectors = [] , 
     outer = (props)=><span>{props.children}</span> , 
 }:{
-	extra_effectors?: BasicEffector[] ,
+	extra_effectors?: ((element: NodeType) => BasicEffector)[] ,
 	outer     ?: (props: {element: NodeType, context: PrinterContext, children: any}) => any
 }){ 
 
@@ -80,7 +93,7 @@ function get_DefaultInlinePrinter<NodeType extends Node>({
             
             // 应用额外的前作用器。
             for(let extra_eff of extra_effectors){
-                ret = extra_eff.enter_fuse(element , ret[0] , ret[1])
+                ret = extra_eff(element).enter_fuse(element , ret[0] , ret[1])
             }
     
             return ret
@@ -89,7 +102,7 @@ function get_DefaultInlinePrinter<NodeType extends Node>({
             let ret: [PrinterEnv , PrinterContext] = [ env , context ]
     
             for(let extra_eff of extra_effectors){
-                ret = extra_eff.exit_fuse(element , ret[0] , ret[1])
+                ret = extra_eff(element).exit_fuse(element , ret[0] , ret[1])
             }
     
             return ret
