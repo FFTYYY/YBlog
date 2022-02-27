@@ -22,7 +22,7 @@ import {
 } from "../../../lib"
 
 
-import { make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter , withNecessaryStyle} from "../components"
+import { make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter , withNecessaryStyle} from "../styles"
 import { Node , Transforms , Element } from "slate"
 import { ReactEditor } from "slate-react"
 import { axios , get_node_id } from '../utils'
@@ -71,16 +71,17 @@ class App extends  React.Component<App_Props , App_State>{
 		for(let [name , meta_name , fixed_params , default_params , extra_params] of node_components){
 			let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params , extra_params)
 			this.core.add_style(style)
-			my_editor.update_renderer (editor  , style.type , style.name)
-			my_printer.update_renderer(printer , style.type , style.name)
+			if(style.type != "abstract"){
+				my_editor.update_renderer (editor  , style.type , style.name)
+				my_printer.update_renderer(printer , style.type , style.name)
+			}
 		}
 		this.setState({editor: my_editor , printer: my_printer})
 
 		var root = (await axios.get(`/get_node/${node_id}`)).data.content
-		console.log(root)
+		root = root || {children: [] , parameters: {}}
 		Transforms.insertNodes(this.state.editor.slate , root.children , {at: [0]})
 		this.core.update_root({parameters: root.parameters})
-		console.log(this.core)
 	}
 	
 	async save_content(){
@@ -133,9 +134,6 @@ class App extends  React.Component<App_Props , App_State>{
 	render(){
 		let me = this
 		let MainPart = this.mainpart.bind(this)
-
-		console.log("group render" , me.state.editor.style_renderers.group)
-		console.log("children render" , me.state.editor.slate.children)
 
 		return <ThemeProvider theme={createTheme(my_theme)}><Box sx={{
 				position: "absolute" , 

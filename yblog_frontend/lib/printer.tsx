@@ -74,15 +74,36 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         this.setState({root: this.core.root})
     }
 
+    // 根据路径生成唯一的表示。
+    get_path_id(path: (number | string)[]): string{
+        return JSON.stringify(path.map(x=>Number(x)))
+    }
+
+    get_ref(path: (number | string)[] , binding = false){
+        let ref = this.my_refs[this.get_path_id(path)]
+        if(!binding){
+            // 如果不是正在绑定`ref`，那么可以模糊地返回值。
+            if(ref == undefined || ref.current == undefined)
+                return undefined
+        }
+        return ref
+    }
+    set_ref(path: (number | string)[] , val: any){
+        this.my_refs[this.get_path_id(path)] = val
+        return path
+    }
+    
+
     /** 这个函数可以被主动调用，令编辑器滚动到指定元素。
-     * @param path_id path数组字符串化以后的值（JSON.stringify(path)）。注意 path_id 只到inline节点的上一层。
+     * @param path path数组。
      */
-    scroll_to(path_id: string){
+    scroll_to(path: number[]){
         // TODO 如果是新建一行，调用这个函数的时候这行还没创建好，因此会返回undefined。（不过好像问题也不大就是了...）
-        if(this.my_refs[path_id] == undefined || this.my_refs[path_id].current == undefined){
+        let ref = this.get_ref(path)
+        if(ref == undefined){
             return 
         }
-        this.my_refs[path_id].current.scrollIntoView({
+        ref.current.scrollIntoView({
             behavior: "smooth" , 
             block: "center"
         })
@@ -94,13 +115,13 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
      * @param props.contexts 全体节点的上下文。
      * @param props.now_path 当前节点的路径。 
     */
-    _sub_component(props: {element: Node , contexts: {[idx: number]: PrinterContext}, now_path: number[]}){
+    _sub_component(props: {element: Node , contexts: {[idx: number]: PrinterContext}, now_path: (number | string)[]}){
         let element = props.element
         let me = this
         let ThisFunction = this._sub_component.bind(this)
         let printer = this.printer
         let contexts = props.contexts
-        let path_id = JSON.stringify(props.now_path) // 用路径表示的节点id。和node.idx不一样，这是视图相关的节点名。
+        let path = props.now_path // 用路径表示的节点id。和node.idx不一样，这是视图相关的节点名。
         
         type has_children = Node & {children: Node[]}
         type has_text = Node & {text: string}
@@ -111,7 +132,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
 
             let text:any = (element as has_text).text
             return <React.Fragment>
-                <span style={{display: "hidden"}} ref={me.my_refs[path_id]}/>
+                <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
                 <R.render_func element={element} context={{}}>{text}</R.render_func>
             </React.Fragment>
         }
@@ -125,13 +146,13 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         
         let R = printer.get_renderer(type , name)
         return <React.Fragment>
-            <span style={{display: "hidden"}} ref={me.my_refs[path_id]}/>
-            <R.render_func element={ element } context={contexts[path_id] } >{
+            <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
+            <R.render_func element={ element } context={contexts[this.get_path_id(path)] } >{
                 Object.keys(children).map((subidx) => <ThisFunction
                     key      = {subidx}
                     element  = {children[subidx]} 
                     contexts = {contexts}
-                    now_path = {[...props.now_path , parseInt(subidx)]}
+                    now_path = {[...path , subidx]}
                 />)
             }</R.render_func>
         </React.Fragment>
@@ -142,14 +163,13 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
      * @param props.now_env 当前环境。
      * @param props.now_path 从根到当前节点的路径。
     */
-    build_envs(_node: Node, now_env: PrinterEnv, contexts: PrinterContext, now_path: number[]){
-        let path_id = JSON.stringify(now_path) // 用路径表示的节点id。和node.idx不一样，这是视图相关的节点名。
-        this.my_refs[path_id] = React.createRef() // 初始化 refs
+    build_envs(_node: Node, now_env: PrinterEnv, contexts: PrinterContext, now_path: (number | string)[]){
+        let path = now_path // 用路径表示的节点id。和node.idx不一样，这是视图相关的节点名。
+        this.set_ref(path , React.createRef()) // 初始化 refs
 
         if(!("children" in _node)){
             return [ now_env , contexts ]            
         }
-
 
         let node = _node as Node & {children: Node[]}
         let type = get_node_type(node)
@@ -167,14 +187,14 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
 
         // 递归地进入子节点。
         for(let subidx in node.children){
-            [now_env , contexts] = this.build_envs(node.children[subidx] , now_env , contexts, [...now_path , parseInt(subidx)])
+            [now_env , contexts] = this.build_envs(node.children[subidx] , now_env , contexts, [...now_path , subidx])
         }
 
         // 获得退出时的结果。
         let [new_env , new_context] = R.exit_effect(node , now_env , _context)
         
         // 注意，这里用路径作为上下文的键，因为段落节点没有 idx 。
-        contexts[path_id] = new_context // 更新此节点的上下文。
+        contexts[this.get_path_id(path)] = new_context // 更新此节点的上下文。
 
         return [new_env , contexts]
     }

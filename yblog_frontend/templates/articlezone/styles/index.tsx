@@ -12,7 +12,7 @@ var type2class = {
     group: GroupStyle , 
     inline: InlineStyle , 
     abstract: AbstractStyle , 
-    suport: SupportStyle , 
+    support: SupportStyle , 
     struct: StructStyle , 
 }
 
@@ -28,12 +28,18 @@ var style_editor_printer: {
     [S.sectioner_style.name]    : [S.sectioner_style    , E.sectioner_editor    , O.sectioner_printer] , 
     [S.ender_style.name]        : [S.ender_style        , E.ender_editor        , O.ender_printer] , 
     [S.strong_style.name]       : [S.strong_style       , E.strong_editor       , O.strong_printer] , 
+    [S.normalwords_style.name]  : [S.normalwords_style  , E.normalwords_editor  , O.normalwords_printer] , 
+    [S.alignedwords_style.name] : [S.alignedwords_style , E.alignedwords_editor , O.alignedwords_printer] , 
+    [S.image_style.name]        : [S.image_style        , E.image_editor        , O.image_printer] , 
+    [S.delete_style.name]       : [S.delete_style       , E.delete_editor       , O.delete_printer] , 
+    [S.link_style.name]         : [S.link_style         , E.link_editor         , O.link_printer] , 
+    [S.list_style.name]         : [S.list_style         , E.list_editor         , O.list_printer] , 
 }
 
 function make_new_style(meta_name:string , name: string , fixed_params: any, default_params: any , extra_params: any){
     let [meta_style , meta_editor , meta_printer] = style_editor_printer[meta_name]
     let meta_type = type2class[meta_style.type]
-
+    
     let parameters = {...meta_style.parameter_prototype , ...fixed_params , ...default_params , ...extra_params}
     let flags = meta_style.flags 
 

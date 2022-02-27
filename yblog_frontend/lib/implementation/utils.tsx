@@ -10,7 +10,27 @@ export {
     object_foreach , 
     merge_object , 
     idx2path, 
+    remtimes , 
+    rem2num , 
+    num2rem , 
 }
+
+
+/** 将`xxxrem`形式的字符串转换成数字。 */
+function rem2num(rem:string){
+	return Number( rem.slice(0,rem.length-3) )
+}
+
+/** 将数字转换成`"xxxrem"`形式的字符串。 */
+function num2rem(num: number){
+	return `${num}rem`
+}
+
+/** 将`xxxrem`形式的字符串乘以数字。 */
+function remtimes(rem:string , num: number){
+	return  num2rem( rem2num(rem) * num )
+}
+
 
 /** 询问一个节点在另一个节点的 hidden 数组中的位置。 */
 function get_hidden_idx(fathernode: StyledNode, sonnode: GroupNode){

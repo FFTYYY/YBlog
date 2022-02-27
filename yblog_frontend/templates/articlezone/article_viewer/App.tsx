@@ -25,19 +25,17 @@ import {
 	PrinterDivider , 
     PrinterWeakenText , 
     PrinterDisplayText , 
-    PrinterTitleBoxText  , 
+    PrinterStructureBoxText  , 
     PrinterParagraphBox , 
     PrinterPartBox , 
     PrinterNewLevelBox , 
     PrinterOldLevelBox , 
     PrinterBackgroundPaper , 
 	get_DefaultStructPrinter , 
-
-
 } from "../../../lib"
 
 
-import { make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter , withNecessaryStyle} from "../components"
+import { make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter , withNecessaryStyle} from "../styles"
 import { axios , get_node_id } from '../utils'
 import { my_theme } from "../construction/theme"
 import { LeftBox } from "./cards"
@@ -69,7 +67,8 @@ class App extends  React.Component{
 		for(let [name , meta_name , fixed_params , default_params , extra_params] of node_components){
 			let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params , extra_params)
 			this.core.add_style(style)
-			this.printer.update_renderer(printer , style.type , style.name)
+			if(style.type != "abstract")
+				this.printer.update_renderer(printer , style.type , style.name)
 		}
         this.forceUpdate()
 	}
@@ -104,7 +103,7 @@ class App extends  React.Component{
 					top: "1%" , 
 					height: "3%" , 
 				}}>
-					<PrinterTitleBoxText sx={{textAlign: "center"}}>{me.printer.core.root.parameters.title}</PrinterTitleBoxText>
+					<PrinterStructureBoxText sx={{textAlign: "center"}}>{me.printer.core.root.parameters.title}</PrinterStructureBoxText>
 				</Box>
 				<Box sx = {{
 					position: "absolute" , 
