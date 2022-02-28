@@ -1,8 +1,8 @@
 import React from "react"
 
 import {
-    Tabs , Tab , Button , 
-    Box , Divider , Typography
+    Tabs , Tab , Button , IconButton , 
+    Box , Divider , Typography , Link
 } from "@mui/material"
 import {
     TabContext  , 
@@ -19,6 +19,8 @@ import {
 import {
     ExpandMore as ExpandMoreIcon , 
     ChevronRight as ChevronRightIcon , 
+    ArrowUpward as ArrowUpwardIcon , 
+    ArrowDownward as ArrowDownwardIcon , 
 } from "@mui/icons-material"
 
 import {
@@ -28,6 +30,7 @@ import {
 	DefaultPrinter , 
 	DefaultEditor , 
 	AutoStack , 
+    AutoTooltip , 
 
 	PrinterDivider , 
     PrinterWeakenText , 
@@ -75,65 +78,6 @@ class BasicInformation extends React.Component<BasicInformation_Props , BasicInf
         }
     }
 
-    get_my_treeitem(){
-        return React.forwardRef((props: TreeItemContentProps , ref) => {
-            const { classes, className, label, nodeId, icon: iconProp, expansionIcon, displayIcon } = props
-            const { disabled, expanded, selected, focused, handleExpansion, handleSelection, preventSelection } = useTreeItem(nodeId)
-            const icon = iconProp || expansionIcon || displayIcon
-
-            return <Box
-                className = {[
-                    className , 
-                    classes.root , 
-                    classes.expanded ? expanded : "" , 
-                    classes.selected ? selected : "" , 
-                    classes.focused ? focused : "" , 
-                    classes.disabled ? disabled : "" , 
-                ].join(" ")}            
-                ref = {ref}
-            >
-                <Box onClick = {(e)=>handleExpansion(e)} className={classes.iconContainer}>
-                    {icon}
-                </Box>
-                <a className = {classes.label} href="http://www.baidu.com">
-                    {label}
-                </a>
-            </Box>
-        })
-    }      
-    /** 渲染某个节点的全部子节点。 
-    */
-    get_subtree(nownode: info_item){
-        let me = this    
-        let MyTreeItem = this.get_my_treeitem()
-
-        function SubTree(props: {subnode: info_item}){
-            let subnode = props.subnode
-            let subid = subnode.my_id
-
-            let [title , set_title] = React.useState("")
-
-            React.useEffect(()=>{(async ()=>{
-                let root = await get_node_information("get_node" , "content" , subid)
-                set_title(root.parameters.title) 
-            })()} , [])
-            
-            return <TreeItem
-                label = {`${title}`}
-                nodeId = {`${subid}`}
-                ContentComponent = {MyTreeItem}
-                // onFocusCapture = {e => e.stopPropagation()} // 防止选择
-            >
-                {me.get_subtree(subnode)}
-            </TreeItem>
-
-        }
-
-        return <>{Object.values(nownode.sons).map((subnode:info_item, idx:number)=>{
-            return <SubTree subnode={subnode} key={idx}/>
-        })}</>  
-    }
-
     async componentDidMount() {
         let time_info = await get_node_information("get_node_create_time")
         this.setState({
@@ -157,32 +101,78 @@ class BasicInformation extends React.Component<BasicInformation_Props , BasicInf
         return <>{title}</>
     }
 
+    /** 这个组件是左侧的导航栏。 */
     Navigation(props: {}){
         if(this.state.now_node_id == undefined){
             return <></>
         }
+        let me = this
         let now_node = this.state.id2node[ this.state.now_node_id ]
         let now_sons = now_node.sons
 
         let TitleWord = this.TitleWord.bind(this)
 
-        
-        return <Box sx={{marginTop: "1rem"}}>
-            <Button>UP</Button><Typography><TitleWord node_id={now_node.my_id} /></Typography>
+        // TODO use a special theme for this
+
+        let WordsWithButton = (props:{words: any , onClick?: ((e)=>void) , title?: any, icon?: any, url: string}) => {
+            let Icon = props.icon
+            return <Box sx={{marginTop: "0.5rem"}}><AutoStack>
+                {
+                    Icon 
+                    ? <AutoTooltip title={props.title}><IconButton size="small" sx={{height: "1rem"}} onClick={props.onClick}>
+                        <Icon sx={{fontSize: "0.8rem"}}/>
+                    </IconButton></AutoTooltip>
+                    : <></>
+                }
+                <Link 
+                    sx = {(theme)=>({...theme.printer.typography.structure , fontSize: "0.8rem"})} 
+                    underline = "hover" 
+                    href = {props.url}
+                >{props.words}</Link>
+            </AutoStack></Box>
+        }
+
+        return <Box sx={{marginTop: "0.5rem"}}><AutoStack force_direction="column">
+            {
+                now_node.father_id >= 0
+                ? <WordsWithButton  // 可以往上
+                    words = {<TitleWord node_id={now_node.my_id} />} 
+                    title = "上行" 
+                    onClick = { ()=>me.setState({now_node_id: now_node.father_id})}
+                    icon = {ArrowUpwardIcon}
+                    url = {"#"} // TODO specify URL
+                />
+                : <WordsWithButton // 不能往上惹
+                    words = {<TitleWord node_id={now_node.my_id} />} 
+                    url = {"#"}
+                />
+            }
+            
+
             {now_node.sons.map((subnode,idx)=>{
                 return <Box sx={{marginLeft: (theme)=>theme.printer.margins.level}} key={idx}>
-                    <Button>DW</Button><Typography><TitleWord node_id={subnode.my_id} /></Typography>
+                    {
+                        subnode.sons.length > 0 
+                        ? <WordsWithButton // 有子节点
+                            words = {<TitleWord node_id={subnode.my_id} />} 
+                            title = "下行" 
+                            onClick = { ()=>me.setState({now_node_id: subnode.my_id}) }
+                            icon = {ArrowDownwardIcon}
+                            url = {"#"}
+                        />
+                        : <WordsWithButton // 不能再往下惹
+                            words = {<TitleWord node_id={subnode.my_id} />} 
+                            url = {"#"}
+                        />  
+                    }
                 </Box>
             })}
-        </Box>
+        </AutoStack></Box>
     }
 
-    render(){
-        let me = this
-        let title = this.props.core.root.parameters.title
-
-        // TODO use theme
-        const ItemBox = (props: {title: string, content: string}) => <Box
+    /** 这个组件是一个小框。 */
+    ItemBox(props: {title: string, content: string}){ 
+        return <Box
             sx = {(theme)=>({marginBottom: "1rem"})}
         >
             <Typography color="text.secondary" sx={{
@@ -192,14 +182,22 @@ class BasicInformation extends React.Component<BasicInformation_Props , BasicInf
             }}>{props.title}</Typography>
             <Typography sx={{fontSize: "0.8rem" , display: "inline-block" , }}>{props.content}</Typography>
         </Box>
+    }
 
+
+    render(){
+        let me = this
+        let title = this.props.core.root.parameters.title
+
+        // TODO use theme
+        let ItemBox = this.ItemBox.bind(this)
         let Navigation = this.Navigation.bind(this)
             
         return <Box sx = {(theme)=>({...theme.printer.typography.structure})}>
             <ItemBox title="题目" content={`${title}`} />
             <ItemBox title="创建时间" content={me.state.create_time} />
             <ItemBox title="修改时间" content={me.state.modify_time} />
-            <Divider>导航</Divider>
+            <Divider sx={{fontSize: "0.8rem"}}>导航</Divider>
             <Navigation />
         </Box>
     }
