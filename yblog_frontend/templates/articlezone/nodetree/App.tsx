@@ -11,7 +11,7 @@ import { DndProvider , useDrag , useDrop , DropTargetMonitor} from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
 
 import { get_node_information , post_node_information } from "../utils/ineraction"
-import { raw_to_processed , processed_to_raw } from "../utils/nodetree"
+import { raw_to_processed , processed_to_raw , generate_id2node } from "../utils/nodetree"
 import type { raw_info_item , info_item } from "../utils/nodetree"
 import { get_node_id } from "../utils"
 import { FlexibleDrawer , FlexibleItem } from "../construction/framework"
@@ -42,18 +42,6 @@ class App extends React.Component<{},App_State>{
         }
     }
 
-    /** 给定 nodetree，这个函数生成一个 id 到树节点的映射。 
-     * @param node 节点树的根。
-    */
-    generate_id2node(node: info_item){
-        function _generate_id2node(nownode: info_item, id2node: {[id: number]: info_item}){
-            id2node[nownode.my_id] = nownode
-            for(let nd of nownode.sons)
-                _generate_id2node(nd , id2node)
-            return id2node
-        }
-        return _generate_id2node(node , {})
-    }
 
     /** 
      * 相当于 setState( {nodetree: nodetree} ) ，但是这个函数也会同时更新 id2node。
@@ -61,7 +49,7 @@ class App extends React.Component<{},App_State>{
      * @param nodetree 新的 nodetree。
     */
     setNodetree(nodetree: info_item){
-        let id2node: {[id: number] : info_item} = this.generate_id2node(nodetree)
+        let id2node: {[id: number] : info_item} = generate_id2node(nodetree)
         this.setState( {nodetree: nodetree , id2node: id2node} )
     }
 
@@ -102,7 +90,7 @@ class App extends React.Component<{},App_State>{
 
         
         let new_nodetree = JSON.parse( JSON.stringify( this.state.nodetree ) )
-        let new_id2node = this.generate_id2node(new_nodetree)
+        let new_id2node = generate_id2node(new_nodetree)
         
         let old_idx = to_move.idx_in_father as number // 待删除节点在父节点中的位置。
 

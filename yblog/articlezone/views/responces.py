@@ -69,7 +69,7 @@ def get_nodetree_info(request , node_id):
         lis = Node.objects.all()
     else:
         lis = Node.objects.get(id = node_id).get_sons()
-
+    
     return JsonResponse({
         "data": [ [x.id, x.father.id if x.father is not None else -1, x.index_in_father] for x in lis]
     })
@@ -83,10 +83,15 @@ def post_nodetree_info(request , node_id):
     nodetree = JSONDecode(request.body)["nodetree"]
 
     for my_id , father_id , idx_in_father in nodetree:
+        my_id = int(my_id)
         if my_id == node_id: # 豁免根节点
             continue
+
         node = Node.objects.get(id = my_id)
-        node.father = Node.objects.get(id = father_id)
+        if father_id == -1: 
+            node.father = None
+        else:
+            node.father = Node.objects.get(id = father_id)
         node.index_in_father = idx_in_father
         node.save()
 
