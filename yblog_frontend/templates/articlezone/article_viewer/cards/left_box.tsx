@@ -1,7 +1,7 @@
 import React from "react"
 
 import {
-    Tabs , Tab , 
+    Tabs , Tab , Button , 
     Box , Divider , Typography
 } from "@mui/material"
 import {
@@ -41,7 +41,8 @@ import {
 	get_DefaultStructPrinter , 
 } from "../../../../lib"
 import { get_node_information , post_node_information } from "../../utils/ineraction"
-import { raw_to_processed , processed_to_raw } from "../../utils/nodetree"
+import { get_node_id } from "../../utils"
+import { raw_to_processed , processed_to_raw , generate_id2node } from "../../utils/nodetree"
 import type { raw_info_item , info_item } from "../../utils/nodetree"
 
 
@@ -56,10 +57,9 @@ interface BasicInformation_Props{
 interface BasicInformation_State{
     create_time: any
     modify_time: any
-    nodetree: any
-
-    /** 已经展开的节点，这是 mui TreeView 需要的状态。 */
-    expanded: string [] 
+    nodetree: info_item
+    now_node_id: number
+    id2node: {[key: number]: info_item}
 }
 class BasicInformation extends React.Component<BasicInformation_Props , BasicInformation_State>{
     constructor(props: BasicInformation_Props){
@@ -68,8 +68,10 @@ class BasicInformation extends React.Component<BasicInformation_Props , BasicInf
         this.state = {
             create_time: undefined , 
             modify_time: undefined , 
+
             nodetree: undefined , 
-            expanded: [] , 
+            id2node: undefined , 
+            now_node_id: undefined , // 当前展开的树节点。
         }
     }
 
@@ -139,30 +141,66 @@ class BasicInformation extends React.Component<BasicInformation_Props , BasicInf
             modify_time: time_info.modify_time , 
         })
 
-        let raw_nodetree = await get_node_information("get_nodetree_info" , "data") as raw_info_item[]
+        let raw_nodetree = await get_node_information("get_nodetree_info" , "data" , 0) as raw_info_item[]
         let nodetree = raw_to_processed(raw_nodetree)
-        this.setState({nodetree: nodetree})
+        this.setState({nodetree: nodetree , id2node: generate_id2node(nodetree) , now_node_id: get_node_id()})
+    }
 
-        let all_ids = raw_nodetree.map((x)=>`${x[0]}`)
-        this.setState({expanded: all_ids})
+    /** 这个组件异步加载一个节点的标题，等加载好了就现实出来。 */
+    TitleWord(props: {node_id: number}){
+        let [title , set_title] = React.useState("")
+
+        React.useEffect(()=>{(async ()=>{
+            let root = await get_node_information("get_node" , "content" , props.node_id)
+            set_title(root.parameters.title) 
+        })()} , [])
+        return <>{title}</>
+    }
+
+    Navigation(props: {}){
+        if(this.state.now_node_id == undefined){
+            return <></>
+        }
+        let now_node = this.state.id2node[ this.state.now_node_id ]
+        let now_sons = now_node.sons
+
+        let TitleWord = this.TitleWord.bind(this)
+
+        
+        return <Box sx={{marginTop: "1rem"}}>
+            <Button>UP</Button><Typography><TitleWord node_id={now_node.my_id} /></Typography>
+            {now_node.sons.map((subnode,idx)=>{
+                return <Box sx={{marginLeft: (theme)=>theme.printer.margins.level}} key={idx}>
+                    <Button>DW</Button><Typography><TitleWord node_id={subnode.my_id} /></Typography>
+                </Box>
+            })}
+        </Box>
     }
 
     render(){
         let me = this
         let title = this.props.core.root.parameters.title
+
+        // TODO use theme
+        const ItemBox = (props: {title: string, content: string}) => <Box
+            sx = {(theme)=>({marginBottom: "1rem"})}
+        >
+            <Typography color="text.secondary" sx={{
+                marginRight: (theme)=>theme.printer.margins.colon , 
+                fontSize: "0.5rem" , 
+                display: "inline-block" , 
+            }}>{props.title}</Typography>
+            <Typography sx={{fontSize: "0.8rem" , display: "inline-block" , }}>{props.content}</Typography>
+        </Box>
+
+        let Navigation = this.Navigation.bind(this)
             
-        return <Box>
-            <PrinterStructureBoxText>题目：{title}</PrinterStructureBoxText>
-            <PrinterStructureBoxText>创建时间：{me.state.create_time}</PrinterStructureBoxText>
-            <PrinterStructureBoxText>修改时间：{me.state.modify_time}</PrinterStructureBoxText>
-            <TreeView
-                expanded     = { me.state.expanded } // 将 me.state.expanded 转成字符串数组。
-                onNodeToggle = { (e:any,nodeIds: string[])=>{me.setState({expanded:nodeIds})} } // 直接设置 me.state.expanded。
-                defaultCollapseIcon={<ExpandMoreIcon />}
-                defaultExpandIcon={<ChevronRightIcon />}          
-            >
-                {me.state.nodetree ? me.get_subtree(me.state.nodetree) : undefined}
-            </TreeView>
+        return <Box sx = {(theme)=>({...theme.printer.typography.structure})}>
+            <ItemBox title="题目" content={`${title}`} />
+            <ItemBox title="创建时间" content={me.state.create_time} />
+            <ItemBox title="修改时间" content={me.state.modify_time} />
+            <Divider>导航</Divider>
+            <Navigation />
         </Box>
     }
 }

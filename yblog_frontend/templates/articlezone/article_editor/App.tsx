@@ -81,7 +81,7 @@ class App extends  React.Component<App_Props , App_State>{
 		var root = (await axios.get(`/get_node/${node_id}`)).data.content
 		root = root || {children: [] , parameters: {}}
 		Transforms.insertNodes(this.state.editor.slate , root.children , {at: [0]})
-		this.core.update_root({parameters: root.parameters})
+		this.core.update_root({parameters: {...this.core.root.parameters , ...root.parameters}})
 	}
 	
 	async save_content(){

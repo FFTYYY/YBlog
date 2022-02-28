@@ -1,5 +1,5 @@
 
-export {raw_to_processed , processed_to_raw}
+export {raw_to_processed , processed_to_raw , generate_id2node}
 export type {raw_info_item , info_item}
 
 /** 每个 raw_info_item 是从后端获得的一组原始数据，这组数据稍后被解析成 info_item 树。
@@ -14,6 +14,20 @@ interface info_item {
     sons: info_item[]
     idx_in_father? : number
 }
+
+/** 给定 nodetree，这个函数生成一个 id 到树节点的映射。 
+ * @param node 节点树的根。
+*/
+function generate_id2node(node: info_item){
+    function _generate_id2node(nownode: info_item, id2node: {[id: number]: info_item}){
+        id2node[nownode.my_id] = nownode
+        for(let nd of nownode.sons)
+            _generate_id2node(nd , id2node)
+        return id2node
+    }
+    return _generate_id2node(node , {})
+}
+
 
 /** 这个函数将三元组形式的描述转换成树形的描述。 
  * @param raw_nodetree （后端发来的）三元组形式的节点树描述。
