@@ -11,12 +11,22 @@ def JSONDecode(s):
     return json.loads(s)
 
 @debug_convenient
-def get_node_components(request , node_id):
+def get_node_concepts(request , node_id):
     node = Node.objects.get(id = node_id) 
     return JsonResponse({
-        "components": [
+        "concepts": [
             [c.name , c.meta , JSONDecode(c.fixed_params) , JSONDecode(c.default_params) , JSONDecode(c.extra_params)]
-            for c in node.get_all_components()
+            for c in node.get_all_concepts()
+        ]
+    })
+
+@debug_convenient
+def get_node_comments(request , node_id):
+    node = Node.objects.get(id = node_id) 
+    return JsonResponse({
+        "comments": [
+            [c.content , c.name]
+            for c in node.comments.all()
         ]
     })
 

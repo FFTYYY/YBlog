@@ -63,8 +63,8 @@ class App extends  React.Component{
 		this.core.update_root(root)
 
         /** 获得样式。 */
-        var node_components = await get_node_information("get_node_components" , "components")
-		for(let [name , meta_name , fixed_params , default_params , extra_params] of node_components){
+        var node_concepts = await get_node_information("get_node_concepts" , "concepts")
+		for(let [name , meta_name , fixed_params , default_params , extra_params] of node_concepts){
 			let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params , extra_params)
 			this.core.add_style(style)
 			if(style.type != "abstract")

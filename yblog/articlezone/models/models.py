@@ -3,7 +3,7 @@ from .. import constants
 import django.utils.timezone as timezone
 from .constraints import perform_checks
 
-class Component(models.Model):
+class Concept(models.Model):
 
 	name = models.CharField(max_length = constants.short_str_length)
 	meta = models.CharField(max_length = constants.short_str_length)
@@ -18,7 +18,7 @@ class Node(models.Model):
 	father = models.ForeignKey("self", on_delete = models.SET_NULL , null = True , blank = True , related_name = "son")
 	index_in_father = models.IntegerField(default = 0)
 
-	components = models.ManyToManyField(Component , related_name = "place" , null = True , blank = True , )
+	concepts = models.ManyToManyField(Concept , related_name = "place" , blank = True , )
 
 	content = models.TextField(default = "", blank = True)
 
@@ -34,12 +34,12 @@ class Node(models.Model):
 		all_sons.add(self)
 		return all_sons
 
-	def get_all_components(self):
+	def get_all_concepts(self):
 		'''收集自己到根的所有组件。'''
 		ret = set()
 		f = self
 		while f is not None:
-			[ret.add(x) for x in f.components.all()]
+			[ret.add(x) for x in f.concepts.all()]
 			f = f.father
 		return ret
 
@@ -54,3 +54,8 @@ class Node(models.Model):
 
 		return super().save(*args , **kwargs)
 
+
+class Comment(models.Model):
+	content = models.TextField(default = "" , null = True , blank = True)
+	name = models.CharField(max_length = constants.short_str_length , default = "" , null = True , blank = True)
+	father = models.ForeignKey(Node , on_delete = models.SET_NULL , related_name = "comments" , null = True)
