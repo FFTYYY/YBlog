@@ -1,6 +1,6 @@
 from django.http import HttpResponse , JsonResponse , Http404
 import json
-from ..models import Node
+from ..models import Node , Comment
 from .utils import debug_convenient
 import pdb
 
@@ -53,6 +53,22 @@ def get_node_create_time(request , node_id):
         "create_time": create_time , 
         "modify_time": modify_time , 
     })
+
+@debug_convenient
+def post_node_comments(request , node_id):
+    flag = False
+    
+    if request.body != b"":
+        data = JSONDecode(request.body)
+        content = data["content"]
+        name = data["name"]
+
+        new_comment = Comment(content = content , name = name,  father_id = node_id)
+        new_comment.save()
+        flag = True
+
+    return JsonResponse({"status": flag})
+
 
 @debug_convenient
 def post_node_content(request, node_id):

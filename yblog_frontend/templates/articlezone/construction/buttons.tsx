@@ -14,7 +14,22 @@ import {
 } 
 from "../../../lib"
 
-export { SaveButton }
+export { SaveButton , PostSnackbar }
+
+function PostSnackbar(props: {
+    info_sucess: string , 
+    info_fail: string , 
+    open: boolean , 
+    status: boolean , 
+    onClose: ()=>void , 
+}){
+    return <Snackbar 
+        anchorOrigin = {{vertical: "top" , horizontal: "center"}}
+        open = {props.open}
+        message = {props.status ? props.info_sucess : props.info_fail}
+        onClose = { ()=>props.onClose() }
+    />
+}
 
 function SaveButton(props: {save_func: (()=>Promise<boolean>)}){
 
@@ -37,11 +52,12 @@ function SaveButton(props: {save_func: (()=>Promise<boolean>)}){
             }}
             no_button
         />
-        <Snackbar 
-            anchorOrigin = {{vertical: "top" , horizontal: "center"}}
+        <PostSnackbar 
+            info_sucess = "保存成功"
+            info_fail = "保存失败"
             open = {snackbar_open}
-            message = {status ? "保存成功" : "保存失败"}
-            onClose = {()=>set_snackbar_open(false)}
+            status = {status}
+            onClose = {()=>set_snackbar_open(false)}     
         />
     </React.Fragment>
 }
