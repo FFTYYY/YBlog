@@ -4,7 +4,7 @@ import React from "react"
 
 import {
     Tabs , Tab , Button , IconButton , 
-    Box , Divider , Typography , Link
+    Box , Divider , Typography , Link , Chip
 } from "@mui/material"
 import {
     TabContext  , 
@@ -218,7 +218,7 @@ class LeftBasic extends React.Component<{core: EditorCore}>{
     render(){
         return <Box sx = {(theme)=>({...theme.printer.typography.structure})}>
             <BasicInformation core={this.props.core}/>
-            <Divider sx={{fontSize: "0.8rem"}}>导航</Divider>
+            <Divider sx={{fontSize: "0.8rem"}}><Chip sx={{fontSize: "0.8rem"}} label="导航" /></Divider>
             <Navigation />
         </Box>
     }
