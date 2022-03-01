@@ -67,8 +67,8 @@ class App extends  React.Component<App_Props , App_State>{
 	async componentDidMount(){
 		let my_editor = this.state.editor
 		let my_printer = this.state.printer
-		var node_components = (await axios.get(`/get_node_components/${node_id}`)).data.components
-		for(let [name , meta_name , fixed_params , default_params , extra_params] of node_components){
+		var node_concepts = (await axios.get(`/get_node_concepts/${node_id}`)).data.concepts
+		for(let [name , meta_name , fixed_params , default_params , extra_params] of node_concepts){
 			let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params , extra_params)
 			this.core.add_style(style)
 			if(style.type != "abstract"){

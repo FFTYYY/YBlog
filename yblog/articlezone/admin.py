@@ -1,18 +1,15 @@
 from django.contrib import admin
-from .models import Node , Component
+from .models import Node , Concept , Comment
 from django import forms
-class NodeForm(forms.ModelForm):
-    def __init(self , user , *args, **kwargs):
-        super ().__init__(*args, **kwargs)
 
 # TODO 子节点不能选父节点已经选过的组件。
 class NodeAdmin(admin.ModelAdmin):
-    filter_horizontal = ["components"]
+    filter_horizontal = ["concepts"]
 
     def get_fieldsets(self, request, object):
         return [
             ["内容" , {
-                "fields": ["content" , "components"] , 
+                "fields": ["content" , "concepts"] , 
                 "description": "<a href='/edit/content/{obj_id}'>编辑内容</a>".format(obj_id = object.id)
             }] , 
             ["结构" , {
@@ -26,8 +23,12 @@ class NodeAdmin(admin.ModelAdmin):
             }]
         ]
 
-class ComponentAdmin(admin.ModelAdmin):
+class ConceptAdmin(admin.ModelAdmin):
+    pass
+
+class CommentAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Node      , NodeAdmin      )
-admin.site.register(Component , ComponentAdmin)
+admin.site.register(Concept , ConceptAdmin)
+admin.site.register(Comment , CommentAdmin)
