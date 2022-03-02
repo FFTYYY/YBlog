@@ -2,7 +2,7 @@ import { Node } from "slate"
 import React from "react"
 
 import {
-    Box
+    Box , Link , Typography
 } from "@mui/material"
 
 import {
@@ -48,8 +48,9 @@ import type {
 	PrinterEnv , 
 	PrinterContext , 
     PrinterRenderFunc_Props , 
-} 
-from "../../../lib"
+} from "../../../lib"
+
+import { num2chinese } from "../utils/others"
 
 import Paper from '@mui/material/Paper';
 import Divider from '@mui/material/Divider';
@@ -70,12 +71,6 @@ export {
     delete_printer , 
     link_printer , 
     list_printer , 
-}
-
-/** 用中国字，因为我是 中国（吴京.jpg） 人 */
-function num2chinese(number){
-    let m = ["〇","一","二","三","四","五","六","七","八","九",]
-    return `${number}`.split("").map((x)=>m[Number(x)]).join("")
 }
 
 /** 『昭言』表示一段需要专门的、需要强调的话。如定理。 */
@@ -256,13 +251,18 @@ var link_printer = (()=>{
 
             // 如果是跳转到外部链接。
             if(tarurl){
-                return <a href={tarurl}>{props.children}</a>
+                return <Link href={tarurl}>{props.children}</Link>
             }
 
             // 如果是跳转到本文内。
 			return <GlobalInfo.Consumer>{value => {
 				// TODO 似乎可以用react-router
-				return <u onClick={e=>value.printer_component.scroll_to(idx2path( value.root , taridx ))}>{props.children}</u>
+				return <Link 
+                    component = "button" 
+                    onClick = {e=>value.printer_component.scroll_to(idx2path( value.root , taridx ))}
+                >
+                    <Typography>{props.children}</Typography>
+                </Link>
 			}}</GlobalInfo.Consumer>
 		}
 	})
