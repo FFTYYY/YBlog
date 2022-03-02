@@ -7,18 +7,6 @@ import {
     Box , Divider , Typography , Link , Chip
 } from "@mui/material"
 import {
-    TabContext  , 
-    TabList  , 
-    TabPanel   , 
-    useTreeItem , 
-    TreeItemContentProps , 
-} from "@mui/lab"
-
-import {
-    TreeItem , TreeView , 
-    TreeItemProps, treeItemClasses , 
-} from "@mui/lab"
-import {
     ExpandMore as ExpandMoreIcon , 
     ChevronRight as ChevronRightIcon , 
     ArrowUpward as ArrowUpwardIcon , 
@@ -26,29 +14,14 @@ import {
 } from "@mui/icons-material"
 
 import {
-	YEditor , 
 	EditorCore , 
-	Printer , 
-	DefaultPrinter , 
-	DefaultEditor , 
 	AutoStack , 
     AutoTooltip , 
-
-	PrinterDivider , 
-    PrinterWeakenText , 
-    PrinterDisplayText , 
-    PrinterStructureBoxText  , 
-    PrinterParagraphBox , 
-    PrinterPartBox , 
-    PrinterNewLevelBox , 
-    PrinterOldLevelBox , 
-    PrinterBackgroundPaper , 
-	get_DefaultStructPrinter , 
 } from "../../../../lib"
-import { get_node_information , post_node_information } from "../../utils/ineraction"
 import { get_node_id } from "../../utils"
-import { raw_to_processed , processed_to_raw , generate_id2node } from "../../utils/nodetree"
-import type { raw_info_item , info_item } from "../../utils/nodetree"
+import { Nodetree } from "../../base/nodetree"
+import type { raw_info_item } from "../../base/nodetree"
+import { Interaction } from "../../base/interaction"
 
 
 export { LeftBasic }
@@ -64,7 +37,7 @@ class TitleWord extends React.Component<{node_id: number} , {title: string | und
     }
 
     async componentDidMount() {
-        let root = await get_node_information("get_node" , "content" , this.props.node_id)
+        let root = await Interaction.get.content(this.props.node_id)
         this.setState({title: root.parameters.title}) 
     }
 
@@ -73,25 +46,30 @@ class TitleWord extends React.Component<{node_id: number} , {title: string | und
     }
 }
 
+/** 这个组件显示一个导航区域。 
+ * 导航区域会显示一个父节点和其全部子节点。
+ * 子节点有一个按钮可以进入之。父节点有一个按钮可以进入其父节点。『进入』一个节点就是说将其作为新的父节点。
+*/
 class Navigation extends React.Component<{} , {
-    nodetree: info_item
+
+    /** 总的节点树。 */
+    nodetree: Nodetree
+
+    /** 当前父节点的`id`。 */
     now_node_id: number
-    id2node: {[key: number]: info_item}
 }>{
     constructor(props){
         super(props)
 
         this.state = {
             nodetree: undefined , 
-            id2node: undefined , 
             now_node_id: undefined , // 当前展开的树节点。
         }
     }
 
     async componentDidMount() {
-        let raw_nodetree = await get_node_information("get_nodetree_info" , "data" , 0) as raw_info_item[]
-        let nodetree = raw_to_processed(raw_nodetree)
-        this.setState({nodetree: nodetree , id2node: generate_id2node(nodetree) , now_node_id: get_node_id()})
+        let raw_nodetree = await Interaction.get.nodetree(0) as raw_info_item[]
+        this.setState({nodetree: new Nodetree(raw_nodetree) , now_node_id: get_node_id()})
     }
 
     render(){
@@ -100,8 +78,7 @@ class Navigation extends React.Component<{} , {
             return <></>
         }
         let me = this
-        let now_node = this.state.id2node[ this.state.now_node_id ]
-        let now_sons = now_node.sons
+        let now_node = this.state.nodetree.id2node( this.state.now_node_id )
 
         // TODO use a special theme for this
         let WordsWithButton = (props:{words: any , onClick?: ((e)=>void) , title?: any, icon?: any, url: string}) => {
@@ -138,7 +115,6 @@ class Navigation extends React.Component<{} , {
                 />
             }
             
-
             {now_node.sons.map((subnode,idx)=>{
                 return <Box sx={{marginLeft: (theme)=>theme.printer.margins.level}} key={idx}>
                     {
@@ -161,6 +137,8 @@ class Navigation extends React.Component<{} , {
     }
 
 }
+
+/** 这个组件显示一些基本的信息。 */
 class BasicInformation extends React.Component<{
     core: EditorCore
 } , {
@@ -177,7 +155,7 @@ class BasicInformation extends React.Component<{
     }
 
     async componentDidMount() {
-        let time_info = await get_node_information("get_node_create_time")
+        let time_info = await Interaction.get.create_time()
         this.setState({
             create_time: time_info.create_time , 
             modify_time: time_info.modify_time , 
@@ -211,6 +189,7 @@ class BasicInformation extends React.Component<{
     }
 }
 
+/** 这个组件是左边基本信息部分的总体。 */
 class LeftBasic extends React.Component<{core: EditorCore}>{
     constructor(props){
         super (props)

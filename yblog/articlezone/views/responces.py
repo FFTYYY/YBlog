@@ -89,7 +89,7 @@ def post_node_content(request, node_id):
     return JsonResponse({"status": flag})
 
 @debug_convenient
-def get_nodetree_info(request , node_id):
+def get_nodetree(request , node_id):
 
     if node_id == 0:
         lis = Node.objects.all()
@@ -101,7 +101,7 @@ def get_nodetree_info(request , node_id):
     })
 
 @debug_convenient
-def post_nodetree_info(request , node_id):
+def post_nodetree(request , node_id):
 
     if request.body == b"":
         return JsonResponse({"status": False})
