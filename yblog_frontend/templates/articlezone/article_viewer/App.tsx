@@ -22,26 +22,17 @@ import {
 	DefaultEditor , 
 	AutoStack , 
 
-	PrinterDivider , 
-    PrinterWeakenText , 
-    PrinterDisplayText , 
     PrinterStructureBoxText  , 
-    PrinterParagraphBox , 
-    PrinterPartBox , 
-    PrinterNewLevelBox , 
-    PrinterOldLevelBox , 
-    PrinterBackgroundPaper , 
-	get_DefaultStructPrinter , 
 } from "../../../lib"
 
 
-import { make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter , withNecessaryStyle} from "../styles"
-import { axios , get_node_id } from '../utils'
+import { make_new_style , withNecessaryPrinter , withNecessaryStyle} from "../styles"
 import { my_theme } from "../construction/theme"
 import { LeftBox , RightBox } from "./cards"
-import { get_node_information , post_node_information } from "../utils/ineraction"
+import { Interaction } from "../base/interaction"
 
-var node_id = get_node_id()
+// import "react-perfect-scrollbar/dist/css/styles.css"
+// import PerfectScrollbar from "react-perfect-scrollbar"
 
 class App extends  React.Component{
 	core: EditorCore
@@ -62,11 +53,11 @@ class App extends  React.Component{
 	async componentDidMount(){
 
         /** 获得内容。 */
-		var root = await get_node_information("get_node" , "content")
+		var root = await Interaction.get.content()
 		this.core.update_root(root)
 
         /** 获得样式。 */
-        var node_concepts = await get_node_information("get_node_concepts" , "concepts")
+        var node_concepts = await Interaction.get.concept()
 		for(let [name , meta_name , fixed_params , default_params , extra_params] of node_concepts){
 			let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params , extra_params)
 			this.core.add_style(style)
@@ -121,8 +112,6 @@ class App extends  React.Component{
 						ref = {me.printer_ref}
 					/>
 				</Box>
-
-
 			</Box>
 			
 			<Box sx={{

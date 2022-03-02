@@ -51,6 +51,7 @@ import type {
 } from "../../../lib"
 
 import { num2chinese } from "../utils/others"
+import PerfectScrollbar from "perfect-scrollbar"
 
 import Paper from '@mui/material/Paper';
 import Divider from '@mui/material/Divider';

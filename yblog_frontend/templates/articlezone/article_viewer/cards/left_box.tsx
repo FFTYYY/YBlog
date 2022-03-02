@@ -8,45 +8,11 @@ import {
     TabContext  , 
     TabList  , 
     TabPanel   , 
-    useTreeItem , 
-    TreeItemContentProps , 
 } from "@mui/lab"
 
 import {
-    TreeItem , TreeView , 
-    TreeItemProps, treeItemClasses , 
-} from "@mui/lab"
-import {
-    ExpandMore as ExpandMoreIcon , 
-    ChevronRight as ChevronRightIcon , 
-    ArrowUpward as ArrowUpwardIcon , 
-    ArrowDownward as ArrowDownwardIcon , 
-} from "@mui/icons-material"
-
-import {
-	YEditor , 
 	EditorCore , 
-	Printer , 
-	DefaultPrinter , 
-	DefaultEditor , 
-	AutoStack , 
-    AutoTooltip , 
-
-	PrinterDivider , 
-    PrinterWeakenText , 
-    PrinterDisplayText , 
-    PrinterStructureBoxText  , 
-    PrinterParagraphBox , 
-    PrinterPartBox , 
-    PrinterNewLevelBox , 
-    PrinterOldLevelBox , 
-    PrinterBackgroundPaper , 
-	get_DefaultStructPrinter , 
 } from "../../../../lib"
-import { get_node_information , post_node_information } from "../../utils/ineraction"
-import { get_node_id } from "../../utils"
-import { raw_to_processed , processed_to_raw , generate_id2node } from "../../utils/nodetree"
-import type { raw_info_item , info_item } from "../../utils/nodetree"
 import { LeftBasic } from "./left_basic"
 import { LeftComments } from "./left_comments"
 

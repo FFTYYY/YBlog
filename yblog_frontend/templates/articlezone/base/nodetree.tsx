@@ -1,5 +1,5 @@
 
-export {raw_to_processed , processed_to_raw , generate_id2node}
+export { Nodetree }
 export type {raw_info_item , info_item}
 
 /** 每个 raw_info_item 是从后端获得的一组原始数据，这组数据稍后被解析成 info_item 树。
@@ -77,3 +77,42 @@ function processed_to_raw(nodetree: info_item){
     return _processed_to_raw( nodetree , -1 )
 }
 
+/** 这个类封装对节点树的操作。 */
+class Nodetree{
+
+    /** 根节点的编号。 
+     * 因为输入的可能是一棵子树，根节点的父节点可能还是有记录。因此需要外部输入根节点信息。
+    */
+    root_id?: number
+
+    /** 处理好的节点树。 */
+    nodetree: info_item
+
+    /** 将节点编号映射成节点的映射。 */
+    _id2node: {[key: number]: info_item}
+
+    constructor(raw_nodeinfos?: raw_info_item[] , root_id?: number){
+        if(raw_nodeinfos != undefined){
+            this.update_rawinfo(raw_nodeinfos , root_id)
+        }
+    }
+
+    /** 这个函数输入一个节点树并用来更新储存的节点树。 */
+    update_nodetree(nodetree: info_item){
+        this.nodetree = nodetree
+        this._id2node = generate_id2node(nodetree)
+        return this
+    }
+
+    /** 这个函数输入一些原始信息并用来更新储存的节点树。 */
+    update_rawinfo(raw_nodeinfos: raw_info_item[], root_id?: number){
+        this.root_id = root_id
+        let nodetree = raw_to_processed(raw_nodeinfos , root_id)
+        this.update_nodetree(nodetree)
+        return this
+    }
+
+    id2node(nodeid: number){
+        return this._id2node[nodeid]
+    }
+}

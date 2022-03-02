@@ -50,9 +50,7 @@ import {
 	get_DefaultStructPrinter , 
 } from "../../../../lib"
 import { Node } from "slate"
-import { get_node_information , post_node_information } from "../../utils/ineraction"
 import { get_node_id } from "../../utils"
-import { raw_to_processed , processed_to_raw , generate_id2node } from "../../utils/nodetree"
 import type { raw_info_item , info_item } from "../../utils/nodetree"
 import { LeftBasic } from "./left_basic"
 import { LeftComments } from "./left_comments"
@@ -70,6 +68,7 @@ function find_sectioner(root: Node){
     return ret
 }
 
+/** 这个组件在显示一个章节内部的导航。导航到每个小节线和章节线。 */
 function RightBox(props: {core: EditorCore , onScroll: (path: number[])=>void}){
 
     let root = props.core.root
@@ -94,7 +93,7 @@ function RightBox(props: {core: EditorCore , onScroll: (path: number[])=>void}){
                     <Box component = "span">{node.parameters.title}</Box>
                 </React.Fragment>
             }
-            return <Box sx={{
+            return <Box key={idx} sx={{
                 marginTop: "0.2rem" , 
             }}><Link 
                 component = "button" 

@@ -6,52 +6,12 @@ import {
     Tabs , Tab , Button , IconButton , 
     Box , Divider , Typography , Link , TextField , Chip
 } from "@mui/material"
-import {
-    TabContext  , 
-    TabList  , 
-    TabPanel   , 
-    useTreeItem , 
-    TreeItemContentProps , 
-} from "@mui/lab"
-
-import {
-    TreeItem , TreeView , 
-    TreeItemProps, treeItemClasses , 
-} from "@mui/lab"
-import {
-    ExpandMore as ExpandMoreIcon , 
-    ChevronRight as ChevronRightIcon , 
-    ArrowUpward as ArrowUpwardIcon , 
-    ArrowDownward as ArrowDownwardIcon , 
-} from "@mui/icons-material"
-
-import {
-	YEditor , 
-	EditorCore , 
-	Printer , 
-	DefaultPrinter , 
-	DefaultEditor , 
-	AutoStack , 
-    AutoTooltip , 
-
-	PrinterDivider , 
-    PrinterWeakenText , 
-    PrinterDisplayText , 
-    PrinterStructureBoxText  , 
-    PrinterParagraphBox , 
-    PrinterPartBox , 
-    PrinterNewLevelBox , 
-    PrinterOldLevelBox , 
-    PrinterBackgroundPaper , 
-	get_DefaultStructPrinter , 
-} from "../../../../lib"
-import { get_node_information , post_node_information } from "../../utils/ineraction"
-import { get_node_id } from "../../utils"
-import { raw_to_processed , processed_to_raw , generate_id2node } from "../../utils/nodetree"
-import type { raw_info_item , info_item } from "../../utils/nodetree"
 import { PostSnackbar } from "../../construction/buttons"
+import { Interaction } from "../../base/interaction"
+
 export { LeftComments }
 
+/** 这个组件显示所有评论。 */
 class Comments extends React.Component<{} , {
     comments: [string , string][]
 }>{
@@ -62,14 +22,18 @@ class Comments extends React.Component<{} , {
             comments: []
         }
     }
-    async reload(){
-        let comments = ( await get_node_information("get_node_comments" , "comments") ) as [string,string][]
+
+    /** 刷新评论，重新从后台获取数据并更新状态。 */
+    async update(){
+        let comments = await Interaction.get.comments() as [string,string][]
         comments = comments.reverse()
         this.setState({comments: comments})
     }
+    
     async componentDidMount() {
-        await this.reload()
+        await this.update()
     }
+
     render(){
         let me = this
         let CommentBox = (props: {name: string , content: string})=>{
@@ -88,12 +52,22 @@ class Comments extends React.Component<{} , {
 }
 
 
+/** 这个组件显示一个新建留言的按钮。 
+*/
 class NewComments extends React.Component<{
+    // 当提交了评论时的回调函数。
     onRenew: ()=>void
 } , {
+    /** 当前输入的留言内容。 */
     content: string , 
+
+    /** 当前输入的留言者称呼。 */
     name: string , 
+
+    /** 是否显示通知条。 */
     snakerbar_open: boolean, 
+
+    /** 通知条状态。 */
     status: boolean , 
 }>{
     constructor(props){
@@ -107,17 +81,19 @@ class NewComments extends React.Component<{
         }
     }
 
+    /** 提交评论。 */
     async submit(){
         let me = this
         let status = false
         if(me.state.content){
-            status = await post_node_information("post_node_comments" , {
+            status = await Interaction.post.comments({
                 content: me.state.content , 
                 name: me.state.name , 
             })
         }
         me.setState({status: status , snakerbar_open: true})
 
+        // 调用回调函数，并清空自己的状态。
         if(status){
             me.props.onRenew()
             me.setState({
@@ -171,6 +147,7 @@ class NewComments extends React.Component<{
 }
 
 
+/** 这个组件是左边留言区域的总体。 */
 class LeftComments extends React.Component<{} , {}>{
     comment_ref: React.RefObject<Comments>
     constructor(props){
@@ -194,7 +171,7 @@ class LeftComments extends React.Component<{} , {}>{
         >
             <NewComments onRenew={()=>{
                 if(me.comment_ref && me.comment_ref.current){
-                    me.comment_ref.current.reload()
+                    me.comment_ref.current.update() // 当提交留言时刷新显示的留言。
                 }
             }}/>
             <Divider sx={{marginTop: "3rem"}}><Chip sx={{fontSize: "0.8rem"}} label="留言列表" /></Divider>
