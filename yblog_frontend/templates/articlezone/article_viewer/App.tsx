@@ -38,7 +38,7 @@ import {
 import { make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter , withNecessaryStyle} from "../styles"
 import { axios , get_node_id } from '../utils'
 import { my_theme } from "../construction/theme"
-import { LeftBox } from "./cards"
+import { LeftBox , RightBox } from "./cards"
 import { get_node_information , post_node_information } from "../utils/ineraction"
 
 var node_id = get_node_id()
@@ -46,6 +46,7 @@ var node_id = get_node_id()
 class App extends  React.Component{
 	core: EditorCore
     printer: Printer
+	printer_ref: React.RefObject<DefaultPrinter>
     
 	constructor(props){
 		super(props)
@@ -54,6 +55,8 @@ class App extends  React.Component{
 			title: ""
 		}) )
         this.printer = withNecessaryPrinter( new Printer( this.core ) )
+
+		this.printer_ref = React.createRef<DefaultPrinter>()
 	}
 
 	async componentDidMount(){
@@ -115,10 +118,29 @@ class App extends  React.Component{
 					<DefaultPrinter
 						printer = {me.printer}
 						theme = {my_theme}
+						ref = {me.printer_ref}
 					/>
 				</Box>
+
+
 			</Box>
 			
+			<Box sx={{
+				position: "absolute" , 
+				top: "2%" ,
+				left: "81%" , 
+				height: "96%" , 
+				width: "17%" , 
+			}}>
+				<RightBox 
+					core = {me.printer.core} 
+					onScroll = {(path)=>{
+						if(me.printer_ref && me.printer_ref.current){
+							me.printer_ref.current.scroll_to(path)
+						}
+					}}
+				/>
+			</Box>
 		</ThemeProvider>
 	}
 

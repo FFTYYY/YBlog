@@ -109,13 +109,13 @@ class Navigation extends React.Component<{} , {
             return <Box sx={{marginTop: "0.5rem"}}><AutoStack>
                 {
                     Icon 
-                    ? <AutoTooltip title={props.title}><IconButton size="small" sx={{height: "0.9rem"}} onClick={props.onClick}>
+                    ? <AutoTooltip title={props.title}><IconButton size="small" sx={{height: "0.9rem", marginY: "auto"}} onClick={props.onClick}>
                         <Icon sx={{fontSize: "0.9rem"}}/>
                     </IconButton></AutoTooltip>
                     : <></>
                 }
                 <Link 
-                    sx = {(theme)=>({...theme.printer.typography.structure , fontSize: "0.9rem"})} 
+                    sx = {(theme)=>({fontSize: "0.9rem"})} 
                     underline = "hover" 
                     href = {props.url}
                 >{props.words}</Link>
@@ -216,7 +216,7 @@ class LeftBasic extends React.Component<{core: EditorCore}>{
         super (props)
     }
     render(){
-        return <Box sx = {(theme)=>({...theme.printer.typography.structure})}>
+        return <Box sx = {(theme)=>({...theme.printer.typography.body})}>
             <BasicInformation core={this.props.core}/>
             <Divider sx={{fontSize: "0.8rem"}}><Chip sx={{fontSize: "0.8rem"}} label="导航" /></Divider>
             <Navigation />
