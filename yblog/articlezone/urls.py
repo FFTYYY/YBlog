@@ -1,5 +1,5 @@
 from django.urls import path
-from .views.views import edit_node_view , edit_nodetree_view , view_node_view
+from .views.views import edit_node_view , edit_nodetree_view , read_node_view
 from .views.responces import post_nodetree , get_node_create_time , get_node_content , post_node_content
 from .views.responces import get_nodetree , get_node_concepts , get_node_comments , post_node_comments
 from functools import partial
@@ -9,7 +9,7 @@ urlpatterns = [
     path("edit/content/<int:node_id>" , edit_node_view) , 
     path("edit/structure/<int:node_id>" , edit_nodetree_view) , 
     path("edit/structure/" , partial(edit_nodetree_view , node_id = 0)) , 
-    path("view/content/<int:node_id>" , view_node_view) , 
+    path("view/content/<int:node_id>" , read_node_view) , 
 
     path("get/node/content/<int:node_id>" , get_node_content) , 
     path("get/node/concepts/<int:node_id>" , get_node_concepts) , 

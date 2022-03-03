@@ -20,7 +20,7 @@ import {
 } from "../../../../lib"
 import { Nodetree } from "../../base/nodetree"
 import type { raw_info_item } from "../../base/nodetree"
-import { Interaction , get_node_id } from "../../base/interaction"
+import { Interaction , BackendData } from "../../base/interaction"
 
 
 export { LeftBasic }
@@ -68,7 +68,7 @@ class Navigation extends React.Component<{} , {
 
     async componentDidMount() {
         let raw_nodetree = await Interaction.get.nodetree(0) as raw_info_item[]
-        this.setState({nodetree: new Nodetree(raw_nodetree) , now_node_id: get_node_id()})
+        this.setState({nodetree: new Nodetree(raw_nodetree) , now_node_id: BackendData.node_id})
     }
 
     render(){
