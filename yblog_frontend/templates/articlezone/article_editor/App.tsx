@@ -21,18 +21,17 @@ import {
 
 } from "../../../lib"
 
+import { ReactEditor } from "slate-react"
 
 import { make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter , withNecessaryStyle} from "../styles"
 import { Node , Transforms , Element } from "slate"
-import { ReactEditor } from "slate-react"
-import { axios , get_node_id } from '../utils'
+import { Interaction } from "../base/interaction"
 import { FlexibleDrawer , FlexibleItem } from "../construction/framework"
 import { my_theme } from "../construction/theme"
 import { SaveButton } from "../construction/buttons"
 import { withAllPlugins } from "./plugins"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 
-var node_id = get_node_id()
 interface App_Props{
 
 }
@@ -67,7 +66,7 @@ class App extends  React.Component<App_Props , App_State>{
 	async componentDidMount(){
 		let my_editor = this.state.editor
 		let my_printer = this.state.printer
-		var node_concepts = (await axios.get(`/get_node_concepts/${node_id}`)).data.concepts
+		let node_concepts = await Interaction.get.concept() // 从后端获得所有概念。
 		for(let [name , meta_name , fixed_params , default_params , extra_params] of node_concepts){
 			let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params , extra_params)
 			this.core.add_style(style)
@@ -78,7 +77,7 @@ class App extends  React.Component<App_Props , App_State>{
 		}
 		this.setState({editor: my_editor , printer: my_printer})
 
-		var root = (await axios.get(`/get_node/${node_id}`)).data.content
+		var root = await Interaction.get.content()
 		root = root || {children: [] , parameters: {}}
 		Transforms.insertNodes(this.state.editor.slate , root.children , {at: [0]})
 		this.core.update_root({parameters: {...this.core.root.parameters , ...root.parameters}})
@@ -86,8 +85,7 @@ class App extends  React.Component<App_Props , App_State>{
 	
 	async save_content(){
 		var data = {"content": this.core.root}
-		let ret = await axios.post( `/post_node/${node_id}` , data)
-		return ret.data.status
+		return await Interaction.post.content(data)
 	}
 
 	mainpart(props: {sx: any}){
