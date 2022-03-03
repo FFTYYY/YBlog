@@ -17,7 +17,7 @@ import { HTML5Backend } from "react-dnd-html5-backend"
 
 import { SaveButton } from "../base/construction/buttons"
 import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
-import { Interaction , get_node_id } from "../base/interaction"
+import { Interaction , BackendData } from "../base/interaction"
 import { Nodetree } from "../base/nodetree"
 import type { info_item , raw_info_item } from "../base/nodetree"
 
@@ -46,7 +46,7 @@ class App extends React.Component<{},App_State>{
         let raw_nodetree = await Interaction.get.nodetree() as raw_info_item[]
         this.setState( {
             // 注意将自己的`id`作为根节点`id`传入。
-            nodetree: this.state.nodetree.update_rawinfo(raw_nodetree , get_node_id()) , 
+            nodetree: this.state.nodetree.update_rawinfo(raw_nodetree , BackendData.node_id) , 
 
             expanded: Object.values(raw_nodetree).map( (val:raw_info_item)=>val[1] )
         } )

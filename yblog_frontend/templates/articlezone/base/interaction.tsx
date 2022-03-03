@@ -5,30 +5,41 @@
 import axios from "axios"
 import $ from "jquery"
 
-export { Interaction , get_node_id }
+export { Interaction , BackendData , get_backend_data }
 
 var DEBUGGING = true
 
-/** 这个函数读取后端发送过来的`csrf_token`。 */
-function get_csrf(): number{
-    let data = $("#_data_csrf").html()
-    console.log("csrf" , data)
-    return data
+/** 获得一个后端发来的数据。 */
+function get_backend_data(key: string): string {
+    let element = $(`#_data_${key}`)
+    if(!element)
+        return undefined
+    return element.html()
 }
 
-/** 这个函数读取后端发送过来的当前节点编号。 */
-function get_node_id(): number{
-    return parseInt($("#_data_nodeid").html())
+
+/** 所有从后端发送来的数据。 */
+var BackendData = {
+
+    /** csrk token。 */
+    csrf: get_backend_data("csrf") , 
+
+    /** 当前节点编号。 */
+    node_id: parseInt(get_backend_data("node_id")) , 
+    
+    /** 当前用户是否已经登录。 */
+    logged_in: get_backend_data("logged_in") , 
 }
+
+
 
 /** `root`是当前的根目录。 */
 var root = DEBUGGING ? "http://127.0.0.1:8000" : "/"
 
-
 // 设置 axios 的默认选项。
 axios.defaults.baseURL = root
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
-axios.defaults.headers.post["X-CSRFToken"] = get_csrf()
+axios.defaults.headers.post["X-CSRFToken"] = BackendData.csrf
 
 
 
@@ -39,7 +50,7 @@ axios.defaults.headers.post["X-CSRFToken"] = get_csrf()
  */
 async function get_node_information(urlmaker:(nodeid:number) => string , key?: string, node_id?: number){
     if(node_id == undefined)
-        node_id = get_node_id()
+        node_id = BackendData.node_id
     
     let data = (await axios.get(urlmaker(node_id))).data
     
@@ -55,7 +66,7 @@ async function get_node_information(urlmaker:(nodeid:number) => string , key?: s
  */
 async function post_node_information(urlmaker:(nodeid:number) => string, data: any , node_id?: number): Promise<boolean>{
     if(node_id == undefined)
-        node_id = get_node_id()
+        node_id = BackendData.node_id
 
     let status = (await axios.post( urlmaker(node_id) , data)).data.status
 
@@ -98,3 +109,4 @@ var Interaction = {
         comments    :(data: any, nodeid?: number) => post_node_information(urls.post.comments , data , nodeid) , 
     }
 }
+

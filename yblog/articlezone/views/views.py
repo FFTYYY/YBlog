@@ -19,9 +19,9 @@ def edit_nodetree_view(request , node_id = None):
         "node_id": node_id , 
     })
 
-
 @debug_convenient
-def view_node_view(request , node_id = None):
+def read_node_view(request , node_id = None):
     return render(request , "articlezone/article_viewer_index.html" , {
         "node_id": node_id , 
+        "logged_in": request.user.is_authenticated , 
     })

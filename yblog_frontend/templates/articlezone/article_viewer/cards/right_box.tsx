@@ -23,7 +23,7 @@ import {
     ArrowDownward as ArrowDownwardIcon , 
 } from "@mui/icons-material"
 
-import { num2chinese } from "../../utils/others"
+import { num2chinese } from "../../base/utils"
 
 
 import {
@@ -50,7 +50,6 @@ import {
 	get_DefaultStructPrinter , 
 } from "../../../../lib"
 import { Node } from "slate"
-import { get_node_id } from "../../utils"
 import { LeftBasic } from "./left_basic"
 import { LeftComments } from "./left_comments"
 
@@ -72,7 +71,6 @@ function RightBox(props: {core: EditorCore , onScroll: (path: number[])=>void}){
 
     let root = props.core.root
     let sectioners = find_sectioner(root)
-    console.log(sectioners)
 
     return <Box sx={(theme)=>({
             ...theme.printer.typography.body , 

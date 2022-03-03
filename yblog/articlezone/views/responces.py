@@ -32,6 +32,7 @@ def get_node_comments(request , node_id):
 
 @debug_convenient
 def get_node_content(request, node_id):
+    
     node = Node.objects.get(id = node_id)
     content = node.content.strip()
     if content == "":
@@ -75,7 +76,7 @@ def post_node_content(request, node_id):
     # 禁止未登录用户访问
     # if not request.user.is_authenticated:
     #     return Http404()
-    
+
     flag = False
 
     node = Node.objects.get(id = node_id)

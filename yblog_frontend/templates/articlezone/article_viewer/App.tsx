@@ -29,7 +29,7 @@ import {
 import { make_new_style , withNecessaryPrinter , withNecessaryStyle} from "../base/styles"
 import { my_theme } from "../base/construction/theme"
 import { LeftBox , RightBox } from "./cards"
-import { Interaction } from "../base/interaction"
+import { Interaction , BackendData } from "../base/interaction"
 
 // import "react-perfect-scrollbar/dist/css/styles.css"
 // import PerfectScrollbar from "react-perfect-scrollbar"
@@ -51,6 +51,8 @@ class App extends  React.Component{
 	}
 
 	async componentDidMount(){
+
+		console.log(BackendData.logged_in)
 
         /** 获得内容。 */
 		var root = await Interaction.get.content()
