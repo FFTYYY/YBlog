@@ -4,9 +4,10 @@
 /YYYBlog/media/
 /YYYBlog/Article_Zone/static/Article_Zone/YUI/fonts/font_files
 *.pyc
-utils/Get_Article_From_isPrigrammer/
+temporary_utils/
 sftp-config.json
 autoupdate.sh
+yblog/yblog/secret_key.py
 
 *.crt
 *.key
