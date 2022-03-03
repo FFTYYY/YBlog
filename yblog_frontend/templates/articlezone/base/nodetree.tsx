@@ -1,13 +1,20 @@
+/** 这个模块封装了对节点树的一些操作。
+ * 一个节点树有两种表示方式：原始表示和处理之后的表示。原始表示是后端存储时使用的表示，和后端进行交互时会使用这种表示。
+ * 而处理后的表示是更适合使用的表示。
+ * @module
+ */
 
 export { Nodetree }
 export type {raw_info_item , info_item}
 
-/** 每个 raw_info_item 是从后端获得的一组原始数据，这组数据稍后被解析成 info_item 树。
- * 三个元素依次表示 id 、father_id 、idx_in_father。
+/** 每个`raw_info_item`是从后端获得的一组原始数据，这组数据稍后被解析成`info_item`树。
+ * 三个元素依次表示`id`、`father_id`、`idx_in_father`。
 */
 type raw_info_item = [number,number,number] // 树项 
 
-/**  info_item 用于描述节点树。 */
+/** `info_item`用于描述处理后的节点树。 
+ * 每个节点会有一个`id`，这个`id`从`1`开始编号，是后端储存时用的编号。
+*/
 interface info_item {
     my_id: number
     father_id: number 
@@ -91,10 +98,22 @@ class Nodetree{
     /** 将节点编号映射成节点的映射。 */
     _id2node: {[key: number]: info_item}
 
+    /** 初始化一棵节点树。
+     * @param raw_nodeinfos 原始表示的树信息。
+     * @param root_id 根节点的编号。如果输入的是一棵子树，则需要输入根节点编号。
+     */
     constructor(raw_nodeinfos?: raw_info_item[] , root_id?: number){
         if(raw_nodeinfos != undefined){
             this.update_rawinfo(raw_nodeinfos , root_id)
         }
+    }
+
+    /** 复制一棵全新的相同结构的节点树。 */
+    deepcopy(){
+        return new Nodetree(
+            this.get_raw() , 
+            this.root_id , 
+        )
     }
 
     /** 这个函数输入一个节点树并用来更新储存的节点树。 */
@@ -112,7 +131,31 @@ class Nodetree{
         return this
     }
 
+    /** 给定`id`，询问一个树节点。 */
     id2node(nodeid: number){
         return this._id2node[nodeid]
+    }
+
+    /** 获得当前树的原始形式。 */
+    get_raw(){
+        return processed_to_raw(this.nodetree)
+    }
+
+    /** 获取树根。 */
+    get_root(): info_item{
+        return this.nodetree
+    }
+
+    /** 询问`nodef`是否是`nodes`的父节点。
+     */
+    is_son(nodef_id: number , nodes_id: number): boolean{
+        while(true){
+            nodes_id = this.id2node(nodes_id).father_id // 向上行。
+            if(nodes_id == -1)
+                break
+            if(nodes_id == nodef_id)
+                return true
+        }
+        return false
     }
 }

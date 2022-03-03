@@ -7,78 +7,53 @@ import {
     TreeItem , TreeView , 
     TreeItemProps, treeItemClasses , 
 } from "@mui/lab"
+import {
+    ExpandMore as ExpandMoreIcon , 
+    ChevronRight as ChevronRightIcon , 
+} from "@mui/icons-material"
+
 import { DndProvider , useDrag , useDrop , DropTargetMonitor} from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
 
-import { get_node_information , post_node_information } from "../utils/ineraction"
-import { raw_to_processed , processed_to_raw , generate_id2node } from "../utils/nodetree"
-import type { raw_info_item , info_item } from "../utils/nodetree"
 import { get_node_id } from "../utils"
 import { FlexibleDrawer , FlexibleItem } from "../construction/framework"
 import { SaveButton } from "../construction/buttons"
-
+import { Interaction } from "../base/interaction"
+import { Nodetree } from "../base/nodetree"
+import type { info_item , raw_info_item } from "../base/nodetree"
 
 interface App_State{
 
-    /** 节点树的根。 
-     * 注意根节点被设为 my_id = -1 和 father_id = -1 。但凡 father_id = -1 就表示根节点的子节点。
+    /** 节点树。
     */
-    nodetree: info_item
+    nodetree: Nodetree
 
     /** 已经展开的节点，这是 mui TreeView 需要的状态。 */
     expanded: (string | number) [] 
-
-    /** 一个从节点编号映射到具体节点树中的节点的映射。注意这个状态只能在 setNodetree() 中更新。 永远不要用 setState() 更新这个状态。 */
-    id2node: { [my_ids: number] : info_item}
 }
 
 class App extends React.Component<{},App_State>{
     constructor(props: {}){
         super(props)
         this.state = {
-            nodetree: {my_id: 0,father_id:0,sons:[]} , 
+            nodetree: new Nodetree([]) , 
             expanded: [] , 
-            id2node: {}
         }
     }
 
-
-    /** 
-     * 相当于 setState( {nodetree: nodetree} ) ，但是这个函数也会同时更新 id2node。
-     * 约定：只能用这个函数更新 nodetree，永远不更新 id2node。 
-     * @param nodetree 新的 nodetree。
-    */
-    setNodetree(nodetree: info_item){
-        let id2node: {[id: number] : info_item} = generate_id2node(nodetree)
-        this.setState( {nodetree: nodetree , id2node: id2node} )
-    }
 
     /** 生命周期钩子。这个函数在初始化时向后端询问节点树的信息。 */
     async componentDidMount(){
-        let raw_nodetree = await get_node_information("get_nodetree_info" , "data") as raw_info_item[]
-        
-        this.setNodetree(raw_to_processed(raw_nodetree))
-        this.setState({expanded: Object.values(raw_nodetree).map( (val:raw_info_item)=>val[1])})
-    }
+        let raw_nodetree = await Interaction.get.nodetree() as raw_info_item[]
+        this.setState( {
+            // 注意将自己的`id`作为根节点`id`传入。
+            nodetree: this.state.nodetree.update_rawinfo(raw_nodetree , get_node_id()) , 
 
-    /** 将 id 转换为具体的 node。 */
-    id2node(id: number){
-        return this.state.id2node[id]
+            expanded: Object.values(raw_nodetree).map( (val:raw_info_item)=>val[1] )
+        } )
     }
 
     
-    /** 询问 nodef 是否是 nodes 的父节点。
-     */
-    is_son(nodef: info_item , nodes: info_item): boolean{
-        while(true){
-            nodes = this.id2node(nodes.father_id)
-            if(nodes.my_id == -1)
-                break
-            if(nodes.my_id == nodef.my_id)
-                return true
-        }
-        return false
-    }
 
     /** 在 nodetree 中移动节点的暴力实现。我知道有更好的实现方式，但我懒得写了。
      * 注意这个函数会更新组件的 nodetree 状态。
@@ -88,16 +63,15 @@ class App extends React.Component<{},App_State>{
     */
     move_node(to_move: info_item , new_father: info_item, new_idx: number){
 
-        
-        let new_nodetree = JSON.parse( JSON.stringify( this.state.nodetree ) )
-        let new_id2node = generate_id2node(new_nodetree)
-        
+        // 复制一棵新树。
+        let new_nodetree = this.state.nodetree.deepcopy()
+                
         let old_idx = to_move.idx_in_father as number // 待删除节点在父节点中的位置。
 
-        // 转换到新树
-        let old_father = new_id2node[to_move.father_id]
-        new_father = new_id2node[new_father.my_id] 
-        to_move = new_id2node[to_move.my_id]
+        // 将现有的节点转换到新树
+        let old_father  = new_nodetree.id2node(to_move.father_id)
+        new_father      = new_nodetree.id2node(new_father.my_id)
+        to_move         = new_nodetree.id2node(to_move.my_id)
         
         // 若是同子树移动，因为是先删除再插入，所以要将插入位置向前挪。
         if(old_father.my_id == new_father.my_id && old_idx < new_idx){
@@ -115,7 +89,7 @@ class App extends React.Component<{},App_State>{
         // 修改必要信息
         to_move.father_id = new_father.my_id
 
-        this.setNodetree(new_nodetree)
+        this.setState({nodetree: new_nodetree})
     }
 
     /** 这个组件创建一个空白占位符，用于作为树节点之间的可放置位置。
@@ -127,6 +101,7 @@ class App extends React.Component<{},App_State>{
         let me = this
         let node = props.node
         let expect_idx = props.expect_idx
+        let nodetree = this.state.nodetree
 
         const [ { is_over_can_drop } , drop] = useDrop(()=>({
             accept: "treeitem" , 
@@ -140,7 +115,7 @@ class App extends React.Component<{},App_State>{
                 is_over_can_drop: monitor.isOver({shallow: true}) && monitor.canDrop(), 
             }) , 
             canDrop: (item: info_item)=>{
-                return (node.my_id != item.my_id) && !me.is_son( item , node ) // 被拖动对象不能是自身的严格祖先
+                return (node.my_id != item.my_id) && !nodetree.is_son( item.my_id , node.my_id ) // 被拖动对象不能是自身的严格祖先
             } , 
         }))
     
@@ -167,6 +142,7 @@ class App extends React.Component<{},App_State>{
         let my_id = node.my_id
         let father_id = node.father_id
         let idx_in_father = props.idx_in_father
+        let nodetree = this.state.nodetree
         let DroppableSpace = this.DroppableSpace.bind(this)
 
         const [{ is_dragging }, drag] = useDrag(() => ({
@@ -192,7 +168,7 @@ class App extends React.Component<{},App_State>{
                 can_drop: monitor.canDrop() , 
             }) , 
             canDrop: (item: info_item)=>{
-                return (node.my_id == item.my_id) || !me.is_son( item , node ) // 被拖动对象不能是自身的严格祖先
+                return (node.my_id == item.my_id) || !nodetree.is_son( item.my_id , node.my_id ) // 被拖动对象不能是自身的严格祖先
             } , 
         }))
         
@@ -202,7 +178,7 @@ class App extends React.Component<{},App_State>{
                border: (is_over && can_drop) ? "1px dashed grey" : "0" , 
             }}
         >
-            <DroppableSpace node={ me.id2node(father_id) } expect_idx={idx_in_father} />
+            <DroppableSpace node={ nodetree.id2node(father_id) } expect_idx={idx_in_father} />
             <TreeItem 
                 label = {`node-${my_id}`}
                 nodeId = {`${my_id}`}
@@ -227,7 +203,6 @@ class App extends React.Component<{},App_State>{
         let me = this
         let DragableTreeItem = this.DragableTreeItem.bind(this)
 
-
         //TODO： 做一个展开/折叠的样式，不然看起来像是有bug。
         return <>{Object.values(nownode.sons).map((subnode:info_item, idx:number)=>{
             return <DragableTreeItem
@@ -241,13 +216,13 @@ class App extends React.Component<{},App_State>{
     }
 
     async save_nodetree(){
-
-        let ret = await post_node_information("post_nodetree_info" , {"nodetree": processed_to_raw(this.state.nodetree)})
-		return ret
+		return await Interaction.post.nodetree( {"nodetree": this.state.nodetree.get_raw()} )
     }
 
     render(){
         let me = this
+        let nodetree = this.state.nodetree
+
         return <Box sx={{
                 position: "absolute" , 
 				top: "2%" ,
@@ -259,9 +234,9 @@ class App extends React.Component<{},App_State>{
             <FlexibleDrawer sx={{
 				marginRight: "1%"
 			}}>
-				
 				<SaveButton save_func={me.save_nodetree.bind(me)}/>
 			</FlexibleDrawer>
+
             <Box sx={{
                 position: "relative" ,
                 width: "100%" , 
@@ -271,7 +246,9 @@ class App extends React.Component<{},App_State>{
                 <DndProvider backend={HTML5Backend}><TreeView
                     expanded     = { Object.values(me.state.expanded).map(value=>`${value}`) } // 将 me.state.expanded 转成字符串数组。
                     onNodeToggle = { (e:any,nodeIds: string[])=>{me.setState({expanded:nodeIds})} } // 直接设置 me.state.expanded。
-                >{me.get_subtree(me.state.nodetree)}</TreeView></DndProvider>
+                    defaultCollapseIcon = {<ExpandMoreIcon />}
+                    defaultExpandIcon = {<ChevronRightIcon />}              
+                >{me.get_subtree(nodetree.get_root())}</TreeView></DndProvider>
                 <Divider/>
             </Box>
         </Box>
