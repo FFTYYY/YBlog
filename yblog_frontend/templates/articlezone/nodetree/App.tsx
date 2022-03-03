@@ -15,10 +15,9 @@ import {
 import { DndProvider , useDrag , useDrop , DropTargetMonitor} from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
 
-import { get_node_id } from "../utils"
-import { FlexibleDrawer , FlexibleItem } from "../construction/framework"
-import { SaveButton } from "../construction/buttons"
-import { Interaction } from "../base/interaction"
+import { SaveButton } from "../base/construction/buttons"
+import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
+import { Interaction , get_node_id } from "../base/interaction"
 import { Nodetree } from "../base/nodetree"
 import type { info_item , raw_info_item } from "../base/nodetree"
 

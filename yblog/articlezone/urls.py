@@ -11,13 +11,13 @@ urlpatterns = [
     path("edit/structure/" , partial(edit_nodetree_view , node_id = 0)) , 
     path("view/content/<int:node_id>" , view_node_view) , 
 
-    path("get_node_content/<int:node_id>" , get_node_content) , 
-    path("get_node_concepts/<int:node_id>" , get_node_concepts) , 
-    path("get_node_create_time/<int:node_id>" , get_node_create_time) , 
-    path("get_node_comments/<int:node_id>" , get_node_comments) , 
-    path("get_nodetree/<int:node_id>" , get_nodetree) , 
+    path("get/node/content/<int:node_id>" , get_node_content) , 
+    path("get/node/concepts/<int:node_id>" , get_node_concepts) , 
+    path("get/node/create_time/<int:node_id>" , get_node_create_time) , 
+    path("get/node/comments/<int:node_id>" , get_node_comments) , 
+    path("get/nodetree/<int:node_id>" , get_nodetree) , 
 
-    path("post_node_content/<int:node_id>" , post_node_content) , 
-    path("post_node_comments/<int:node_id>" , post_node_comments) , 
-    path("post_nodetree/<int:node_id>" , post_nodetree) , 
+    path("post/node/content/<int:node_id>" , post_node_content) , 
+    path("post/node/comments/<int:node_id>" , post_node_comments) , 
+    path("post/nodetree/<int:node_id>" , post_nodetree) , 
 ]

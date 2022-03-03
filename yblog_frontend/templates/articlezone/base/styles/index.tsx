@@ -1,10 +1,10 @@
 import * as O from "./printers"
 import * as E from "./editors"
 import * as S from  "./styles"
-import { YEditor } from "../../../lib"
-import { Printer , EditorCore } from  "../../../lib"
-import { GroupStyle , InlineStyle , AbstractStyle , SupportStyle , StructStyle , } from "../../../lib"
-import type { EditorRenderer_Func , PrinterRenderer , } from "../../../lib"
+import { YEditor } from "../../../../lib"
+import { Printer , EditorCore } from  "../../../../lib"
+import { GroupStyle , InlineStyle , AbstractStyle , SupportStyle , StructStyle , } from "../../../../lib"
+import type { EditorRenderer_Func , PrinterRenderer , } from "../../../../lib"
 
 export {withNecessaryStyle , make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter}
 

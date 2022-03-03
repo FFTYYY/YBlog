@@ -10,7 +10,7 @@ import {
     DefaultParagraphEditor , 
     get_DefaultStructEditor_with_RightBar , 
     YEditor , 
-} from "../../../lib"
+} from "../../../../lib"
 
 
 export { 

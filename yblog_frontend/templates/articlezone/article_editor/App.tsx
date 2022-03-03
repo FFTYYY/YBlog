@@ -23,12 +23,12 @@ import {
 
 import { ReactEditor } from "slate-react"
 
-import { make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter , withNecessaryStyle} from "../styles"
+import { make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter , withNecessaryStyle} from "../base/styles"
 import { Node , Transforms , Element } from "slate"
 import { Interaction } from "../base/interaction"
-import { FlexibleDrawer , FlexibleItem } from "../construction/framework"
-import { my_theme } from "../construction/theme"
-import { SaveButton } from "../construction/buttons"
+import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
+import { my_theme } from "../base/construction/theme"
+import { SaveButton } from "../base/construction/buttons"
 import { withAllPlugins } from "./plugins"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 
@@ -86,7 +86,7 @@ class App extends  React.Component<App_Props , App_State>{
 	async save_content(){
 		var data = {"content": this.core.root}
 		return await Interaction.post.content(data)
-	}
+	}	
 
 	mainpart(props: {sx: any}){
 		let me = this
