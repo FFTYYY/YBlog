@@ -4,7 +4,7 @@ import {
     AutoStack , 
     AutoTooltip , 
 } 
-from "../../../lib"
+from "../../../../lib"
 
 import {
     Box , 

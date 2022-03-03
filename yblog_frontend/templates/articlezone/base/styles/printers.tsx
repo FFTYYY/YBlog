@@ -38,7 +38,7 @@ import {
 	idx2path , 
 
     remtimes , 
-} from "../../../lib"
+} from "../../../../lib"
 import type {
 	PrinterRenderer , 
 	GroupNode , 
@@ -48,9 +48,9 @@ import type {
 	PrinterEnv , 
 	PrinterContext , 
     PrinterRenderFunc_Props , 
-} from "../../../lib"
+} from "../../../../lib"
 
-import { num2chinese } from "../utils/others"
+import { num2chinese } from "../utils"
 import PerfectScrollbar from "perfect-scrollbar"
 
 import Paper from '@mui/material/Paper';

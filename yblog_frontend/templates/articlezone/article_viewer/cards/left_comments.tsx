@@ -6,7 +6,7 @@ import {
     Tabs , Tab , Button , IconButton , 
     Box , Divider , Typography , Link , TextField , Chip
 } from "@mui/material"
-import { PostSnackbar } from "../../construction/buttons"
+import { PostSnackbar } from "../../base/construction/snackbar"
 import { Interaction } from "../../base/interaction"
 
 export { LeftComments }

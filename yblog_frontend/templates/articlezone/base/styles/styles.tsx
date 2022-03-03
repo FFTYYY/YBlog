@@ -1,4 +1,4 @@
-import { GroupStyle , InlineStyle , AbstractStyle , SupportStyle , StructStyle } from "../../../lib"
+import { GroupStyle , InlineStyle , AbstractStyle , SupportStyle , StructStyle } from "../../../../lib"
 
 export { 
     brightwords_style , 

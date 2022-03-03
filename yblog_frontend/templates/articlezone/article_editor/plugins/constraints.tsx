@@ -1,6 +1,6 @@
 import { Editor , Node , Transforms } from "slate"
 import { GroupNode , get_node_type , SupportNode , is_certain_style, paragraph_prototype } from "../../../../lib"
-import { newpara_style , sectioner_style , ender_style  } from "../../styles/styles"
+import { newpara_style , sectioner_style , ender_style  } from "../../base/styles/styles"
 
 export { set_force_new_paragraph_in_group , set_force_new_para_in_sectioner , set_force_sectioner}
 

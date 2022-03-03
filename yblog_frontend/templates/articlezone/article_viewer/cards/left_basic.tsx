@@ -18,10 +18,9 @@ import {
 	AutoStack , 
     AutoTooltip , 
 } from "../../../../lib"
-import { get_node_id } from "../../utils"
 import { Nodetree } from "../../base/nodetree"
 import type { raw_info_item } from "../../base/nodetree"
-import { Interaction } from "../../base/interaction"
+import { Interaction , get_node_id } from "../../base/interaction"
 
 
 export { LeftBasic }

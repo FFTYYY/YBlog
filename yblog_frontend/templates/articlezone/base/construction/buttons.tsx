@@ -12,24 +12,11 @@ import {
     AutoStack , 
     AutoTooltip , 
 } 
-from "../../../lib"
+from "../../../../lib"
 
-export { SaveButton , PostSnackbar }
+import { PostSnackbar } from "./snackbar"
 
-function PostSnackbar(props: {
-    info_sucess: string , 
-    info_fail: string , 
-    open: boolean , 
-    status: boolean , 
-    onClose: ()=>void , 
-}){
-    return <Snackbar 
-        anchorOrigin = {{vertical: "top" , horizontal: "center"}}
-        open = {props.open}
-        message = {props.status ? props.info_sucess : props.info_fail}
-        onClose = { ()=>props.onClose() }
-    />
-}
+export { SaveButton }
 
 function SaveButton(props: {save_func: (()=>Promise<boolean>)}){
 
