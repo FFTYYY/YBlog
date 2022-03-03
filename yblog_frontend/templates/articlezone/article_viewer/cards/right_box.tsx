@@ -51,7 +51,6 @@ import {
 } from "../../../../lib"
 import { Node } from "slate"
 import { get_node_id } from "../../utils"
-import type { raw_info_item , info_item } from "../../utils/nodetree"
 import { LeftBasic } from "./left_basic"
 import { LeftComments } from "./left_comments"
 
