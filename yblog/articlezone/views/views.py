@@ -15,4 +15,13 @@ def edit_node_view(request , node_id):
 
 @debug_convenient
 def edit_nodetree_view(request , node_id = None):
-    return render(request , "articlezone/nodetree_index.html" , {})
+    return render(request , "articlezone/nodetree_index.html" , {
+        "node_id": node_id , 
+    })
+
+
+@debug_convenient
+def view_node_view(request , node_id = None):
+    return render(request , "articlezone/article_viewer_index.html" , {
+        "node_id": node_id , 
+    })

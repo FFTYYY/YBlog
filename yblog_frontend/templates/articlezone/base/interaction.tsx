@@ -2,7 +2,7 @@
  * @module
  */
 
-import { axios , get_node_id } from "../utils"
+import { axios , get_node_id , get_csrf } from "../utils"
 export { Interaction }
 
 

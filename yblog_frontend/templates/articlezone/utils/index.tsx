@@ -3,35 +3,23 @@
  */
 
 import axios from "axios"
-import * as $ from "jquery"
+import $ from "jquery"
 
-export { axios , get_node_id }
-
-function getCookie(name: string) {
-    let cookieValue = ""
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
+function get_csrf(): number{
+    let data = $("#_data_csrf").html()
+    console.log("csrf" , data)
+    return data
 }
-const csrftoken = getCookie("csrftoken")
 
-
-var root = "http://127.0.0.1:8000" // DEBUG
-// var root = "/" // production
+// var root = "http://127.0.0.1:8000" // DEBUG
+var root = "/" // production
 
 axios.defaults.baseURL = root
-axios.defaults.headers.post["X-CSRFToken"] = csrftoken
+axios.defaults.xsrfHeaderName = "X-CSRFToken"
+axios.defaults.headers.post["X-CSRFToken"] = get_csrf()
 
 function get_node_id(): number{
     return parseInt($("#_data_nodeid").html())
 }
 
+export { axios , get_node_id , get_csrf }

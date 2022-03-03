@@ -76,6 +76,10 @@ def post_node_content(request, node_id):
     # if not request.user.is_authenticated:
     #     return Http404()
 
+    print (request)
+    import pdb
+    pdb.set_trace()
+
     flag = False
 
     node = Node.objects.get(id = node_id)
@@ -90,6 +94,8 @@ def post_node_content(request, node_id):
 
 @debug_convenient
 def get_nodetree(request , node_id):
+
+    print ("aaaa")
 
     if node_id == 0:
         lis = Node.objects.all()
