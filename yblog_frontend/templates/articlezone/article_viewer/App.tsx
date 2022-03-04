@@ -13,7 +13,7 @@ import {
 
 import { Node , Transforms , Element } from "slate"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
-
+	
 import {
 	YEditor , 
 	EditorCore , 
@@ -24,12 +24,11 @@ import {
 
     PrinterStructureBoxText  , 
 } from "../../../lib"
-
-
 import { make_new_style , withNecessaryPrinter , withNecessaryStyle} from "../base/styles"
 import { my_theme } from "../base/construction/theme"
 import { LeftBox , RightBox } from "./cards"
 import { Interaction , BackendData } from "../base/interaction"
+import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../base/mathjax"
 
 // import "react-perfect-scrollbar/dist/css/styles.css"
 // import PerfectScrollbar from "react-perfect-scrollbar"
@@ -72,7 +71,7 @@ class App extends  React.Component{
 	render(){
 		let me = this
 
-		return <ThemeProvider theme={createTheme(my_theme)}>
+		return <MathJaxContext><ThemeProvider theme={createTheme(my_theme)}>
 			
 			<Box sx={{
 				position: "absolute" , 
@@ -132,7 +131,7 @@ class App extends  React.Component{
 					}}
 				/>
 			</Box>
-		</ThemeProvider>
+		</ThemeProvider></MathJaxContext>
 	}
 
 }

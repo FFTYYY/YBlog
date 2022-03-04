@@ -34,6 +34,8 @@ var style_editor_printer: {
     [S.delete_style.name]       : [S.delete_style       , E.delete_editor       , O.delete_printer] , 
     [S.link_style.name]         : [S.link_style         , E.link_editor         , O.link_printer] , 
     [S.list_style.name]         : [S.list_style         , E.list_editor         , O.list_printer] , 
+    [S.mathinline_style.name]   : [S.mathinline_style   , E.mathinline_editor   , O.mathinline_printer] , 
+    [S.mathblock_style.name]    : [S.mathblock_style    , E.mathblock_editor    , O.mathblock_printer] , 
 }
 
 function make_new_style(meta_name:string , name: string , fixed_params: any, default_params: any , extra_params: any){

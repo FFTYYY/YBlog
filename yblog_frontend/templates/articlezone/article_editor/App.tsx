@@ -31,6 +31,7 @@ import { my_theme } from "../base/construction/theme"
 import { SaveButton } from "../base/construction/buttons"
 import { withAllPlugins } from "./plugins"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
+import { MathJaxContext } from "../base/mathjax"
 
 interface App_Props{
 
@@ -133,7 +134,7 @@ class App extends  React.Component<App_Props , App_State>{
 		let me = this
 		let MainPart = this.mainpart.bind(this)
 
-		return <ThemeProvider theme={createTheme(my_theme)}><Box sx={{
+		return <MathJaxContext><ThemeProvider theme={createTheme(my_theme)}><Box sx={{
 				position: "absolute" , 
 				top: "2%" ,
 				left: "1%" , 
@@ -155,7 +156,7 @@ class App extends  React.Component<App_Props , App_State>{
 				flex: 1 , 
 			}}/>
 			
-		</Box></ThemeProvider>
+		</Box></ThemeProvider></MathJaxContext>
 	}
 
 }

@@ -2,7 +2,7 @@ import { Node } from "slate"
 import React from "react"
 
 import {
-    Box , Link , Typography
+    Box , Link , Typography , Divider
 } from "@mui/material"
 
 import {
@@ -52,9 +52,7 @@ import type {
 
 import { num2chinese } from "../utils"
 import PerfectScrollbar from "perfect-scrollbar"
-
-import Paper from '@mui/material/Paper';
-import Divider from '@mui/material/Divider';
+import { MathJaxInline , MathJaxBlock } from "../mathjax"
 
 export {
     brightwords_printer , 
@@ -72,6 +70,8 @@ export {
     delete_printer , 
     link_printer , 
     list_printer , 
+    mathinline_printer , 
+    mathblock_printer , 
 }
 
 /** 『昭言』表示一段需要专门的、需要强调的话。如定理。 */
@@ -241,6 +241,22 @@ var delete_printer = (()=>{
 		outer: (props: {element: InlineNode , context: PrinterContext, children: any}) => {
 			return <del>{props.children}</del>
 		}
+	})
+})()
+
+var mathinline_printer = (()=>{
+    return get_DefaultInlinePrinter<InlineNode>({
+		outer: (props: {element: InlineNode , context: PrinterContext, children: any}) => {
+			return <MathJaxInline>{props.children}</MathJaxInline>
+		}
+	})
+})()
+
+var mathblock_printer = (()=>{
+    return get_DefaultBlockPrinter({
+		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
+			return <MathJaxBlock>{props.children}</MathJaxBlock>
+		} , 
 	})
 })()
 
