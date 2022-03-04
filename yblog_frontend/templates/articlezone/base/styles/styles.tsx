@@ -16,6 +16,8 @@ export {
     delete_style , 
     link_style , 
     list_style , 
+    mathinline_style , 
+    mathblock_style ,
 }
 
 var brightwords_style = new GroupStyle   ("昭言"   , { title: "昭言" , alias: "" })
@@ -33,3 +35,5 @@ var delete_style      = new InlineStyle  ("刊调"   , {})
 let link_style        = new InlineStyle  ("链调"   , {targetidx: "" , targeturl: ""})
 var image_style       = new SupportStyle ("图调"   , {url: "" , title: "" , width: 10 , height: -1} , {forceInline: true})
 var dimwords_style    = new AbstractStyle("穆言"   , {})
+var mathinline_style  = new InlineStyle  ("数学调"   , { label: "数学"})
+var mathblock_style   = new GroupStyle   ("数学言"   , { label: "数学"})

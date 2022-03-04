@@ -29,6 +29,8 @@ export {
     delete_editor , 
     link_editor , 
     list_editor , 
+    mathblock_editor , 
+    mathinline_editor , 
 } 
 
 var brightwords_editor = get_DefaultGroupEditor_with_AppBar( 
@@ -37,6 +39,10 @@ var brightwords_editor = get_DefaultGroupEditor_with_AppBar(
 
 
 var normalwords_editor = get_DefaultGroupEditor_with_RightBar(
+    (parameters) => parameters.label
+)
+
+var mathblock_editor = get_DefaultGroupEditor_with_RightBar(
     (parameters) => parameters.label
 )
 
@@ -88,5 +94,6 @@ var alignedwords_editor = get_DefaultStructEditor_with_RightBar(
 
 var delete_editor      = get_DefaultInlineEditor("刊调" , (props)=><del>{props.children}</del>)
 var link_editor        = get_DefaultInlineEditor("链调" , (props)=><u>{props.children}</u>)
+var mathinline_editor  = get_DefaultInlineEditor("数学调" , (props)=><u>{props.children}</u>)
 
 let list_editor        = get_DefaultGroupEditor_with_RightBar( (p)=>p.label )
