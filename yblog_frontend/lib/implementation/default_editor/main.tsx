@@ -45,6 +45,7 @@ import {
 } from "../basic"
 
 import { EditorBackgroundPaper , EditorComponentEditingBox } from "./basic"
+import { DoSomething } from "../utils"
 
 export { DefaultEditor }
 
@@ -69,6 +70,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 	onUpdate: (newval: Node[]) => void
 	onMount: ()=>void
 	onFocusChange: ()=>void
+	notification_key: number // 用来记录自己对于 core 的notification。
 
 	constructor(props: DefaultEditor_Props) {
 		super(props)
@@ -81,9 +83,13 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 	componentDidMount(): void {
 		let me = this
 		this.onMount()	
-		this.editor.core.add_notificatioon(()=>{
-			me.forceUpdate()
-		})
+
+		this.notification_key = Math.floor( Math.random() * 233333 )
+		let layzy_update = new DoSomething( ()=>{me.forceUpdate()} , 1000)
+		this.editor.core.add_notificatioon(()=>layzy_update.go() , `editor-${this.notification_key}`)
+	}
+	componentWillUnmount(): void {
+		this.editor.core.remove_notificatioon(`editor-${this.notification_key}`)
 	}
 	render() {
 

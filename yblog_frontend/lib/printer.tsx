@@ -9,6 +9,7 @@ import { get_node_type , is_styled } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
 import { Renderer } from "./core/renderer"
 import { GlobalInfo , GlobalInfoProvider } from "./globalinfo"
+import { DoSomething } from "./implementation/utils"
 
 export { Printer , make_print_renderer }
 export type { 
@@ -20,6 +21,7 @@ export type {
     PrinterContext , 
     PrinterEnv , 
 }
+
 
 type PrinterContext = any
 type PrinterEnv = any
@@ -49,6 +51,9 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
     /** 渲染出来的节点的引用。从路径映射到节点。 */
     my_refs: {[key: string]: any}
 
+    /** 用来记录自己在`core`处的`notification`。 */
+    notification_key: number
+
     /**
      * 
      * @param props.printer 这个组件对应的输出器。
@@ -70,8 +75,16 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
 
     componentDidMount(): void {
         let me = this
-        this.core.add_notificatioon( (new_root: GroupNode)=>me.setState({root: new_root}) )
+
+        this.notification_key = Math.floor( Math.random() * 233333 )
+        let lazy_not = new DoSomething( (new_root: GroupNode)=>me.setState({root: new_root}) , 1000)
+        this.core.add_notificatioon( (new_root: GroupNode)=>lazy_not.go(new_root) , `printer-${this.notification_key}`)
         this.setState({root: this.core.root})
+    }
+
+    componentWillUnmount(): void {
+        this.core.remove_notificatioon(`printer-${this.notification_key}`)
+
     }
 
     // 根据路径生成唯一的表示。
@@ -132,7 +145,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
 
             let text:any = (element as has_text).text
             return <React.Fragment>
-                <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
+                <span style={{display: "hidden"}} ref={me.get_ref(path , true)} className = "mathjax_preview"/>
                 <R.render_func element={element} context={{}}>{text}</R.render_func>
             </React.Fragment>
         }
@@ -258,7 +271,7 @@ class Printer extends Renderer<PrinterRenderer>{
     constructor(core: EditorCore){
         super(core , 
             {
-                text      : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+                text      : make_print_renderer((props: PrinterRenderFunc_Props)=><>{props.children}</>) , 
                 inline    : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
                 paragraph : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
                 group     : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 

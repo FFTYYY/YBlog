@@ -109,7 +109,7 @@ class App extends  React.Component<App_Props , App_State>{
 						}
 					}}
 					onUpdate = {()=>{
-						console.log(me.core.root)
+						// console.log(me.core.root)
 					}}
 				/>
 			</Box>
@@ -134,14 +134,14 @@ class App extends  React.Component<App_Props , App_State>{
 		let me = this
 		let MainPart = this.mainpart.bind(this)
 
-		return <MathJaxContext><ThemeProvider theme={createTheme(my_theme)}><Box sx={{
+		return <ThemeProvider theme={createTheme(my_theme)}><Box sx={{
 				position: "absolute" , 
 				top: "2%" ,
 				left: "1%" , 
 				height: "96%" , 
 				width: "98%" , 
 				display: "flex" , 
-			}}>
+			}}><MathJaxContext core={me.core}>
 
 			<FlexibleDrawer sx={{
 				marginRight: "1%"
@@ -156,7 +156,7 @@ class App extends  React.Component<App_Props , App_State>{
 				flex: 1 , 
 			}}/>
 			
-		</Box></ThemeProvider></MathJaxContext>
+		</MathJaxContext></Box></ThemeProvider>
 	}
 
 }
