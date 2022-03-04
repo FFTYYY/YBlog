@@ -46,7 +46,7 @@ class EditorCore{
     root: GroupNode
 
     /** 当树结构改变时需要通知谁。 */
-    notifications: RootNotification_Function[]
+    notifications: {[key: string] : RootNotification_Function}
 
     /**
      * @param styles 初始的样式列表。
@@ -66,7 +66,7 @@ class EditorCore{
         }
 
         this.root = group_prototype("root" , root_parameters) //节点树
-        this.notifications = [] // 当root修改时要通知的人的列表
+        this.notifications = {} // 当root修改时要通知的人的列表
     }
 
     /** 
@@ -82,13 +82,18 @@ class EditorCore{
      */
     public update_root(new_root: any){
         this.root = {...this.root, ...new_root}
-        for(let notif of this.notifications)
+        for(let notif of Object.values(this.notifications)){
             notif(this.root)
+        }
     }
 
     /** 添加一个通知函数。 */
-    public add_notificatioon(notif: RootNotification_Function){
-        this.notifications.push(notif)
+    public add_notificatioon(notif: RootNotification_Function , key: string){
+        this.notifications[key] = notif
+    }
+    /** 删除一个通知函数。 */
+    public remove_notificatioon(key: string){
+        delete this.notifications[key]
     }
 
     /** 添加一个样式。 */

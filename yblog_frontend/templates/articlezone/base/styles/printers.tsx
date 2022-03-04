@@ -245,9 +245,14 @@ var delete_printer = (()=>{
 })()
 
 var mathinline_printer = (()=>{
+
+      
     return get_DefaultInlinePrinter<InlineNode>({
 		outer: (props: {element: InlineNode , context: PrinterContext, children: any}) => {
-			return <MathJaxInline>{props.children}</MathJaxInline>
+            /** 这是一个比较蛋疼的写法，取消原来的children并直接将element序列化。
+             * 这里的问题在于，如果直接写成${props.children}$，则printer里为了定位元素所添加的空白<span>会阻碍mathjax的处理。
+             */
+			return <MathJaxInline>{Node.string(props.element)}</MathJaxInline>
 		}
 	})
 })()
@@ -255,7 +260,7 @@ var mathinline_printer = (()=>{
 var mathblock_printer = (()=>{
     return get_DefaultBlockPrinter({
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
-			return <MathJaxBlock>{props.children}</MathJaxBlock>
+			return <MathJaxBlock>{Node.string(props.element)}</MathJaxBlock>
 		} , 
 	})
 })()

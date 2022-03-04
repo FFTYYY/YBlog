@@ -51,6 +51,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     slate: ReactEditor
     onUpdate: (v: any) => void
     onFocusChange: ()=>void
+    // lazy_update_value: DoSomething
 
     /**
      * @param props.editor 与这个组件对应的YEditor。
