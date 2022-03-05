@@ -15,6 +15,7 @@ import {
 
     set_node , 
 } from "../../../../lib"
+import { Interaction , url_from_root } from "../interaction"
 
 
 export { 
@@ -72,12 +73,30 @@ var paragraph_editor = DefaultParagraphEditor
 
 var image_editor = get_DefaultDisplayerEditor(
     "图片" , 
-    (parameters)=>!!(parameters.url) , 
+    (parameters)=>!!(parameters.target) , 
     (props: {parameters: any}) => {
         let p = props.parameters
+        let [ url , set_url ] = React.useState(p.target)
+
+        React.useEffect(()=>{(async ()=>{
+            if(p.internal){
+                let resource_info = await Interaction.get.resource_info(p.target)
+                if(!resource_info.url){
+                    set_url("")
+                }
+                else{
+                    set_url(url_from_root(resource_info.url))
+                }
+                // 其实直接`set_url(resource_info.url)`也行，套一层`url_from_root`主要是为了调试方便。
+            }
+            else{
+                set_url(p.target)
+            }
+        })()})
+
         let width = p.width > 0 ? `${p.width}rem` : "100%"
         let height = p.height > 0 ? `${p.height}rem` : "100%"
-        return <img src={p.url} style={{
+        return <img src={url} style={{
             width: width, 
             height: height , 
         }}/>

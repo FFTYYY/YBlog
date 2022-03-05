@@ -5,7 +5,7 @@
 import axios from "axios"
 import $ from "jquery"
 
-export { Interaction , BackendData , get_backend_data }
+export { Interaction , BackendData , get_backend_data , url_from_root}
 
 var DEBUGGING = true
 
@@ -34,7 +34,15 @@ var BackendData = {
 
 
 /** `root`是当前的根目录。 */
-var root = DEBUGGING ? "http://127.0.0.1:8000" : "/"
+var root = DEBUGGING ? "http://127.0.0.1:8000/" : "/"
+
+/** 这个函数将一个url转换成`root/url` */
+function url_from_root(url: string){
+    if(url.startsWith("/"))
+        url = url.slice(1,url.length)
+    
+    return `${root}${url}`
+}
 
 // 设置 axios 的默认选项。
 axios.defaults.baseURL = root
@@ -83,12 +91,15 @@ var urls = {
         concept     : (nodeid: number)  => `get/node/concepts/${nodeid}` , 
         create_time : (nodeid: number)  => `get/node/create_time/${nodeid}` , 
         comments    : (nodeid: number)  => `get/node/comments/${nodeid}` , 
+        resources   : (nodeid: number)  => `get/node/resources/${nodeid}` , 
+        resource_info : (nodeid: number)  => `get/node/resource_info/${nodeid}` , 
     } , 
     post: {
         content : (nodeid: number) => `post/node/content/${nodeid}` , 
         comments: (nodeid: number) => `post/node/comments/${nodeid}` , 
         nodetree: (nodeid: number) => `post/nodetree/${nodeid}` , 
         file    : (nodeid: number) => `post/file/${nodeid}` , 
+        manage_recourse    : (resourceid: number) => `post/manage_recourse/${resourceid}` , 
     }
 }
 
@@ -101,6 +112,17 @@ var Interaction = {
         concept     :(nodeid?: number) => get_node_information(urls.get.concept     , "concepts" , nodeid), 
         create_time :(nodeid?: number) => get_node_information(urls.get.create_time , undefined  , nodeid), 
         comments    :(nodeid?: number) => get_node_information(urls.get.comments    , "comments" , nodeid), 
+        resources   :(nodeid?: number) => get_node_information(urls.get.resources   , "resources", nodeid), 
+        resource_info: async (resouce_name: string, nodeid?: number) => {
+            if(nodeid == undefined){
+                nodeid = BackendData.node_id
+            }
+            return (await axios.get(urls.get.resource_info(nodeid) , {
+                params: {
+                    name: resouce_name
+                }
+            })).data
+        }
     } , 
 
     /** 所有向后端发送数据的函数。 */
@@ -112,7 +134,12 @@ var Interaction = {
             headers: {
                 "Content-Type": "multipart/form-data"
             } ,
-        }) , 
+        }) ,         
+        manage_recourse: async (upload: boolean, data: any, resource_id: number) => {
+            let config = upload?  { headers: { "Content-Type": "multipart/form-data" } , } : {}
+            let status = (await axios.post( urls.post.manage_recourse(resource_id) , data, config)).data.status
+            return status
+        }, 
     }
 }
 

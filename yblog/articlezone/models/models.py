@@ -61,12 +61,17 @@ class Comment(models.Model):
 	name = models.CharField(max_length = constants.short_str_length , default = "" , null = True , blank = True)
 	father = models.ForeignKey(Node , on_delete = models.SET_NULL , related_name = "comments" , null = True)
 
+# 存到 /MEDIA_ROOT/article_files/node_<id>/<filename> 这个文件下。
+def upload_to(instance , filename):
+	father_id = str(instance.father.id) if instance.father is not None else "-1"
+	return "article_files/node_{father_id}/{filename}".format(father_id = father_id , filename = filename)
 
 class Resource(models.Model):
 
 	name = models.CharField(max_length = constants.short_str_length)
-	file = models.FileField( upload_to = "article_files" )
+	file = models.FileField( upload_to = upload_to )
 	father = models.ForeignKey(Node , on_delete = models.SET_NULL , related_name = "files" , null = True)
 
 	def __str__(self):
 		return self.name
+		
