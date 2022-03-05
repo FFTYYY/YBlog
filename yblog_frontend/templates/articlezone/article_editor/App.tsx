@@ -12,12 +12,17 @@ import {
 } from "@mui/material"
 
 import {
+	DriveFolderUpload as DriveFolderUploadIcon
+} from "@mui/icons-material"
+
+import {
 	YEditor , 
 	EditorCore , 
 	Printer , 
 	DefaultPrinter , 
 	DefaultEditor , 
 	AutoStack , 
+	AutoIconButton , 
 
 } from "../../../lib"
 
@@ -87,11 +92,20 @@ class App extends  React.Component<App_Props , App_State>{
 	async save_content(){
 		var data = {"content": this.core.root}
 		return await Interaction.post.content(data)
-	}	
+	}
+
+	extra_buttons(props: {}){
+		return <React.Fragment>
+			<AutoIconButton 
+				title = "上传"
+				icon = {DriveFolderUploadIcon}
+			/>
+		</React.Fragment>
+	}
 
 	mainpart(props: {sx: any}){
 		let me = this
-		
+		let ExtraButtons = this.extra_buttons.bind(this)
 		return <Box sx={props.sx}>
 			<Box sx = {{
 				position: "absolute" , 
@@ -111,6 +125,7 @@ class App extends  React.Component<App_Props , App_State>{
 					onUpdate = {()=>{
 						// console.log(me.core.root)
 					}}
+					extra_buttons = {<ExtraButtons />}
 				/>
 			</Box>
 

@@ -267,6 +267,8 @@ var mathblock_printer = (()=>{
             let environ_exit  = environ ? `\\end{${environ}}`   : ""
 
             value = `${environ_enter}${value}\\text{${exit}}${environ_exit}`
+
+            // TODO anchor 的滚动动作会被mathjax刷新给打断。
 			return <React.Fragment>
                 {props.context.anchor}
                 <MathJaxBlock>{value}</MathJaxBlock>

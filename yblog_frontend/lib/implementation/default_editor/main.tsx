@@ -60,6 +60,7 @@ interface DefaultEditor_Props{
 	onFocusChange?: ()=>void
 	onMount?: () => void
 	theme?: ThemeOptions
+	extra_buttons?: any
 }
 
 /** 
@@ -133,6 +134,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 				<AutoStack force_direction="column">
 					<DefaultParameterEditButton editor = {me.editor} element = {me.editor.core.root} />
 					<DefaultHiddenEditorButtons editor={me.editor} element={me.editor.core.root} />
+					{me.props.extra_buttons}
 					<Divider />
 					{["group" , "inline" , "support" , "struct"].map ( (typename: StyleType)=>{
 						let Icon = icons[typename]

@@ -1,4 +1,4 @@
-
+import json
 
 def debug_convenient(response_func):
 
@@ -10,3 +10,10 @@ def debug_convenient(response_func):
         response["Access-Control-Allow-Headers"] = "*"
         return response
     return warp_response_func
+
+
+def JSONDecode(s):
+    s = s.strip()
+    if s == "":
+        return {}
+    return json.loads(s)
