@@ -93,13 +93,31 @@ class App extends  React.Component<App_Props , App_State>{
 		var data = {"content": this.core.root}
 		return await Interaction.post.content(data)
 	}
+	async post_file(files: any){
+		var form_data = new FormData()
+		form_data.append("file" , files[0])
+		return await Interaction.post.file(form_data)
+	}
 
 	extra_buttons(props: {}){
+		let me = this
 		return <React.Fragment>
-			<AutoIconButton 
-				title = "上传"
-				icon = {DriveFolderUploadIcon}
-			/>
+			<label>
+				<input 
+					type = "file"  
+					style = {{display: "none"}}
+					onChange = {(e)=>{
+						if(e.target.files.length > 0){
+							me.post_file(e.target.files)
+						}
+					}}
+				/>
+				<AutoIconButton 
+					title = "上传"
+					icon = {DriveFolderUploadIcon}
+					component = "span"
+				/>
+			</label>
 		</React.Fragment>
 	}
 

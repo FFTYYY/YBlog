@@ -1,2 +1,2 @@
-from .models import Node , Concept , Comment
+from .models import Node , Concept , Comment , Resource
 from . import constraints

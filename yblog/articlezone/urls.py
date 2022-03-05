@@ -1,6 +1,6 @@
 from django.urls import path
 from .views.views import edit_node_view , edit_nodetree_view , read_node_view
-from .views.posts import post_nodetree , post_node_content , post_node_comments , post_node_comments
+from .views.posts import post_nodetree , post_node_content , post_node_comments , post_node_comments , post_upload_file
 from .views.gets import get_nodetree , get_node_concepts , get_node_comments , get_node_create_time , get_node_content
 from functools import partial
 
@@ -20,4 +20,6 @@ urlpatterns = [
     path("post/node/content/<int:node_id>" , post_node_content) , 
     path("post/node/comments/<int:node_id>" , post_node_comments) , 
     path("post/nodetree/<int:node_id>" , post_nodetree) , 
+
+    path("post/file/<int:node_id>" , post_upload_file) , 
 ]

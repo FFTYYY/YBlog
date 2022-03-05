@@ -1,8 +1,9 @@
-from sre_constants import SUCCESS
 from django.http import HttpResponse , JsonResponse , Http404
 import json
-from ..models import Node , Comment
+from ..models import Node , Comment , Resource
+from ..constants import short_str_length
 from .utils import debug_convenient , JSONDecode
+from django import forms
 import pdb
 
 FAIL = JsonResponse({"status": False})
@@ -69,6 +70,12 @@ def post_node_comments(request , node_id):
 @debug_convenient
 def post_upload_file(request , node_id):
 
-
+    if request.method != "POST":
+        return FAIL
+        
+    file = request.FILES["file"]
+    
+    resource = Resource(name = str(file) , file = file , father_id = node_id)
+    resource.save()
 
     return SUCCESS

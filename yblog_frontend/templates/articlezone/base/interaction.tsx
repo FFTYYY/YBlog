@@ -64,11 +64,11 @@ async function get_node_information(urlmaker:(nodeid:number) => string , key?: s
  * @param data 要发送的数据。
  * @param node_id 要访问的节点的编号。默认为当前正在修改的节点。
  */
-async function post_node_information(urlmaker:(nodeid:number) => string, data: any , node_id?: number): Promise<boolean>{
+async function post_node_information(urlmaker:(nodeid:number) => string, data: any , node_id?: number, config?: any): Promise<boolean>{
     if(node_id == undefined)
         node_id = BackendData.node_id
 
-    let status = (await axios.post( urlmaker(node_id) , data)).data.status
+    let status = (await axios.post( urlmaker(node_id) , data, config)).data.status
 
 	return status
 }
@@ -88,6 +88,7 @@ var urls = {
         content : (nodeid: number) => `post/node/content/${nodeid}` , 
         comments: (nodeid: number) => `post/node/comments/${nodeid}` , 
         nodetree: (nodeid: number) => `post/nodetree/${nodeid}` , 
+        file    : (nodeid: number) => `post/file/${nodeid}` , 
     }
 }
 
@@ -107,6 +108,11 @@ var Interaction = {
         content     :(data: any, nodeid?: number) => post_node_information(urls.post.content  , data , nodeid) , 
         nodetree    :(data: any, nodeid?: number) => post_node_information(urls.post.nodetree , data , nodeid) , 
         comments    :(data: any, nodeid?: number) => post_node_information(urls.post.comments , data , nodeid) , 
+        file        :(data: any, nodeid?: number) => post_node_information(urls.post.file     , data , nodeid , {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            } ,
+        }) , 
     }
 }
 

@@ -17,7 +17,7 @@ import {
     Box , 
     Switch , 
 } from "@mui/material"
-import type { IconButtonProps } from "@mui/material"
+import type { IconButtonProps  } from "@mui/material"
 
 import {
     Close as CloseIcon , 
@@ -52,10 +52,12 @@ function AutoIconButton(props:{
     size?: IconButtonProps["size"]
     title?: string
     icon?: any
+    component?: "button" | "span"
 }){
     let Icon = props.icon
+    let component = props.component || "button"
     return <AutoTooltip title={props.title}>
-        <IconButton onClick={props.onClick} size={props.size}>
+        <IconButton onClick={props.onClick} size={props.size} component={component}>
             <Icon/>
         </IconButton>
     </AutoTooltip>
