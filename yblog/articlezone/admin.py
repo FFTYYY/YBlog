@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Node , Concept , Comment
+from .models import Node , Concept , Comment , Resource
 from django import forms
 
 # TODO 子节点不能选父节点已经选过的组件。
@@ -28,7 +28,10 @@ class ConceptAdmin(admin.ModelAdmin):
 
 class CommentAdmin(admin.ModelAdmin):
     pass
+class ResourceAdmin(admin.ModelAdmin):
+    pass
 
-admin.site.register(Node      , NodeAdmin      )
-admin.site.register(Concept , ConceptAdmin)
-admin.site.register(Comment , CommentAdmin)
+admin.site.register(Node        , NodeAdmin      )
+admin.site.register(Concept     , ConceptAdmin)
+admin.site.register(Comment     , CommentAdmin)
+admin.site.register(Resource    , ResourceAdmin)

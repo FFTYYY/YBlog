@@ -3,6 +3,7 @@ from .. import constants
 import django.utils.timezone as timezone
 from .constraints import perform_checks
 
+
 class Concept(models.Model):
 
 	name = models.CharField(max_length = constants.short_str_length)
@@ -59,3 +60,13 @@ class Comment(models.Model):
 	content = models.TextField(default = "" , null = True , blank = True)
 	name = models.CharField(max_length = constants.short_str_length , default = "" , null = True , blank = True)
 	father = models.ForeignKey(Node , on_delete = models.SET_NULL , related_name = "comments" , null = True)
+
+
+class Resource(models.Model):
+
+	name = models.CharField(max_length = constants.short_str_length)
+	file = models.FileField( upload_to = "article_files" )
+	father = models.ForeignKey(Node , on_delete = models.SET_NULL , related_name = "files" , null = True)
+
+	def __str__(self):
+		return self.name

@@ -8,6 +8,7 @@ temporary_utils/
 sftp-config.json
 autoupdate.sh
 yblog/yblog/secret_key.py
+yblog/medias/*
 
 *.crt
 *.key
