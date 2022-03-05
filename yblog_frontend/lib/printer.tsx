@@ -142,11 +142,11 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         let type = get_node_type(element)
         if(type == "text"){
             let R = printer.get_renderer("text")
-
+            let anchor = <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
             let text:any = (element as has_text).text
             return <React.Fragment>
-                <span style={{display: "hidden"}} ref={me.get_ref(path , true)} className = "mathjax_preview"/>
-                <R.render_func element={element} context={{}}>{text}</R.render_func>
+                {anchor}
+                <R.render_func element={element} context={{anchor: anchor}}>{text}</R.render_func>
             </React.Fragment>
         }
         let children = (element as has_children).children
@@ -158,9 +158,11 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         }
         
         let R = printer.get_renderer(type , name)
+        let anchor = <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
+        // TODO 注意 anchor 会储存到context中，这是一个不好的设计。
         return <React.Fragment>
-            <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
-            <R.render_func element={ element } context={contexts[this.get_path_id(path)] } >{
+            { anchor }
+            <R.render_func element={ element } context={{ anchor: anchor , ...contexts[this.get_path_id(path)] }} >{
                 Object.keys(children).map((subidx) => <ThisFunction
                     key      = {subidx}
                     element  = {children[subidx]} 

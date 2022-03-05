@@ -260,7 +260,17 @@ var mathinline_printer = (()=>{
 var mathblock_printer = (()=>{
     return get_DefaultBlockPrinter({
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
-			return <MathJaxBlock>{Node.string(props.element)}</MathJaxBlock>
+            let value = Node.string(props.element)
+            let exit = props.element.parameters.exit || ""
+            let environ = props.element.parameters.environ
+            let environ_enter = environ ? `\\begin{${environ}}` : ""
+            let environ_exit  = environ ? `\\end{${environ}}`   : ""
+
+            value = `${environ_enter}${value}\\text{${exit}}${environ_exit}`
+			return <React.Fragment>
+                {props.context.anchor}
+                <MathJaxBlock>{value}</MathJaxBlock>
+            </React.Fragment>
 		} , 
 	})
 })()

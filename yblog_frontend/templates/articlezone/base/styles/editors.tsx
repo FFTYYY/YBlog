@@ -1,3 +1,5 @@
+import { Typography  , TextField } from "@mui/material"
+import React from "react"
 import { Node } from "slate"
 
 import {
@@ -10,6 +12,8 @@ import {
     DefaultParagraphEditor , 
     get_DefaultStructEditor_with_RightBar , 
     YEditor , 
+
+    set_node , 
 } from "../../../../lib"
 
 
@@ -39,10 +43,6 @@ var brightwords_editor = get_DefaultGroupEditor_with_AppBar(
 
 
 var normalwords_editor = get_DefaultGroupEditor_with_RightBar(
-    (parameters) => parameters.label
-)
-
-var mathblock_editor = get_DefaultGroupEditor_with_RightBar(
     (parameters) => parameters.label
 )
 
@@ -97,3 +97,22 @@ var link_editor        = get_DefaultInlineEditor("链调" , (props)=><u>{props.c
 var mathinline_editor  = get_DefaultInlineEditor("数学调" , (props)=><u>{props.children}</u>)
 
 let list_editor        = get_DefaultGroupEditor_with_RightBar( (p)=>p.label )
+
+
+var mathblock_editor = get_DefaultGroupEditor_with_RightBar(
+    (parameters) => parameters.label , 
+
+    /** 在右侧提供一个用于快速输入退出符号的文本框。 */
+    (props) => {
+        let universal_props = {variant: "standard" as "standard" , sx: {width: "2rem"}}
+        let label = <Typography sx={{fontSize: "0.7rem"}}>extra</Typography>
+        let exit_default = props.element.parameters.exit || ""
+        return <React.Fragment>
+            <TextField {...universal_props} label={label} defaultValue={exit_default} onChange = {(e)=>{
+                let val = e.target.value
+                let node = props.element
+                set_node(props.editor , node , {parameters: {...node.parameters, exit: val}})
+            }}/>
+        </React.Fragment>
+    }  , 
+)
