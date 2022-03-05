@@ -5,6 +5,7 @@ export * as plugins from "./plugins"
 export * as core from "./core"
 export * as implementation from "./implementation"
 export * as globalinfo from "./globalinfo"
+export * as behaviours from "./behaviours"
 
 
 export *  from "./implementation/utils"
@@ -14,4 +15,5 @@ export *  from "./plugins"
 export *  from "./core"
 export *  from "./implementation"
 export *  from "./globalinfo"
+export *  from "./behaviours"
 

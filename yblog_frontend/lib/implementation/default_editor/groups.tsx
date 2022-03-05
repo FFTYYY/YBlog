@@ -133,7 +133,7 @@ function get_DefaultGroupEditor_with_RightBar(
                 <ComponentEditorBox autogrow>
                     <SUR editor={editor} element={element}>{props.children}</SUR>
                 </ComponentEditorBox>                
-                <UnselecableBox>
+                <UnselecableBox sx={{textAlign: "center"}}>
                     <SimpleAutoStack>
                         <StructureTypography variant="overline">{title}</StructureTypography>
                         <E editor={editor} element={element}/>
@@ -142,7 +142,7 @@ function get_DefaultGroupEditor_with_RightBar(
                             button_class = {IconButton}
                             button_props = {{
                                 size: "small" , 
-                                children: <KeyboardArrowDownIcon fontSize="small"/> , 
+                                children: <KeyboardArrowDownIcon fontSize="small"/> ,  
                             }}
                             title = "展开"
                         >
