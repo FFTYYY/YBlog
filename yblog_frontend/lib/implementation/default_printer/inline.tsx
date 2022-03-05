@@ -86,7 +86,7 @@ function get_DefaultInlinePrinter<NodeType extends Node>({
         render_func: (props: PrinterRenderFunc_Props) => {
             let element = props.element as NodeType 
 
-            return <OUT element={element} context={props.context}>bb{props.children}bb</OUT>
+            return <OUT element={element} context={props.context}>{props.children}</OUT>
         } , 
         enter_effect: (element: NodeType, env: PrinterEnv): [PrinterEnv,PrinterContext] => {    
             let ret: [PrinterEnv , PrinterContext] = [ env , {} ]

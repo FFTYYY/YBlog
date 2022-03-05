@@ -43,6 +43,7 @@ export {
     AutoStackedPopperWithButton , 
 	NewParagraphButton , 
     DefaultSwicth , 
+    AutoIconButton , 
 }
 
 /** 这个函数是一个语法糖，用于自动创建按钮 */
