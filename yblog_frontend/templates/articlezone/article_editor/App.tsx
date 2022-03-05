@@ -37,6 +37,7 @@ import { SaveButton } from "../base/construction/buttons"
 import { withAllPlugins } from "./plugins"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 import { MathJaxContext } from "../base/mathjax"
+import { FileManageButton } from "./manage_files"
 
 interface App_Props{
 
@@ -180,6 +181,7 @@ class App extends  React.Component<App_Props , App_State>{
 				marginRight: "1%"
 			}}>
 				<SaveButton save_func={me.save_content.bind(me)}/>
+				<FileManageButton />
 			</FlexibleDrawer>
 
 			<MainPart sx={{

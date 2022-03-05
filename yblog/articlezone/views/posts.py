@@ -12,70 +12,93 @@ SUCCESS = JsonResponse({"status": True})
 @debug_convenient
 def post_nodetree(request , node_id):
 
-    if request.body == b"":
-        return JsonResponse({"status": False})
+	if request.body == b"":
+		return JsonResponse({"status": False})
 
-    nodetree = JSONDecode(request.body)["nodetree"]
+	nodetree = JSONDecode(request.body)["nodetree"]
 
-    for my_id , father_id , idx_in_father in nodetree:
-        my_id = int(my_id)
-        if my_id == node_id: # 豁免根节点
-            continue
+	for my_id , father_id , idx_in_father in nodetree:
+		my_id = int(my_id)
+		if my_id == node_id: # 豁免根节点
+			continue
 
-        node = Node.objects.get(id = my_id)
-        if father_id == -1: 
-            node.father = None
-        else:
-            node.father = Node.objects.get(id = father_id)
-        node.index_in_father = idx_in_father
-        node.save()
+		node = Node.objects.get(id = my_id)
+		if father_id == -1: 
+			node.father = None
+		else:
+			node.father = Node.objects.get(id = father_id)
+		node.index_in_father = idx_in_father
+		node.save()
 
-    return SUCCESS
+	return SUCCESS
 
 
 
 @debug_convenient
 def post_node_content(request, node_id):
-    # 禁止未登录用户访问
-    # if not request.user.is_authenticated:
-    #     return Http404()
+	# 禁止未登录用户访问
+	# if not request.user.is_authenticated:
+	#     return Http404()
 
-    if request.body == b"":
-        return FAIL
+	if request.body == b"":
+		return FAIL
 
-    node = Node.objects.get(id = node_id)
+	node = Node.objects.get(id = node_id)
 
-    content = JSONDecode(request.body)["content"]
-    node.content = json.dumps( content )
-    node.save()
+	content = JSONDecode(request.body)["content"]
+	node.content = json.dumps( content )
+	node.save()
 
-    return SUCCESS
+	return SUCCESS
 
 @debug_convenient
 def post_node_comments(request , node_id):
 
-    if request.body == b"":
-        return FAIL
+	if request.body == b"":
+		return FAIL
 
-    
-    data = JSONDecode(request.body)
-    content = data["content"]
-    name = data["name"]
+	
+	data = JSONDecode(request.body)
+	content = data["content"]
+	name = data["name"]
 
-    new_comment = Comment(content = content , name = name,  father_id = node_id)
-    new_comment.save()
+	new_comment = Comment(content = content , name = name,  father_id = node_id)
+	new_comment.save()
 
-    return SUCCESS
+	return SUCCESS
 
 @debug_convenient
 def post_upload_file(request , node_id):
 
-    if request.method != "POST":
-        return FAIL
-        
-    file = request.FILES["file"]
-    
-    resource = Resource(name = str(file) , file = file , father_id = node_id)
-    resource.save()
+	if request.method != "POST":
+		return FAIL
+		
+	file = request.FILES["file"]
+	
+	resource = Resource(file.name , file = file , father_id = node_id)
+	resource.save()
 
-    return SUCCESS
+	return SUCCESS
+
+@debug_convenient
+def post_manage_resource(request , resource_id):
+
+	if request.method != "POST":
+		return FAIL
+	
+	resource = Resource.objects.get(id = resource_id)
+
+	file = request.FILES.get("file")
+
+	if file is not None: # 这是一次修改文件
+		resource.file = file
+		resource.save()
+	elif request.body != b"": # 这是一次修改文件名
+		data = JSONDecode(request.body)
+		name = data["name"]
+		resource.name = name
+		resource.save()
+	else:
+		return FAIL
+
+	return SUCCESS

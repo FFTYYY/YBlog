@@ -125,7 +125,7 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
         if(typeof(val) == "boolean"){
             return <TextField 
                 onChange = {e=>{onChange(e.target.value == "true")}}
-                select
+                //select // TODO 这里如果设置成select有个bug，使得点击的时候页面并没有刷新，但是drawer会消失。
                 {...standard_props}
             >
                 <MenuItem key={0} value="true" >true</MenuItem>
