@@ -1,22 +1,22 @@
 from django.shortcuts import render
 from django.http import HttpResponse , Http404
-from .utils import debug_convenient
+from .utils import debug_convenient , must_login
 
 @debug_convenient
+@must_login(Http404())
 def edit_node_view(request , node_id):
-
-    # 禁止未登录用户访问
-    if not request.user.is_authenticated:
-        return Http404()
 
     return render(request , "articlezone/article_editor_index.html" , {
         "node_id": node_id , 
+        "logged_in": request.user.is_authenticated , 
     })
 
 @debug_convenient
+@must_login(Http404())
 def edit_nodetree_view(request , node_id = None):
     return render(request , "articlezone/nodetree_index.html" , {
         "node_id": node_id , 
+        "logged_in": request.user.is_authenticated , 
     })
 
 @debug_convenient

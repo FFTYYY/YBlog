@@ -17,7 +17,7 @@ function flush_mathjax(){
     }
 }
 
-function MathJaxContext(props: {core: EditorCore , children: any}){
+function MathJaxContext(props: {children: any}){
     React.useEffect(() => {
         let script = $(`
             ${""/** mathjax配置。必须先于mathjax的引入。 */}
@@ -47,7 +47,6 @@ function MathJaxContext(props: {core: EditorCore , children: any}){
 
         return ()=>{
             script.remove()
-            props.core.remove_notificatioon("mathjax")
         }
     }, [])
 

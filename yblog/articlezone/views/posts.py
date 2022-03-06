@@ -2,14 +2,16 @@ from django.http import HttpResponse , JsonResponse , Http404
 import json
 from ..models import Node , Comment , Resource
 from ..constants import short_str_length
-from .utils import debug_convenient , JSONDecode
+from .utils import debug_convenient , JSONDecode , must_login
 from django import forms
 import pdb
 
 FAIL = JsonResponse({"status": False})
 SUCCESS = JsonResponse({"status": True})
 
+#注意`debug_convenient`必须放在外面，否则debug时访问失败无法正确接收失败信息。
 @debug_convenient
+@must_login(FAIL)
 def post_nodetree(request , node_id):
 
 	if request.body == b"":
@@ -33,12 +35,9 @@ def post_nodetree(request , node_id):
 	return SUCCESS
 
 
-
 @debug_convenient
+@must_login(FAIL)
 def post_node_content(request, node_id):
-	# 禁止未登录用户访问
-	# if not request.user.is_authenticated:
-	#     return Http404()
 
 	if request.body == b"":
 		return FAIL
@@ -68,6 +67,7 @@ def post_node_comments(request , node_id):
 	return SUCCESS
 
 @debug_convenient
+@must_login(FAIL)
 def post_upload_file(request , node_id):
 
 	if request.method != "POST":
@@ -81,6 +81,7 @@ def post_upload_file(request , node_id):
 	return SUCCESS
 
 @debug_convenient
+@must_login(FAIL)
 def post_manage_resource(request , resource_id):
 
 	if request.method != "POST":

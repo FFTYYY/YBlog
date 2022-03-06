@@ -170,13 +170,13 @@ class App extends  React.Component<App_Props , App_State>{
 		let MainPart = this.mainpart.bind(this)
 
 		return <ThemeProvider theme={createTheme(my_theme)}><Box sx={{
-				position: "absolute" , 
-				top: "2%" ,
-				left: "1%" , 
-				height: "96%" , 
-				width: "98%" , 
-				display: "flex" , 
-			}}><MathJaxContext core={me.core}>
+			position: "absolute" , 
+			top: "2%" ,
+			left: "1%" , 
+			height: "96%" , 
+			width: "98%" , 
+			display: "flex" , 
+		}}><MathJaxContext>
 
 			<FlexibleDrawer sx={{
 				marginRight: "1%"
