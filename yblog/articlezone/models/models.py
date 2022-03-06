@@ -1,3 +1,4 @@
+from re import L
 from django.db import models
 from .. import constants
 import django.utils.timezone as timezone
@@ -25,6 +26,15 @@ class Node(models.Model):
 
 	create_time = models.DateTimeField(default = timezone.now)
 	update_time = models.DateTimeField(default = timezone.now)
+	secret = models.BooleanField(default = True)
+
+	# 是否可以被公开看见
+	def can_public_view(self):
+		if self.secret:
+			return False
+		if self.father:
+			return self.father.can_public_view()
+		return True
 
 	def get_sons(self):
 		'''返回所有子节点，包括自己。'''

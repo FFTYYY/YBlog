@@ -2,6 +2,8 @@ import * as React from "react"
 import {
     Box , 
     Divider , 
+    Checkbox  , 
+    Typography , 
 } from "@mui/material"
 import {
     TreeItem , TreeView , 
@@ -20,6 +22,7 @@ import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
 import { Interaction , BackendData } from "../base/interaction"
 import { Nodetree } from "../base/nodetree"
 import type { info_item , raw_info_item } from "../base/nodetree"
+import { AutoStack } from "../../../lib"
 
 interface App_State{
 
@@ -29,6 +32,16 @@ interface App_State{
 
     /** 已经展开的节点，这是 mui TreeView 需要的状态。 */
     expanded: (string | number) [] 
+}
+
+/** 只要祖先或者自己有一个不可见就返回`true`。 */
+function is_secret(tree: Nodetree , node: info_item){
+    if(node.secret)
+        return true
+
+    if(node.father_id > 0)
+        return is_secret(tree , tree.id2node(node.father_id))
+    return false
 }
 
 class App extends React.Component<{},App_State>{
@@ -143,6 +156,7 @@ class App extends React.Component<{},App_State>{
         let idx_in_father = props.idx_in_father
         let nodetree = this.state.nodetree
         let DroppableSpace = this.DroppableSpace.bind(this)
+        let node_is_secret = is_secret(this.state.nodetree , node)
 
         const [{ is_dragging }, drag] = useDrag(() => ({
             type: "treeitem",
@@ -179,7 +193,22 @@ class App extends React.Component<{},App_State>{
         >
             <DroppableSpace node={ nodetree.id2node(father_id) } expect_idx={idx_in_father} />
             <TreeItem 
-                label = {`node-${my_id}`}
+                label = { 
+                    <Box 
+                        color = {node_is_secret ? "text.secondary" : "text.primary"}
+                    ><AutoStack force_direction="row">
+                        <Typography sx={{marginY: "auto"}}>node-{my_id}</Typography>
+                        <Checkbox 
+                            onClick={(e)=>{e.stopPropagation()}} // 防止点击传递到`TreeItem`上。
+                            defaultChecked = {node.secret}
+                            onChange={(e)=>{
+                                let new_tree = this.state.nodetree.deepcopy() // 复制一棵新的树
+                                new_tree.id2node(my_id).secret = e.target.checked // 设置新树上的节点属性
+                                this.setState({nodetree: new_tree})
+                            }}
+                        />
+                    </AutoStack></Box>
+                }
                 nodeId = {`${my_id}`}
     
                 ref = { drag } 

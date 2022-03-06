@@ -1,12 +1,16 @@
 from django.http import HttpResponse , JsonResponse , Http404
 import json
 from ..models import Node , Comment , Resource
-from .utils import debug_convenient , JSONDecode
+from .utils import debug_convenient , JSONDecode , node_can_view
 import pdb
 
 @debug_convenient
 def get_node_concepts(request , node_id):
+
 	node = Node.objects.get(id = node_id) 
+	if not node_can_view(request , node):
+		return Http404()
+
 	return JsonResponse({
 		"concepts": [
 			[c.name , c.meta , JSONDecode(c.fixed_params) , JSONDecode(c.default_params) , JSONDecode(c.extra_params)]
@@ -16,7 +20,11 @@ def get_node_concepts(request , node_id):
 
 @debug_convenient
 def get_node_comments(request , node_id):
+
 	node = Node.objects.get(id = node_id) 
+	if not node_can_view(request , node):
+		return Http404()
+
 	return JsonResponse({
 		"comments": [
 			[c.content , c.name]
@@ -26,8 +34,10 @@ def get_node_comments(request , node_id):
 
 @debug_convenient
 def get_node_content(request, node_id):
-	
-	node = Node.objects.get(id = node_id)
+	node = Node.objects.get(id = node_id) 
+	if not node_can_view(request , node):
+		return Http404()
+
 	content = node.content.strip()
 	if content == "":
 		content = json.dumps(None)
@@ -38,7 +48,10 @@ def get_node_content(request, node_id):
 
 @debug_convenient
 def get_node_create_time(request , node_id):
-	node = Node.objects.get(id = node_id)
+	node = Node.objects.get(id = node_id) 
+	if not node_can_view(request , node):
+		return Http404()
+
 	create_time = node.create_time
 	modify_time = node.update_time
 
@@ -56,13 +69,23 @@ def get_nodetree(request , node_id):
 		lis = Node.objects.get(id = node_id).get_sons()
 	
 	return JsonResponse({
-		"data": [ [x.id, x.father.id if x.father is not None else -1, x.index_in_father] for x in lis]
+		"data": [ 
+			[
+				x.id, 
+				x.father.id if x.father is not None else -1, 
+				x.index_in_father , 
+				x.secret ,
+			] 
+			for x in lis
+			if node_can_view(request , x) # 只返回能被看见的节点的信息
+		]
 	})
 	
 @debug_convenient
 def get_node_resources(request , node_id):
-
 	node = Node.objects.get(id = node_id)
+	if not node_can_view(request , node):
+		return Http404()
 
 	return JsonResponse({
 		"resources": [
@@ -72,6 +95,10 @@ def get_node_resources(request , node_id):
 	})
 @debug_convenient
 def get_node_resource_info(request , node_id):
+	'''给定一个资源文件的和所在节点和名称，查询其`url`。'''
+	node = Node.objects.get(id = node_id)
+	if not node_can_view(request , node):
+		return Http404()
 
 	resource_name = request.GET.get("name")
 	resources = []

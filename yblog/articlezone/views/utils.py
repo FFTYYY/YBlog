@@ -2,6 +2,12 @@ import json
 from django.http import HttpResponse , JsonResponse , Http404
 from django.conf import settings
 
+def node_can_view(request , node):
+    '''判断一个节点是否可以输出到前端。如果已经登录，则输出true，否则根据model的secret属性而定。'''
+    if settings.DEBUG:
+        return True
+    return request.user.is_authenticated or node.can_public_view()
+
 def must_login(fail_return = Http404()):
     '''这个包装器确保一个函数只能在用户已经登录的情况下调用。'''
     def _must_login(response_func):

@@ -27,7 +27,9 @@ var BackendData = {
     /** 当前节点编号。 */
     node_id: parseInt(get_backend_data("node_id")) , 
     
-    /** 当前用户是否已经登录。 */
+    /** 当前用户是否已经登录。 
+     * 注意，这个只是对于登录与否的用户可以渲染不同的页面（例如编辑按钮），不要将危险操作放在前端并依赖这个变量来控制。
+    */
     logged_in: get_backend_data("logged_in").toLocaleLowerCase() == "true" , 
 }
 
