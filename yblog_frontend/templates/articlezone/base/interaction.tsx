@@ -28,7 +28,7 @@ var BackendData = {
     node_id: parseInt(get_backend_data("node_id")) , 
     
     /** 当前用户是否已经登录。 */
-    logged_in: get_backend_data("logged_in") , 
+    logged_in: get_backend_data("logged_in").toLocaleLowerCase() == "true" , 
 }
 
 
