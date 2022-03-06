@@ -67,7 +67,7 @@ var ender_editor = get_DefaultSplitterEditor(
     (parameters) => "章节"
 )
 
-var strong_editor = get_DefaultInlineEditor()
+var strong_editor = get_DefaultInlineEditor(  (p)=>p.label )
 
 var paragraph_editor = DefaultParagraphEditor
 
@@ -111,9 +111,9 @@ var alignedwords_editor = get_DefaultStructEditor_with_RightBar(
 )
 
 
-var delete_editor      = get_DefaultInlineEditor("刊调" , (props)=><del>{props.children}</del>)
-var link_editor        = get_DefaultInlineEditor("链调" , (props)=><u>{props.children}</u>)
-var mathinline_editor  = get_DefaultInlineEditor("数学调" , (props)=><u>{props.children}</u>)
+var delete_editor      = get_DefaultInlineEditor((p)=>p.label , (props)=><del>{props.children}</del>)
+var link_editor        = get_DefaultInlineEditor((p)=>p.label , (props)=><u>{props.children}</u>)
+var mathinline_editor  = get_DefaultInlineEditor((p)=>p.label , (props)=><u>{props.children}</u>)
 
 let list_editor        = get_DefaultGroupEditor_with_RightBar( (p)=>p.label )
 

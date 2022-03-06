@@ -48,7 +48,7 @@ export { get_DefaultInlineEditor }
  * 见https://github.com/ianstormtaylor/slate/issues/4811
  */
 function get_DefaultInlineEditor(
-    name: string = "" , 
+    name_maker: (parameters: any)=>string , 
     surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <React.Fragment>{props.children}</React.Fragment> , 
     rightbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
 ): EditorRenderer_Func{
@@ -57,6 +57,7 @@ function get_DefaultInlineEditor(
         let editor  = props.editor
         let Extra = rightbar_extra
         let SUR = surrounder
+        let name = name_maker(element.parameters)
 
         return <ComponentPaper is_inline>
             <AutoStack force_direction="row">
@@ -79,7 +80,7 @@ function get_DefaultInlineEditor(
                             }} 
                             title = {"展开" + (name ? ` / ${name}` : "") }
                         >
-                            <Typography>{element.name}</Typography>
+                            <Typography>{name}</Typography>
                             <DefaultParameterEditButton editor={editor} element={element}/>
                             <DefaultHiddenEditorButtons      editor={editor} element={element} />
                             <DefaultCloseButton editor={editor} element={element} />

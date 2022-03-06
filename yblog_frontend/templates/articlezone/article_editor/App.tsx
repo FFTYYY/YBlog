@@ -27,15 +27,15 @@ import {
 } from "../../../lib"
 
 import { ReactEditor } from "slate-react"
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
+import { Node , Transforms , Element } from "slate"
 
 import { make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter , withNecessaryStyle} from "../base/styles"
-import { Node , Transforms , Element } from "slate"
 import { Interaction } from "../base/interaction"
 import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
 import { my_theme } from "../base/construction/theme"
 import { SaveButton } from "../base/construction/buttons"
-import { withAllPlugins } from "./plugins"
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
+import { withAllPlugins , set_normalize_status } from "./plugins"
 import { MathJaxContext } from "../base/mathjax"
 import { FileManageButton } from "./manage_files"
 
@@ -60,11 +60,9 @@ class App extends  React.Component<App_Props , App_State>{
 			title: "" , 
 		}) )
 		this.state = {
-			editor: withNecessaryEditor( new YEditor( this.core ) ) , 
+			editor: withAllPlugins( withNecessaryEditor( new YEditor( this.core ) ) ), 
 			printer: withNecessaryPrinter( new Printer( this.core ) ) , 
 		}
-
-		this.state.editor.slate = withAllPlugins( this.state.editor.slate ) as ReactEditor
 
 		this.printer_ref = React.createRef()
 	}
@@ -86,8 +84,11 @@ class App extends  React.Component<App_Props , App_State>{
 
 		var root = await Interaction.get.content()
 		root = root || {children: [] , parameters: {}}
+		set_normalize_status({initializing: true})
 		Transforms.insertNodes(this.state.editor.slate , root.children , {at: [0]})
 		this.core.update_root({parameters: {...this.core.root.parameters , ...root.parameters}})
+		
+		set_normalize_status({initializing: false})
 	}
 	
 	async save_content(){
