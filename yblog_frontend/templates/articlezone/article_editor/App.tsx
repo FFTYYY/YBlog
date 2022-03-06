@@ -84,8 +84,12 @@ class App extends  React.Component<App_Props , App_State>{
 
 		var root = await Interaction.get.content()
 		root = root || {children: [] , parameters: {}}
+
 		set_normalize_status({initializing: true})
-		Transforms.insertNodes(this.state.editor.slate , root.children , {at: [0]})
+
+		let to_remove = this.state.editor.slate.children.map((_,idx)=>Number(idx))
+		Transforms.removeNodes(this.state.editor.slate , {at: to_remove}) // 删除所有现存子节点
+		Transforms.insertNodes(this.state.editor.slate , root.children , {at: [0]}) // 插入内容
 		this.core.update_root({parameters: {...this.core.root.parameters , ...root.parameters}})
 		
 		set_normalize_status({initializing: false})
