@@ -8,9 +8,9 @@ export { Nodetree }
 export type {raw_info_item , info_item}
 
 /** 每个`raw_info_item`是从后端获得的一组原始数据，这组数据稍后被解析成`info_item`树。
- * 三个元素依次表示`id`、`father_id`、`idx_in_father`。
+ * 三个元素依次表示`id`、`father_id`、`idx_in_father`、`secret`。其中`secret`表示节点的可见性。
 */
-type raw_info_item = [number,number,number] // 树项 
+type raw_info_item = [number,number,number,boolean] // 树项 
 
 /** `info_item`用于描述处理后的节点树。 
  * 每个节点会有一个`id`，这个`id`从`1`开始编号，是后端储存时用的编号。
@@ -20,12 +20,13 @@ interface info_item {
     father_id: number 
     sons: info_item[]
     idx_in_father? : number
+    secret: boolean
 }
 
 /** 给定 nodetree，这个函数生成一个 id 到树节点的映射。 
  * @param node 节点树的根。
 */
-function generate_id2node(node: info_item){
+function generate_id2node(node: info_item): {[id: number]: info_item}{
     function _generate_id2node(nownode: info_item, id2node: {[id: number]: info_item}){
         id2node[nownode.my_id] = nownode
         for(let nd of nownode.sons)
@@ -40,7 +41,7 @@ function generate_id2node(node: info_item){
  * @param raw_nodetree （后端发来的）三元组形式的节点树描述。
  * @param root_id 这颗子树的根节点。
 */
-function raw_to_processed(raw_nodetree: raw_info_item[] , root_id: number = -1){
+function raw_to_processed(raw_nodetree: raw_info_item[] , root_id: number = -1): info_item{
     raw_nodetree.sort(((x1: raw_info_item,x2: raw_info_item) => x1[2]<x2[2]?1:0)) // 按父节点内的顺序排序
 
     // 如果不是完整的树，那么将根节点的1前一个节点设为`-1`。
@@ -53,14 +54,16 @@ function raw_to_processed(raw_nodetree: raw_info_item[] , root_id: number = -1){
         return Object.values( raw_nodetree.filter(x=>x[1] == father_id) ).map((val:raw_info_item)=>{ return {
             my_id: val[0],
             father_id: father_id,
-            sons: _raw_to_processed(val[0])
+            sons: _raw_to_processed(val[0]) , 
+            secret: val[3] , 
         }})
     }
 
     return {
         my_id: -1,
         father_id: -1,
-        sons: _raw_to_processed(-1)
+        sons: _raw_to_processed(-1), 
+        secret: true , 
     }
 }
 
@@ -70,7 +73,7 @@ function raw_to_processed(raw_nodetree: raw_info_item[] , root_id: number = -1){
 function processed_to_raw(nodetree: info_item){
 
     let _processed_to_raw = (node:info_item , idx_in_father: number): raw_info_item[] =>{
-        let res = [ [node.my_id , node.father_id , idx_in_father] as raw_info_item ]
+        let res = [ [node.my_id , node.father_id , idx_in_father , node.secret] as raw_info_item ]
         if(node.my_id < 0) // 不要包含一个编号小于0的节点。
             res = []
 

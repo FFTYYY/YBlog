@@ -2,7 +2,7 @@ from django.http import HttpResponse , JsonResponse , Http404
 import json
 from ..models import Node , Comment , Resource
 from ..constants import short_str_length
-from .utils import debug_convenient , JSONDecode , must_login
+from .utils import debug_convenient , JSONDecode , must_login , node_can_view
 from django import forms
 import pdb
 
@@ -19,7 +19,7 @@ def post_nodetree(request , node_id):
 
 	nodetree = JSONDecode(request.body)["nodetree"]
 
-	for my_id , father_id , idx_in_father in nodetree:
+	for my_id , father_id , idx_in_father , secret in nodetree:
 		my_id = int(my_id)
 		if my_id == node_id: # 豁免根节点
 			continue
@@ -30,6 +30,7 @@ def post_nodetree(request , node_id):
 		else:
 			node.father = Node.objects.get(id = father_id)
 		node.index_in_father = idx_in_father
+		node.secret = secret
 		node.save()
 
 	return SUCCESS
@@ -56,6 +57,10 @@ def post_node_comments(request , node_id):
 	if request.body == b"":
 		return FAIL
 
+	# 禁止向不可见的节点提交评论
+	node = Node.objects.get(id = node_id)
+	if not node_can_view(request , node):
+		return FAIL
 	
 	data = JSONDecode(request.body)
 	content = data["content"]

@@ -51,8 +51,6 @@ class App extends  React.Component{
 
 	async componentDidMount(){
 
-		console.log(BackendData.logged_in)
-
         /** 获得内容。 */
 		var root = await Interaction.get.content()
 		this.core.update_root(root)

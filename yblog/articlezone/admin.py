@@ -7,7 +7,20 @@ class NodeAdmin(admin.ModelAdmin):
     filter_horizontal = ["concepts"]
 
     def get_fieldsets(self, request, object):
+        node = object 
+
+        visualbility_desc = "此节点可见"
+        if not node.can_public_view():
+            if node.secret:
+                visualbility_desc = "因为自身的<code>secret</code>属性，此节点不可见。"
+            else:
+                visualbility_desc = "因为其父节点的<code>secret</code>属性，此节点不可见。"
+
         return [
+            ["可见性" , {
+                "fields": ["secret"] , 
+                "description": visualbility_desc , 
+            }] , 
             ["内容" , {
                 "fields": ["content" , "concepts"] , 
                 "description": "<a href='/edit/content/{obj_id}'>编辑内容</a>".format(obj_id = object.id)
