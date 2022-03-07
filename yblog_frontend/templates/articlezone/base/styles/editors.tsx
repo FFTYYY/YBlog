@@ -76,7 +76,7 @@ var image_editor = get_DefaultDisplayerEditor(
     (parameters)=>!!(parameters.target) , 
     (props: {parameters: any}) => {
         let p = props.parameters
-        let [ url , set_url ] = React.useState(p.target)
+        let [ url , set_url ] = React.useState("")
 
         React.useEffect(()=>{(async ()=>{
             if(p.internal){
@@ -94,9 +94,10 @@ var image_editor = get_DefaultDisplayerEditor(
             }
         })()})
 
+
         let width = p.width > 0 ? `${p.width}rem` : "100%"
         let height = p.height > 0 ? `${p.height}rem` : "100%"
-        return <img src={url} style={{
+        return <img src={url || undefined } style={{
             width: width, 
             height: height , 
         }}/>
