@@ -20,7 +20,7 @@ import {
 } from "../../../../lib"
 import { Nodetree } from "../../base/nodetree"
 import type { raw_info_item } from "../../base/nodetree"
-import { Interaction , BackendData } from "../../base/interaction"
+import { Interaction , BackendData , urls , url_from_root } from "../../base/interaction"
 
 
 export { LeftBasic }
@@ -106,11 +106,11 @@ class Navigation extends React.Component<{} , {
                     title = "上行" 
                     onClick = { ()=>me.setState({now_node_id: now_node.father_id})}
                     icon = {ArrowUpwardIcon}
-                    url = {"#"} // TODO specify URL
+                    url = { urls.view.content(now_node.my_id) }
                 />
                 : <WordsWithButton // 不能往上惹
                     words = {<TitleWord node_id={now_node.my_id} />} 
-                    url = {"#"}
+                    url = { urls.view.content(now_node.my_id) }
                 />
             }
             
@@ -123,11 +123,11 @@ class Navigation extends React.Component<{} , {
                             title = "下行" 
                             onClick = { ()=>me.setState({now_node_id: subnode.my_id}) }
                             icon = {ArrowDownwardIcon}
-                            url = {"#"}
+                            url = { urls.view.content(subnode.my_id) }
                         />
                         : <WordsWithButton // 不能再往下惹
                             words = {<TitleWord node_id={subnode.my_id} />} 
-                            url = {"#"}
+                            url = { urls.view.content(subnode.my_id) }
                         />  
                     }
                 </Box>

@@ -5,9 +5,9 @@
 import axios from "axios"
 import $ from "jquery"
 
-export { Interaction , BackendData , get_backend_data , url_from_root}
+export { Interaction , BackendData , get_backend_data , url_from_root , urls}
 
-var DEBUGGING = true
+var DEBUGGING = import.meta.env.DEV
 
 /** 获得一个后端发来的数据。 */
 function get_backend_data(key: string): string {
@@ -88,20 +88,23 @@ async function post_node_information(urlmaker:(nodeid:number) => string, data: a
  */
 var urls = {
     get:{
-        content     : (nodeid: number)  => `get/node/content/${nodeid}` , 
-        nodetree    : (nodeid: number)  => `get/nodetree/${nodeid}` , 
-        concept     : (nodeid: number)  => `get/node/concepts/${nodeid}` , 
-        create_time : (nodeid: number)  => `get/node/create_time/${nodeid}` , 
-        comments    : (nodeid: number)  => `get/node/comments/${nodeid}` , 
-        resources   : (nodeid: number)  => `get/node/resources/${nodeid}` , 
-        resource_info : (nodeid: number)  => `get/node/resource_info/${nodeid}` , 
+        content     : (nodeid: number)  => url_from_root( `get/node/content/${nodeid}` ) , 
+        nodetree    : (nodeid: number)  => url_from_root( `get/nodetree/${nodeid}` ) , 
+        concept     : (nodeid: number)  => url_from_root( `get/node/concepts/${nodeid}` ) , 
+        create_time : (nodeid: number)  => url_from_root( `get/node/create_time/${nodeid}` ) , 
+        comments    : (nodeid: number)  => url_from_root( `get/node/comments/${nodeid}` ) , 
+        resources   : (nodeid: number)  => url_from_root( `get/node/resources/${nodeid}` ) , 
+        resource_info : (nodeid: number)  => url_from_root( `get/node/resource_info/${nodeid}` ) , 
     } , 
     post: {
-        content : (nodeid: number) => `post/node/content/${nodeid}` , 
-        comments: (nodeid: number) => `post/node/comments/${nodeid}` , 
-        nodetree: (nodeid: number) => `post/nodetree/${nodeid}` , 
-        file    : (nodeid: number) => `post/file/${nodeid}` , 
-        manage_recourse    : (resourceid: number) => `post/manage_recourse/${resourceid}` , 
+        content : (nodeid: number) => url_from_root( `post/node/content/${nodeid}` ) , 
+        comments: (nodeid: number) => url_from_root( `post/node/comments/${nodeid}` ) , 
+        nodetree: (nodeid: number) => url_from_root( `post/nodetree/${nodeid}` ) , 
+        file    : (nodeid: number) => url_from_root( `post/file/${nodeid}` ) , 
+        manage_recourse    : (resourceid: number) => url_from_root( `post/manage_recourse/${resourceid}` ) , 
+    } , 
+    view: {
+        content: (nodeid: number) => url_from_root( `view/content/${nodeid}` ) , 
     }
 }
 

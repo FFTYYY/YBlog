@@ -21,7 +21,7 @@ function MathJaxContext(props: {children: any}){
     React.useEffect(() => {
         let script = $(`
             ${""/** mathjax配置。必须先于mathjax的引入。 */}
-            <script>
+            <script defer>
                 MathJax = {
                     tex: {
                         inlineMath: [["${MATHJAX_INLINE_START}", "${MATHJAX_INLINE_END}"]] , 
@@ -37,8 +37,9 @@ function MathJaxContext(props: {children: any}){
             </script>
 
             ${""/** mathjax的引入。 */}
-            <script src="./node_modules/mathjax/es5/tex-svg.js" async></script>
         `)
+        // TODO 不知道是否应该用cdn版本
+        import ("mathjax/es5/tex-svg.js")
 
         $("head").append(script)
         

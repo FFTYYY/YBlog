@@ -267,20 +267,28 @@ var image_printer = (()=>{
 	return get_DefaultInlinePrinter<SupportNode>({
 		outer: (props: {element: SupportNode , context: PrinterContext, children: any}) => {
 			let p = props.element.parameters as {target: string , internal: boolean , width: number , height: number}
-			let [ url , set_url ] = React.useState(p.target)
+			let [ url , set_url ] = React.useState("")
 
 			React.useEffect(()=>{(async ()=>{
-				if(p.internal && p.target){
+				if(p.internal){
 					let resource_info = await Interaction.get.resource_info(p.target)
-					set_url(url_from_root(resource_info.url))
+					if(!resource_info.url){
+						set_url("")
+					}
+					else{
+						set_url(url_from_root(resource_info.url))
+					}
 					// 其实直接`set_url(resource_info.url)`也行，套一层`url_from_root`主要是为了调试方便。
 				}
+				else{
+					set_url(p.target)
+				}
 			})()})
-
+	
 			let width = p.width > 0 ? `${p.width}rem` : "100%"
 			let height = p.height > 0 ? `${p.height}rem` : "100%"
 			// TODO 这玩意儿每次编辑都会重新加载，有点蛋疼....
-			return <img src={url} style={{
+			return <img src={url || undefined} style={{
 				width: width, 
 				height: height , 
 			}}/>
