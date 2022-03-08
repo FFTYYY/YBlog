@@ -80,7 +80,7 @@ def post_upload_file(request , node_id):
 		
 	file = request.FILES["file"]
 	
-	resource = Resource(file.name , file = file , father_id = node_id)
+	resource = Resource(name = file.name , file = file , father_id = node_id)
 	resource.save()
 
 	return SUCCESS

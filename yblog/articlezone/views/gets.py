@@ -118,3 +118,31 @@ def get_node_resource_info(request , node_id):
 		"id": resource.id , 
 		"url": resource.file.url , 
 	})
+
+@debug_convenient
+def get_node_son_ids(request , node_id):
+	'''询问一个节点的全体子节点，但是只有可见的能被看到。'''
+	if node_id <= 0:
+		lis = Node.objects.filter(father = None)
+	else:
+		lis = Node.objects.filter(father_id = node_id)
+	
+	# 只返回能被看见的节点的信息
+	return JsonResponse({
+		"son_ids": [ x.id for x in lis if node_can_view(request , x) ]
+	})
+
+@debug_convenient
+def get_node_father_id(request , node_id):
+	'''询问一个节点的父节点'''
+
+	node = Node.objects.get(id = node_id)
+	if not node_can_view(request , node):
+		return Http404()
+	# 如果节点可见，那么其父节点也一定可见，因此无需额外判断。
+
+	
+	# 只返回能被看见的节点的信息
+	return JsonResponse({
+		"father_id": node.father.id if node.father is not None else -1
+	})

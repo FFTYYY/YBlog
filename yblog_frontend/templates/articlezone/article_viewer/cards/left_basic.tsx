@@ -21,29 +21,11 @@ import {
 import { Nodetree } from "../../base/nodetree"
 import type { raw_info_item } from "../../base/nodetree"
 import { Interaction , BackendData , urls , url_from_root } from "../../base/interaction"
+import { TitleWord } from "../../base/construction/titleword"
 
 
 export { LeftBasic }
 
-/** 这个组件异步加载一个节点的标题，等加载好了就现实出来。 */
-class TitleWord extends React.Component<{node_id: number} , {title: string | undefined}>{
-    constructor(props){
-        super(props)
-
-        this.state = {
-            title: undefined
-        }
-    }
-
-    async componentDidMount() {
-        let root = await Interaction.get.content(this.props.node_id)
-        this.setState({title: root.parameters.title}) 
-    }
-
-    render(){
-        return <>{this.state.title}</>
-    }
-}
 
 /** 这个组件显示一个导航区域。 
  * 导航区域会显示一个父节点和其全部子节点。
@@ -51,87 +33,118 @@ class TitleWord extends React.Component<{node_id: number} , {title: string | und
 */
 class Navigation extends React.Component<{} , {
 
-    /** 总的节点树。 */
-    nodetree: Nodetree
-
     /** 当前父节点的`id`。 */
-    now_node_id: number
+    father_id: number
+
+    /** 当前所有子节点的`id`。 */
+    son_ids: number[]
 }>{
     constructor(props){
         super(props)
 
         this.state = {
-            nodetree: undefined , 
-            now_node_id: undefined , // 当前展开的树节点。
+            father_id: BackendData.node_id , 
+            son_ids: [] , // 当前展开的树节点。
         }
+    }
+
+    async set_father_id(new_father_id: number) {
+        let son_ids = (await Interaction.get.son_ids(new_father_id)) as number []
+        this.setState({father_id: new_father_id , son_ids: son_ids})
     }
 
     async componentDidMount() {
-        let raw_nodetree = await Interaction.get.nodetree(0) as raw_info_item[]
-        this.setState({nodetree: new Nodetree(raw_nodetree) , now_node_id: BackendData.node_id})
+        this.set_father_id(BackendData.node_id)
     }
 
+    /** 这个组件显示一行带按钮的文字。 */
+    WordsWithButton(props:{words: any , onClick?: ((e)=>void) , title?: any, icon?: any, url: string}){
+        let Icon = props.icon
+        return <Box sx={{marginTop: "0.5rem"}}><AutoStack>
+            {
+                Icon 
+                ? <AutoTooltip title={props.title}><IconButton size="small" sx={{height: "0.9rem", marginY: "auto"}} onClick={props.onClick}>
+                    <Icon sx={{fontSize: "0.9rem"}}/>
+                </IconButton></AutoTooltip>
+                : <></>
+            }
+            <Link 
+                sx = {(theme)=>({fontSize: "0.9rem"})} 
+                underline = "hover" 
+                href = {props.url}
+            >{props.words}</Link>
+        </AutoStack></Box>
+    }
+
+    /** 这个组件显示一个子节点的项。 */
+    SubnodeItem(props: {node_id: number}){
+        let me = this
+        let node_id = props.node_id
+        let [ have_sons , set_have_sons ] = React.useState(true) // 这个子节点是否还有子节点。
+        let WordsWithButton = this.WordsWithButton.bind(this)
+
+        React.useEffect(()=>{(async ()=>{
+            let sons = await Interaction.get.son_ids(node_id)
+            set_have_sons(sons.length > 0)
+        })()})
+
+        return <React.Fragment>{
+            have_sons 
+            ? <WordsWithButton // 有子节点
+                words = {<TitleWord node_id={node_id} />} 
+                title = "下行" 
+                onClick = { ()=>me.set_father_id(node_id) }
+                icon = {ArrowDownwardIcon}
+                url = { urls.view.content(node_id) }
+            />
+            : <WordsWithButton // 不能再往下惹
+                words = {<TitleWord node_id={node_id} />} 
+                url = { urls.view.content(node_id) }
+            />  
+        }</React.Fragment>
+    }
+
+    /** 这个组件显示父节点的项。 */
+    FathernodeItem(props: {node_id: number}){
+        let me = this
+        let node_id = props.node_id
+        let WordsWithButton = this.WordsWithButton.bind(this)
+
+        let [ father_id , set_father_id ] = React.useState(-1) // 当前父节点的父节点
+
+        React.useEffect(()=>{(async ()=>{
+            set_father_id(await Interaction.get.father_id(node_id))
+        })()})
+
+        return <React.Fragment>{
+            father_id > 0
+            ? <WordsWithButton  // 可以往上
+                words = {<TitleWord node_id={node_id} />} 
+                title = "上行" 
+                onClick = { ()=>me.set_father_id(father_id)}
+                icon = {ArrowUpwardIcon}
+                url = { urls.view.content(node_id) }
+            />
+            : <WordsWithButton // 不能往上惹
+                words = {<TitleWord node_id={node_id} />} 
+                url = { urls.view.content(node_id) }
+            />
+        }</React.Fragment>
+    }
+    
     render(){
 
-        if(this.state.now_node_id == undefined){
-            return <></>
-        }
         let me = this
-        let now_node = this.state.nodetree.id2node( this.state.now_node_id )
-
-        // TODO use a special theme for this
-        let WordsWithButton = (props:{words: any , onClick?: ((e)=>void) , title?: any, icon?: any, url: string}) => {
-            let Icon = props.icon
-            return <Box sx={{marginTop: "0.5rem"}}><AutoStack>
-                {
-                    Icon 
-                    ? <AutoTooltip title={props.title}><IconButton size="small" sx={{height: "0.9rem", marginY: "auto"}} onClick={props.onClick}>
-                        <Icon sx={{fontSize: "0.9rem"}}/>
-                    </IconButton></AutoTooltip>
-                    : <></>
-                }
-                <Link 
-                    sx = {(theme)=>({fontSize: "0.9rem"})} 
-                    underline = "hover" 
-                    href = {props.url}
-                >{props.words}</Link>
-            </AutoStack></Box>
-        }
+        let now_id       = this.state.father_id
+        let now_son_ids  = this.state.son_ids
+        let F = this.FathernodeItem.bind(this)
+        let S = this.SubnodeItem.bind(this)
 
         return <Box sx={{marginTop: "0.5rem"}}><AutoStack force_direction="column">
-            {
-                now_node.father_id >= 0
-                ? <WordsWithButton  // 可以往上
-                    words = {<TitleWord node_id={now_node.my_id} />} 
-                    title = "上行" 
-                    onClick = { ()=>me.setState({now_node_id: now_node.father_id})}
-                    icon = {ArrowUpwardIcon}
-                    url = { urls.view.content(now_node.my_id) }
-                />
-                : <WordsWithButton // 不能往上惹
-                    words = {<TitleWord node_id={now_node.my_id} />} 
-                    url = { urls.view.content(now_node.my_id) }
-                />
-            }
-            
-            {now_node.sons.map((subnode,idx)=>{
-                return <Box sx={{marginLeft: (theme)=>theme.printer.margins.level}} key={idx}>
-                    {
-                        subnode.sons.length > 0 
-                        ? <WordsWithButton // 有子节点
-                            words = {<TitleWord node_id={subnode.my_id} />} 
-                            title = "下行" 
-                            onClick = { ()=>me.setState({now_node_id: subnode.my_id}) }
-                            icon = {ArrowDownwardIcon}
-                            url = { urls.view.content(subnode.my_id) }
-                        />
-                        : <WordsWithButton // 不能再往下惹
-                            words = {<TitleWord node_id={subnode.my_id} />} 
-                            url = { urls.view.content(subnode.my_id) }
-                        />  
-                    }
-                </Box>
-            })}
+            {<F node_id = {now_id}/>}
+            <Box sx={{marginLeft: (theme)=>theme.printer.margins.level}}>{
+                now_son_ids.map((son_id , idx)=><React.Fragment key={idx}><S node_id={son_id}/></React.Fragment>)
+            }</Box>
         </AutoStack></Box>
     }
 

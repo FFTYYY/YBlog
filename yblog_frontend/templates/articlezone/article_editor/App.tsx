@@ -23,6 +23,7 @@ import {
 	DefaultEditor , 
 	AutoStack , 
 	AutoIconButton , 
+	paragraph_prototype , 
 
 } from "../../../lib"
 
@@ -83,7 +84,7 @@ class App extends  React.Component<App_Props , App_State>{
 		this.setState({editor: my_editor , printer: my_printer})
 
 		var root = await Interaction.get.content()
-		root = root || {children: [] , parameters: {}}
+		root = root || {children: [paragraph_prototype("")] , parameters: {}}
 
 		set_normalize_status({initializing: true})
 
