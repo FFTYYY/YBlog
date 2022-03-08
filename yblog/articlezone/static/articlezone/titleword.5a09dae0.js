@@ -1,0 +1,1 @@
+import{a as e,j as s,i as a}from"./vendor.7943a1a9.js";import{I as r}from"./snackbar.9d1848d3.js";class d extends e.Component{constructor(t){super(t);this.state={title:void 0}}async componentDidMount(){let t=await r.get.content(this.props.node_id);this.setState({title:t.parameters.title})}render(){return s(a,{children:this.state.title})}}export{d as T};

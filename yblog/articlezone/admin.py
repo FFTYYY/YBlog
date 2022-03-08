@@ -5,6 +5,8 @@ from django import forms
 # TODO 子节点不能选父节点已经选过的组件。
 class NodeAdmin(admin.ModelAdmin):
     filter_horizontal = ["concepts"]
+    list_display = ["get_title" , "id" , "can_public_view" ]
+    raw_id_fields = ["father"]
 
     def get_fieldsets(self, request, object):
         node = object 

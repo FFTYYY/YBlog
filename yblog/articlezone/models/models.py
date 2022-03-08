@@ -4,7 +4,7 @@ from .. import constants
 import django.utils.timezone as timezone
 from .constraints import perform_checks
 import json
-
+from django.contrib import admin
 class Concept(models.Model):
 
 	name = models.CharField(max_length = constants.short_str_length)
@@ -30,7 +30,8 @@ class Node(models.Model):
 
 	def __str__(self):
 		return self.get_title()
-
+	
+	@admin.display(description = "title")
 	def get_title(self):
 		'''这个方法效率极低，尽量避免调用。'''
 		notitle = "<NoTitle: {0}>".format(self.id)
@@ -44,8 +45,10 @@ class Node(models.Model):
 			return notitle
 		return title
 
-	# 是否可以被公开看见
+
+	@admin.display(boolean = True, description = "public")
 	def can_public_view(self):
+		'''是否可以被公开看见'''
 		if self.secret:
 			return False
 		if self.father:
