@@ -7,7 +7,7 @@
 temporary_utils/
 sftp-config.json
 autoupdate.sh
-yblog/yblog/secret_key.py
+yblog/yblog/extra_infos.py
 yblog/medias/*
 
 *.crt
@@ -16,3 +16,4 @@ node_modules
 tempprok.rar
 
 .VSCodeCounter
+yblog/static

@@ -95,6 +95,8 @@ var urls = {
         comments    : (nodeid: number)  => url_from_root( `get/node/comments/${nodeid}` ) , 
         resources   : (nodeid: number)  => url_from_root( `get/node/resources/${nodeid}` ) , 
         resource_info : (nodeid: number)  => url_from_root( `get/node/resource_info/${nodeid}` ) , 
+        son_ids     : (nodeid: number)  => url_from_root( `get/node/son_ids/${nodeid}` ) ,  
+        father_id   : (nodeid: number)  => url_from_root( `get/node/father_id/${nodeid}` ) , 
     } , 
     post: {
         content : (nodeid: number) => url_from_root( `post/node/content/${nodeid}` ) , 
@@ -127,7 +129,10 @@ var Interaction = {
                     name: resouce_name
                 }
             })).data
-        }
+        } , 
+        
+        son_ids     :(nodeid?: number) => get_node_information(urls.get.son_ids    , "son_ids" , nodeid), 
+        father_id   :(nodeid?: number) => get_node_information(urls.get.father_id  , "father_id", nodeid), 
     } , 
 
     /** 所有向后端发送数据的函数。 */

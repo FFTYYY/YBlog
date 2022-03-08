@@ -6,6 +6,10 @@ def perform_checks(node):
 def checkfather(node):
     seen = set()
 
+    # 这个节点还在新建中...
+    if node.id == None:
+        return True
+
     while node is not None:
         if node in seen:
             return False

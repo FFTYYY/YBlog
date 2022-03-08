@@ -3,7 +3,7 @@ from django.db import models
 from .. import constants
 import django.utils.timezone as timezone
 from .constraints import perform_checks
-
+import json
 
 class Concept(models.Model):
 
@@ -27,6 +27,22 @@ class Node(models.Model):
 	create_time = models.DateTimeField(default = timezone.now)
 	update_time = models.DateTimeField(default = timezone.now)
 	secret = models.BooleanField(default = True)
+
+	def __str__(self):
+		return self.get_title()
+
+	def get_title(self):
+		'''这个方法效率极低，尽量避免调用。'''
+		notitle = "<NoTitle: {0}>".format(self.id)
+		if self.content.strip() == "":
+			return notitle
+		root = json.loads(self.content)
+		if (root.get("parameters") is None) or (root["parameters"].get("title") is None):
+			return notitle
+		title = root["parameters"]["title"]
+		if title.strip() == "":
+			return notitle
+		return title
 
 	# 是否可以被公开看见
 	def can_public_view(self):

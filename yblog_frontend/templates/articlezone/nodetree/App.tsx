@@ -21,6 +21,7 @@ import { SaveButton } from "../base/construction/buttons"
 import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
 import { Interaction , BackendData } from "../base/interaction"
 import { Nodetree } from "../base/nodetree"
+import { TitleWord } from "../base/construction/titleword"
 import type { info_item , raw_info_item } from "../base/nodetree"
 import { AutoStack } from "../../../lib"
 
@@ -185,7 +186,7 @@ class App extends React.Component<{},App_State>{
             } , 
         }))
         
-        return <Box
+        return <Box 
             ref = { drop }
             sx = {{
                border: (is_over && can_drop) ? "1px dashed grey" : "0" , 
@@ -197,7 +198,7 @@ class App extends React.Component<{},App_State>{
                     <Box 
                         color = {node_is_secret ? "text.secondary" : "text.primary"}
                     ><AutoStack force_direction="row">
-                        <Typography sx={{marginY: "auto"}}>node-{my_id}</Typography>
+                        <Typography sx={{marginY: "auto"}}>[{my_id}] <TitleWord node_id={my_id}/></Typography>
                         <Checkbox 
                             onClick={(e)=>{e.stopPropagation()}} // 防止点击传递到`TreeItem`上。
                             defaultChecked = {node.secret}
