@@ -33,9 +33,10 @@ export {
     alignedwords_editor , 
     delete_editor , 
     link_editor , 
-    list_editor , 
+    subwords_editor , 
     mathblock_editor , 
     mathinline_editor , 
+    formatted_editor , 
 } 
 
 var brightwords_editor = get_DefaultGroupEditor_with_AppBar( 
@@ -44,6 +45,11 @@ var brightwords_editor = get_DefaultGroupEditor_with_AppBar(
 
 
 var normalwords_editor = get_DefaultGroupEditor_with_RightBar(
+    (parameters) => parameters.label
+)
+
+
+var formatted_editor = get_DefaultGroupEditor_with_RightBar(
     (parameters) => parameters.label
 )
 
@@ -116,7 +122,7 @@ var delete_editor      = get_DefaultInlineEditor((p)=>p.label , (props)=><del>{p
 var link_editor        = get_DefaultInlineEditor((p)=>p.label , (props)=><u>{props.children}</u>)
 var mathinline_editor  = get_DefaultInlineEditor((p)=>p.label , (props)=><u>{props.children}</u>)
 
-let list_editor        = get_DefaultGroupEditor_with_RightBar( (p)=>p.label )
+let subwords_editor    = get_DefaultGroupEditor_with_RightBar( (p)=>p.label )
 
 
 var mathblock_editor = get_DefaultGroupEditor_with_RightBar(
