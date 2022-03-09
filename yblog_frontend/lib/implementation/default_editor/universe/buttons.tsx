@@ -189,5 +189,5 @@ function DefaultSwicth(props: {editor: YEditor , element: StyledNode}){
 
     }
 
-    return <AutoTooltip title = "贴合"><Switch checked={checked} onChange={switch_check_change}></Switch></AutoTooltip>
+    return <AutoTooltip title = "贴贴"><Switch checked={checked} onChange={switch_check_change}></Switch></AutoTooltip>
 }

@@ -38,8 +38,8 @@ def post_nodetree(request , node_id):
 
 @debug_convenient
 @must_login(FAIL)
-def post_node_content(request, node_id):
-
+def post_node_content(request, node_id): 
+	
 	if request.body == b"":
 		return FAIL
 

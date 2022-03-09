@@ -2,7 +2,24 @@ from django.contrib import admin
 from .models import Node , Concept , Comment , Resource
 from django import forms
 
-# TODO 子节点不能选父节点已经选过的组件。
+"""
+class NodeAdminFrom(forms.ModelForm):
+  class Meta:
+    model = Node
+    fields = "__all__"
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+
+    node = self.instance
+
+    似乎不用这样...
+    if node.father is not None:
+        used_concepts = node.father.get_all_concepts()
+        unused_concepts = set( [x.id for x in Concept.objects.all()] ) - set( [x.id for x in used_concepts] )
+        self.fields["concepts"].queryset = Concept.objects.filter(id__in = unused_concepts)
+"""
+
 class NodeAdmin(admin.ModelAdmin):
     filter_horizontal = ["concepts"]
     list_display = ["get_title" , "id" , "can_public_view" ]
