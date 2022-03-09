@@ -1,14 +1,14 @@
 from re import L
 from django.db import models
-from .. import constants
+from ..constants import short_str_length , concept_names
 import django.utils.timezone as timezone
 from .constraints import perform_checks
 import json
 from django.contrib import admin
 class Concept(models.Model):
 
-	name = models.CharField(max_length = constants.short_str_length)
-	meta = models.CharField(max_length = constants.short_str_length)
+	name = models.CharField(max_length = short_str_length)
+	meta = models.CharField(max_length = short_str_length , choices = [ [x,x] for x in concept_names ])
 	fixed_params   = models.TextField(default = "" , null = True , blank = True)
 	default_params = models.TextField(default = "" , null = True , blank = True)
 	extra_params   = models.TextField(default = "" , null = True , blank = True)
@@ -66,11 +66,9 @@ class Node(models.Model):
 
 	def get_all_concepts(self):
 		'''收集自己到根的所有组件。'''
-		ret = set()
-		f = self
-		while f is not None:
-			[ret.add(x) for x in f.concepts.all()]
-			f = f.father
+		ret = set(self.concepts.all())
+		if self.father is not None:
+			ret = ret | self.father.get_all_concepts()
 		return ret
 
 	def save(self , *args , **kwargs):
@@ -81,13 +79,20 @@ class Node(models.Model):
 			return 
 
 		self.update_time = timezone.now()
+		
+		if self.father is not None:
+			mine = set(self.concepts.all())
+			fath = self.father.get_all_concepts()
+			if len(fath - mine) > 0:
+				for x in fath - mine:
+					self.concepts.add(x)
 
 		return super().save(*args , **kwargs)
 
 
 class Comment(models.Model):
 	content = models.TextField(default = "" , null = True , blank = True)
-	name = models.CharField(max_length = constants.short_str_length , default = "" , null = True , blank = True)
+	name = models.CharField(max_length = short_str_length , default = "" , null = True , blank = True)
 	father = models.ForeignKey(Node , on_delete = models.SET_NULL , related_name = "comments" , null = True)
 
 # 存到 /MEDIA_ROOT/article_files/node_<id>/<filename> 这个文件下。
@@ -97,7 +102,7 @@ def upload_to(instance , filename):
 
 class Resource(models.Model):
 
-	name = models.CharField(max_length = constants.short_str_length)
+	name = models.CharField(max_length = short_str_length)
 	file = models.FileField( upload_to = upload_to )
 	father = models.ForeignKey(Node , on_delete = models.SET_NULL , related_name = "files" , null = True)
 

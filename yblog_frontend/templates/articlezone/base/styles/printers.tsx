@@ -168,9 +168,13 @@ var sectioner_printer = (()=>{
 			let order = orderer.get_context(props.context)
 			let element = props.element as GroupNode
 			let title = element.parameters.title
+			let alone = element.parameters.alone
+
+			// 如果是`alone`的就不显示序号惹。
+			let order_word = alone ? <></> : <PrinterStructureBoxText inline>第{num2chinese(order)}节</PrinterStructureBoxText>
+			let title_word = title ? <></> : <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText>
 			return <Divider>
-				<PrinterStructureBoxText inline>第{num2chinese(order)}节</PrinterStructureBoxText>
-				<PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText>
+				{order_word}{title_word}
 			</Divider>
 		} , 
 		enter_effect: (element: SupportNode, env: PrinterEnv): [PrinterEnv,PrinterContext] => {    
