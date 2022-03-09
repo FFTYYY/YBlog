@@ -33,9 +33,10 @@ var style_editor_printer: {
     [S.image_style.name]        : [S.image_style        , E.image_editor        , O.image_printer] , 
     [S.delete_style.name]       : [S.delete_style       , E.delete_editor       , O.delete_printer] , 
     [S.link_style.name]         : [S.link_style         , E.link_editor         , O.link_printer] , 
-    [S.list_style.name]         : [S.list_style         , E.list_editor         , O.list_printer] , 
+    [S.subwords_style.name]     : [S.subwords_style     , E.subwords_editor     , O.subwords_printer] , 
     [S.mathinline_style.name]   : [S.mathinline_style   , E.mathinline_editor   , O.mathinline_printer] , 
     [S.mathblock_style.name]    : [S.mathblock_style    , E.mathblock_editor    , O.mathblock_printer] , 
+    [S.formatted_style.name]    : [S.formatted_style    , E.formatted_editor    , O.formatted_printer] , 
 }
 
 function make_new_style(meta_name:string , name: string , fixed_params: any, default_params: any , extra_params: any){

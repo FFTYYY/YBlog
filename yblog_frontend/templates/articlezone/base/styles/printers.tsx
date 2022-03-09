@@ -70,9 +70,10 @@ export {
 	alignedwords_printer , 
 	delete_printer , 
 	link_printer , 
-	list_printer , 
+	subwords_printer , 
 	mathinline_printer , 
 	mathblock_printer , 
+	formatted_printer , 
 }
 
 /** 『昭言』表示一段需要专门的、需要强调的话。如定理。 */
@@ -146,6 +147,16 @@ var mount_printer = (()=>{
 	})
 })()
 
+/** 『格示』展示一段有固定格式的文本，比如代码。 */
+var formatted_printer = (()=>{
+	return get_DefaultBlockPrinter({
+		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
+			return <pre>{props.children}</pre>
+		} , 
+	})
+})()
+
+
 /** 『彰示』 表示展示一个完整的部分的片段，以供剖析。如引用一首诗中的一句。 */
 var display_printer = (()=>{
 	return get_DefaultBlockPrinter({
@@ -158,6 +169,7 @@ var display_printer = (()=>{
 		} , 
 	})
 })()
+
 
 /** 小节线。 */
 var sectioner_printer = (()=>{
@@ -330,7 +342,7 @@ var link_printer = (()=>{
 })()
 
 
-var list_printer = (()=>{
+var subwords_printer = (()=>{
 	let orderer = (e: GroupNode) => new OrderEffector<GroupNode>(
 		`order/${e.parameters.label}` , 
 		`order/${e.parameters.label}` , 
@@ -341,9 +353,12 @@ var list_printer = (()=>{
 		extra_effectors: [orderer] , 
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
 			let order = orderer(props.element).get_context(props.context)
+			let show_order = props.element.parameters.order
 			return <React.Fragment><AutoStack force_direction="row">
 				{/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
-				<PrinterOldLevelBox><PrinterParagraphBox>{num2chinese(order)}</PrinterParagraphBox></PrinterOldLevelBox>
+				<PrinterOldLevelBox>
+					{show_order ? <PrinterParagraphBox>{num2chinese(order)}</PrinterParagraphBox> : <></>}
+				</PrinterOldLevelBox>
 				<Box>{props.children}</Box>
 			</AutoStack></React.Fragment>
 		} , 

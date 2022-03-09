@@ -9,7 +9,7 @@ urlpatterns = [
     path("" , partial(edit_node_view,node_id = 0)) , 
     path("edit/content/<int:node_id>"           , edit_node_view) , 
     path("edit/structure/<int:node_id>"         , edit_nodetree_view) , 
-    path("edit/structure/"                      , partial(edit_nodetree_view , node_id = 0)) , 
+    path("edit/structure/"                      , partial(edit_nodetree_view , node_id = 1)) , 
     path("view/content/<int:node_id>"           , read_node_view) , 
 
     path("get/node/content/<int:node_id>"       , get_node_content) , 
