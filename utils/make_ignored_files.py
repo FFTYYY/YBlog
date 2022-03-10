@@ -14,10 +14,10 @@ def generate_key():
 	length = random.randint(20,50)
 	return "".join( random.sample(dic * length , length) )
 
-file_path =  Path(__file__) / "../../yblog/yblog/extra_infos_.py" 
+file_path =  Path(__file__) / "../../yblog/yblog/extra_infos.py" 
 file_content = '''
 SECRET_KEY = '{0}'
 DEBUG = False
 '''.format(generate_key())
 
-make_ignored_file(file_path , file_content)
+make_ignored_file(os.path.abspath(file_path) , file_content)
