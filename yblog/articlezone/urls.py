@@ -6,7 +6,7 @@ from .views.gets import  get_node_resources , get_node_resource_info , get_node_
 from functools import partial
 
 urlpatterns = [
-    path("" , partial(edit_node_view,node_id = 0)) , 
+    path("" , partial(edit_node_view,node_id = 1)) , 
     path("edit/content/<int:node_id>"           , edit_node_view) , 
     path("edit/structure/<int:node_id>"         , edit_nodetree_view) , 
     path("edit/structure/"                      , partial(edit_nodetree_view , node_id = 1)) , 
