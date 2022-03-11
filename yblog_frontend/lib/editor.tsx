@@ -27,10 +27,6 @@ export { YEditor }
 export type { EditorRenderer_Props , EditorRenderer_Func}
 
 
-function selection2text(editor , selection){
-
-}
-
 interface YEditorComponent_Props{
     editor: YEditor                 // 目标YEditor对象
     onUpdate?: (newval:any)=>void    // 当节点改变时的回调函数
@@ -162,7 +158,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
                     onClick       = {e=>{me.onFocusChange()}}
 
                     onCopy = {async (e)=>{
-                        return true // 这会使得其只向粘贴板中输入文本
+                        return true // 虽然不知道是什么原理，但是返回`true`会使得`slate`只向粘贴板中输入文本。
                     }}
                 />
             </Slate>
