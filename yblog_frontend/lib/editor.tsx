@@ -21,10 +21,15 @@ import { EditorCore } from "./core/editor_core"
 import { withAllYEditorPlugins } from "./plugins/apply_all"
 import { Renderer } from "./core/renderer"
 import { GlobalInfoProvider , GlobalInfo } from "./globalinfo"
+import { add_nodes } from "./behaviours"
 
 export { YEditor }
 export type { EditorRenderer_Props , EditorRenderer_Func}
 
+
+function selection2text(editor , selection){
+
+}
 
 interface YEditorComponent_Props{
     editor: YEditor                 // 目标YEditor对象
@@ -59,6 +64,10 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
      */
     constructor(props: YEditorComponent_Props){
         super(props)
+
+        this.state = {
+            clipboard: undefined
+        }
 
         this.editor = props.editor
         this.core = this.editor.core
@@ -129,7 +138,10 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
         return <span {...slate_attributes}><R {...subprops}></R></span>
     }
     render(){
+        // TODO 更好的复制粘贴
+        let clipboard = navigator.clipboard
         let me = this
+        let slate = me.editor.slate
         let context = {
             editor: me.editor , 
             slate: me.slate , 
@@ -148,6 +160,10 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
                     renderElement = {me.renderElement.bind(me)}
                     renderLeaf    = {me.renderLeaf.bind(me)}
                     onClick       = {e=>{me.onFocusChange()}}
+
+                    onCopy = {async (e)=>{
+                        return true // 这会使得其只向粘贴板中输入文本
+                    }}
                 />
             </Slate>
         </GlobalInfoProvider>
