@@ -13,6 +13,8 @@ import {
     get_DefaultStructEditor_with_RightBar , 
     YEditor , 
 
+    EditorUnselecableBox , 
+
     set_node , 
 } from "../../../../lib"
 import { Interaction , url_from_root } from "../interaction"
@@ -37,10 +39,15 @@ export {
     mathblock_editor , 
     mathinline_editor , 
     formatted_editor , 
+    subsection_editor , 
 } 
 
 var brightwords_editor = get_DefaultGroupEditor_with_AppBar( 
     (parameters) => parameters.title
+)
+
+var subsection_editor = get_DefaultGroupEditor_with_AppBar( 
+    (parameters) => `次节：${parameters.title}`
 )
 
 
@@ -120,7 +127,7 @@ var alignedwords_editor = get_DefaultStructEditor_with_RightBar(
 
 var delete_editor      = get_DefaultInlineEditor((p)=>p.label , (props)=><del>{props.children}</del>)
 var link_editor        = get_DefaultInlineEditor((p)=>p.label , (props)=><u>{props.children}</u>)
-var mathinline_editor  = get_DefaultInlineEditor((p)=>p.label , (props)=><u>{props.children}</u>)
+var mathinline_editor  = get_DefaultInlineEditor((p)=>p.label , (props)=><>{props.children}</>)
 
 let subwords_editor    = get_DefaultGroupEditor_with_RightBar( (p)=>p.label )
 

@@ -37,6 +37,7 @@ var style_editor_printer: {
     [S.mathinline_style.name]   : [S.mathinline_style   , E.mathinline_editor   , O.mathinline_printer] , 
     [S.mathblock_style.name]    : [S.mathblock_style    , E.mathblock_editor    , O.mathblock_printer] , 
     [S.formatted_style.name]    : [S.formatted_style    , E.formatted_editor    , O.formatted_printer] , 
+    [S.subsection_style.name]   : [S.subsection_style   , E.subsection_editor   , O.subsection_printer] , 
 }
 
 function make_new_style(meta_name:string , name: string , fixed_params: any, default_params: any , extra_params: any){
@@ -69,6 +70,7 @@ function withNecessaryStyle(core: EditorCore): EditorCore{
     core.add_style(S.newpara_style      )
     core.add_style(S.sectioner_style    )
     core.add_style(S.ender_style        )
+    core.add_style(S.subsection_style   )
     return core
 }
 
@@ -78,14 +80,16 @@ function withNecessaryEditor(editor: YEditor): YEditor{
     editor.update_renderer(E.newpara_editor       , "support"  , S.newpara_style.name)
     editor.update_renderer(E.sectioner_editor     , "support"  , S.sectioner_style.name)
     editor.update_renderer(E.ender_editor         , "support"  , S.ender_style.name)
+    editor.update_renderer(E.subsection_editor    , "group"    , S.subsection_style.name)
     return editor
 }
 function withNecessaryPrinter(printer: Printer): Printer{
-    printer.update_renderer(O.paragraph_printer      , "paragraph")
+    printer.update_renderer(O.paragraph_printer     , "paragraph")
     
     printer.update_renderer(O.space_printer         , "support"  , S.newpara_style.name)
     printer.update_renderer(O.sectioner_printer     , "support"  , S.sectioner_style.name)
     printer.update_renderer(O.ender_printer         , "support"  , S.ender_style.name)
+    printer.update_renderer(O.subsection_printer    , "group"    , S.subsection_style.name)
     return printer
 }
 

@@ -28,15 +28,14 @@ function MathJaxContext(props: {children: any}){
                         displayMath: [["${MATHJAX_BLOCK_START}", "${MATHJAX_BLOCK_END}"]] , 
                     },
                     svg: {
-                        fontCache: "global"
+                        fontCache: "global" , 
+                        scale: 0.8 , 
                     } , 
                     ignoreHtmlClass: "mathjax_ignore" , 
                     processHtmlClass: "mathjax_process" , 
                     preRemoveClass: "mathjax_preview" , 
                 }
             </script>
-
-            ${""/** mathjax的引入。 */}
         `)
         // TODO 不知道是否应该用cdn版本
         import ("mathjax/es5/tex-svg.js")

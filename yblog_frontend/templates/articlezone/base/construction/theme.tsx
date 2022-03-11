@@ -22,7 +22,7 @@ const my_theme: ThemeOptions = {
                 fontFamily: "STXihei" , 
             },
             title: {
-                fontFamily: "STXinwei" , 
+                fontFamily: "SimHei" , 
             } , 
             structure: {
                 fontFamily: "SimHei" , 
