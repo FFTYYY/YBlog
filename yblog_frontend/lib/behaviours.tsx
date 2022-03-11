@@ -6,7 +6,7 @@ import { StyledNode } from "./core/elements"
 import { Transforms, Node, Editor } from "slate"
 import { YEditor } from "./editor"
 
-export { set_node , replace_nodes , add_nodes , add_nodes_before , move_node , delete_node , add_nodes_after }
+export { set_node , replace_nodes , add_nodes , add_nodes_before , move_node , delete_node , add_nodes_after , delete_node_by_path }
 
 /** 这个函数修改节点的某个属性。相当于 slate.Transforms.setNodes */
 function set_node<T extends Node = StyledNode>(editor: YEditor, node: T, new_val: Partial<T>){
@@ -25,6 +25,12 @@ function set_node<T extends Node = StyledNode>(editor: YEditor, node: T, new_val
 function delete_node(editor: YEditor, node: Node){
     Transforms.removeNodes(editor.slate , {at: node2path(editor.core.root , node)})
 }
+
+/** 这个函数删除一个节点。 */
+function delete_node_by_path(editor: YEditor, path: number[]){
+    Transforms.removeNodes(editor.slate , {at: path})
+}
+
 
 function move_node(editor: YEditor , node_from: Node, position_to: number[]){
     Transforms.moveNodes(editor.slate , {

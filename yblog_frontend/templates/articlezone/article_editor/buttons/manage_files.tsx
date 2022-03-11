@@ -17,10 +17,10 @@ import {
 	AutoTooltip , 
 	AutoIconButton , 
 } 
-from "../../../lib"
-import { Interaction } from "../base/interaction"
-import { FlexibleItem } from "../base/construction/framework"
-import { PostSnackbar } from "../base/construction/snackbar"
+from "../../../../lib"
+import { Interaction } from "../../base/interaction"
+import { FlexibleItem } from "../../base/construction/framework"
+import { PostSnackbar } from "../../base/construction/snackbar"
 
 export {FileManageButton}
 

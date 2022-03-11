@@ -38,7 +38,8 @@ import { my_theme } from "../base/construction/theme"
 import { SaveButton } from "../base/construction/buttons"
 import { withAllPlugins , set_normalize_status } from "./plugins"
 import { MathJaxContext } from "../base/mathjax"
-import { FileManageButton } from "./manage_files"
+import { FileManageButton } from "./buttons/manage_files"
+import { HandleMathBuutton } from "./buttons/handle_math"
 
 interface App_Props{
 
@@ -188,6 +189,7 @@ class App extends  React.Component<App_Props , App_State>{
 			}}>
 				<SaveButton save_func={me.save_content.bind(me)}/>
 				<FileManageButton />
+				<HandleMathBuutton editor={me.state.editor} />
 			</FlexibleDrawer>
 
 			<MainPart sx={{
