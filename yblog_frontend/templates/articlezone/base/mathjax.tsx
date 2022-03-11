@@ -29,7 +29,7 @@ function MathJaxContext(props: {children: any}){
                     },
                     svg: {
                         fontCache: "global" , 
-                        scale: 0.8 , 
+                        scale: 0.9 , 
                     } , 
                     ignoreHtmlClass: "mathjax_ignore" , 
                     processHtmlClass: "mathjax_process" , 
