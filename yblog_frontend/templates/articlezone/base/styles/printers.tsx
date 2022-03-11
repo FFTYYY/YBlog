@@ -74,7 +74,23 @@ export {
 	mathinline_printer , 
 	mathblock_printer , 
 	formatted_printer , 
+	subsection_printer , 
 }
+
+/** 『次节』表示小节内的一个小小节。 */
+var subsection_printer = (()=>{
+	let printer = get_DefaultBlockPrinter({
+		outer: (props) => {
+			let title = props.element.parameters.title
+			return <PrinterPartBox>
+			<PrinterPartBox subtitle_like>{title}</PrinterPartBox>
+			{props.children}
+		</PrinterPartBox>
+		} , 
+	})
+	return printer
+})()
+
 
 /** 『昭言』表示一段需要专门的、需要强调的话。如定理。 */
 var brightwords_printer = (()=>{
@@ -87,9 +103,12 @@ var brightwords_printer = (()=>{
 			let my_order = num2chinese(order[order.length - 1])
 			let title = props.element.parameters.title
 			let alias = props.element.parameters.alias
+			
 			return <PrinterStructureBoxText inline>{title} {my_order}{alias ? ` (${alias})` : ""}</PrinterStructureBoxText>
 		} , 
-		outer: (props) => <PrinterPartBox subtitle_like>{props.children}</PrinterPartBox> , 
+		outer: (props) => {
+			return <PrinterPartBox subtitle_like>{props.children}</PrinterPartBox>
+		} , 
 	})
 	return printer
 })()
@@ -184,7 +203,7 @@ var sectioner_printer = (()=>{
 
 			// 如果是`alone`的就不显示序号惹。
 			let order_word = alone ? <></> : <PrinterStructureBoxText inline>第{num2chinese(order)}节</PrinterStructureBoxText>
-			let title_word = title ? <></> : <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText>
+			let title_word = title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>
 			return <Divider>
 				{order_word}{title_word}
 			</Divider>
@@ -248,13 +267,14 @@ var delete_printer = (()=>{
 
 var mathinline_printer = (()=>{
 
-	  
 	return get_DefaultInlinePrinter<InlineNode>({
 		outer: (props: {element: InlineNode , context: PrinterContext, children: any}) => {
 			/** 这是一个比较蛋疼的写法，取消原来的children并直接将element序列化。
 			 * 这里的问题在于，如果直接写成${props.children}$，则printer里为了定位元素所添加的空白<span>会阻碍mathjax的处理。
 			 */
-			return <MathJaxInline>{Node.string(props.element)}</MathJaxInline>
+			return <Box component="span" sx={{paddingX: "0.1rem"}}>
+				<MathJaxInline>{Node.string(props.element)}</MathJaxInline>
+			</Box>
 		}
 	})
 })()

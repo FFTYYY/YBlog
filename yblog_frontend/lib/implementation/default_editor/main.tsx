@@ -93,7 +93,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 		this.editor.core.remove_notificatioon(`editor-${this.notification_key}`)
 	}
 	render() {
-
+		
 		let icons = {
 			group: CalendarViewDayIcon , 
 			inline: CloseFullscreenIcon , 

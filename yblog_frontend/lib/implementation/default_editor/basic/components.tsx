@@ -104,7 +104,7 @@ const EditorComponentPaper = (props: PaperProps & {is_inline?: boolean}) =><Pape
             ...(props.is_inline
                 ? { // 行内
                     display : "inline-block" ,
-                    height  :  (theme) => theme.editor.typography.body.lineHeight , 
+                    minHeight  :  (theme) => theme.editor.typography.body.lineHeight , 
                     color   : (theme) => theme.palette.secondary.dark , 
                     marginX : (theme) => theme.editor.margins.small , 
                 } : { // 块级
