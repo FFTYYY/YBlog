@@ -31,6 +31,9 @@ interface YEditorComponent_Props{
     editor: YEditor                 // 目标YEditor对象
     onUpdate?: (newval:any)=>void    // 当节点改变时的回调函数
     onFocusChange?: ()=>void          // 点击或者修改
+    onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void
+    onKeyUp?: (e: React.KeyboardEvent<HTMLDivElement>) => void
+    onKeyPress?: (e: React.KeyboardEvent<HTMLDivElement>) => void
 }
 
 /** Slate 需要的渲染函数的 props 。 */
@@ -51,6 +54,9 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     core: EditorCore
     slate: ReactEditor
     onUpdate: (v: any) => void
+    onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void
+    onKeyUp: (e: React.KeyboardEvent<HTMLDivElement>) => void
+    onKeyPress: (e: React.KeyboardEvent<HTMLDivElement>) => void
     onFocusChange: ()=>void
     // lazy_update_value: DoSomething
 
@@ -70,6 +76,9 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
         this.slate = this.editor.slate
 
         this.onUpdate = props.onUpdate || ( (v) => {} ) // 这个函数用于通知外部自身的改变
+        this.onKeyDown = props.onKeyDown || ( (v) => {} ) 
+        this.onKeyUp = props.onKeyUp || ( (v) => {} ) 
+        this.onKeyPress = props.onKeyPress || ( (v) => {} ) 
         this.onFocusChange = props.onFocusChange || ( () => {} ) // 这个函数用于通知外部自身的改变
     }
 
@@ -160,6 +169,10 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
                     onCopy = {async (e)=>{
                         return true // 虽然不知道是什么原理，但是返回`true`会使得`slate`只向粘贴板中输入文本。
                     }}
+
+                    onKeyDown = {e=>me.onKeyDown(e)}
+                    onKeyUp = {e=>me.onKeyUp(e)}
+                    onKeyPress = {e=>{me.onKeyPress(e)}}
                 />
             </Slate>
         </GlobalInfoProvider>
@@ -227,16 +240,16 @@ class YEditor extends Renderer<EditorRenderer_Func>{
      * @param nodetype 节点类型，必须是有样式节点之一。
      * @param stylename 样式名。
      */
-    get_onClick(nodetype: StyleType, stylename: string): (e:any)=>void{
+    get_onClick(nodetype: StyleType, stylename: string): ()=>void{
         let me = this
         let root = me.core.root
         if(nodetype == "group" || nodetype == "support" || nodetype == "struct")
         {        
             let style = me.core.get_style(nodetype , stylename)
             if(style == undefined)
-                return (e:any) => undefined
+                return () => undefined
 
-            return (e:any) => {
+            return () => {
                 let node = style.makenode()
                 Transforms.insertNodes(me.slate , node)
             }
@@ -245,9 +258,9 @@ class YEditor extends Renderer<EditorRenderer_Func>{
         if(nodetype == "inline"){
             let style = me.core.get_style("inline" , stylename)
             if(style == undefined)
-                return (e:any) => undefined
+                return () => undefined
 
-            return (e:any)=>{
+            return ()=>{
                 let selection = me.slate.selection
                 let flag = true
                 if(selection != undefined)
@@ -272,7 +285,7 @@ class YEditor extends Renderer<EditorRenderer_Func>{
 
         }
 
-        return (e:any) => undefined
+        return () => undefined
     }
 }
 
