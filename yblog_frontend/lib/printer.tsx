@@ -77,7 +77,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         let me = this
 
         this.notification_key = Math.floor( Math.random() * 233333 )
-        let lazy_not = new DoSomething( (new_root: GroupNode)=>me.setState({root: new_root}) , 1000)
+        let lazy_not = new DoSomething( (new_root: GroupNode)=>me.setState({root: new_root}) , 5000)
         this.core.add_notificatioon( (new_root: GroupNode)=>lazy_not.go(new_root) , `printer-${this.notification_key}`)
         this.setState({root: this.core.root})
     }

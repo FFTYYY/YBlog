@@ -10,11 +10,15 @@ let MATHJAX_INLINE_END = "_MATHJAX_INLINE_END"
 let MATHJAX_BLOCK_START = "_MATHJAX_BLOCK_START"
 let MATHJAX_BLOCK_END = "_MATHJAX_BLOCK_END"
 
-function flush_mathjax(){
+var flush_math = new DoSomething(()=>{
     let MathJax = (window as any).MathJax
     if(MathJax != undefined && MathJax.typesetPromise != undefined){
         MathJax.typesetPromise()
     }
+} , 3000)
+
+function flush_mathjax(){
+    flush_math.go()
 }
 
 function MathJaxContext(props: {children: any}){
@@ -59,7 +63,7 @@ function MathJaxInline(props: {children: any}){
 
     React.useEffect(()=>{
         flush_mathjax()
-    })
+    } , [props.children] )
 
     return <span className = "mathjax_process">{MATHJAX_INLINE_START}{props.children}{MATHJAX_INLINE_END}</ span>
 }
@@ -68,7 +72,7 @@ function MathJaxBlock(props: {children: any}){
     
     React.useEffect(()=>{
         flush_mathjax()
-    })
+    } , [props.children] )
     return <div className = "mathjax_process">{MATHJAX_BLOCK_START}{props.children}{MATHJAX_BLOCK_END}</div>
 }
 
