@@ -227,7 +227,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 		this.onMount()	
 
 		this.notification_key = Math.floor( Math.random() * 233333 )
-		let layzy_update = new DoSomething( ()=>{me.forceUpdate()} , 1000)
+		let layzy_update = new DoSomething( ()=>{me.forceUpdate()} , 5000)
 		this.editor.core.add_notificatioon(()=>layzy_update.go() , `editor-${this.notification_key}`)
 	}
 	componentWillUnmount(): void {
