@@ -1,1 +1,0 @@
-//在具体的template中应用config，不在这应用
