@@ -61,7 +61,7 @@ type GroupRelationType = "chaining" | "separating"
 type ValidParameterLeaf = string | number | boolean
 
 /** 合法的节点参数对象。 */
-type ValidParameter = {[key:string]: ValidParameter | ValidParameterLeaf}
+type ValidParameter<LeafType = ValidParameterLeaf> = {[key:string]: ValidParameter | ValidParameterLeaf}
 
 
 

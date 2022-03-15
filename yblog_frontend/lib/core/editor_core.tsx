@@ -119,6 +119,9 @@ interface Style<ST extends StyleType>{
     /** 这个样式的参数原型。 */
     parameter_prototype: ValidParameter , 
 
+    /** 这个样式的参数注释 */
+    parameter_labels?: ValidParameter<string> , 
+
     /** 这个样式的`flags`。 */
     flags: StyledNodeFlag , 
 
@@ -137,10 +140,17 @@ class InlineStyle implements Style<"inline">{
     parameter_prototype: ValidParameter 
     flags: StyledNodeFlag
     makenode: ()=>InlineNode
-    constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
+    parameter_labels: ValidParameter<string>
+    constructor(
+        name: string , 
+        parameter_prototype: ValidParameter , 
+        parameter_labels: ValidParameter<string> = {} , 
+        flags: StyledNodeFlag = {}, 
+    ){
         this.name = name
         this.parameter_prototype = parameter_prototype
         this.flags = flags
+        this.parameter_labels = parameter_labels
         this.makenode = ()=>inline_prototype(name , parameter_prototype , flags)
     }
 }
@@ -153,10 +163,17 @@ class GroupStyle implements Style<"group">{
     parameter_prototype: ValidParameter 
     flags: StyledNodeFlag
     makenode: ()=>GroupNode
-    constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
+    parameter_labels: ValidParameter<string>
+    constructor(
+        name: string , 
+        parameter_prototype: ValidParameter , 
+        parameter_labels: ValidParameter<string> = {} , 
+        flags: StyledNodeFlag = {}, 
+    ){
         this.name = name
         this.parameter_prototype = parameter_prototype
         this.flags = flags
+        this.parameter_labels = parameter_labels
         this.makenode = ()=>group_prototype(name , parameter_prototype , flags)
     }
 }
@@ -169,10 +186,17 @@ class StructStyle implements Style<"struct">{
     parameter_prototype: ValidParameter 
     flags: StyledNodeFlag
     makenode: ()=>StructNode
-    constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
+    parameter_labels: ValidParameter<string>
+    constructor(
+        name: string , 
+        parameter_prototype: ValidParameter , 
+        parameter_labels: ValidParameter<string> = {} , 
+        flags: StyledNodeFlag = {}, 
+    ){
         this.name = name
         this.parameter_prototype = parameter_prototype
         this.flags = flags
+        this.parameter_labels = parameter_labels
         this.makenode = ()=>struct_prototype(name , parameter_prototype , flags)
     }
 }
@@ -185,10 +209,17 @@ class SupportStyle implements Style<"support">{
     parameter_prototype: ValidParameter 
     flags: StyledNodeFlag
     makenode: ()=>SupportNode
-    constructor(name: string , parameter_prototype: any , flags: StyledNodeFlag = {}){
+    parameter_labels: ValidParameter<string>
+    constructor(
+        name: string , 
+        parameter_prototype: ValidParameter , 
+        parameter_labels: ValidParameter<string> = {} , 
+        flags: StyledNodeFlag = {}, 
+    ){
         this.name = name
         this.parameter_prototype = parameter_prototype
         this.flags = flags
+        this.parameter_labels = parameter_labels
         this.makenode = ()=>support_prototype(name , parameter_prototype , flags)
     }
 }
@@ -200,10 +231,11 @@ class AbstractStyle implements Style<"abstract">{
     parameter_prototype: ValidParameter 
     flags: StyledNodeFlag
     makehidden: () => GroupNode
-
-    constructor(name: string , parameter_prototype: any){
+    parameter_labels: ValidParameter<string>
+    constructor(name: string , parameter_prototype: ValidParameter , parameter_labels: ValidParameter<string> = {}){
         this.name = name
         this.parameter_prototype = parameter_prototype
+        this.parameter_labels = parameter_labels
         this.flags = {}
         
         this.makehidden = ()=>group_prototype(name , parameter_prototype)  
