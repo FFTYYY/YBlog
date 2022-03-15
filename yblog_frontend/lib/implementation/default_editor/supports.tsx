@@ -27,6 +27,7 @@ from "@mui/icons-material"
 import { Node } from "slate"
 
 import { SupportNode , paragraph_prototype} from "../../core/elements"
+import type { ValidParameter} from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 
 import {  AutoStack , AutoTooltip , Direction } from "../basic"
@@ -87,7 +88,7 @@ function DefaultNewParagraphEditor(props: EditorRenderer_Props){
 }
 
 /** 这个函数返回一个默认的分界符组件。 */
-function get_DefaultSplitterEditor(get_title: (parameters:any)=>string = (parameters:any)=>parameters.name){
+function get_DefaultSplitterEditor({get_title = (p:any)=>p.title as string}: {get_title?: (p:any)=>string}){
     return (props: EditorRenderer_Props) => {
 
         let editor = props.editor
@@ -125,20 +126,25 @@ function get_DefaultSplitterEditor(get_title: (parameters:any)=>string = (parame
  * @param get_url 如何从参数中获得要显示元素的url，默认为取 url 这个参数。
  * @param render_element 如何在编辑视图中渲染元素。默认为用 <img> 来渲染。
 */
-function get_DefaultDisplayerEditor(
-    name?: string , 
-    is_empty:((parameters: any)=>boolean)=((p)=>!!(p["url"])) , 
-    render_element: ((props: {parameters: any})=>any) = ((props)=><img src={props.parameters.url}/> ), 
-){
+function get_DefaultDisplayerEditor({
+    get_label       = (p)=>p.label as string , 
+    is_empty        = (p)=>!!(p["url"]) , 
+    render_element  = (props)=><img src={props.parameters.url as string}/>, 
+} : {
+    get_label       ?: (p: ValidParameter)=>string , 
+    is_empty        ?: (p: ValidParameter)=>boolean , 
+    render_element  ?: (props: {parameters: ValidParameter})=>any , 
+}){
     return (props: EditorRenderer_Props) => {
         let editor = props.editor
         let element = props.element as SupportNode
         let parameters = element.parameters
+        let label = get_label(parameters)
         let R = render_element
 
         return <ComponentPaper is_inline>{props.children}<UnselecableBox>
             <AutoStack force_direction="row">
-                {is_empty(parameters) ? <R parameters={parameters} /> : name }
+                {is_empty(parameters) ? <R parameters={parameters} /> : label }
                 <AutoStackedPopperWithButton
                     close_on_otherclick
                     button_class = {IconButton}
@@ -150,9 +156,9 @@ function get_DefaultDisplayerEditor(
                         } , 
                         children: <KeyboardArrowDownIcon sx={{height: "1rem"}}/> ,
                     }} 
-                    title = {"展开" + (name ? ` / ${name}` : "") }
+                    title = {"展开" + (label ? ` / ${label}` : "") }
                 >
-                    <Typography>{name}</Typography>
+                    <Typography>{label}</Typography>
                     <DefaultParameterEditButton editor={editor} element={element} />
                     <NewParagraphButton         editor={editor} element={element} />
                     <DefaultCloseButton editor={editor} element={element} />

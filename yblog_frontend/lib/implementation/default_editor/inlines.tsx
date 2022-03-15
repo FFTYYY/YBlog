@@ -22,6 +22,7 @@ import {
 
 import { InlineStyle , EditorCore} from "../../core/editor_core"
 import { InlineNode , StyledNode } from "../../core/elements"
+import type { ValidParameter } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
 
@@ -47,17 +48,22 @@ export { get_DefaultInlineEditor }
  * @remark 现在有个bug，在内联节点的末尾输入中文的时候会出错。
  * 见https://github.com/ianstormtaylor/slate/issues/4811
  */
-function get_DefaultInlineEditor(
-    name_maker: (parameters: any)=>string , 
-    surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <React.Fragment>{props.children}</React.Fragment> , 
-    rightbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
-): EditorRenderer_Func{
+function get_DefaultInlineEditor({
+    get_label       = (p)=>p.label as string , 
+    surrounder      = (props) => <React.Fragment>{props.children}</React.Fragment> , 
+    rightbar_extra  = (props) => <></> , 
+}: {
+    get_label       ?: (p: ValidParameter)=>string , 
+    surrounder      ?: (props: UniversalComponent_Props & {children: any}) => any , 
+    rightbar_extra  ?: (props: UniversalComponent_Props) => any  , 
+
+}): EditorRenderer_Func{
     return (props: EditorRenderer_Props) => {
         let element = props.element as InlineNode
         let editor  = props.editor
         let Extra = rightbar_extra
         let SUR = surrounder
-        let name = name_maker(element.parameters)
+        let label = get_label(element.parameters)
 
         return <ComponentPaper is_inline>
             <AutoStack force_direction="row">
@@ -78,9 +84,9 @@ function get_DefaultInlineEditor(
                                 } , 
                                 children: <KeyboardArrowDownIcon sx={{height: "1rem"}}/> ,
                             }} 
-                            title = {"展开" + (name ? ` / ${name}` : "") }
+                            title = {"展开" + (label ? ` / ${label}` : "") }
                         >
-                            <Typography>{name}</Typography>
+                            <Typography>{label}</Typography>
                             <DefaultParameterEditButton editor={editor} element={element}/>
                             <DefaultHiddenEditorButtons      editor={editor} element={element} />
                             <DefaultCloseButton editor={editor} element={element} />

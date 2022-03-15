@@ -44,6 +44,7 @@ import {
 import { Node, Editor } from "slate"
 
 import { StructNode , StyledNode , paragraph_prototype , get_node_type } from "../../core/elements"
+import type { ValidParameter } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
 import { add_nodes , set_node , add_nodes_before , move_node } from "../../behaviours"
@@ -73,38 +74,30 @@ let StructPaper = (props: PaperProps & {element: StructNode}) => <ComponentPaper
     sx = { props.element.relation == "chaining" ? { marginTop: "0" } : {} }
 />
 
-/**                 <ComponentEditorBox autogrow>
-                    <SUR editor={editor} element={element}>
-                        <TableRow>{widths.map((width,idx)=>{
-                        return <React.Fragment key={idx} >
-                                <TableCell> 
-                                {props.children[idx]}</TableCell>
-                            </React.Fragment>
-                        }
-                    )}</TableRow>
-                </SUR>
-                </ComponentEditorBox>                
- */
-
 /** 这个函数返回一个默认的group组件，但是各种选项等都被折叠在右侧的一个小按钮内。用于比较小的group。
  * @param get_title 从参数列表获得title的方法。
  * @param rightbar_extra 要额外向添加的组件。
  * @param surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
  */
-function get_DefaultStructEditor_with_RightBar(
-    get_title: ((parameters:any)=>string) = ((parameters:any)=>parameters.title) ,
-    get_widths: ((num_children: number, parameters:any)=>number[]) = (n,p)=>[] ,
-    rightbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
-    surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <>{props.children}</>
-): EditorRenderer_Func{
+function get_DefaultStructEditor_with_RightBar({
+    get_label       = ((p:ValidParameter)=>p.title as string)   ,
+    get_widths      = (n,p)=>[]                                 ,
+    rightbar_extra  = (props) => <></>                          , 
+    surrounder      = (props) => <>{props.children}</>          , 
+} : {
+    get_label       ?: ((p:ValidParameter)=>string)                         ,
+    get_widths      ?: ((num_children: number, parameters:any)=>number[])   ,
+    rightbar_extra  ?: (props: UniversalComponent_Props) => any             , 
+    surrounder      ?: (props: UniversalComponent_Props & {children: any}) => any , 
+}): EditorRenderer_Func{
 
     return (props: EditorRenderer_Props) => {
         let element = props.element as StructNode
-        let title = get_title(element.parameters)
-        let editor = props.editor
-        let E = rightbar_extra
-        let SUR = surrounder
+        let editor  = props.editor
+        let label   = get_label(element.parameters)
+        let E       = rightbar_extra
+        let SUR     = surrounder
 
         let children = element.children
         
@@ -116,7 +109,6 @@ function get_DefaultStructEditor_with_RightBar(
         let sum = widths.reduce( (s,x)=>s+x , 0 ) // 求所有元素的和。
 
         let [nc_val, set_nc_val] = React.useState<number>(element.num_children) // 用来输入有多少个子节点的输入框。
-
 
         React.useEffect(()=>{
             // TODO 这个operation的名字应该规范一下...
@@ -144,7 +136,7 @@ function get_DefaultStructEditor_with_RightBar(
                     
                 <UnselecableBox>
                     <SimpleAutoStack>
-                        <StructureTypography variant="overline">{title}</StructureTypography>
+                        <StructureTypography variant="overline">{label}</StructureTypography>
                         <E editor={editor} element={element}/>
                         <AutoStackedPopperWithButton
                             close_on_otherclick
@@ -164,9 +156,9 @@ function get_DefaultStructEditor_with_RightBar(
                             <DefaultCloseButton         editor={editor} element={element} />
                             <NewParagraphButton         editor={editor} element={element} />
                             <TextField 
-                                sx={{width: "5rem"}}
-                                type = "number" 
-                                label = "number of children"  
+                                sx      ={{width: "5rem"}}
+                                type    = "number" 
+                                label   = "number of children"  
                                 defaultValue = {element.num_children}
                                 onChange = {e=>{
                                     set_nc_val(parseInt(e.target.value))

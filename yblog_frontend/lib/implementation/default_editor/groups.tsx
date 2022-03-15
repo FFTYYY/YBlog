@@ -39,6 +39,7 @@ import {
 import { Node, Editor } from "slate"
 
 import { GroupNode , StyledNode , paragraph_prototype , get_node_type } from "../../core/elements"
+import type { ValidParameter } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
 import { add_nodes , set_node , add_nodes_before , move_node } from "../../behaviours"
@@ -69,20 +70,25 @@ let GroupPaper = (props: PaperProps & {element: GroupNode}) => <ComponentPaper {
 />
 
 /** 这个函数返回一个默认的带应用栏的 group 组件。用于比较大的 group 组件。
- * @param get_title 从参数列表获得 title 的方法。
+ * @param get_label 从参数列表获得 title 的方法。
  * @param appbar_extra 要额外向 appbar 里添加的组件。
  * @param surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
  */
-function get_DefaultGroupEditor_with_AppBar(
-    get_title:((parameters:any)=>string) = ((parameters:any)=>parameters.title) , 
-    appbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
-    surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <>{props.children}</>
-): EditorRenderer_Func{
+function get_DefaultGroupEditor_with_AppBar({
+    get_label     = (p:ValidParameter)=>p.label as string, 
+    appbar_extra  = (props) => <></> , 
+    surrounder    = (props) => <>{props.children}</>
+}: {
+    get_label       ?: (p:ValidParameter)=>string , 
+    appbar_extra    ?: (props: UniversalComponent_Props) => any, 
+    surrounder      ?: (props: UniversalComponent_Props & {children: any}) => any ,
+}): EditorRenderer_Func{
     // 渲染器
     return (props: EditorRenderer_Props) => {
         let element = props.element as GroupNode
-        let title = get_title(element.parameters)
+        let label   = get_label(element.parameters)
+
         let editor = props.editor
         let E = appbar_extra
         let SUR = surrounder
@@ -91,7 +97,7 @@ function get_DefaultGroupEditor_with_AppBar(
             <AutoStack force_direction="column">
                 <UnselecableBox>
                     <Toolbar sx={{overflow: "auto"}}><AutoStack>
-                        <StructureTypography>{title}</StructureTypography>
+                        <StructureTypography>{label}</StructureTypography>
                         <DefaultParameterEditButton editor={editor} element={element} />         
                         <DefaultHiddenEditorButtons editor={editor} element={element} />
                         <DefaultSwicth              editor={editor} element={element} />
@@ -110,20 +116,24 @@ function get_DefaultGroupEditor_with_AppBar(
 }
 
 /** 这个函数返回一个默认的group组件，但是各种选项等都被折叠在右侧的一个小按钮内。用于比较小的group。
- * @param get_title 从参数列表获得title的方法。
+ * @param get_label 从参数列表获得title的方法。
  * @param rightbar_extra 要额外向添加的组件。
  * @param surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
 */
-function get_DefaultGroupEditor_with_RightBar(
-    get_title:((parameters:any)=>string) = ((parameters:any)=>parameters.title) , 
-    rightbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
-    surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <>{props.children}</>
-): EditorRenderer_Func{
+function get_DefaultGroupEditor_with_RightBar({
+    get_label       = (p:ValidParameter)=>p.label as string, 
+    rightbar_extra  = (props) => <></> , 
+    surrounder      = (props) => <>{props.children}</>
+}: {
+    get_label       ?: (p:ValidParameter)=>string , 
+    rightbar_extra  ?: (props: UniversalComponent_Props) => any, 
+    surrounder      ?: (props: UniversalComponent_Props & {children: any}) => any ,
+}): EditorRenderer_Func{
 
     return (props: EditorRenderer_Props) => {
         let element = props.element as GroupNode
-        let title = get_title(element.parameters)
+        let label = get_label(element.parameters)
         let editor = props.editor
         let E = rightbar_extra
         let SUR = surrounder
@@ -135,7 +145,7 @@ function get_DefaultGroupEditor_with_RightBar(
                 </ComponentEditorBox>                
                 <UnselecableBox sx={{textAlign: "center"}}>
                     <SimpleAutoStack>
-                        <StructureTypography variant="overline">{title}</StructureTypography>
+                        <StructureTypography variant="overline">{label}</StructureTypography>
                         <E editor={editor} element={element}/>
                         <AutoStackedPopperWithButton
                             close_on_otherclick

@@ -77,6 +77,8 @@ export {
 	subsection_printer , 
 }
 
+// TODO 重写printer，把所有title prefix 啥的全都用上。
+
 /** 『次节』表示小节内的一个小小节。 */
 var subsection_printer = (()=>{
 	let printer = get_DefaultBlockPrinter({
@@ -101,8 +103,8 @@ var brightwords_printer = (()=>{
 		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
 			let order = orderer(props.element).get_context(props.context)
 			let my_order = num2chinese(order[order.length - 1])
-			let title = props.element.parameters.title
-			let alias = props.element.parameters.alias
+			let title = props.element.parameters.title  // 标题
+			let alias = props.element.parameters.prefix // 前缀
 			
 			return <PrinterStructureBoxText inline>{title} {my_order}{alias ? ` (${alias})` : ""}</PrinterStructureBoxText>
 		} , 
@@ -121,14 +123,14 @@ var normalwords_printer = (()=>{
 		extra_effectors: [orderer] , 
 		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
 			let order = orderer(props.element).get_context(props.context)
-			let use_order = props.element.parameters.order
-			let starting = props.element.parameters.starting
-			return <PrinterStructureBoxText inline>{use_order ? `[${order}] ` : ""}{starting}</PrinterStructureBoxText>
+			let ordering = props.element.parameters.ordering // 是否使用标号
+			let prefix = props.element.parameters.prefix // 前缀
+			return <PrinterStructureBoxText inline>{ordering ? `[${order}] ` : ""}{prefix}</PrinterStructureBoxText>
 		} , 
 
 		inject_suf: (props: {element: GroupNode , context: PrinterContext}) => {
-			let ending = props.element.parameters.ending
-			return <PrinterStructureBoxText inline leftmargin>{ending}</PrinterStructureBoxText>
+			let suffix = props.element.parameters.suffix // 后缀
+			return <PrinterStructureBoxText inline leftmargin>{suffix}</PrinterStructureBoxText>
 		} , 
 		outer: (props) => <PrinterPartBox>{props.children}</PrinterPartBox> , 
 	})
@@ -140,12 +142,12 @@ var normalwords_printer = (()=>{
 var followwords_printer = (()=>{
 	return get_DefaultBlockPrinter({
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
-			let enter = props.element.parameters.enter
-			let exit = props.element.parameters.exit
+			let title = props.element.parameters.title // 标题
+			let close = props.element.parameters.close // 结尾
 			return <AutoStack force_direction="column">
-				{enter ? <PrinterStructureBoxText>{enter}</PrinterStructureBoxText> : <></>}
+				{title ? <PrinterStructureBoxText>{title}</PrinterStructureBoxText> : <></>}
 				<PrinterNewLevelBox><PrinterWeakenText>{props.children}</PrinterWeakenText></PrinterNewLevelBox>
-				{exit  ? <PrinterStructureBoxText>{exit   }</PrinterStructureBoxText> : <></>}
+				{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
 			</AutoStack>
 		} , 
 	})
@@ -155,12 +157,12 @@ var followwords_printer = (()=>{
 var mount_printer = (()=>{
 	return get_DefaultBlockPrinter({
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
-			let enter  = props.element.parameters.enter
-			let exit = props.element.parameters.exit			
+			let title = props.element.parameters.title // 标题
+			let close = props.element.parameters.close // 结尾
 			return <AutoStack force_direction="column">
-				{enter ? <PrinterStructureBoxText>{enter}</PrinterStructureBoxText> : <></>}
+				{title ? <PrinterStructureBoxText>{title}</PrinterStructureBoxText> : <></>}
 				<PrinterDisplayText align="center">{props.children}</PrinterDisplayText>
-				{exit ? <PrinterStructureBoxText align="right">{exit}</PrinterStructureBoxText> : <></>}
+				{close ? <PrinterStructureBoxText align="right">{close}</PrinterStructureBoxText> : <></>}
 			</AutoStack>
 		} , 
 	})
@@ -226,7 +228,6 @@ var sectioner_printer = (()=>{
 var ender_printer = (()=>{
 	return make_print_renderer(
 		(props: PrinterRenderFunc_Props) => {
-			let element = props.element as GroupNode
 			return <Divider></Divider>
 		}
 	)
@@ -252,7 +253,7 @@ var space_printer = (()=>{
 var alignedwords_printer = (()=>{
 	return get_DefaultStructPrinter({
 		small_margin_enter: true ,  // 将其作为类似于段落的对象，不要前后空一大坨。
-		small_margin_exit: true , 
+		small_margin_exit : true , 
 		get_widths: (element: StructNode) => (element.parameters.widths as string).split(",").map(x=>x=="" ? 1 : parseInt(x))
 	})
 })()
@@ -282,18 +283,20 @@ var mathinline_printer = (()=>{
 var mathblock_printer = (()=>{
 	return get_DefaultBlockPrinter({
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
-			let value = Node.string(props.element)
-			let exit = props.element.parameters.exit || ""
+			let value 	= Node.string(props.element)
+			let suffix 	= props.element.parameters.suffix || ""
+			let close 	= props.element.parameters.close || ""
 			let environ = props.element.parameters.environ
 			let environ_enter = environ ? `\\begin{${environ}}` : ""
 			let environ_exit  = environ ? `\\end{${environ}}`   : ""
 
-			value = `${environ_enter}${value}\\text{${exit}}${environ_exit}`
+			value = `${environ_enter}${value}\\text{${suffix}}${environ_exit}`
 
 			// TODO anchor 的滚动动作会被mathjax刷新给打断。
 			return <React.Fragment>
 				{props.context.anchor}
 				<MathJaxBlock>{value}</MathJaxBlock>
+				{close}
 			</React.Fragment>
 		} , 
 	})
@@ -302,12 +305,12 @@ var mathblock_printer = (()=>{
 var image_printer = (()=>{
 	return get_DefaultInlinePrinter<SupportNode>({
 		outer: (props: {element: SupportNode , context: PrinterContext, children: any}) => {
-			let p = props.element.parameters as {target: string , internal: boolean , width: number , height: number}
+			let p = props.element.parameters
 			let [ url , set_url ] = React.useState("")
 
 			React.useEffect(()=>{(async ()=>{
-				if(p.internal){
-					let resource_info = await Interaction.get.resource_info(p.target)
+				if(p.type == "internal"){
+					let resource_info = await Interaction.get.resource_info(p.target as string)
 					if(!resource_info.url){
 						set_url("")
 					}
@@ -317,7 +320,7 @@ var image_printer = (()=>{
 					// 其实直接`set_url(resource_info.url)`也行，套一层`url_from_root`主要是为了调试方便。
 				}
 				else{
-					set_url(p.target)
+					set_url(p.target as string)
 				}
 			})()})
 	
@@ -339,8 +342,9 @@ var link_printer = (()=>{
 		outer: (props: {element: InlineNode , context: PrinterContext, children: any}) => {
 
 			let target = props.element.parameters.target as string
+			let type = props.element.parameters.type as string
 
-			if(props.element.parameters.index){// 如果是跳转到本文内。
+			if(type == "index"){// 如果是跳转到本文内。
 				let taridx = Number(target)
 			
 				return <GlobalInfo.Consumer>{value => {
@@ -373,11 +377,11 @@ var subwords_printer = (()=>{
 		extra_effectors: [orderer] , 
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
 			let order = orderer(props.element).get_context(props.context)
-			let show_order = props.element.parameters.order
+			let ordering = props.element.parameters.ordering
 			return <React.Fragment><AutoStack force_direction="row">
 				{/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
 				<PrinterOldLevelBox>
-					{show_order ? <PrinterParagraphBox>{num2chinese(order)}</PrinterParagraphBox> : <></>}
+					{ordering ? <PrinterParagraphBox>{num2chinese(order)}</PrinterParagraphBox> : <></>}
 				</PrinterOldLevelBox>
 				<Box>{props.children}</Box>
 			</AutoStack></React.Fragment>
