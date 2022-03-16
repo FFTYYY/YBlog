@@ -1,7 +1,7 @@
 from django.http import HttpResponse , JsonResponse , Http404
 import json
 from ..models import Node , Comment , Resource
-from ..constants import short_str_length
+from ..constants import SHORT_STR_LENGTH
 from .utils import debug_convenient , JSONDecode , must_login , node_can_view
 from django import forms
 import pdb

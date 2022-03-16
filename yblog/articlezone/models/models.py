@@ -1,17 +1,16 @@
 from re import L
 from django.db import models
-from ..constants import short_str_length , concept_names
+from ..constants import SHORT_STR_LENGTH , CONCEPT_METAS
 import django.utils.timezone as timezone
 from .constraints import perform_checks
 import json
 from django.contrib import admin
 class Concept(models.Model):
 
-	name = models.CharField(max_length = short_str_length)
-	meta = models.CharField(max_length = short_str_length , choices = [ [x,x] for x in concept_names ])
-	fixed_params   = models.TextField(default = "" , null = True , blank = True)
-	default_params = models.TextField(default = "" , null = True , blank = True)
-	extra_params   = models.TextField(default = "" , null = True , blank = True)
+	name = models.CharField(max_length = SHORT_STR_LENGTH)
+	meta = models.CharField(max_length = SHORT_STR_LENGTH , choices = [ [x,x] for x in CONCEPT_METAS ])
+	fixed_params   = models.TextField(default = "{'_meta': {'functions':[]}}" , null = True , blank = True)
+	default_params = models.TextField(default = "{}" , null = True , blank = True)
 
 	def __str__(self):
 		return self.name
@@ -92,7 +91,7 @@ class Node(models.Model):
 
 class Comment(models.Model):
 	content = models.TextField(default = "" , null = True , blank = True)
-	name = models.CharField(max_length = short_str_length , default = "" , null = True , blank = True)
+	name = models.CharField(max_length = SHORT_STR_LENGTH , default = "" , null = True , blank = True)
 	father = models.ForeignKey(Node , on_delete = models.SET_NULL , related_name = "comments" , null = True)
 
 # 存到 /MEDIA_ROOT/article_files/node_<id>/<filename> 这个文件下。
@@ -102,7 +101,7 @@ def upload_to(instance , filename):
 
 class Resource(models.Model):
 
-	name = models.CharField(max_length = short_str_length)
+	name = models.CharField(max_length = SHORT_STR_LENGTH)
 	file = models.FileField( upload_to = upload_to )
 	father = models.ForeignKey(Node , on_delete = models.SET_NULL , related_name = "files" , null = True)
 
