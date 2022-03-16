@@ -1,6 +1,6 @@
 import json
 from django.http import HttpResponse , JsonResponse , Http404
-from django.conf import settings
+from django.conf import settings 
 
 def node_can_view(request , node):
     '''判断一个节点是否可以输出到前端。如果已经登录，则输出true，否则根据model的secret属性而定。'''

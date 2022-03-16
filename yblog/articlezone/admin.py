@@ -1,25 +1,11 @@
 from django.contrib import admin
+from matplotlib import widgets
 from .models import Node , Concept , Comment , Resource
 from django import forms
-
-"""
-class NodeAdminFrom(forms.ModelForm):
-  class Meta:
-    model = Node
-    fields = "__all__"
-
-  def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-
-    node = self.instance
-
-    似乎不用这样...
-    if node.father is not None:
-        used_concepts = node.father.get_all_concepts()
-        unused_concepts = set( [x.id for x in Concept.objects.all()] ) - set( [x.id for x in used_concepts] )
-        self.fields["concepts"].queryset = Concept.objects.filter(id__in = unused_concepts)
-"""
-
+from django_json_widget.widgets import JSONEditorWidget
+from functools import partial
+from .constants import CONCEPT_METAS
+from YTools.universe.beautiful_str import beautiful_str
 class NodeAdmin(admin.ModelAdmin):
     filter_horizontal = ["concepts"]
     list_display = ["get_title" , "id" , "can_public_view" ]
@@ -60,8 +46,62 @@ class NodeAdmin(admin.ModelAdmin):
             }]
         ]
 
+class MyJSONEditorWidget(JSONEditorWidget):
+    def __init__(self , *args , **kwargs):
+        kwargs.update({
+            "height": "auto" , 
+        })
+        super().__init__(*args , **kwargs)
+
+class ConceptAdminForm(forms.ModelForm):
+  class Meta:
+    model = Concept
+    fields = "__all__"
+    widgets = {
+        "fixed_params": MyJSONEditorWidget , 
+        "default_params": MyJSONEditorWidget , 
+    }
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+
 class ConceptAdmin(admin.ModelAdmin):
-    pass
+    form = ConceptAdminForm
+    def get_fieldsets(self, request, object):
+
+        meta_name = ""
+        default_info = ""
+        while True:
+            if object is None or object.id is None:
+                break
+            meta_name = object.meta
+
+            meta_info = CONCEPT_METAS.get(meta_name)
+            if meta_info is None:
+                break
+            params , labels = meta_info
+
+            default_info = beautiful_str(["参数名" , "默认值" , "介绍"] , [
+                [pname , params.get(pname) , labels.get(pname)]
+                for pname in params
+            ])
+
+            break
+
+
+        return [
+            ["Base" , {
+                "fields": ["name" , "meta"] , 
+            }] , 
+            ["Parameters" , {
+                "fields": ["fixed_params" , "default_params"] , 
+                "description": "<pre style=\"font-family:monospace\">" + """
+                    概念 {meta_name} 的参数列表：
+                    {default_info}
+                """.format(meta_name = meta_name , default_info = default_info).strip() + "</pre>"
+            }]
+        ]
+
 
 class CommentAdmin(admin.ModelAdmin):
     pass
