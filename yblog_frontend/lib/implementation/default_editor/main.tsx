@@ -80,6 +80,10 @@ class DefaultButtonbar extends React.Component<{
 		}
 	}
 
+	get_style_list(typename: StyledNodeType){
+		return Object.keys(this.editor.proxies.style_renderers[typename])
+	}
+
 	get_ref(type_idx?: number , styl_idx?: number){
 		if(type_idx == undefined || styl_idx == undefined){
 			return undefined
@@ -104,11 +108,11 @@ class DefaultButtonbar extends React.Component<{
 	}
 
 	normalize_idx(type_idx: number, styl_idx: number){
-		const type_order = ["group" , "inline" , "support" , "struct"]
+		const type_order = ["group" , "inline" , "support" , "struct"] as ["group" , "inline" , "support" , "struct"]
 		const typenum = type_order.length
 		type_idx = ((type_idx % typenum) + typenum) % typenum
 
-		let stylnum = Object.keys(this.editor.core.styles[type_order[type_idx]]).length
+		let stylnum = this.get_style_list(type_order[type_idx]).length
 		styl_idx = ((styl_idx % stylnum) + stylnum) % stylnum
 		return [type_idx , styl_idx]
 	}
@@ -124,9 +128,9 @@ class DefaultButtonbar extends React.Component<{
 
 	// 假装点击了当前位置
 	force_click(){
-		const type_order = ["group" as "group" , "inline" as "inline" , "support" as "support" , "struct" as "struct"]
+		const type_order = ["group" , "inline" , "support" , "struct"] as ["group" , "inline" , "support" , "struct"]
 		let cur_typename = type_order[this.state.cur_type_idx]
-		let cur_stylename = Object.keys(this.editor.core.styles[cur_typename])[this.state.cur_styl_idx]
+		let cur_stylename = this.get_style_list(cur_typename)[this.state.cur_styl_idx]
 		this.editor.get_onClick(cur_typename , cur_stylename)()
 	}
 
@@ -152,8 +156,9 @@ class DefaultButtonbar extends React.Component<{
 		}
 
 		let me = this
+
 		return <React.Fragment>
-			{["group" , "inline" , "support" , "struct"].map ( (typename: StyleType)=>{
+			{["group" , "inline" , "support" , "struct"].map ( (typename: StyledNodeType)=>{
 				let Icon = icons[typename]
 				return <React.Fragment key={typename}><AutoStackedPopperWithButton
 					poper_props = {{
@@ -166,7 +171,7 @@ class DefaultButtonbar extends React.Component<{
 					}}
 					title = {typename}
 				>{
-					Object.keys(me.editor.core.styles[typename]).map( (stylename , idx) => 
+					Object.keys(me.get_style_list(typename)).map( (stylename , idx) => 
 						<React.Fragment key={idx}>
 							<Button 
 								onClick = {e => me.editor.get_onClick(typename , stylename)()}
@@ -354,7 +359,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 			}}>
 				<AutoStack force_direction="column">
 					<DefaultParameterEditButton editor = {me.editor} element = {me.editor.core.root} />
-					<DefaultHiddenEditorButtons editor={me.editor} element={me.editor.core.root} />
+					<DefaultHiddenEditorButtons editor = {me.editor} element = {me.editor.core.root} />
 					{me.props.extra_buttons}
 					<Divider />
 					<DefaultButtonbar editor={me.editor} selecting={me.is_selecting()} ref={me.buttonbar_ref}/>

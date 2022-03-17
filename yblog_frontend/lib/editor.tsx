@@ -15,7 +15,7 @@ import {
 } from "@mui/material"
 
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./core/elements"
-import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , StyleType , NodeType } from "./core/elements"
+import type { StyledNodeType , InlineNode , GroupNode , StructNode , SupportNode , StyleType , NodeType } from "./core/elements"
 import { get_node_type , is_styled , new_struct_child } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
 import { withAllYEditorPlugins } from "./plugins/apply_all"
@@ -24,7 +24,7 @@ import { GlobalInfoProvider , GlobalInfo } from "./globalinfo"
 import { add_nodes } from "./behaviours"
 
 export { YEditor }
-export type { EditorRenderer_Props , EditorRenderer_Func}
+export type { EditorRenderer_Props , EditorRenderer_Func , EditorMakeNode_Func}
 
 
 interface YEditorComponent_Props{
@@ -180,6 +180,9 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     
 }
 
+type EditorMakeNode_Func = (param: any)=>Node
+type EditorProxy = {makenode: EditorMakeNode_Func , parameter_interface: any}
+
 
 /** Editor 的 renderer 可以接受的参数列表。 */
 interface EditorRenderer_Props{
@@ -194,6 +197,9 @@ type EditorRenderer_Func = (props: EditorRenderer_Props) => any
 
 /** 这个组件定义一个编辑器。 */
 class YEditor extends Renderer<EditorRenderer_Func>{
+
+    /** `Editor`在用户界面提供的不是真正的`style`，因此需要用`proxy`来转换成真正的`style`。 */
+    proxies: Renderer<EditorProxy>
 
     /** 所有需要『稍后应用』的操作。 */
     suboperations: { [subnode_idx: number]: (fat: YEditor)=>void }
@@ -217,6 +223,22 @@ class YEditor extends Renderer<EditorRenderer_Func>{
 
         this.slate  = withAllYEditorPlugins( withHistory( withReact(createEditor() as ReactEditor) ) ) as ReactEditor
         this.suboperations = {}
+
+        this.proxies = new Renderer<EditorProxy>(core , {
+            text      : {makenode: ()=>undefined , parameter_interface: {}} , 
+            inline    : {makenode: ()=>undefined , parameter_interface: {}} , 
+            paragraph : {makenode: ()=>undefined , parameter_interface: {}} , 
+            group     : {makenode: ()=>undefined , parameter_interface: {}} , 
+            struct    : {makenode: ()=>undefined , parameter_interface: {}} , 
+            support   : {makenode: ()=>undefined , parameter_interface: {}} , 
+        })
+    }
+
+    update_proxy(proxy: EditorProxy, prox_nodetype: StyledNodeType, prox_stylename?: string){
+        return this.proxies.update_renderer(proxy, prox_nodetype, prox_stylename)
+    }
+    get_proxy(prox_nodetype: StyledNodeType, prox_stylename?: string): EditorMakeNode_Func{
+        return this.proxies.get_renderer(prox_nodetype, prox_stylename)
     }
 
     /** 这个函数为编辑器的某个节点添加一个「稍后修改」。大多数情况是一个子编辑器进行的修改，为了防止焦点丢失等问题无法立刻应用。
@@ -240,25 +262,22 @@ class YEditor extends Renderer<EditorRenderer_Func>{
      * @param nodetype 节点类型，必须是有样式节点之一。
      * @param stylename 样式名。
      */
-    get_onClick(nodetype: StyleType, stylename: string): ()=>void{
+    get_onClick(prox_nodetype: StyledNodeType, prox_stylename: string): ()=>void{
         let me = this
         let root = me.core.root
-        if(nodetype == "group" || nodetype == "support" || nodetype == "struct")
-        {        
-            let style = me.core.get_style(nodetype , stylename)
-            if(style == undefined)
-                return () => undefined
 
+
+        /** 创建节点的函数。 */
+        let makenode = this.proxies.get_renderer(prox_nodetype , prox_stylename) || ( ()=>undefined )
+
+        if(prox_nodetype == "group" || prox_nodetype == "support" || prox_nodetype == "struct")
+        {        
             return () => {
-                let node = style.makenode()
+                let node = makenode()
                 Transforms.insertNodes(me.slate , node)
             }
         }        
-
-        if(nodetype == "inline"){
-            let style = me.core.get_style("inline" , stylename)
-            if(style == undefined)
-                return () => undefined
+        if(prox_nodetype == "inline"){
 
             return ()=>{
                 let selection = me.slate.selection
@@ -266,7 +285,7 @@ class YEditor extends Renderer<EditorRenderer_Func>{
                 if(selection != undefined)
                     flag = JSON.stringify(selection.anchor) == JSON.stringify(selection.focus) // 是否没有选择
 
-                let node: InlineNode = style.makenode()
+                let node: InlineNode = makenode()
 
                 if(flag){ // 如果没有选择任何东西，就新建节点。
                     Transforms.insertNodes(me.slate , node)
