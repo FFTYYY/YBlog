@@ -31,7 +31,7 @@ import { ReactEditor } from "slate-react"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 import { Node , Transforms , Element } from "slate"
 
-import { make_new_style , apply_style , withNecessaryEditor , withNecessaryPrinter , withNecessaryStyle} from "../base/styles"
+import { make_new_style , apply_style , withAllStyles , withAllPrinters , withAllEditors , withNeccesaryProxies} from "../base/styles"
 import { Interaction } from "../base/interaction"
 import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
 import { my_theme } from "../base/construction/theme"
@@ -58,12 +58,12 @@ class App extends  React.Component<App_Props , App_State>{
 	constructor(props: App_Props){
 		super(props)
 
-		this.core    = withNecessaryStyle( new EditorCore([] , {
+		this.core    = withAllStyles( new EditorCore([] , {
 			title: "" , 
 		}) )
 		this.state = {
-			editor: withAllPlugins( withNecessaryEditor( new YEditor( this.core ) ) ), 
-			printer: withNecessaryPrinter( new Printer( this.core ) ) , 
+			editor: withAllPlugins( withNeccesaryProxies( withAllEditors( new YEditor( this.core ) ) ) ), 
+			printer: withAllPrinters( new Printer( this.core ) ) , 
 		}
 
 		this.printer_ref = React.createRef()
@@ -74,13 +74,14 @@ class App extends  React.Component<App_Props , App_State>{
 		let my_editor = this.state.editor
 		let my_printer = this.state.printer
 		let node_concepts = await Interaction.get.concept() // 从后端获得所有概念。
-		for(let [name , meta_name , fixed_params , default_params , extra_params] of node_concepts){
-			let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params , extra_params)
-			this.core.add_style(style)
-			if(style.type != "abstract"){
-				my_editor.update_renderer (editor  , style.type , style.name)
-				my_printer.update_renderer(printer , style.type , style.name)
-			}
+		for(let [name , meta_name , fixed_params , default_params ] of node_concepts){
+
+			// let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params , extra_params)
+			// this.core.add_style(style)
+			// if(style.type != "abstract"){
+			// 	my_editor.update_renderer (editor  , style.type , style.name)
+			// 	my_printer.update_renderer(printer , style.type , style.name)
+			// }
 		}
 		this.setState({editor: my_editor , printer: my_printer})
 

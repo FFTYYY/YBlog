@@ -94,6 +94,9 @@ type StyledNodeBase = {
 
     /** 节点的 flag 。 */
     flags: StyledNodeFlag
+
+    /** 为了编辑方便需要记录的额外信息。 */
+    _editor_info: {}
 }
 
 /** 一个合法的行内样式的节点。 */

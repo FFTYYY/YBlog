@@ -13,7 +13,7 @@ def get_node_concepts(request , node_id):
 
 	return JsonResponse({
 		"concepts": [
-			[c.name , c.meta , JSONDecode(c.fixed_params) , JSONDecode(c.default_params) , JSONDecode(c.extra_params)]
+			[c.name , c.meta , JSONDecode(c.fixed_params) , JSONDecode(c.default_params) ]
 			for c in node.get_all_concepts()
 		]
 	})
