@@ -1,5 +1,7 @@
 /** 
- * 这个文件定义一个抽象的编辑器，描述了一个编辑器可以使用的所有样式，以及具体的节点树。
+ * 这个文件定义一个**渲染**一个完整的文档所需要的最小信息。
+ * 包括：节点树的结构，以及样式列表。
+ * 注意，这个节点树的结构是最终的，也就是
  * 注意，这个文件只描述抽象的样式，不涉及具体如何渲染。
  * @module
 */
@@ -19,6 +21,7 @@ import type {
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./elements"
 
 export {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle}
+export type { Style }
 
 type RootNotification_Function = (new_root: GroupNode)=>void
 

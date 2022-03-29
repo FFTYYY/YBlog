@@ -6,7 +6,7 @@ import { Printer , EditorCore } from  "../../../../lib"
 import { GroupStyle , InlineStyle , AbstractStyle , SupportStyle , StructStyle ,  } from "../../../../lib"
 import type { EditorRenderer_Func , PrinterRenderer , EditorMakeNode_Func} from "../../../../lib"
 
-export {make_new_style , apply_style , withAllStyles , withAllPrinters , withAllEditors , withNeccesaryProxies}
+export { withAllStyles , withAllPrinters , withAllEditors , withNeccesaryProxies }
 
 var type2class = {
     group: GroupStyle , 
@@ -54,7 +54,7 @@ function withAllPrinters(printer: Printer): Printer{
             continue
         }
         let printer_func = style_editor_printer[name][2]
-        printer.update_renderer(printer_func , style.type , style.name)
+        printer.set(printer_func , style.type , style.name)
     }
     return printer
 }
@@ -65,7 +65,7 @@ function withAllEditors(editor: YEditor): YEditor{
             continue
         }
         let editor_func = style_editor_printer[name][1]
-        editor.update_renderer(editor_func , style.type , style.name)
+        editor.set(editor_func , style.type , style.name)
     }
     return editor
 }
@@ -75,34 +75,41 @@ function withNeccesaryProxies(editor: YEditor): YEditor{
     let nes_styles = [S.newpara_style , S.sectioner_style , S.ender_style , S.subsection_style]
 
     for(let style of nes_styles){
-        editor.update_proxy(()=>style.makenode() , style.type , style.name)
+        //editor.set(()=>style.makenode , style.type , style.name)
     }
     return editor
 }
 
-
-function make_new_style(meta_name:string , name: string , fixed_params: any, default_params: any , extra_params: any){
+// TODO unfinished
+function make_proxer(meta_name:string , name: string , fixed_params: any, default_params: any){
     let [meta_style , meta_editor , meta_printer] = style_editor_printer[meta_name]
-    let meta_type = type2class[meta_style.type]
+    return ()=>{ }
+}
+
+// function make_new_style(meta_name:string , proxy_name: string , fixed_params: any, default_params: any){
+//     let [meta_style , meta_editor , meta_printer] = style_editor_printer[meta_name]
+//     let meta_type = type2class[meta_style.type]
     
-    let parameters = {...meta_style.parameter_prototype , ...fixed_params , ...default_params , ...extra_params}
-    let flags = meta_style.flags 
+//     let parameters = {...meta_style.parameter_prototype , ...default_params} // TODO 使用 fixed_params
+//     let parameter_labels = meta_style.parameter_labels
+//     let flags = meta_style.flags 
 
-    let style = new meta_type(name , parameters , flags)
+//     let style = new meta_type(meta_name , parameters , parameter_labels , flags)
+//     style.proxy = name
 
-    return [style , meta_editor , meta_printer]
-}
+//     return [style , meta_editor , meta_printer]
+// }
 
-function apply_style(
-    core:EditorCore , 
-    editor: YEditor , 
-    printer: Printer , 
-    style: any , 
-    style_editor: EditorRenderer_Func , 
-    style_printer: PrinterRenderer , 
-): [EditorCore , YEditor , Printer]{
-    core.add_style(style)
-    editor.update_renderer (style_editor  , style.type , style.name)
-    printer.update_renderer(style_printer , style.type , style.name)
-    return [core , editor , printer]
-}
+// function apply_style(
+//     core:EditorCore , 
+//     editor: YEditor , 
+//     printer: Printer , 
+//     style: any , 
+//     style_editor: EditorRenderer_Func , 
+//     style_printer: PrinterRenderer , 
+// ): [EditorCore , YEditor , Printer]{
+//     core.add_style(style)
+//     editor.update_renderer (style_editor  , style.type , style.name)
+//     printer.update_renderer(style_printer , style.type , style.name)
+//     return [core , editor , printer]
+// }

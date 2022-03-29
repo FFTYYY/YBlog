@@ -31,7 +31,7 @@ import { ReactEditor } from "slate-react"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 import { Node , Transforms , Element } from "slate"
 
-import { make_new_style , apply_style , withAllStyles , withAllPrinters , withAllEditors , withNeccesaryProxies} from "../base/styles"
+import { withAllStyles , withAllPrinters , withAllEditors , withNeccesaryProxies , make_new_style} from "../base/styles"
 import { Interaction } from "../base/interaction"
 import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
 import { my_theme } from "../base/construction/theme"
@@ -40,6 +40,7 @@ import { withAllPlugins , set_normalize_status } from "./plugins"
 import { MathJaxContext } from "../base/mathjax"
 import { FileManageButton } from "./buttons/manage_files"
 import { HandleMathBuutton } from "./buttons/handle_math"
+
 
 interface App_Props{
 
@@ -62,7 +63,7 @@ class App extends  React.Component<App_Props , App_State>{
 			title: "" , 
 		}) )
 		this.state = {
-			editor: withAllPlugins( withNeccesaryProxies( withAllEditors( new YEditor( this.core ) ) ) ), 
+			editor: withAllPlugins( withAllEditors( new YEditor( this.core ) ) ), 
 			printer: withAllPrinters( new Printer( this.core ) ) , 
 		}
 
@@ -76,12 +77,13 @@ class App extends  React.Component<App_Props , App_State>{
 		let node_concepts = await Interaction.get.concept() // 从后端获得所有概念。
 		for(let [name , meta_name , fixed_params , default_params ] of node_concepts){
 
-			// let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params , extra_params)
-			// this.core.add_style(style)
-			// if(style.type != "abstract"){
-			// 	my_editor.update_renderer (editor  , style.type , style.name)
-			// 	my_printer.update_renderer(printer , style.type , style.name)
-			// }
+			let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params)
+
+			this.core.add_style(style)
+			if(style.type != "abstract"){
+				my_editor.update_renderer (editor  , style.type , style.name)
+				my_printer.update_renderer(printer , style.type , style.name)
+			}
 		}
 		this.setState({editor: my_editor , printer: my_printer})
 

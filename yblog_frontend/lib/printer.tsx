@@ -6,8 +6,8 @@ import { text_prototype , paragraph_prototype , inline_prototype , group_prototy
 import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode  } from "./core/elements"
 import type { StyleType , NodeType } from "./core/elements"
 import { get_node_type , is_styled } from "./core/elements"
-import { EditorCore } from "./core/editor_core"
-import { Renderer } from "./core/renderer"
+import { EditorCore } from "./core/core"
+import { StyleCollector } from "./core/stylecollector"
 import { GlobalInfo , GlobalInfoProvider } from "./globalinfo"
 import { DoSomething } from "./implementation/utils"
 
@@ -141,7 +141,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
 
         let type = get_node_type(element)
         if(type == "text"){
-            let R = printer.get_renderer("text")
+            let R = printer.get("text")
             let anchor = <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
             let text:any = (element as has_text).text
             return <React.Fragment>
@@ -157,7 +157,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
             name = (element as StyledNode).name
         }
         
-        let R = printer.get_renderer(type , name)
+        let R = printer.get(type , name)
         let anchor = <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
         // TODO 注意 anchor 会储存到context中，这是一个不好的设计。
         return <React.Fragment>
@@ -194,7 +194,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         }
         
         let printer = this.printer
-        let R = printer.get_renderer(type , name)
+        let R = printer.get(type , name)
 
         // 获得进入时的活动结果。
         let [_env , _context] = R.enter_effect(node , now_env)
@@ -266,7 +266,7 @@ function make_print_renderer(
     }
 }
 
-class Printer extends Renderer<PrinterRenderer>{
+class Printer extends StyleCollector<PrinterRenderer>{
 
     static Component = _PrinterComponent
 
