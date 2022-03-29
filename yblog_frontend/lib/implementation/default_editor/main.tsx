@@ -81,7 +81,7 @@ class DefaultButtonbar extends React.Component<{
 	}
 
 	get_style_list(typename: StyledNodeType){
-		return Object.keys(this.editor.proxies.style_renderers[typename])
+		return Object.keys(this.editor.styled_vals[typename])
 	}
 
 	get_ref(type_idx?: number , styl_idx?: number){

@@ -21,7 +21,6 @@ export {
 	group_prototype , 
 	struct_prototype , 
 	support_prototype , 
-	is_valid_parameter_leaf , 
 	is_styled , 
 	has_children , 
 	is_paragraph , 
@@ -34,7 +33,7 @@ export type {
 	StyleType , 
 	NodeType , 
 	GroupRelationType , 
-	ValidParameterLeaf , 
+    ValidParameterItem , 
 	ValidParameter , 
 	StyledNodeFlag , 
 	StyledNodeBase , 
@@ -43,6 +42,12 @@ export type {
 	GroupNode , 
 	StructNode , 
 	SupportNode , 
+}
+
+interface Typename2Type{
+    string: string
+    number: number
+    boolean: boolean
 }
 
 /**  全体可能的节点样式类型。 */
@@ -57,11 +62,11 @@ type NodeType = StyledNodeType | "paragraph" | "text"
 /** 所有可能的段组连接方式。 */
 type GroupRelationType = "chaining" | "separating"
 
-/** 参数可以接受的叶子节点。 */
-type ValidParameterLeaf = string | number | boolean
+/** 参数可以接受的叶子节点的类型。 */
+type ValidParameterItem = {type: "string" , val: string} | {type: "number" , val: number} | {type: "boolean" , val: boolean}
 
 /** 合法的节点参数对象。 */
-type ValidParameter<LeafType = ValidParameterLeaf> = {[key:string]: ValidParameter | ValidParameterLeaf}
+type ValidParameter<Item = ValidParameterItem> = {[key:string]: Item}
 
 
 
@@ -95,8 +100,8 @@ type StyledNodeBase = {
     /** 节点的 flag 。 */
     flags: StyledNodeFlag
 
-    /** 为了编辑方便需要记录的额外信息。 */
-    _editor_info: {}
+    /** 编辑器使用何种代理来编辑这个节点。 */
+    proxy: string
 }
 
 /** 一个合法的行内样式的节点。 */
@@ -165,6 +170,7 @@ function inline_prototype(name: string, parameter_proto: ValidParameter, flags:S
         children: [ text_prototype("") ] , 
         hiddens: [] , 
         flags: flags , 
+        proxy: "" , 
     }
 }
 
@@ -181,6 +187,7 @@ function group_prototype(name: string , parameter_proto: ValidParameter, flags: 
         children: [paragraph_prototype()] , 
         hiddens: [] , 
         flags: flags , 
+        proxy: "" , 
     }
 }
 
@@ -198,6 +205,7 @@ function struct_prototype(name: string , parameter_proto: ValidParameter , flags
         children: [new_struct_child()] , 
         hiddens: [] , 
         flags: {} , 
+        proxy: "" , 
     }
 }
 
@@ -211,12 +219,8 @@ function support_prototype(name: string , parameter_proto: ValidParameter , flag
         children: [ text_prototype() ],
         hiddens: [] , 
         flags: flags , 
+        proxy: "" , 
     }
-}
-
-/** 这个函数判断参数是否是合法的参数的叶节点。 */
-function is_valid_parameter_leaf(o:any): o is ValidParameterLeaf{
-    return typeof(o) == "string" || typeof(o) == "number" || typeof(o) == "boolean"
 }
 
 /** 这个函数判断一个节点是否是样式节点。 */

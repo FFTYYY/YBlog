@@ -27,8 +27,8 @@ import {
 
 import { Node, Editor } from "slate"
 
-import { StyledNode , is_valid_parameter_leaf} from "../../../core/elements"
-import type { ValidParameter , ValidParameterLeaf } from "../../../core/elements"
+import { StyledNode } from "../../../core/elements"
+import type { ValidParameter , ValidParameterItem } from "../../../core/elements"
 import { YEditor } from "../../../editor"
 import { is_same_node , node2path } from "../../utils"
 import { set_node , delete_node } from "../../../behaviours"
@@ -41,6 +41,12 @@ export {
 export type {
     UniversalComponent_Props
 }
+
+/** 这个函数判断参数是否是合法的参数的叶节点。 */
+function is_valid_parameter_leaf(o:any): o is ValidParameterItem{
+    return typeof(o) == "string" || typeof(o) == "number" || typeof(o) == "boolean"
+}
+
 
 interface DefaultParameterContainer_Props{
     initval: ValidParameter
@@ -97,7 +103,7 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
      * @param props.val 参数的当前值。
      * @param onChange 当值改变时的回调函数。
      */
-    renderValue(props: {name: string, val: ValidParameterLeaf , onChange: (newval:ValidParameterLeaf)=>void}){
+    renderValue(props: {name: string, val: ValidParameterItem , onChange: (newval:ValidParameterItem)=>void}){
 
         let name = props.name
         let val = props.val
@@ -168,7 +174,7 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
                         key     = {subname}
                         name    = {subname} 
                         val     = {subval} 
-                        onChange = {(newsubval:ValidParameterLeaf)=>{
+                        onChange = {(newsubval:ValidParameterItem)=>{
                             newval[subname] = newsubval
                             props.onChange(newval)
                         }} 

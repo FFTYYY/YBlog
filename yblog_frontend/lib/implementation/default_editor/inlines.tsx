@@ -20,7 +20,7 @@ import {
 } from "@mui/icons-material"
 
 
-import { InlineStyle , EditorCore} from "../../core/editor_core"
+import { InlineStyle , EditorCore} from "../../core/core"
 import { InlineNode , StyledNode } from "../../core/elements"
 import type { ValidParameter } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
