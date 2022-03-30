@@ -171,7 +171,7 @@ class DefaultParameterWithEditor extends React.Component<UniversalComponent_Prop
         let props = this.props
         let element = props.element
 
-        let has_prox = !(element.proxy_info.proxy_name )
+        let has_prox = !!( element.proxy_info.proxy_name )
 
         /** 这个函数将参数的更新应用到编辑器上。 */
         function temp_update_value(newval: ValidParameter){
@@ -185,7 +185,7 @@ class DefaultParameterWithEditor extends React.Component<UniversalComponent_Prop
                 )
             })
         }
-    
+        
         return <DefaultParameterContainer
             initval = { has_prox ? element.proxy_info.proxy_params : element.parameters }
             onUpdate = { newval=>temp_update_value(newval) }
