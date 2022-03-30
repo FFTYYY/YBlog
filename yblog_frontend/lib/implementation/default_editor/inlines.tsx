@@ -49,7 +49,7 @@ export { get_DefaultInlineEditor }
  * 见https://github.com/ianstormtaylor/slate/issues/4811
  */
 function get_DefaultInlineEditor({
-    get_label       = (p)=>p.label as string , 
+    get_label       = (p)=>p.label.val as string , 
     surrounder      = (props) => <React.Fragment>{props.children}</React.Fragment> , 
     rightbar_extra  = (props) => <></> , 
 }: {
@@ -61,9 +61,9 @@ function get_DefaultInlineEditor({
     return (props: EditorRenderer_Props) => {
         let element = props.element as InlineNode
         let editor  = props.editor
+        let label   = get_label(editor.get_real_parameters(element))
         let Extra = rightbar_extra
         let SUR = surrounder
-        let label = get_label(element.parameters)
 
         return <ComponentPaper is_inline>
             <AutoStack force_direction="row">

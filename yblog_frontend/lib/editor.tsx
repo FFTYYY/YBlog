@@ -14,8 +14,17 @@ import {
     Container , 
 } from "@mui/material"
 
-import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./core/elements"
-import type { StyledNodeType , InlineNode , GroupNode , StructNode , SupportNode , StyleType , NodeType } from "./core/elements"
+import {
+    text_prototype , 
+    paragraph_prototype , 
+    inline_prototype , 
+    group_prototype , 
+    struct_prototype, 
+    support_prototype , 
+    has_children , 
+} from "./core/elements"
+import type { StyledNodeType , InlineNode , GroupNode , StructNode , SupportNode , StyleType , NodeType , StyledNode } from "./core/elements"
+import { Proxy } from "./core/proxy"
 import { get_node_type , is_styled , new_struct_child } from "./core/elements"
 import { EditorCore } from "./core/core"
 import { withAllYEditorPlugins } from "./plugins/apply_all"
@@ -24,7 +33,7 @@ import { GlobalInfoProvider , GlobalInfo } from "./globalinfo"
 import { add_nodes } from "./behaviours"
 
 export { YEditor }
-export type { EditorRenderer_Props , EditorRenderer_Func , EditorMakeNode_Func}
+export type { EditorRenderer_Props , EditorRenderer_Func}
 
 
 interface YEditorComponent_Props{
@@ -180,9 +189,6 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     
 }
 
-type EditorMakeNode_Func = (param: any)=>Node
-type EditorProxy = {makenode: EditorMakeNode_Func , parameter_interface: any}
-
 
 /** Editor 的 renderer 可以接受的参数列表。 */
 interface EditorRenderer_Props{
@@ -199,10 +205,10 @@ type EditorRenderer_Func = (props: EditorRenderer_Props) => any
 class YEditor extends StyleCollector<EditorRenderer_Func>{
 
     /** `Editor`在用户界面提供的不是真正的`style`，因此需要用`proxy`来转换成真正的`style`。 */
-    proxies: StyleCollector<EditorProxy>
+    proxies: {[key in StyleType]: {[name: string]: Proxy}}
 
     /** 所有需要『稍后应用』的操作。 */
-    suboperations: { [subnode_idx: number]: (fat: YEditor)=>void }
+    delay_operations: { [subnode_idx: number]: (fat: YEditor)=>void }
 
     /** slate 编辑器。 */
     slate: ReactEditor
@@ -222,24 +228,40 @@ class YEditor extends StyleCollector<EditorRenderer_Func>{
         )
 
         this.slate  = withAllYEditorPlugins( withHistory( withReact(createEditor() as ReactEditor) ) ) as ReactEditor
-        this.suboperations = {}
+        this.delay_operations = {}
+
+        this.proxies = {
+            inline: {},
+            group: {}, 
+            struct: {},
+            support: {} ,  
+            abstract: {} , 
+        }
+    }
+
+    add_proxy(proxy: Proxy){
+        if(proxy.target_style.type != "abstract")
+            this.proxies[proxy.target_style.type][proxy.target_style.name] = proxy
+    }
+    get_proxy(type: StyleType , name: string){
+        return this.proxies[type][name]
     }
 
     /** 这个函数为编辑器的某个节点添加一个「稍后修改」。大多数情况是一个子编辑器进行的修改，为了防止焦点丢失等问题无法立刻应用。
-     * @param idx 应用关涉的节点编号。节点编号相同的操作会被覆盖。
+     * @param key 应用关涉的节点编号。节点编号相同的操作会被覆盖。
      * @param subapply 等修改时调用的函数。
      */
-    add_suboperation(idx: string, subapply: (fat: YEditor)=>void){
-        this.suboperations[idx] = subapply
+    add_delay_operation(key: string, subapply: (fat: YEditor)=>void){
+        this.delay_operations[key] = subapply
     }
 
     /** 这个函数应用临时操作。 */
-    apply_all(){
+    apply_delay_operations(){
         let me = this
-        Object.values(this.suboperations).map((subapply)=>{
+        Object.values(this.delay_operations).map((subapply)=>{
             subapply(me)
         } )
-        this.suboperations = {}
+        this.delay_operations = {}
     }
     
     /** 这个函数帮助用户构建按钮。返回一个函数，这个函数表示要新建对应*样式*节点时的行为。
@@ -250,14 +272,13 @@ class YEditor extends StyleCollector<EditorRenderer_Func>{
         let me = this
         let root = me.core.root
 
-
         /** 创建节点的函数。 */
-        let makenode = this.core.get_style(nodetype , stylename).makenode
+        let proxy = this.get_proxy(nodetype , stylename)
 
         if(nodetype == "group" || nodetype == "support" || nodetype == "struct")
         {        
             return () => {
-                let node = makenode()
+                let node = proxy.makenode()
                 Transforms.insertNodes(me.slate , node)
             }
         }
@@ -269,7 +290,7 @@ class YEditor extends StyleCollector<EditorRenderer_Func>{
                 if(selection != undefined)
                     flag = JSON.stringify(selection.anchor) == JSON.stringify(selection.focus) // 是否没有选择
 
-                let node = makenode()
+                let node = proxy.makenode()
 
                 if(flag){ // 如果没有选择任何东西，就新建节点。
                     Transforms.insertNodes(me.slate , node)
@@ -290,6 +311,38 @@ class YEditor extends StyleCollector<EditorRenderer_Func>{
 
         return () => undefined
     }
+
+    /** 获得用于渲染的节点树。 */
+    public get_root(){
+        let me = this
+        function parse_node(original_node: Node){
+            let node = {...original_node}
+            if(is_styled(node)){
+                node.parameters = this.get_parameters(node)
+            }
+            if(has_children(node)){
+                node.children = node.children.map(subnode=>parse_node(subnode))
+            }
+            return node
+        }
+
+        return parse_node(this.core.root)
+    }
+
+    /** 对于一个有样式的节点，如果其有代理，就返回代理解析过的参数，否则返回本来的参数。 */
+    public get_real_parameters(node: StyledNode){
+        if(node.proxy_info.proxy_name && this.get_proxy(node.type , node.proxy_info.proxy_name)){
+            let proxy = this.get_proxy(node.type , node.proxy_info.proxy_name)
+            return proxy.get_real_parameters(node.proxy_info.proxy_params) // 将节点的参数替换成真实参数。
+        }
+        return node.parameters
+    }
+
+    /** 对于一个有样式的节点，如果其有代理，就修改其代理的参数，否则返回本来的参数。 */
+    public set_parameters(node: StyledNode){
+
+    }
+    
 }
 
 /* 以下是写了一半的把当前选区转换为group的代码

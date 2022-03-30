@@ -55,12 +55,12 @@ var mathblock_editor    = get_DefaultGroupEditor_with_RightBar({
     rightbar_extra: (props) => {/** 在右侧提供一个用于快速输入退出符号的文本框。 */
         let universal_props = {variant: "standard" as "standard" , sx: {width: "2rem"}}
         let label = <Typography sx={{fontSize: "0.7rem"}}>extra</Typography>
-        let exit_default = props.element.parameters.exit || ""
+        let exit_default = props.element.parameters.exit.val || "" // 注意，这里假设exit必不用代理。
         return <React.Fragment>
             <TextField {...universal_props} label={label} defaultValue={exit_default} onChange = {(e)=>{
                 let val = e.target.value
                 let node = props.element
-                set_node(props.editor , node , {parameters: {...node.parameters, exit: val}})
+                set_node(props.editor , node , {parameters: {...node.parameters, exit: {type: "string" , val: val}}})
             }}/>
         </ React.Fragment>
     }
@@ -84,7 +84,7 @@ var image_editor = get_DefaultDisplayerEditor({
     render_element: (props) => {
         let p = props.parameters
         let [ url , set_url ] = React.useState("")
-        let target = p.target as string
+        let target = p.target.val as string
 
         React.useEffect(()=>{(async ()=>{
             if(p.internal){
@@ -103,8 +103,8 @@ var image_editor = get_DefaultDisplayerEditor({
         })()})
 
 
-        let width = p.width > 0 ? `${p.width}rem` : "100%"
-        let height = p.height > 0 ? `${p.height}rem` : "100%"
+        let width = p.width.val > 0 ? `${p.width}rem` : "100%"
+        let height = p.height.val > 0 ? `${p.height}rem` : "100%"
         return <img src={url || undefined } style={{
             width: width, 
             height: height , 
@@ -113,7 +113,7 @@ var image_editor = get_DefaultDisplayerEditor({
 })
 
 var alignedwords_editor = get_DefaultStructEditor_with_RightBar({
-    get_label: (p)=>p.label as string, 
+    get_label: (p)=>p.label.val as string, 
     get_widths: (n,p)=>{
         return p.widths.split(",").map(x=>x=="" ? 1 : parseInt(x))
     }

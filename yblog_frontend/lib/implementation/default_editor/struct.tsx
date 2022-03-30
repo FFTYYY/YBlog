@@ -81,7 +81,7 @@ let StructPaper = (props: PaperProps & {element: StructNode}) => <ComponentPaper
  * @returns 一个用于渲染group的组件。
  */
 function get_DefaultStructEditor_with_RightBar({
-    get_label       = ((p:ValidParameter)=>p.title as string)   ,
+    get_label       = ((p:ValidParameter)=>p.title.val as string)   ,
     get_widths      = (n,p)=>[]                                 ,
     rightbar_extra  = (props) => <></>                          , 
     surrounder      = (props) => <>{props.children}</>          , 
@@ -95,14 +95,15 @@ function get_DefaultStructEditor_with_RightBar({
     return (props: EditorRenderer_Props) => {
         let element = props.element as StructNode
         let editor  = props.editor
-        let label   = get_label(element.parameters)
+        let parameters = editor.get_real_parameters(element)
+        let label   = get_label(parameters)
         let E       = rightbar_extra
         let SUR     = surrounder
 
         let children = element.children
         
         // 获得元素的相对长度
-        let widths = get_widths(element.num_children , element.parameters)
+        let widths = get_widths(element.num_children , parameters)
         widths = widths.splice(0,children.length) // 确保为widths元素不少
         while(widths.length < children.length) // 确保widths元素不多
             widths.push(1)
@@ -112,7 +113,7 @@ function get_DefaultStructEditor_with_RightBar({
 
         React.useEffect(()=>{
             // TODO 这个operation的名字应该规范一下...
-            editor.add_suboperation(`${element.idx}-struct` , ()=>{
+            editor.add_delay_operation(`${element.idx}-struct` , ()=>{
                 set_node<StructNode>(editor , element , {num_children: nc_val})
             })
         })
@@ -147,7 +148,7 @@ function get_DefaultStructEditor_with_RightBar({
                             }}
                             title = "展开"
                             onClose={()=>{
-                                editor.apply_all() // 在退出时才应用更改。
+                                editor.apply_delay_operations() // 在退出时才应用更改。
                             }}
                         >
                             <DefaultParameterEditButton editor={editor} element={element} />

@@ -14,7 +14,9 @@ import {
     Box , 
     Switch , 
     MenuItem  , 
-    Divider , 
+    Divider, 
+    List , 
+    ListItem, 
 } from "@mui/material"
 import { 
     TreeItem , 
@@ -38,22 +40,7 @@ export {
     DefaultParameterContainer , 
     DefaultParameterWithEditorWithDrawer , 
 }
-export type {
-    UniversalComponent_Props
-}
-
-/** 这个函数判断参数是否是合法的参数的叶节点。 */
-function is_valid_parameter_leaf(o:any): o is ValidParameterItem{
-    return typeof(o) == "string" || typeof(o) == "number" || typeof(o) == "boolean"
-}
-
-
-interface DefaultParameterContainer_Props{
-    initval: ValidParameter
-    onUpdate?: (newval: ValidParameter) => void
-    flag?: boolean , 
-}
-
+export type {UniversalComponent_Props}
 
 /** 这个类定义一个菜单组件，作为默认的参数更新器。 
  * 注意，这个组件更新参数有两种方式：通过回调函数立刻更新（ onUpdate ），或者像父组件暴露本对象，期望父组件来调用
@@ -62,52 +49,46 @@ interface DefaultParameterContainer_Props{
  * 
  * 注意，这个类是一个菜单，不包含打开菜单的逻辑。
 */
-class DefaultParameterContainer extends React.Component <DefaultParameterContainer_Props >{
-    parameters: any
+class DefaultParameterContainer extends React.Component <{
+    /** 参数的初始值。 */
+    initval: ValidParameter
+
+    /** 更改时的回调函数。 */
+    onUpdate?: (newval: ValidParameter) => void
+} , {
+    parameters: ValidParameter
+}>{
     onUpdate: (newval: any) => void
 
     /**
      * @param props.initval 所有参数的初始值。
-     * @param onUpdate 在自身更新时的回调。如果为 undefined 则不会干任何事。
+     * @param props.onUpdate 在自身更新时的回调。如果为 undefined 则不会干任何事。
      */
-    constructor(props: DefaultParameterContainer_Props){
+    constructor(props){
         super(props)
 
-        this.parameters = this.props.initval
+        this.state = {
+            parameters: this.props.initval
+        }
+
         this.onUpdate = props.onUpdate || ( (newval: any) => {} )
     }
 
-    /** 不知道为什么，在组件更新时必须重新赋值。 */
     componentDidUpdate(): void {
-        this.parameters = this.props.initval  
         this.onUpdate = this.props.onUpdate || ( (newval: any) => {} )
-    }
-
-    /** 这个函数收集所有节点，作为树的初始展开项。 */
-    get_all_treenodes(name: string[] , parameters: any):string[][]{
-        let me = this
-        let ret = []
-        for(let key in parameters){
-            let subname = [...name , key]
-            if(!is_valid_parameter_leaf(parameters[key])){
-                ret.push(subname)
-                ret = [...ret , ...me.get_all_treenodes(subname , parameters[key])]
-            }
-        }
-        return ret
-    }
-    
+    }    
 
     /** 如果参数的当前项是一个基本值，则渲染一个输入框。
      * @param props.name 参数项的名称。
      * @param props.val 参数的当前值。
      * @param onChange 当值改变时的回调函数。
      */
-    renderValue(props: {name: string, val: ValidParameterItem , onChange: (newval:ValidParameterItem)=>void}){
+    RenderValue(props: {name: string, val: ValidParameterItem , onChange: (newval:ValidParameterItem)=>void}){
 
         let name = props.name
-        let val = props.val
-        let onChange = props.onChange
+        let type = props.val.type
+        let val = props.val.val
+        let onChange = (v)=>props.onChange({type: type,val: v})
         let standard_props = {
             defaultValue: val ,
             label: name, 
@@ -115,20 +96,20 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
             sx: {marginLeft: "5%"} , 
         }
 
-        if(typeof(val) == "string"){
+        if(type == "string"){
             return <TextField 
                 onChange  = {e=>onChange(e.target.value)}
                 {...standard_props}
             />
         }
-        if(typeof(val) == "number"){
+        if(type == "number"){
             return <TextField 
                 onChange  = {e=>onChange(e.target.value)}
                 type = "number"
                 {...standard_props}
             />
         }
-        if(typeof(val) == "boolean"){
+        if(type == "boolean"){
             return <TextField 
                 onChange = {e=>{onChange(e.target.value == "true")}}
                 //select // TODO 这里如果设置成select有个bug，使得点击的时候页面并没有刷新，但是drawer会消失。
@@ -141,97 +122,37 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
         return <></>
     }
 
-    /** 如果参数的当前项是一个对象，则渲染一个菜单，并递归地检查每一项，直到遇到字符串。
-     * TODO：还应该处理其他基本类型，例如number和boolean，但是目前只考虑了字符串。
-     * 
-     * @param props.name 参数项的名称。
-     * @param props.father_names 这个参数收集所有父节点的名称，作为唯一的 nodeID。
-     * @param props.val 参数项的当前值。应该是一个字典。
-     * @param props.onChange 当值改变时的回调函数。
-     */
-    renderDict(props: {name: string, val: ValidParameter, father_names:string[], onChange: (newval:object)=>void}){
-        let newval = {...props.val}
-
-        let RV = this.renderValue.bind(this)   // 渲染一个文本框。
-        let RO = this.renderDict.bind(this)     // 递归地渲染一个菜单。
-        let my_names = [...props.father_names , props.name]
-        let my_nodeId = JSON.stringify(my_names)
-
-        return <TreeItem 
-            nodeId = {my_nodeId} 
-            label = {props.name}
-            sx = {{
-                width: "auto" , 
-                overflowX: "hidden" , 
-            }}
-        >
-            {Object.keys(props.val).map( (subname)=>{
-                let subval = props.val[subname]
-
-                // 如果是基本类型，就渲染一个输入框。
-                if(is_valid_parameter_leaf(subval)){
-                    return <RV 
-                        key     = {subname}
-                        name    = {subname} 
-                        val     = {subval} 
-                        onChange = {(newsubval:ValidParameterItem)=>{
-                            newval[subname] = newsubval
-                            props.onChange(newval)
-                        }} 
-                    />               
-                }
-
-                // 如果不是，就渲染一个树项。
-                return <RO 
-                    key     = {subname}
-                    name    = {subname} 
-                    val     = {subval} 
-                    father_names = {my_names}
-                    onChange = {(newsubval:ValidParameter)=>{
-                        newval[subname] = newsubval
-                        props.onChange(newval)
-                    }} 
-                />            
-            })}
-        </TreeItem >
-
-    }
-    
     /**
      * 渲染函数。
      * 注意，这个组件必须被包裹在一个 non_selectable_prop 的元素内部。
      * @returns 一个菜单，提供各个参数的编辑项。
      */
     render(){
-        let R = this.renderDict.bind(this)
         let me = this
 
-        let root_name = "Parameters"
-        let all_nodeids = Object.values( this.get_all_treenodes([] ,{[root_name]: me.parameters}) ).map(val=>JSON.stringify(val))
-
-        return <TreeView
-            defaultExpanded = {all_nodeids}
-            disableSelection
-            disabledItemsFocusable
-            defaultCollapseIcon = {<ExpandMoreIcon />}
-            defaultExpandIcon = {<ChevronRightIcon />} 
-        ><R
-            name = {root_name}
-            val = {me.parameters}
-            father_names = {[]}
-            
-            onChange = {(newval:ValidParameter)=>{
-                me.parameters = newval
-                me.onUpdate(newval) // 向父组件通知自己的更新
-            }}
-        ></R></TreeView>
+        let R = this.RenderValue.bind(this)
+        return <List>
+            {Object.keys(me.state.parameters).map((key,idx)=>{
+                <ListItem key = {idx}>
+                    <R 
+                        name = {key}
+                        val = {me.state.parameters[key]}
+                        onChange = {(v)=>{
+                            me.setState({parameters: {...me.state.parameters , [key]: v}})
+                            me.onUpdate(me.state.parameters)
+                        }}
+                    />
+                </ListItem>
+            })}
+        </List>
+        
     }
 }
-
 interface UniversalComponent_Props{
     editor: YEditor
     element: StyledNode
 }
+
 
 /** 这个组件向具体的编辑器和具体的节点提供 DefaultParameterContainer ，并使用 YEditor 提供的 operations 功能延迟更新。
  * 注意，这个组件不包含打开菜单的逻辑。
@@ -240,29 +161,34 @@ interface UniversalComponent_Props{
  */
 class DefaultParameterWithEditor extends React.Component<UniversalComponent_Props>{
 
-    constructor(props: UniversalComponent_Props){
+    constructor(props){
         super(props)
     }
 
-    temp_update_value(newval: ValidParameter){
-        let props = this.props
-
-        props.editor.add_suboperation( `${props.element.idx}-parameter` , (father_editor: YEditor) => {
-            set_node( father_editor , props.element , { parameters: newval })
-        })
-    }
-
-    componentDidUpdate(prevProps: Readonly<UniversalComponent_Props>, prevState: Readonly<{}>, snapshot?: any): void {
-        
-    }
 
     render(){
         let me = this
         let props = this.props
+        let element = props.element
 
+        let has_prox = !(element.proxy_info.proxy_name )
+
+        /** 这个函数将参数的更新应用到编辑器上。 */
+        function temp_update_value(newval: ValidParameter){
+            let props = me.props
+            
+            // 这是一个延迟操作。
+            props.editor.add_delay_operation( `${props.element.idx}-parameter` , (father_editor: YEditor) => {
+                set_node( father_editor , props.element , has_prox ? 
+                    { proxy_info: {...element.proxy_info , proxy_params: newval}} : //如果有代理，就更新代理参数。
+                    { parameters: newval }   // 如果没有代理，就更新原始参数。
+                )
+            })
+        }
+    
         return <DefaultParameterContainer
-            initval = { props.element.parameters }
-            onUpdate = { newval=>me.temp_update_value(newval) }
+            initval = { has_prox ? element.proxy_info.proxy_params : element.parameters }
+            onUpdate = { newval=>temp_update_value(newval) }
         />
     }
 }
@@ -289,7 +215,7 @@ function DefaultParameterWithEditorWithDrawer(props: UniversalComponent_Props & 
         }}
         SlideProps = {{
             onExited: () => {
-                props.editor.apply_all()
+                props.editor.apply_delay_operations() // 令编辑器应用所有延迟操作。
             }
         }}
         PaperProps  = {{sx: { width: "40%" }}}

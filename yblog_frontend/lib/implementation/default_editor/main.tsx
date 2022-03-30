@@ -31,6 +31,7 @@ import { Node } from "slate"
 import { YEditor } from "../../editor"
 import { object_foreach , merge_object } from "../utils"
 import type { StyleType , NodeType , StyledNodeType } from "../../core/elements"
+import { Proxy } from "../../core/proxy"
 
 import { DefaultHiddenEditorButtons } from "./hidden"
 import { 
@@ -62,6 +63,7 @@ class DefaultButtonbar extends React.Component<{
 }>{
 	editor: YEditor
 	button_refs: {[k in StyledNodeType] : React.RefObject<HTMLButtonElement>[]}
+    proxies: {[key in StyleType]: {[name: string]: Proxy}}
 	constructor(props){
 		super(props)
 
@@ -71,12 +73,12 @@ class DefaultButtonbar extends React.Component<{
 		}
 
 		this.editor = props.editor
-		let core = this.editor.core
+		this.proxies = this.editor.proxies
 		this.button_refs = {
-			group	: Object.keys( core.styles["group"] 	).map( (x=>React.createRef()) ) , 
-			inline	: Object.keys( core.styles["inline"] 	).map( (x=>React.createRef()) ) , 
-			support	: Object.keys( core.styles["support"] 	).map( (x=>React.createRef()) ) , 
-			struct	: Object.keys( core.styles["struct"] 	).map( (x=>React.createRef()) ) , 
+			group	: Object.keys( this.proxies["group"] 	).map( (x=>React.createRef()) ) , 
+			inline	: Object.keys( this.proxies["inline"] 	).map( (x=>React.createRef()) ) , 
+			support	: Object.keys( this.proxies["support"] 	).map( (x=>React.createRef()) ) , 
+			struct	: Object.keys( this.proxies["struct"] 	).map( (x=>React.createRef()) ) , 
 		}
 	}
 
@@ -233,10 +235,10 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 
 		this.notification_key = Math.floor( Math.random() * 233333 )
 		let layzy_update = new DoSomething( ()=>{me.forceUpdate()} , 5000)
-		this.editor.core.add_notificatioon(()=>layzy_update.go() , `editor-${this.notification_key}`)
+		// this.editor.core.add_notificatioon(()=>layzy_update.go() , `editor-${this.notification_key}`)
 	}
 	componentWillUnmount(): void {
-		this.editor.core.remove_notificatioon(`editor-${this.notification_key}`)
+		// this.editor.core.remove_notificatioon(`editor-${this.notification_key}`)
 	}
 
 	is_selecting(){

@@ -2,11 +2,11 @@ import * as O from "./printers"
 import * as E from "./editors"
 import * as S from  "./styles"
 import { YEditor } from "../../../../lib"
-import { Printer , EditorCore } from  "../../../../lib"
+import { Printer , EditorCore , Proxy } from  "../../../../lib"
 import { GroupStyle , InlineStyle , AbstractStyle , SupportStyle , StructStyle ,  } from "../../../../lib"
-import type { EditorRenderer_Func , PrinterRenderer , EditorMakeNode_Func} from "../../../../lib"
+import type { EditorRenderer_Func , PrinterRenderer } from "../../../../lib"
 
-export { withAllStyles , withAllPrinters , withAllEditors , withNeccesaryProxies }
+export { withAllStyles , withAllPrinters , withAllEditors , make_proxy }
 
 var type2class = {
     group: GroupStyle , 
@@ -70,20 +70,10 @@ function withAllEditors(editor: YEditor): YEditor{
     return editor
 }
 
-function withNeccesaryProxies(editor: YEditor): YEditor{
-
-    let nes_styles = [S.newpara_style , S.sectioner_style , S.ender_style , S.subsection_style]
-
-    for(let style of nes_styles){
-        //editor.set(()=>style.makenode , style.type , style.name)
-    }
-    return editor
-}
-
-// TODO unfinished
-function make_proxer(meta_name:string , name: string , fixed_params: any, default_params: any){
+function make_proxy(meta_name:string , name: string , fixed_params: any, default_params: any){
     let [meta_style , meta_editor , meta_printer] = style_editor_printer[meta_name]
-    return ()=>{ }
+    let proxy = new Proxy(name , meta_style , fixed_params , default_params)
+    return proxy
 }
 
 // function make_new_style(meta_name:string , proxy_name: string , fixed_params: any, default_params: any){

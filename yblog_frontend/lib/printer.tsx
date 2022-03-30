@@ -1,7 +1,7 @@
 /** 这个组件提供输出器的基础定义。 */
 
 import { Node } from "slate"
-import React from "react"
+import React, { ContextType } from "react"
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./core/elements"
 import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode  } from "./core/elements"
 import type { StyleType , NodeType } from "./core/elements"
@@ -13,7 +13,6 @@ import { DoSomething } from "./implementation/utils"
 
 export { Printer , make_print_renderer }
 export type { 
-    PrinterComponent_Props , 
     PrinterRenderFunc_Props , 
     EnterEffectFunc , 
     ExitEffectFunc , 
@@ -26,30 +25,29 @@ export type {
 type PrinterContext = any
 type PrinterEnv = any
 
-interface PrinterComponent_Props{
-    printer: Printer
-}
-
-interface PrinterComponent_State{
-    root: GroupNode
-}
-
-
 type EnterEffectFunc = (element: Node, env: PrinterEnv)                           => [PrinterEnv , PrinterContext]
 type ExitEffectFunc  = (element: Node, env: PrinterEnv, context: PrinterContext)  => [PrinterEnv , PrinterContext]
 
 
 /** 这个类是 Printer 的组件类。*/
-class _PrinterComponent extends React.Component<PrinterComponent_Props , PrinterComponent_State>{
+class _PrinterComponent extends React.Component<{
+    printer: Printer
+} , {
+    /** 经过解析的根节点。 */
+    root: GroupNode
+
+    /** 当前上下文 */
+    contexts: PrinterContext
+}>{
 
     /** 使用的输出器。 */
     printer: Printer
 
+    /** 渲染出来的节点的引用。从路径映射到节点。 */
+    sub_refs: {[key: string]: any}
+
     /** 编辑器核心。 */
     core: EditorCore
-
-    /** 渲染出来的节点的引用。从路径映射到节点。 */
-    my_refs: {[key: string]: any}
 
     /** 用来记录自己在`core`处的`notification`。 */
     notification_key: number
@@ -58,34 +56,32 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
      * 
      * @param props.printer 这个组件对应的输出器。
      */
-    constructor(props: PrinterComponent_Props){
+    constructor(props){
         super(props)
 
         this.state = {
-            root: group_prototype("root" , {})
+            root: group_prototype("root" , {}) , 
+            contexts: {} , 
         }
 
         this.printer = props.printer
         this.core = this.printer.core
         
         let me = this
-        
-        this.my_refs = {}
+
+        this.sub_refs = {}
     }
 
-    componentDidMount(): void {
-        let me = this
-
-        this.notification_key = Math.floor( Math.random() * 233333 )
-        let lazy_not = new DoSomething( (new_root: GroupNode)=>me.setState({root: new_root}) , 5000)
-        this.core.add_notificatioon( (new_root: GroupNode)=>lazy_not.go(new_root) , `printer-${this.notification_key}`)
-        this.setState({root: this.core.root})
+    
+    update(root: GroupNode){
+        this.sub_refs = {}
+        let [_ , contexts] = this.build_envs(root , {} , {} , [])
+        this.setState({
+            root: root , 
+            contexts: contexts , 
+        })
     }
 
-    componentWillUnmount(): void {
-        this.core.remove_notificatioon(`printer-${this.notification_key}`)
-
-    }
 
     // 根据路径生成唯一的表示。
     get_path_id(path: (number | string)[]): string{
@@ -93,7 +89,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
     }
 
     get_ref(path: (number | string)[] , binding = false){
-        let ref = this.my_refs[this.get_path_id(path)]
+        let ref = this.sub_refs[this.get_path_id(path)]
         if(!binding){
             // 如果不是正在绑定`ref`，那么可以模糊地返回值。
             if(ref == undefined || ref.current == undefined)
@@ -102,7 +98,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         return ref
     }
     set_ref(path: (number | string)[] , val: any){
-        this.my_refs[this.get_path_id(path)] = val
+        this.refs[this.get_path_id(path)] = val
         return path
     }
     
@@ -217,12 +213,9 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
     render(){
         let me = this
         let R = this._sub_component.bind(this)
-
-        me.my_refs = {}
-        let [_ , contexts] = this.build_envs(me.state.root , {} , {} , [])
-
+        
         let context = {
-            "refs": me.my_refs , 
+            "refs": me.sub_refs , 
             "root": me.state.root , 
             "core": me.core , 
             "printer": me.printer , 
@@ -230,7 +223,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         }
 
         return <GlobalInfoProvider value={context}>
-            <R element={me.state.root} contexts={contexts} now_path={[]}></R>
+            <R element={me.state.root} contexts={this.state.contexts} now_path={[]}></R>
         </GlobalInfoProvider>
     }
 }

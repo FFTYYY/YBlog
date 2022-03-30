@@ -76,7 +76,7 @@ let GroupPaper = (props: PaperProps & {element: GroupNode}) => <ComponentPaper {
  * @returns 一个用于渲染group的组件。
  */
 function get_DefaultGroupEditor_with_AppBar({
-    get_label     = (p:ValidParameter)=>p.label as string, 
+    get_label     = (p:ValidParameter)=>p.label.val as string, 
     appbar_extra  = (props) => <></> , 
     surrounder    = (props) => <>{props.children}</>
 }: {
@@ -87,9 +87,9 @@ function get_DefaultGroupEditor_with_AppBar({
     // 渲染器
     return (props: EditorRenderer_Props) => {
         let element = props.element as GroupNode
-        let label   = get_label(element.parameters)
-
         let editor = props.editor
+        let label   = get_label(editor.get_real_parameters(element))
+
         let E = appbar_extra
         let SUR = surrounder
 
@@ -122,7 +122,7 @@ function get_DefaultGroupEditor_with_AppBar({
  * @returns 一个用于渲染group的组件。
 */
 function get_DefaultGroupEditor_with_RightBar({
-    get_label       = (p:ValidParameter)=>p.label as string, 
+    get_label       = (p:ValidParameter)=>p.label.val as string, 
     rightbar_extra  = (props) => <></> , 
     surrounder      = (props) => <>{props.children}</>
 }: {
@@ -133,8 +133,8 @@ function get_DefaultGroupEditor_with_RightBar({
 
     return (props: EditorRenderer_Props) => {
         let element = props.element as GroupNode
-        let label = get_label(element.parameters)
         let editor = props.editor
+        let label   = get_label(editor.get_real_parameters(element))
         let E = rightbar_extra
         let SUR = surrounder
 

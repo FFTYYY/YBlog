@@ -101,7 +101,10 @@ type StyledNodeBase = {
     flags: StyledNodeFlag
 
     /** 编辑器使用何种代理来编辑这个节点。 */
-    proxy: string
+    proxy_info: {
+        proxy_name: string
+        proxy_params?: any
+    }
 }
 
 /** 一个合法的行内样式的节点。 */
@@ -170,7 +173,9 @@ function inline_prototype(name: string, parameter_proto: ValidParameter, flags:S
         children: [ text_prototype("") ] , 
         hiddens: [] , 
         flags: flags , 
-        proxy: "" , 
+        proxy_info: {
+            proxy_name: ""
+        } , 
     }
 }
 
@@ -187,7 +192,9 @@ function group_prototype(name: string , parameter_proto: ValidParameter, flags: 
         children: [paragraph_prototype()] , 
         hiddens: [] , 
         flags: flags , 
-        proxy: "" , 
+        proxy_info: {
+            proxy_name: ""
+        } , 
     }
 }
 
@@ -205,7 +212,9 @@ function struct_prototype(name: string , parameter_proto: ValidParameter , flags
         children: [new_struct_child()] , 
         hiddens: [] , 
         flags: {} , 
-        proxy: "" , 
+        proxy_info: {
+            proxy_name: ""
+        } , 
     }
 }
 
@@ -219,7 +228,9 @@ function support_prototype(name: string , parameter_proto: ValidParameter , flag
         children: [ text_prototype() ],
         hiddens: [] , 
         flags: flags , 
-        proxy: "" , 
+        proxy_info: {
+            proxy_name: ""
+        } , 
     }
 }
 
@@ -264,3 +275,4 @@ function new_struct_child(){
     let node = group_prototype("struct-child" , {} , {})
     return node
 }
+
