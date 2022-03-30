@@ -46,9 +46,6 @@ class EditorCore{
      */
     styles: { [ST in StyleType]: {[name: string]: Style<ST> } }
     
-    /** 这个文档的具体的树结构。 */
-    root: GroupNode
-
     /** 当树结构改变时需要通知谁。 */
     notifications: {[key: string] : RootNotification_Function}
 
@@ -69,26 +66,7 @@ class EditorCore{
             this.add_style(style)
         }
 
-        this.root = group_prototype("root" , root_parameters) //节点树
         this.notifications = {} // 当root修改时要通知的人的列表
-    }
-
-    /** 
-     * 这个函数直接修改`root.children`。
-     * 等价于`update_root({children: children})`。
-     */
-    public update_children(children: Node[]){
-        return this.update_root({children: children})
-    }
-
-    /** 
-     * 这个函数是外部改变 root 的唯一方式。 
-     */
-    public update_root(new_root: any){
-        this.root = {...this.root, ...new_root}
-        for(let notif of Object.values(this.notifications)){
-            notif(this.root)
-        }
     }
 
     /** 添加一个通知函数。 */

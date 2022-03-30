@@ -31,6 +31,7 @@ import { withAllYEditorPlugins } from "./plugins/apply_all"
 import { StyleCollector } from "./core/stylecollector"
 import { GlobalInfoProvider , GlobalInfo } from "./globalinfo"
 import { add_nodes } from "./behaviours"
+import { rootShouldForwardProp } from "@mui/material/styles/styled";
 
 export { YEditor }
 export type { EditorRenderer_Props , EditorRenderer_Func}
@@ -58,7 +59,10 @@ interface SlateRenderer_Props{
  * 这个类定义了渲染YEditor的组件
  * 一个YEditor类负责储存数据，而_YEditorComponent类负责渲染组件。
  */
-class _YEditorComponent extends React.Component<YEditorComponent_Props>{
+class _YEditorComponent extends React.Component<YEditorComponent_Props , {
+    clipboard: undefined
+    root: GroupNode
+}>{
     editor: YEditor
     core: EditorCore
     slate: ReactEditor
@@ -76,8 +80,14 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     constructor(props: YEditorComponent_Props){
         super(props)
 
+        let node = group_prototype("root" , {
+            title: {type: "string" , val: ""} , 
+        })
+        node.children = [paragraph_prototype("122")]
+
         this.state = {
-            clipboard: undefined
+            clipboard: undefined , 
+            root: node, 
         }
 
         this.editor = props.editor
@@ -95,7 +105,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
      * 当 slate 改变 value 时通知自身的函数。
      */
     update_value(value: Node[]){
-        this.core.update_children(value)
+        this.setState({root: {...this.state.root , children: value}})
         this.onUpdate(value)
     }
 
@@ -105,7 +115,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
      * @param props.children 下层节点，这是slate要求的。
      * @private
      */
-     renderElement(props: SlateRenderer_Props){
+    renderElement(props: SlateRenderer_Props){
         let me = this
         let element = props.element  as BaseElement
 
@@ -127,12 +137,12 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
             editor: me.editor , 
             children: props.children , 
         }
-
+        
         // 如果这是个 inline 元素，就添加一个额外 style 。
         let extra_style = {}
         if(me.editor.slate.isInline(element))
             extra_style = {display: "inline-block"}
-
+        
         return <div {...slate_attributes} style={extra_style}><R {...subprops}/></div>
     }
     renderLeaf(props: SlateRenderer_Props){
@@ -148,7 +158,6 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
             editor: me.editor , 
             children: props.children , 
         }
-
         return <span {...slate_attributes}><R {...subprops}></R></span>
     }
     render(){
@@ -161,10 +170,11 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
             slate: me.slate , 
             core: me.core , 
         }
+
         return <GlobalInfoProvider value={context}>
             <Slate 
                 editor = {me.slate} 
-                value = {[paragraph_prototype("")]} 
+                value = {me.state.root.children} 
                 onChange = {value => {
                     me.update_value(value)
                     me.onFocusChange()
@@ -227,7 +237,15 @@ class YEditor extends StyleCollector<EditorRenderer_Func>{
             }
         )
 
-        this.slate  = withAllYEditorPlugins( withHistory( withReact(createEditor() as ReactEditor) ) ) as ReactEditor
+        // let slate = withAllYEditorPlugins( withHistory( withReact(createEditor() as ReactEditor) ) ) as ReactEditor
+        let slate = withReact(createEditor() as ReactEditor)
+        // let mixin = group_prototype("root" , {title: {type:"string" , val:""}})
+        // Object.keys(mixin).map(k=>{
+        //     slate[k] = mixin[k]
+        // })
+        // this.slate = slate as ReactEditor & GroupNode
+        this.slate = slate
+        
         this.delay_operations = {}
 
         this.proxies = {
@@ -270,7 +288,6 @@ class YEditor extends StyleCollector<EditorRenderer_Func>{
      */
     get_onClick(nodetype: StyledNodeType, stylename: string): ()=>void{
         let me = this
-        let root = me.core.root
 
         /** 创建节点的函数。 */
         let proxy = this.get_proxy(nodetype , stylename)
@@ -318,7 +335,7 @@ class YEditor extends StyleCollector<EditorRenderer_Func>{
         function parse_node(original_node: Node){
             let node = {...original_node}
             if(is_styled(node)){
-                node.parameters = this.get_parameters(node)
+                node.parameters = this.get_real_parameters(node)
             }
             if(has_children(node)){
                 node.children = node.children.map(subnode=>parse_node(subnode))
@@ -326,7 +343,7 @@ class YEditor extends StyleCollector<EditorRenderer_Func>{
             return node
         }
 
-        return parse_node(this.core.root)
+        return parse_node(this.slate)
     }
 
     /** 对于一个有样式的节点，如果其有代理，就返回代理解析过的参数，否则返回本来的参数。 */
@@ -336,13 +353,7 @@ class YEditor extends StyleCollector<EditorRenderer_Func>{
             return proxy.get_real_parameters(node.proxy_info.proxy_params) // 将节点的参数替换成真实参数。
         }
         return node.parameters
-    }
-
-    /** 对于一个有样式的节点，如果其有代理，就修改其代理的参数，否则返回本来的参数。 */
-    public set_parameters(node: StyledNode){
-
-    }
-    
+    }    
 }
 
 /* 以下是写了一半的把当前选区转换为group的代码

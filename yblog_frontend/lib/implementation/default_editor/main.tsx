@@ -353,20 +353,20 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 				/>
 			</EditorComponentEditingBox></Box>
 
-			<Box sx = {{
+			{/* <Box sx = {{
 				position: "absolute", 
 				height: "100%", 
 				left: number2percent(complement_width), 
 				width: toolbar_width
 			}}>
 				<AutoStack force_direction="column">
-					<DefaultParameterEditButton editor = {me.editor} element = {me.editor.core.root} />
-					<DefaultHiddenEditorButtons editor = {me.editor} element = {me.editor.core.root} />
+					<DefaultParameterEditButton editor = {me.editor} element = {me.editor.slate} />
+					<DefaultHiddenEditorButtons editor = {me.editor} element = {me.editor.slate} />
 					{me.props.extra_buttons}
 					<Divider />
 					<DefaultButtonbar editor={me.editor} selecting={me.is_selecting()} ref={me.buttonbar_ref}/>
 				</AutoStack>
-			</Box>
+			</Box> */}
 
 			</EditorBackgroundPaper></ThemeProvider>
 	}
