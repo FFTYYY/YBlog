@@ -127,9 +127,9 @@ function get_DefaultSplitterEditor({get_title = (p:any)=>p.title as string}: {ge
  * @param render_element 如何在编辑视图中渲染元素。默认为用 <img> 来渲染。
 */
 function get_DefaultDisplayerEditor({
-    get_label       = (p)=>p.label as string , 
+    get_label       = (p)=>p.label.val as string , 
     is_empty        = (p)=>!!(p["url"]) , 
-    render_element  = (props)=><img src={props.parameters.url as string}/>, 
+    render_element  = (props)=><img src={props.parameters.url.val as string}/>, 
 } : {
     get_label       ?: (p: ValidParameter)=>string , 
     is_empty        ?: (p: ValidParameter)=>boolean , 
@@ -138,7 +138,7 @@ function get_DefaultDisplayerEditor({
     return (props: EditorRenderer_Props) => {
         let editor = props.editor
         let element = props.element as SupportNode
-        let parameters = element.parameters
+        let parameters = editor.get_real_parameters(element)
         let label = get_label(parameters)
         let R = render_element
 

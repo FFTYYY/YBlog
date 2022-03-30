@@ -16,7 +16,6 @@ export {
     DoSomething , 
 }
 
-
 /** 将`xxxrem`形式的字符串转换成数字。 */
 function rem2num(rem:string){
 	return Number( rem.slice(0,rem.length-3) )

@@ -110,8 +110,8 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             ...Object.values(props.editor.core.styles.abstract  ) , 
         ] , props.editor.core.root.parameters))
         
-        this.subeditor.default_renderers = props.editor.default_renderers
-        this.subeditor.style_renderers   = props.editor.style_renderers
+        this.subeditor.default_vals = props.editor.default_vals
+        this.subeditor.styled_vals  = props.editor.styled_vals
         
         this.father_editor = props.editor
         this.father = props.father
@@ -143,7 +143,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             PaperProps  = {{sx: { width: "60%"}}}
             SlideProps = {{
                 onExited: () => {
-                    me.father_editor.apply_all()
+                    me.father_editor.apply_delay_operations()
                 }
             }}
         >
@@ -153,7 +153,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
                     editor = { me.subeditor }
                     onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
                         replace_nodes(me.subeditor , me.subeditor.core.root , me.props.son.children)
-                        me.props.editor.add_suboperation(`${me.son.idx}-hidden` , me.sub_apply.bind(me))
+                        me.props.editor.add_delay_operation(`${me.son.idx}-hidden` , me.sub_apply.bind(me))
                     }}
                 />
             </ForceContain.Provider>

@@ -31,7 +31,7 @@ import { ReactEditor } from "slate-react"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 import { Node , Transforms , Element } from "slate"
 
-import { withAllStyles , withAllPrinters , withAllEditors , withNeccesaryProxies , make_new_style} from "../base/styles"
+import { withAllStyles , withAllPrinters , withAllEditors , make_proxy } from "../base/styles"
 import { Interaction } from "../base/interaction"
 import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
 import { my_theme } from "../base/construction/theme"
@@ -60,7 +60,10 @@ class App extends  React.Component<App_Props , App_State>{
 		super(props)
 
 		this.core    = withAllStyles( new EditorCore([] , {
-			title: "" , 
+			title: {
+				val: "" , 
+				type: "string" , 
+			} , 
 		}) )
 		this.state = {
 			editor: withAllPlugins( withAllEditors( new YEditor( this.core ) ) ), 
@@ -77,13 +80,8 @@ class App extends  React.Component<App_Props , App_State>{
 		let node_concepts = await Interaction.get.concept() // 从后端获得所有概念。
 		for(let [name , meta_name , fixed_params , default_params ] of node_concepts){
 
-			let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params)
-
-			this.core.add_style(style)
-			if(style.type != "abstract"){
-				my_editor.update_renderer (editor  , style.type , style.name)
-				my_printer.update_renderer(printer , style.type , style.name)
-			}
+			let proxy = make_proxy(meta_name , name , fixed_params , default_params)
+			my_editor.add_proxy(proxy)
 		}
 		this.setState({editor: my_editor , printer: my_printer})
 

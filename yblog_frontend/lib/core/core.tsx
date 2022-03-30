@@ -7,7 +7,7 @@
 */
 
 import { Node } from "slate"
-import type { 
+import { 
     StyleType , 
     StyledNodeFlag , 
     ValidParameter ,
@@ -16,7 +16,8 @@ import type {
     GroupNode ,
     InlineNode , 
     SupportNode , 
-    StructNode ,  
+    StructNode, 
+    is_styled,  
 } from "./elements"
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./elements"
 
@@ -31,7 +32,7 @@ interface StyleType2NodeType{
     group: GroupNode
     struct: StructNode
     support: SupportNode
-    abstract: Node
+    abstract: GroupNode
 }
 
 /** 描述一个抽象的编辑器，维护节点树和使用的样式 
