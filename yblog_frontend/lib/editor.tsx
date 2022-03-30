@@ -170,9 +170,26 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props , {
             slate: me.slate , 
             core: me.core , 
         }
+        
+        function S(props: {}){
+            const editor = withReact(createEditor() as ReactEditor)
+            const [value, setValue] = React.useState([
+              {
+                type: 'paragraph',
+                children: [{ text: 'A line of text in a paragraph.' }],
+              },
+            ])
+          
+            return (
+              <Slate editor={editor} value={value} onChange={value => setValue(value)}>
+                <Editable />
+              </Slate>
+            )          
+        }
 
         return <GlobalInfoProvider value={context}>
-            <Slate 
+            <S />
+            {/* <Slate 
                 editor = {me.slate} 
                 value = {me.state.root.children} 
                 onChange = {value => {
@@ -193,7 +210,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props , {
                     onKeyUp = {e=>me.onKeyUp(e)}
                     onKeyPress = {e=>{me.onKeyPress(e)}}
                 />
-            </Slate>
+            </Slate> */}
         </GlobalInfoProvider>
     }
     
