@@ -116,7 +116,7 @@ class App extends  React.Component<App_Props , {
 		for(let [name , meta_name , fixed_params , default_params ] of node_concepts){
 
 			let proxy = make_proxy(meta_name , name , fixed_params , default_params)
-			proxies[proxy.get_styletype()][proxy.get_stylename()] = proxy
+			proxies[proxy.get_styletype()][name] = proxy
 		}
 		this.setState({ editor_proxies: proxies })
 
