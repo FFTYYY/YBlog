@@ -1,7 +1,7 @@
 import * as O from "./printers"
 import * as E from "./editors"
 import * as S from  "./styles"
-import { YEditor } from "../../../../lib"
+import { YEditor , StyleCollector } from "../../../../lib"
 import { Printer , EditorCore , Proxy } from  "../../../../lib"
 import { GroupStyle , InlineStyle , AbstractStyle , SupportStyle , StructStyle ,  } from "../../../../lib"
 import type { EditorRenderer_Func , PrinterRenderer } from "../../../../lib"
@@ -58,14 +58,14 @@ function withAllPrinters(printer: Printer): Printer{
     }
     return printer
 }
-function withAllEditors(editor: YEditor): YEditor{
+function withAllEditors(editor: StyleCollector<EditorRenderer_Func>): StyleCollector<EditorRenderer_Func>{
     for(let name in style_editor_printer){
         let style = style_editor_printer[name][0]
         if(style.type == "abstract"){
             continue
         }
         let editor_func = style_editor_printer[name][1]
-        editor.set_renderer(editor_func , style.type , style.name)
+        editor.set(editor_func , style.type , style.name)
     }
     return editor
 }

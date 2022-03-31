@@ -28,26 +28,29 @@ import { StyleCollector } from "../core/stylecollector"
 import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
 import { add_nodes } from "../behaviours"
 
+import { Constructor } from "./base"
 import { YEditor } from "./editor"
-export { DelayOperationsMixin }
+export { use_delay_operations_mixin }
 
-let DelayOperationsMixin = {
+function use_delay_operations_mixin<Base extends Constructor>(BaseClass: Base){
+    return class extends BaseClass {
 
-    /** 这个函数为编辑器的某个节点添加一个「稍后修改」。大多数情况是一个子编辑器进行的修改，为了防止焦点丢失等问题无法立刻应用。
-     * @param key 应用关涉的节点编号。节点编号相同的操作会被覆盖。
-     * @param subapply 等修改时调用的函数。
-     */
-    add_delay_operation(key: string, subapply: (fat: YEditor)=>void){
-        let me = this as any as YEditor
-        me.setState({delay_operations: {...me.state.delay_operations , [key]: subapply}})
-    } , 
+        /** 这个函数为编辑器的某个节点添加一个「稍后修改」。大多数情况是一个子编辑器进行的修改，为了防止焦点丢失等问题无法立刻应用。
+         * @param key 应用关涉的节点编号。节点编号相同的操作会被覆盖。
+         * @param subapply 等修改时调用的函数。
+         */
+        add_delay_operation(key: string, subapply: (fat: YEditor)=>void){
+            let me = this as any as YEditor
+            me.setState({delay_operations: {...me.state.delay_operations , [key]: subapply}})
+        }
 
-    /** 这个函数应用所有临时操作。 */
-    apply_delay_operations(){
-        let me = this as any as YEditor
-        Object.values(me.state.delay_operations).map((subapply)=>{
-            subapply(me)
-        })
-        me.setState({delay_operations: {}})
-    } , 
+        /** 这个函数应用所有临时操作。 */
+        apply_delay_operations(){
+            let me = this as any as YEditor
+            Object.values(me.state.delay_operations).map((subapply)=>{
+                subapply(me)
+            })
+            me.setState({delay_operations: {}})
+        }
+    }
 }
