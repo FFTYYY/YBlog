@@ -49,8 +49,8 @@ export type {UniversalComponent_Props}
  * 注意，这个类是一个菜单，不包含打开菜单的逻辑。
 */
 class DefaultParameterContainer extends React.Component <{
-    /** 参数的初始值。 */
-    initval: ValidParameter
+    /** 参数的值。 */
+    parameters: ValidParameter
 
     /** 更改时的回调函数。 */
     onUpdate?: (newval: ValidParameter) => void
@@ -60,14 +60,14 @@ class DefaultParameterContainer extends React.Component <{
     onUpdate: (newval: any) => void
 
     /**
-     * @param props.initval 所有参数的初始值。
+     * @param props.parameters 所有参数的初始值。
      * @param props.onUpdate 在自身更新时的回调。如果为 undefined 则不会干任何事。
      */
     constructor(props){
         super(props)
 
         this.state = {
-            parameters: this.props.initval
+            parameters: this.props.parameters
         }
 
         this.onUpdate = props.onUpdate || ( (newval: any) => {} )
@@ -97,20 +97,20 @@ class DefaultParameterContainer extends React.Component <{
 
         if(type == "string"){
             return <TextField 
-                onChange  = {e=>onChange(e.target.value)}
+                onBlur  = {e=>onChange(e.target.value)} // 在失去焦点时才实际更新。
                 {...standard_props}
             />
         }
         if(type == "number"){
             return <TextField 
-                onChange  = {e=>onChange(e.target.value)}
+                onBlur  = {e=>onChange(e.target.value)}
                 type = "number"
                 {...standard_props}
             />
         }
         if(type == "boolean"){
             return <TextField 
-                onChange = {e=>{onChange(e.target.value == "true")}}
+                onBlur = {e=>{onChange(e.target.value == "true")}}
                 //select // TODO 这里如果设置成select有个bug，使得点击的时候页面并没有刷新，但是drawer会消失。
                 {...standard_props}
             >
@@ -132,7 +132,7 @@ class DefaultParameterContainer extends React.Component <{
         let R = this.RenderValue.bind(this)
         return <List>
             {Object.keys(me.state.parameters).map((key,idx)=>{
-                <ListItem key = {idx}>
+                return <ListItem key = {idx}>
                     <R 
                         name = {key}
                         val = {me.state.parameters[key]}
@@ -164,7 +164,6 @@ class DefaultParameterWithEditor extends React.Component<UniversalComponent_Prop
         super(props)
     }
 
-
     render(){
         let me = this
         let props = this.props
@@ -184,9 +183,8 @@ class DefaultParameterWithEditor extends React.Component<UniversalComponent_Prop
                 )
             })
         }
-        
         return <DefaultParameterContainer
-            initval = { has_prox ? element.proxy_info.proxy_params : element.parameters }
+            parameters = { has_prox ? element.proxy_info.proxy_params : element.parameters }
             onUpdate = { newval=>temp_update_value(newval) }
         />
     }
