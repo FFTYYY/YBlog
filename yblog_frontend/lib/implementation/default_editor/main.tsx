@@ -176,7 +176,7 @@ class DefaultButtonbar extends React.Component<{
 					}}
 					title = {typename}
 				>{
-					Object.keys(me.get_style_list(typename)).map( (stylename , idx) => 
+					me.get_style_list(typename).map( (stylename , idx) => 
 						<React.Fragment key={idx}>
 							<Button 
 								onClick = {e => me.editor.get_onClick(typename , stylename)()}
