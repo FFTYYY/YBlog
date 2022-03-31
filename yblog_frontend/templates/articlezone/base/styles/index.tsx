@@ -65,7 +65,7 @@ function withAllEditors(editor: YEditor): YEditor{
             continue
         }
         let editor_func = style_editor_printer[name][1]
-        editor.set(editor_func , style.type , style.name)
+        editor.set_renderer(editor_func , style.type , style.name)
     }
     return editor
 }
