@@ -96,7 +96,7 @@ class App extends  React.Component<App_Props , {
 				struct: {},
 				support: {} ,  
 				abstract: {} , 
-			}
+			} , 
 		}
 
 		this.editor_ref  = React.createRef()
@@ -175,6 +175,8 @@ class App extends  React.Component<App_Props , {
 		let me = this
 		let ExtraButtons = this.extra_buttons.bind(this)
 
+		let haha = ""
+
 		return <Box sx={props.sx}>
 			<Box sx = {{
 				position: "absolute" , 
@@ -196,8 +198,11 @@ class App extends  React.Component<App_Props , {
 						// 	me.printer_ref.current.scroll_to(slate.selection.focus.path)
 						// }
 					}}
-					onUpdate = {()=>{
+					onUpdate = {(v)=>{
 						// console.log(me.core.root)
+						if(me.printer_ref && me.printer_ref.current){
+							me.printer_ref.current.forceUpdate()
+						}
 					}}
 					extra_buttons = {<ExtraButtons />}
 				/>
@@ -210,11 +215,31 @@ class App extends  React.Component<App_Props , {
 				top: "0" , 
 				height: "100%" , 
 			}}>
-				<DefaultPrinter
+				{/* <DefaultPrinter
 					printer = {me.state.printer}
 					ref = {this.printer_ref}
 					theme = {my_theme}
-				/>
+				/> */}
+				{(()=>{
+					function V({js}){
+						if(js == undefined)
+							return <></>
+						if(typeof(js) == "string" || typeof(js) == "number" || typeof(js) == "boolean")
+							return <div>{js}</div>
+						return <>{Object.keys(js).map((k,idx)=><div key={idx}>
+							[{k}] :
+							<div  style={{marginLeft: "20px"}}><V js={js[k]}/></div>
+						</div>)}</>
+					}
+					class R extends React.Component{
+						constructor(props){
+							super(props)
+						}
+						// render(){return <div>{JSON.stringify( (me.get_editor()||{get_root:()=>{}}).get_root() )}</div>}
+						render(){return <V js={(me.get_editor()||{get_root:()=>{}}).get_root()} />}
+					}
+					return <R ref ={me.printer_ref}></R>
+				})()}
 			</Box>
 		</Box>
 	}
