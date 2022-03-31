@@ -33,15 +33,15 @@ import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
 import { add_nodes } from "../behaviours"
 
 export { YEditor }
-import { UtilsMixin } from "./utilsmixin"
-import { DelayOperationsMixin } from "./delayoperationsmixin"
-import { CollectionMixin } from "./collectionmixin"
-import { RenderMixin } from "./rendermixin"
+import { use_utils_mixin } from "./utilsmixin"
+import { use_delay_operations_mixin } from "./delayoperationsmixin"
+import { use_collection_mixin } from "./collectionmixin"
+import { use_render_mixin } from "./rendermixin"
 import type { EditorRenderer_Props , EditorRenderer_Func } from "./collectionmixin"
 import type { SlateRenderer_Props } from "./rendermixin"
 
 
-class YEditor extends React.Component<{
+class YEditorBase extends React.Component<{
     core: EditorCore
     proxies: {[key in StyleType]: {[name: string]: Proxy}}
     renderers: StyleCollector<EditorRenderer_Func>
@@ -56,8 +56,6 @@ class YEditor extends React.Component<{
     root: GroupNode
     delay_operations: { [subnode_idx: number]: (fat: YEditor)=>void }
 }> {
-    proxies: {[key in StyleType]: {[name: string]: Proxy}}
-    renderers: StyleCollector<EditorRenderer_Func>
     core: EditorCore
     onUpdate: (v: any) => void
     onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void
@@ -68,36 +66,20 @@ class YEditor extends React.Component<{
     add_delay_operation: (key: string, subapply: (fat: YEditor)=>void)=>void
     apply_delay_operations: ()=>void
     
+    proxies: {[key in StyleType]: {[name: string]: Proxy}}
+    renderers: StyleCollector<EditorRenderer_Func>
     get_proxy: (type: StyleType , name: string) => Proxy
     get_renderer: (nodetype: NodeType, stylename?: string ) => EditorRenderer_Func
     
     update_value: (value: Node[]) => void
     renderElement: (props: SlateRenderer_Props) => any
     renderLeaf: (props: SlateRenderer_Props) => any
-    // render: () => JSX.Element
+    render: () => any
 
     get_onClick: (nodetype: StyledNodeType, stylename: string) => ( ()=>void )
     get_root: ()=>Node
     get_real_parameters: (node: StyledNode) => ValidParameter
     
-    use_mixins(){
-        this.add_delay_operation    = DelayOperationsMixin.add_delay_operation.bind(this)
-        this.apply_delay_operations = DelayOperationsMixin.apply_delay_operations.bind(this)
-
-        
-        this.get_proxy = CollectionMixin.get_proxy.bind(this)
-        this.get_renderer = CollectionMixin.get_renderer.bind(this)
-        
-        this.update_value = RenderMixin.update_value.bind(this)
-        this.renderElement = RenderMixin.renderElement.bind(this)
-        this.renderLeaf = RenderMixin.renderLeaf.bind(this)
-        this.render = RenderMixin.render.bind(this)
-
-        this.get_onClick = UtilsMixin.get_onClick.bind(this)
-        this.get_root = UtilsMixin.get_root.bind(this)
-        this.get_real_parameters = UtilsMixin.get_real_parameters.bind(this)
-
-    }
 
     constructor(props){
         super(props)
@@ -119,8 +101,6 @@ class YEditor extends React.Component<{
             }) , 
             delay_operations: {} , 
         }
-
-        this.use_mixins()
     }
 
     get_slate(){
@@ -138,27 +118,14 @@ class YEditor extends React.Component<{
         return Object.keys(this.renderers[type])
     }
 }
-// applyMixins(YEditor , [CollectionMixin , DelayOperationsMixin , RenderMixin , UtilsMixin])
 
-// Object.assign(YEditor.prototype, CollectionMixin.prototype)
-// Object.assign(YEditor.prototype, DelayOperationsMixin.prototype)
-// Object.assign(YEditor.prototype, RenderMixin.prototype)
-// Object.assign(YEditor.prototype, UtilsMixin.prototype)
-// console.log(YEditor.prototype)
-
-// function applyMixins(derivedCtor: any, constructors: any[]) {
-//     constructors.forEach((baseCtor) => {
-//         Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
-//             Object.defineProperty(
-//                 derivedCtor.prototype,
-//                 name,
-//                 Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||
-//                 Object.create(null)
-//             )
-//         })
-//     })
-//     console.log(derivedCtor.prototype)
-// }
+const YEditor = 
+    use_utils_mixin(
+    use_delay_operations_mixin(
+    use_collection_mixin(
+    use_render_mixin(
+        YEditorBase
+))))
 
 
 /* 以下是写了一半的把当前选区转换为group的代码

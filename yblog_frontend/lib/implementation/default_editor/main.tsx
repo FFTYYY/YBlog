@@ -50,6 +50,8 @@ import {
 import { EditorBackgroundPaper , EditorComponentEditingBox } from "./basic"
 import { DoSomething } from "../utils"
 import { timelineSeparatorClasses } from "@mui/lab"
+import { StyleCollector } from "../../core/stylecollector"
+import type { EditorRenderer_Props , EditorRenderer_Func } from "../../editor"
 
 export { DefaultEditor }
 
@@ -193,82 +195,31 @@ class DefaultButtonbar extends React.Component<{
 }
 
 
-/** 
- * 这个组件提供一个开箱即用的默认编辑器组件。
- */
-class DefaultEditor extends React.Component <{
-	core: EditorCore
-	onUpdate?: (newval: Node[]) => void
-	onFocusChange?: ()=>void
-	onMount?: () => void
-	theme?: ThemeOptions
-	extra_buttons?: any
-} , {
-	ctrl_key: any
-}> {
-	core: EditorCore
-	onUpdate: (newval: Node[]) => void
-	onMount: ()=>void
-	onFocusChange: ()=>void
-	notification_key: number // 用来记录自己对于 core 的notification。
-	buttonbar_ref: React.RefObject<DefaultButtonbar>
-	editor_ref: React.RefObject<YEditor>
-
-	constructor(props) {
-		super(props)
-
-		this.state = {
-			ctrl_key: {} , // 只在按下ctrl的状态下有效，记录哪些键被按下了
-		}
-
-		this.editor_ref = React.createRef<YEditor>()
-		
-		this.core = props.core
-		this.onUpdate = props.onUpdate || ((newval: Node[])=>{})
-		this.onMount  = props.onMount || (()=>{})
-		this.onFocusChange  = props.onFocusChange || (()=>{})
-
-		this.buttonbar_ref = React.createRef<DefaultButtonbar>()
-    }
-
-	get_editor(){
-		if(this.editor_ref && this.editor_ref.current)
-			return this.editor_ref.current
-		return undefined
-	}
-
-	componentDidMount(): void {
-		let me = this
-		this.onMount()	
-
-		this.notification_key = Math.floor( Math.random() * 233333 )
-		let layzy_update = new DoSomething( ()=>{me.forceUpdate()} , 5000)
-		// this.editor.core.add_notificatioon(()=>layzy_update.go() , `editor-${this.notification_key}`)
-	}
-	componentWillUnmount(): void {
-		// this.editor.core.remove_notificatioon(`editor-${this.notification_key}`)
-	}
-
+class NoKeyboardOpMixin{
 	is_selecting(){
-		return this.state.ctrl_key["q"]
+		let me = this as any as DefaultEditor
+
+		return me.state.ctrl_key["q"]
 	}
 
 	flush_key_state(keydown: boolean , e: React.KeyboardEvent<HTMLDivElement>){
+		let me = this as any as DefaultEditor
+
 		if(e.ctrlKey){
 			if(keydown){
-				if(!this.state.ctrl_key[e.key]){
-					this.setState({ctrl_key: {...this.state.ctrl_key , [e.key]: true}})
+				if(!me.state.ctrl_key[e.key]){
+					me.setState({ctrl_key: {...me.state.ctrl_key , [e.key]: true}})
 				}
 			}
 			else{
-				if(this.state.ctrl_key[e.key]){
-					this.setState({ctrl_key: {...this.state.ctrl_key , [e.key]: undefined}})
+				if(me.state.ctrl_key[e.key]){
+					me.setState({ctrl_key: {...me.state.ctrl_key , [e.key]: undefined}})
 				}
 			}
 		}
 		else{
-			if(Object.keys( this.state.ctrl_key ).length > 0){
-				this.setState({
+			if(Object.keys( me.state.ctrl_key ).length > 0){
+				me.setState({
 					ctrl_key: {} , 
 				})
 			}
@@ -276,11 +227,13 @@ class DefaultEditor extends React.Component <{
 	}
 
 	prevent_key_down(e: React.KeyboardEvent<HTMLDivElement>){
-		if(!this.is_selecting()){
+		let me = this as any as DefaultEditor
+
+		if(!me.is_selecting()){
 			return false
 		}
-		if(this.buttonbar_ref && this.buttonbar_ref.current){
-			let buttonbar = this.buttonbar_ref.current
+		if(me.buttonbar_ref && me.buttonbar_ref.current){
+			let buttonbar = me.buttonbar_ref.current
 			if(e.key == "ArrowLeft" || e.key == "ArrowRight" || e.key == "ArrowDown" || e.key == "ArrowUp" || e.key == "Enter"){
 				e.preventDefault()
 				return true
@@ -289,10 +242,12 @@ class DefaultEditor extends React.Component <{
 	}
 
 	handle_key_press(e: React.KeyboardEvent<HTMLDivElement>){
-		if(!this.is_selecting())
+		let me = this as any as DefaultEditor
+
+		if(!me.is_selecting())
 			return false
-		if(this.buttonbar_ref && this.buttonbar_ref.current){
-			let buttonbar = this.buttonbar_ref.current
+		if(me.buttonbar_ref && me.buttonbar_ref.current){
+			let buttonbar = me.buttonbar_ref.current
 			if(e.key == "ArrowLeft"){
 				buttonbar.move({x: -1})
 				e.preventDefault()
@@ -322,6 +277,82 @@ class DefaultEditor extends React.Component <{
 		return false
 	}
 
+}
+
+/** 
+ * 这个组件提供一个开箱即用的默认编辑器组件。
+ */
+class DefaultEditor extends React.Component <{
+    core: EditorCore
+    proxies: {[key in StyleType]: {[name: string]: Proxy}}
+    renderers: StyleCollector<EditorRenderer_Func>
+
+	onUpdate?: (newval: Node[]) => void
+	onFocusChange?: ()=>void
+	onMount?: () => void
+	theme?: ThemeOptions
+	extra_buttons?: any
+
+} , {
+	ctrl_key: any
+}> implements NoKeyboardOpMixin {
+    core: EditorCore
+    proxies: {[key in StyleType]: {[name: string]: Proxy}}
+    renderers: StyleCollector<EditorRenderer_Func>
+
+	is_selecting: () => boolean
+	flush_key_state: (keydown: boolean , e: React.KeyboardEvent<HTMLDivElement>) => void
+	prevent_key_down: (e: React.KeyboardEvent<HTMLDivElement>) => boolean
+	handle_key_press: (e: React.KeyboardEvent<HTMLDivElement>) => boolean
+	
+
+	onUpdate: (newval: Node[]) => void
+	onMount: ()=>void
+	onFocusChange: ()=>void
+
+	buttonbar_ref: React.RefObject<DefaultButtonbar>
+	editor_ref: React.RefObject<YEditor>
+
+	constructor(props) {
+		super(props)
+
+		this.state = {
+			ctrl_key: {} , // 只在按下ctrl的状态下有效，记录哪些键被按下了
+		}
+
+		this.editor_ref = React.createRef<YEditor>()
+		
+		this.core 		= props.core
+		this.proxies 	= props.proxies
+		this.renderers 	= props.renderers
+
+
+		this.onUpdate = props.onUpdate || ((newval: Node[])=>{})
+		this.onMount  = props.onMount || (()=>{})
+		this.onFocusChange  = props.onFocusChange || (()=>{})
+
+		this.buttonbar_ref = React.createRef<DefaultButtonbar>()
+    }
+
+	get_editor(){
+		if(this.editor_ref && this.editor_ref.current)
+			return this.editor_ref.current
+		return undefined
+	}
+
+	componentDidMount(): void {
+		let me = this
+		this.onMount()	
+
+		// this.notification_key = Math.floor( Math.random() * 233333 )
+		// let layzy_update = new DoSomething( ()=>{me.forceUpdate()} , 5000)
+		// this.editor.core.add_notificatioon(()=>layzy_update.go() , `editor-${this.notification_key}`)
+	}
+	componentWillUnmount(): void {
+		// this.editor.core.remove_notificatioon(`editor-${this.notification_key}`)
+	}
+
+
 	render() {
 	
 		// 工具栏的宽度
@@ -346,8 +377,12 @@ class DefaultEditor extends React.Component <{
 				overflow: "auto", 
 			}}><EditorComponentEditingBox>
 				<YEditor
-					ref = {me.editor_ref} 
-					core = {me.core}
+					ref 		= {me.editor_ref} 
+					
+					core 		= {me.core}
+					proxies 	= {me.proxies}
+					renderers 	= {me.renderers}
+
 					onUpdate = {me.onUpdate} 
 					onFocusChange = {me.onFocusChange} 
 					onKeyDown = {e=>{
@@ -380,3 +415,5 @@ class DefaultEditor extends React.Component <{
 			</EditorBackgroundPaper></ThemeProvider>
 	}
 }
+
+Object.assign( DefaultEditor.prototype  , NoKeyboardOpMixin.prototype)

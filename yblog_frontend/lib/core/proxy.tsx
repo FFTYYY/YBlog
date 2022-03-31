@@ -69,4 +69,11 @@ class Proxy{
         node.proxy_info.proxy_params = this.get_proxy_parameters(node.parameters)
         return node
     }
+
+    get_styletype(){
+        return this.target_style.type
+    }
+    get_stylename(){
+        return this.target_style.name
+    }
 }

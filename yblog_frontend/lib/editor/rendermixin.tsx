@@ -42,7 +42,7 @@ interface SlateRenderer_Props{
     leaf?: Node
 }
 
-class RenderMixin{
+let RenderMixin = {
     
     /** 
      * 当 slate 改变 value 时通知自身的函数。
@@ -51,7 +51,7 @@ class RenderMixin{
         let me = this as any as YEditor
         me.setState({root: {...me.state.root , children: value}})
         me.onUpdate(value)
-    }
+    } , 
 
     /** 渲染函数
      * @param props.element 当前要渲染的节点。
@@ -88,7 +88,8 @@ class RenderMixin{
             extra_style = {display: "inline-block"}
         
         return <div {...slate_attributes} style={extra_style}><R {...subprops}/></div>
-    }
+    } , 
+
     renderLeaf(props: SlateRenderer_Props){
         let me = this as any as YEditor
 
@@ -104,11 +105,13 @@ class RenderMixin{
             children: props.children , 
         }
         return <span {...slate_attributes}><R {...subprops}></R></span>
-    }
-    render(){
-        let me = this as any as YEditor
-        let slate = me.state.slate
+    } , 
 
+    render(){    
+        let me = this as any as YEditor
+
+        let slate = me.state.slate
+    
         let context = {
             editor: me , 
             slate: me.state.slate , 
@@ -128,17 +131,17 @@ class RenderMixin{
                     renderElement = {me.renderElement.bind(me)}
                     renderLeaf    = {me.renderLeaf.bind(me)}
                     onClick       = {e=>{me.onFocusChange()}}
-
+    
                     onCopy = {async (e)=>{
                         return true // 虽然不知道是什么原理，但是返回`true`会使得`slate`只向粘贴板中输入文本。
                     }}
-
+    
                     onKeyDown = {e=>me.onKeyDown(e)}
                     onKeyUp = {e=>me.onKeyUp(e)}
                     onKeyPress = {e=>{me.onKeyPress(e)}}
                 />
             </Slate>
         </GlobalInfoProvider>
-    }
-
+    } ,     
 }
+

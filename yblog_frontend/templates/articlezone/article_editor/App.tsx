@@ -25,6 +25,11 @@ import {
 	AutoStack , 
 	AutoIconButton , 
 	paragraph_prototype , 
+	StyleCollector , 
+	EditorRenderer_Func , 
+	EditorRenderer_Props , 
+	StyleType , 
+	Proxy , 
 
 } from "../../../lib"
 
@@ -55,21 +60,43 @@ interface App_State{
 	printer?: Printer
 }
 
-class App extends  React.Component<App_Props , App_State>{
+class App extends  React.Component<App_Props , {
+	editor_proxies: {[key in StyleType]: {[name: string]: Proxy}}
+	printer?: Printer 
+}>{
 	core: EditorCore
+	editor_renderers: StyleCollector<EditorRenderer_Func>
 	printer_ref: any
+	editor_ref: React.RefObject<DefaultEditor>
 
 	constructor(props: App_Props){
 		super(props)
 
-		this.core    = withAllStyles( new EditorCore([] , {
+		this.core = withAllStyles( new EditorCore([] , {
 			title: {
 				val: "" , 
 				type: "string" , 
 			} , 
 		}) )
+		this.editor_renderers = withAllEditors( new StyleCollector<EditorRenderer_Func>(this.core , {
+			text      : (props: EditorRenderer_Props)=><span>{props.children}</span> , 
+            inline    : (props: EditorRenderer_Props)=><span>{props.children}</span> , 
+            paragraph : (props: EditorRenderer_Props)=><div>{props.children}</div> , 
+            group     : (props: EditorRenderer_Props)=><div>{props.children}</div> , 
+            struct    : (props: EditorRenderer_Props)=><div>{props.children}</div> , 
+            support   : (props: EditorRenderer_Props)=><div>{props.children}</div> , 
+		}) )
+
 		this.state = {
 			printer: withAllPrinters( new Printer( this.core ) ) , 
+			
+			editor_proxies: {
+				inline: {},
+				group: {}, 
+				struct: {},
+				support: {} ,  
+				abstract: {} , 
+			}
 		}
 
 		this.editor_ref  = React.createRef()
@@ -78,15 +105,20 @@ class App extends  React.Component<App_Props , App_State>{
 
 	/** 完全不知道这是什么逻辑。 */
 	async componentDidMount(){
-		let my_editor = this.state.editor
-		let my_printer = this.state.printer
+		let proxies = {
+			inline: {},
+			group: {}, 
+			struct: {},
+			support: {} ,  
+			abstract: {} , 
+		}
 		let node_concepts = await Interaction.get.concept() // 从后端获得所有概念。
 		for(let [name , meta_name , fixed_params , default_params ] of node_concepts){
 
 			let proxy = make_proxy(meta_name , name , fixed_params , default_params)
-			my_editor.add_proxy(proxy)
+			proxies[proxy.get_styletype()][proxy.get_stylename()] = proxy
 		}
-		this.setState({editor: my_editor , printer: my_printer})
+		this.setState({ editor_proxies: proxies })
 
 		var root = await Interaction.get.content()
 		root = root || {children: [paragraph_prototype("")] , parameters: {}}
@@ -98,6 +130,13 @@ class App extends  React.Component<App_Props , App_State>{
 		// Transforms.insertNodes(this.state.editor.slate , root.children , {at: [0]}) // 插入内容
 		
 		set_normalize_status({initializing: false})
+	}
+
+	get_editor(){
+		if(this.editor_ref && this.editor_ref.current){
+			return this.editor_ref.current.get_editor()
+		}
+		return undefined
 	}
 	
 	async save_content(){
@@ -135,7 +174,6 @@ class App extends  React.Component<App_Props , App_State>{
 	mainpart(props: {sx: any}){
 		let me = this
 		let ExtraButtons = this.extra_buttons.bind(this)
-		let slate = this.state.editor.get_slate()
 
 		return <Box sx={props.sx}>
 			<Box sx = {{
@@ -146,12 +184,17 @@ class App extends  React.Component<App_Props , App_State>{
 				height: "100%" , 
 			}}>
 				<DefaultEditor 
-					editor = {me.state.editor}
+					ref 		= {me.editor_ref}
+					core 		= {me.core}
+					renderers 	= {me.editor_renderers}
+					proxies 	= {me.state.editor_proxies}
+					
 					theme = {my_theme}
+
 					onFocusChange = {()=>{
-						if(slate.selection && me.printer_ref  && me.printer_ref.current){
-							me.printer_ref.current.scroll_to(slate.selection.focus.path)
-						}
+						// if(slate.selection && me.printer_ref  && me.printer_ref.current){
+						// 	me.printer_ref.current.scroll_to(slate.selection.focus.path)
+						// }
 					}}
 					onUpdate = {()=>{
 						// console.log(me.core.root)
@@ -194,7 +237,7 @@ class App extends  React.Component<App_Props , App_State>{
 			}}>
 				<SaveButton save_func={me.save_content.bind(me)}/>
 				<FileManageButton />
-				<HandleMathBuutton editor={me.state.editor} />
+				<HandleMathBuutton editor={me.get_editor()} />
 			</FlexibleDrawer>
 
 			<MainPart sx={{

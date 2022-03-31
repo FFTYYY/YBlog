@@ -31,7 +31,7 @@ import { add_nodes } from "../behaviours"
 import { YEditor } from "./editor"
 export { UtilsMixin }
 
-class UtilsMixin{
+let UtilsMixin = {
 
     /** 这个函数帮助用户构建按钮。返回一个函数，这个函数表示要新建对应*样式*节点时的行为。
      * @param nodetype 节点类型，必须是有样式节点之一。
@@ -77,10 +77,10 @@ class UtilsMixin{
         }
 
         return () => undefined
-    }
+    } , 
 
     /** 获得用于渲染的节点树。 */
-    public get_root(){
+    get_root(){
         let me = this as any as YEditor
 
         function parse_node(original_node: Node){
@@ -95,10 +95,10 @@ class UtilsMixin{
         }
 
         return parse_node(me.state.slate)
-    }
+    } , 
 
     /** 对于一个有样式的节点，如果其有代理，就返回代理解析过的参数，否则返回本来的参数。 */
-    public get_real_parameters(node: StyledNode){
+    get_real_parameters(node: StyledNode){
         let me = this as any as YEditor
 
         if(node.proxy_info.proxy_name && me.get_proxy(node.type , node.proxy_info.proxy_name)){
@@ -106,6 +106,6 @@ class UtilsMixin{
             return proxy.get_real_parameters(node.proxy_info.proxy_params) // 将节点的参数替换成真实参数。
         }
         return node.parameters
-    }    
+    }  ,  
 
 }
