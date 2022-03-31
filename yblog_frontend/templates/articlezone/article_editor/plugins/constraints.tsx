@@ -1,4 +1,4 @@
-import { Editor , Node , Transforms } from "slate"
+import { Editor , Node , Transforms} from "slate"
 import { 
     GroupNode , 
     get_node_type , 
@@ -7,7 +7,6 @@ import {
     paragraph_prototype , 
     YEditor , 
     is_styled , 
-    set_node 
 } from "../../../../lib"
 import type { StyledNode } from "../../../../lib"
 import { newpara_style , sectioner_style , ender_style  } from "../../base/styles/styles"

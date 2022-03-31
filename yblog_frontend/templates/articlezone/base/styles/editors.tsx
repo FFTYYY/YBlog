@@ -14,8 +14,6 @@ import {
     YEditor , 
 
     EditorUnselecableBox , 
-
-    set_node , 
 } from "../../../../lib"
 import { Interaction , url_from_root } from "../interaction"
 
@@ -60,7 +58,7 @@ var mathblock_editor    = get_DefaultGroupEditor_with_RightBar({
             <TextField {...universal_props} label={label} defaultValue={exit_default} onChange = {(e)=>{
                 let val = e.target.value
                 let node = props.element
-                set_node(props.editor , node , {parameters: {...node.parameters, exit: {type: "string" , val: val}}})
+                props.editor.set_node( node , {parameters: {...node.parameters, exit: {type: "string" , val: val}}})
             }}/>
         </ React.Fragment>
     }

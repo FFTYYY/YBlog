@@ -32,7 +32,6 @@ import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 
 import {  AutoStack , AutoTooltip , Direction } from "../basic"
 import {  DefaultCloseButton , DefaultParameterEditButton , AutoStackedPopperWithButton , NewParagraphButton } from "./universe"
-import { add_nodes , add_nodes_after , add_nodes_before } from "../../behaviours"
 import { 
     EditorComponentPaper as ComponentPaper , 
     EditorUnselecableBox as UnselecableBox , 
@@ -60,7 +59,7 @@ function DefaultNewParagraphEditor(props: EditorRenderer_Props){
                 >{(()=>{
                     if(left_active)
                         return <AutoTooltip title="向上添加段落"><Button 
-                            onClick = { e => { add_nodes_before(editor , paragraph_prototype() , element) }}
+                            onClick = { e => { editor.add_nodes_before( paragraph_prototype() , element) }}
                             size = "small"
                             variant = "outlined"
                             fullWidth
@@ -75,7 +74,7 @@ function DefaultNewParagraphEditor(props: EditorRenderer_Props){
                 >{(()=>{
                     if(right_active)
                         return <AutoTooltip title="向下添加段落"><Button 
-                            onClick = { e => { add_nodes_after(editor , paragraph_prototype() , element) }}
+                            onClick = { e => { editor.add_nodes_after( paragraph_prototype() , element) }}
                             size = "small"
                             variant = "outlined"
                             fullWidth

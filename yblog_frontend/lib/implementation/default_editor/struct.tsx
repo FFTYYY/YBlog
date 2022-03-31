@@ -47,7 +47,6 @@ import { StructNode , StyledNode , paragraph_prototype , get_node_type } from ".
 import type { ValidParameter } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
-import { add_nodes , set_node , add_nodes_before , move_node } from "../../behaviours"
 
 import { is_same_node , node2path } from "../utils"
 
@@ -114,7 +113,7 @@ function get_DefaultStructEditor_with_RightBar({
         React.useEffect(()=>{
             // TODO 这个operation的名字应该规范一下...
             editor.add_delay_operation(`${element.idx}-struct` , ()=>{
-                set_node<StructNode>(editor , element , {num_children: nc_val})
+                editor.set_node(element , {num_children: nc_val})
             })
         })
 

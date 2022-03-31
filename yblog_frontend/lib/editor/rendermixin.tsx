@@ -26,7 +26,6 @@ import { EditorCore } from "../core/core"
 import { withAllYEditorPlugins } from "../plugins/apply_all"
 import { StyleCollector } from "../core/stylecollector"
 import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
-import { add_nodes } from "../behaviours"
 
 import { YEditor } from "./editor"
 

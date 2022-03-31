@@ -1,7 +1,7 @@
 import React from "react";
 import { createEditor , Node , BaseEditor , Path , BaseElement } from "slate"
 import { Slate, Editable, withReact, ReactEditor} from "slate-react"
-import { Editor, Transforms , Point , Text } from "slate"
+import { Editor , Point , Text } from "slate"
 import { withHistory } from "slate-history"
 
 import {
@@ -26,7 +26,6 @@ import { EditorCore } from "../core/core"
 import { withAllYEditorPlugins } from "../plugins/apply_all"
 import { StyleCollector } from "../core/stylecollector"
 import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
-import { add_nodes } from "../behaviours"
 
 import { YEditor } from "./editor"
 export { UtilsMixin }
@@ -47,7 +46,7 @@ let UtilsMixin = {
         {        
             return () => {
                 let node = proxy.makenode()
-                Transforms.insertNodes(me.state.slate , node)
+                me.add_nodes_here(node) // 在当前选中位置插入节点。
             }
         }
         if(nodetype == "inline"){
@@ -61,17 +60,10 @@ let UtilsMixin = {
                 let node = proxy.makenode()
 
                 if(flag){ // 如果没有选择任何东西，就新建节点。
-                    Transforms.insertNodes(me.state.slate , node)
+                    me.add_nodes_here(node) // 在当前选中位置插入节点。
                 }
                 else{ // 如果有节点，就把所有子节点打包成一个inline节点。
-                    Transforms.wrapNodes<InlineNode>(
-                        me.state.slate , 
-                        node , 
-                        { 
-                            match: (n:Node)=>Text.isText(n) , // 所有子节点中是文本的那些。
-                            split: true , 
-                        }
-                    )
+                    me.wrap_nodes(node  , (n:Node)=>Text.isText(n)) // 所有子节点中是文本的那些。
                 }
             }
         }
@@ -80,7 +72,7 @@ let UtilsMixin = {
     } , 
 
     /** 获得用于渲染的节点树。 */
-    get_root(): GroupNode{
+    get_root(){
         let me = this as any as YEditor
 
         function parse_node(original_node: Node){
@@ -94,7 +86,7 @@ let UtilsMixin = {
             return node
         }
 
-        return parse_node(me.state.root) as GroupNode
+        return parse_node(me.state.root)
     } , 
 
     /** 对于一个有样式的节点，如果其有代理，就返回代理解析过的参数，否则返回本来的参数。 */

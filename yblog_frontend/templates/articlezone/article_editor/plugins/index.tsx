@@ -1,4 +1,4 @@
-import { Editor , Node , Transforms } from "slate"
+import { Editor , Node  } from "slate"
 import { 
     GroupNode , 
     get_node_type , 
@@ -7,7 +7,6 @@ import {
     paragraph_prototype , 
     YEditor , 
     is_styled , 
-    set_node 
 } from "../../../../lib"
 
 import * as C from "./constraints"
