@@ -69,10 +69,10 @@ class App extends  React.Component<App_Props , App_State>{
 			} , 
 		}) )
 		this.state = {
-			editor: withAllPlugins( withAllEditors( new YEditor( this.core ) ) ), 
 			printer: withAllPrinters( new Printer( this.core ) ) , 
 		}
 
+		this.editor_ref  = React.createRef()
 		this.printer_ref = React.createRef()
 	}
 

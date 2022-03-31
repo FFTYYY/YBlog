@@ -102,16 +102,16 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             drawer_open: false
         }
         
-        this.subeditor = new YEditor(new EditorCore([
-            ...Object.values(props.editor.core.styles.inline    ) , 
-            ...Object.values(props.editor.core.styles.group     ) , 
-            ...Object.values(props.editor.core.styles.struct    ) , 
-            ...Object.values(props.editor.core.styles.support   ) , 
-            ...Object.values(props.editor.core.styles.abstract  ) , 
-        ] , props.editor.core.root.parameters))
+        // this.subeditor = new YEditor(new EditorCore([
+        //     ...Object.values(props.editor.core.styles.inline    ) , 
+        //     ...Object.values(props.editor.core.styles.group     ) , 
+        //     ...Object.values(props.editor.core.styles.struct    ) , 
+        //     ...Object.values(props.editor.core.styles.support   ) , 
+        //     ...Object.values(props.editor.core.styles.abstract  ) , 
+        // ] , props.editor.core.root.parameters))
         
-        this.subeditor.default_vals = props.editor.default_vals
-        this.subeditor.styled_vals  = props.editor.styled_vals
+        // this.subeditor.default_vals = props.editor.default_vals
+        // this.subeditor.styled_vals  = props.editor.styled_vals
         
         this.father_editor = props.editor
         this.father = props.father

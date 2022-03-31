@@ -31,6 +31,7 @@ import { Node } from "slate"
 import { YEditor } from "../../editor"
 import { object_foreach , merge_object } from "../utils"
 import type { StyleType , NodeType , StyledNodeType } from "../../core/elements"
+import { EditorCore } from "../../core/core"
 import { Proxy } from "../../core/proxy"
 
 import { DefaultHiddenEditorButtons } from "./hidden"
@@ -191,44 +192,51 @@ class DefaultButtonbar extends React.Component<{
 	}
 }
 
-interface DefaultEditor_State{
-	ctrl_key: any
-}
 
-interface DefaultEditor_Props{
-	editor: YEditor
+/** 
+ * 这个组件提供一个开箱即用的默认编辑器组件。
+ */
+class DefaultEditor extends React.Component <{
+	core: EditorCore
 	onUpdate?: (newval: Node[]) => void
 	onFocusChange?: ()=>void
 	onMount?: () => void
 	theme?: ThemeOptions
 	extra_buttons?: any
-}
-
-/** 
- * 这个组件提供一个开箱即用的默认编辑器组件。
- */
-class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor_State> {
-	editor: YEditor
+} , {
+	ctrl_key: any
+}> {
+	core: EditorCore
 	onUpdate: (newval: Node[]) => void
 	onMount: ()=>void
 	onFocusChange: ()=>void
 	notification_key: number // 用来记录自己对于 core 的notification。
 	buttonbar_ref: React.RefObject<DefaultButtonbar>
+	editor_ref: React.RefObject<YEditor>
 
-	constructor(props: DefaultEditor_Props) {
+	constructor(props) {
 		super(props)
 
 		this.state = {
 			ctrl_key: {} , // 只在按下ctrl的状态下有效，记录哪些键被按下了
 		}
 
-		this.editor = props.editor
+		this.editor_ref = React.createRef<YEditor>()
+		
+		this.core = props.core
 		this.onUpdate = props.onUpdate || ((newval: Node[])=>{})
 		this.onMount  = props.onMount || (()=>{})
 		this.onFocusChange  = props.onFocusChange || (()=>{})
 
 		this.buttonbar_ref = React.createRef<DefaultButtonbar>()
     }
+
+	get_editor(){
+		if(this.editor_ref && this.editor_ref.current)
+			return this.editor_ref.current
+		return undefined
+	}
+
 	componentDidMount(): void {
 		let me = this
 		this.onMount()	
@@ -337,8 +345,9 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 				width: complement_width, 
 				overflow: "auto", 
 			}}><EditorComponentEditingBox>
-				<YEditor.Component 
-					editor = {me.editor} 
+				<YEditor
+					ref = {me.editor_ref} 
+					core = {me.core}
 					onUpdate = {me.onUpdate} 
 					onFocusChange = {me.onFocusChange} 
 					onKeyDown = {e=>{
