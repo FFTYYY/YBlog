@@ -141,8 +141,8 @@ class YEditor extends React.Component<{
     /** 返回储存了的代理的名称列表 */
     get_proxy_names(type?: StyledNodeType): {[type in StyledNodeType]?: string[]} | string[]{
         if(type == undefined)
-            return Object.keys(this.proxies).reduce((obj , k)=>({...obj , k: Object.keys(this.renderers[k])}) , {})
-        return this.renderers[type] ? Object.keys(this.renderers[type]) : []
+            return Object.keys(this.proxies).reduce((obj , k)=>({...obj , k: Object.keys(this.proxies[k])}) , {})
+        return this.proxies[type] ? Object.keys(this.proxies[type]) : []
     }
 }
 // applyMixins(YEditor , [CollectionMixin , DelayOperationsMixin , RenderMixin , UtilsMixin])

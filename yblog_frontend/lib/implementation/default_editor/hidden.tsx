@@ -88,6 +88,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
     father_editor: YEditor
     father: StyledNode
     son: GroupNode
+    editor_ref: React.RefObject<DefaultEditor>
 
 
     /**
@@ -102,16 +103,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             drawer_open: false
         }
         
-        // this.subeditor = new YEditor(new EditorCore([
-        //     ...Object.values(props.editor.core.styles.inline    ) , 
-        //     ...Object.values(props.editor.core.styles.group     ) , 
-        //     ...Object.values(props.editor.core.styles.struct    ) , 
-        //     ...Object.values(props.editor.core.styles.support   ) , 
-        //     ...Object.values(props.editor.core.styles.abstract  ) , 
-        // ] , props.editor.core.root.parameters))
-        
-        // this.subeditor.default_vals = props.editor.default_vals
-        // this.subeditor.styled_vals  = props.editor.styled_vals
+        this.editor_ref = React.createRef()
         
         this.father_editor = props.editor
         this.father = props.father
@@ -121,15 +113,25 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
     /** 这个函数将子编辑器的修改应用到父编辑器上。 */
     sub_apply(father_editor: YEditor){
 
+        let subeditor = this.get_editor()
+        if(!subeditor)
+            return 
+
         let father = this.father
         let son = this.son
         let hidden_idx = get_hidden_idx(father , son)
-        let new_son = {...son , ...{children: this.subeditor.core.root.children}} // 更新之后的son。
+        let new_son = {...son , ...{children: subeditor.get_root().children}} // 更新之后的son。
         let new_hiddens = update_kth(father.hiddens , hidden_idx , new_son) // 更新之后的 father.hiddens。
         
         // TODO：这里有个bug，slate的setNodes并不会立刻应用，这导致如果有多个setNodes，后面修改的会覆盖前面的。
         // 应用变换。
         set_node(father_editor , father , { hiddens: new_hiddens })
+    }
+
+    get_editor(){
+        if(!(this.editor_ref && this.editor_ref.current))
+            return undefined
+        return this.editor_ref.current
     }
 
 	render() {
@@ -149,11 +151,18 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
         >
             <ForceContain.Provider value={true}>
                 <DefaultEditor 
-                    
-                    editor = { me.subeditor }
+                    ref         = {me.editor_ref}
+                    core        = {me.father_editor.core}
+                    proxies     = {me.father_editor.proxies}
+                    renderers   = {me.father_editor.renderers}
+
                     onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
-                        replace_nodes(me.subeditor , me.subeditor.core.root , me.props.son.children)
-                        me.props.editor.add_delay_operation(`${me.son.idx}-hidden` , me.sub_apply.bind(me))
+                        let subeditor = me.get_editor()
+
+                        if(subeditor){
+                            replace_nodes(me.subeditor , subeditor.get_root() , me.props.son.children)
+                            me.props.editor.add_delay_operation(`${me.son.idx}-hidden` , me.sub_apply.bind(me))
+                        }
                     }}
                 />
             </ForceContain.Provider>
