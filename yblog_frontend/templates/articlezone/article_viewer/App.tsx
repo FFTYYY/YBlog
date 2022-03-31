@@ -24,7 +24,7 @@ import {
 
     PrinterStructureBoxText  , 
 } from "../../../lib"
-import { make_new_style , withNecessaryPrinter , withNecessaryStyle} from "../base/styles"
+// import { make_new_style , withNecessaryPrinter , withNecessaryStyle} from "../base/styles"
 import { my_theme } from "../base/construction/theme"
 import { LeftBox , RightBox } from "./cards"
 import { Interaction , BackendData } from "../base/interaction"
