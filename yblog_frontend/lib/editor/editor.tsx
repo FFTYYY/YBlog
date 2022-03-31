@@ -46,6 +46,7 @@ class YEditor extends React.Component<{
     proxies: {[key in StyleType]: {[name: string]: Proxy}}
     renderers: StyleCollector<EditorRenderer_Func>
 
+    bindref?: (ref:YEditor)=>void
     onUpdate?: (newval:any)=>void    // 当节点改变时的回调函数
     onFocusChange?: ()=>void          // 点击或者修改
     onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void
@@ -64,6 +65,7 @@ class YEditor extends React.Component<{
     onKeyUp: (e: React.KeyboardEvent<HTMLDivElement>) => void
     onKeyPress: (e: React.KeyboardEvent<HTMLDivElement>) => void
     onFocusChange: ()=>void
+    bindref: (ref:YEditor)=>void
 
     add_delay_operation: (key: string, subapply: (fat: YEditor)=>void)=>void
     apply_delay_operations: ()=>void
@@ -77,7 +79,7 @@ class YEditor extends React.Component<{
     // render: () => JSX.Element
 
     get_onClick: (nodetype: StyledNodeType, stylename: string) => ( ()=>void )
-    get_root: ()=>Node
+    get_root: ()=>GroupNode
     get_real_parameters: (node: StyledNode) => ValidParameter
     
     use_mixins(){
@@ -108,6 +110,7 @@ class YEditor extends React.Component<{
         this.onKeyUp        = props.onKeyUp         || (()=>{})
         this.onKeyPress     = props.onKeyPress      || (()=>{})
         this.onFocusChange  = props.onFocusChange   || (()=>{})
+        this.bindref        = props.bindref         || (()=>{})
 
         this.renderers  = props.renderers
         this.proxies    = props.proxies
@@ -123,6 +126,10 @@ class YEditor extends React.Component<{
         this.use_mixins()
     }
 
+    componentDidMount(){
+        this.bindref(this)
+    }
+
     get_slate(){
         return this.state.slate
     }
@@ -135,7 +142,7 @@ class YEditor extends React.Component<{
     get_proxy_names(type?: StyledNodeType): {[type in StyledNodeType]?: string[]} | string[]{
         if(type == undefined)
             return Object.keys(this.proxies).reduce((obj , k)=>({...obj , k: Object.keys(this.renderers[k])}) , {})
-        return Object.keys(this.renderers[type])
+        return this.renderers[type] ? Object.keys(this.renderers[type]) : []
     }
 }
 // applyMixins(YEditor , [CollectionMixin , DelayOperationsMixin , RenderMixin , UtilsMixin])

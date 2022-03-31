@@ -195,12 +195,12 @@ class DefaultButtonbar extends React.Component<{
 }
 
 
-class NoKeyboardOpMixin{
+let NoKeyboardOpMixin = {
 	is_selecting(){
 		let me = this as any as DefaultEditor
 
 		return me.state.ctrl_key["q"]
-	}
+	} , 
 
 	flush_key_state(keydown: boolean , e: React.KeyboardEvent<HTMLDivElement>){
 		let me = this as any as DefaultEditor
@@ -224,7 +224,7 @@ class NoKeyboardOpMixin{
 				})
 			}
 		}
-	}
+	} , 
 
 	prevent_key_down(e: React.KeyboardEvent<HTMLDivElement>){
 		let me = this as any as DefaultEditor
@@ -239,7 +239,7 @@ class NoKeyboardOpMixin{
 				return true
 			}
 		}
-	}
+	} , 
 
 	handle_key_press(e: React.KeyboardEvent<HTMLDivElement>){
 		let me = this as any as DefaultEditor
@@ -275,8 +275,7 @@ class NoKeyboardOpMixin{
 			}
 		}
 		return false
-	}
-
+	} , 
 }
 
 /** 
@@ -295,7 +294,7 @@ class DefaultEditor extends React.Component <{
 
 } , {
 	ctrl_key: any
-}> implements NoKeyboardOpMixin {
+}> {
     core: EditorCore
     proxies: {[key in StyleType]: {[name: string]: Proxy}}
     renderers: StyleCollector<EditorRenderer_Func>
@@ -310,17 +309,25 @@ class DefaultEditor extends React.Component <{
 	onMount: ()=>void
 	onFocusChange: ()=>void
 
-	buttonbar_ref: React.RefObject<DefaultButtonbar>
-	editor_ref: React.RefObject<YEditor>
+	editor_ref		: React.RefObject<YEditor>
+	buttonbar_ref	: React.RefObject<DefaultButtonbar>
+
+	use_mixins(){
+		this.is_selecting 		= NoKeyboardOpMixin.is_selecting.bind(this)
+		this.flush_key_state 	= NoKeyboardOpMixin.flush_key_state.bind(this)
+		this.prevent_key_down 	= NoKeyboardOpMixin.prevent_key_down.bind(this)
+		this.handle_key_press 	= NoKeyboardOpMixin.handle_key_press.bind(this)
+	}
 
 	constructor(props) {
 		super(props)
+
+		this.use_mixins()
 
 		this.state = {
 			ctrl_key: {} , // 只在按下ctrl的状态下有效，记录哪些键被按下了
 		}
 
-		this.editor_ref = React.createRef<YEditor>()
 		
 		this.core 		= props.core
 		this.proxies 	= props.proxies
@@ -331,6 +338,7 @@ class DefaultEditor extends React.Component <{
 		this.onMount  = props.onMount || (()=>{})
 		this.onFocusChange  = props.onFocusChange || (()=>{})
 
+		this.editor_ref = React.createRef<YEditor>()
 		this.buttonbar_ref = React.createRef<DefaultButtonbar>()
     }
 
@@ -340,10 +348,20 @@ class DefaultEditor extends React.Component <{
 		return undefined
 	}
 
+	get_root(){
+		let editor = this.get_editor()
+		if(editor){
+			return editor.get_root()
+		}
+		return undefined
+	}
+
 	componentDidMount(): void {
 		let me = this
 		this.onMount()	
 
+		/** 非得要再刷新一下，react是不是有病啊 */
+		this.forceUpdate()
 		// this.notification_key = Math.floor( Math.random() * 233333 )
 		// let layzy_update = new DoSomething( ()=>{me.forceUpdate()} , 5000)
 		// this.editor.core.add_notificatioon(()=>layzy_update.go() , `editor-${this.notification_key}`)
@@ -378,12 +396,13 @@ class DefaultEditor extends React.Component <{
 			}}><EditorComponentEditingBox>
 				<YEditor
 					ref 		= {me.editor_ref} 
+					// bindref 	= {(ref)=>{me.setState({editor_ref: {current: ref}})}}
 					
 					core 		= {me.core}
 					proxies 	= {me.proxies}
 					renderers 	= {me.renderers}
 
-					onUpdate = {me.onUpdate} 
+					onUpdate = {me.onUpdate}
 					onFocusChange = {me.onFocusChange} 
 					onKeyDown = {e=>{
 						this.flush_key_state(true , e)
@@ -397,23 +416,26 @@ class DefaultEditor extends React.Component <{
 				/>
 			</EditorComponentEditingBox></Box>
 
-			{/* <Box sx = {{
+			<Box sx = {{
 				position: "absolute", 
 				height: "100%", 
 				left: number2percent(complement_width), 
 				width: toolbar_width
-			}}>
-				<AutoStack force_direction="column">
-					<DefaultParameterEditButton editor = {me.editor} element = {me.editor.slate} />
-					<DefaultHiddenEditorButtons editor = {me.editor} element = {me.editor.slate} />
+			}}>{(()=>{
+				let editor = me.get_editor()
+				let root = me.get_root()
+				if(!(editor && root)){
+					return <></>
+				}
+				return <AutoStack force_direction="column">
+					<DefaultParameterEditButton editor={editor} element={root} />
+					<DefaultHiddenEditorButtons editor={editor} element={root} />
 					{me.props.extra_buttons}
 					<Divider />
-					<DefaultButtonbar editor={me.editor} selecting={me.is_selecting()} ref={me.buttonbar_ref}/>
+					<DefaultButtonbar editor={editor} selecting={me.is_selecting()} ref={me.buttonbar_ref}/>
 				</AutoStack>
-			</Box> */}
+			})()}</Box>
 
 			</EditorBackgroundPaper></ThemeProvider>
 	}
 }
-
-Object.assign( DefaultEditor.prototype  , NoKeyboardOpMixin.prototype)
