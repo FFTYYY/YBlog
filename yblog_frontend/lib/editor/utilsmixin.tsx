@@ -80,7 +80,7 @@ let UtilsMixin = {
     } , 
 
     /** 获得用于渲染的节点树。 */
-    get_root(){
+    get_root(): GroupNode{
         let me = this as any as YEditor
 
         function parse_node(original_node: Node){
@@ -94,7 +94,7 @@ let UtilsMixin = {
             return node
         }
 
-        return parse_node(me.state.slate)
+        return parse_node(me.state.root) as GroupNode
     } , 
 
     /** 对于一个有样式的节点，如果其有代理，就返回代理解析过的参数，否则返回本来的参数。 */
