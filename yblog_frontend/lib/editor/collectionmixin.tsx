@@ -1,7 +1,7 @@
 import React from "react";
 import { createEditor , Node , BaseEditor , Path , BaseElement } from "slate"
 import { Slate, Editable, withReact, ReactEditor} from "slate-react"
-import { Editor, Transforms , Point , Text } from "slate"
+import { Editor , Point , Text } from "slate"
 import { withHistory } from "slate-history"
 
 import {
@@ -26,7 +26,6 @@ import { EditorCore } from "../core/core"
 import { withAllYEditorPlugins } from "../plugins/apply_all"
 import { StyleCollector } from "../core/stylecollector"
 import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
-import { add_nodes } from "../behaviours"
 
 import { YEditor } from "./editor"
 export { CollectionMixin }

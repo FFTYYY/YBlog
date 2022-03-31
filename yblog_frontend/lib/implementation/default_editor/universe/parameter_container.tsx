@@ -33,7 +33,6 @@ import { StyledNode } from "../../../core/elements"
 import type { ValidParameter , ValidParameterItem } from "../../../core/elements"
 import { YEditor } from "../../../editor"
 import { is_same_node , node2path } from "../../utils"
-import { set_node , delete_node } from "../../../behaviours"
 import { EditorStructureTypography as StructureTypography } from "../basic"
 
 export { 
@@ -179,7 +178,7 @@ class DefaultParameterWithEditor extends React.Component<UniversalComponent_Prop
             
             // 这是一个延迟操作。
             props.editor.add_delay_operation( `${props.element.idx}-parameter` , (father_editor: YEditor) => {
-                set_node( father_editor , props.element , has_prox ? 
+                father_editor.set_node( props.element , has_prox ? 
                     { proxy_info: {...element.proxy_info , proxy_params: newval}} : //如果有代理，就更新代理参数。
                     { parameters: newval }   // 如果没有代理，就更新原始参数。
                 )

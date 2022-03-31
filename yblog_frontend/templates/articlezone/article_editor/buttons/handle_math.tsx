@@ -9,8 +9,6 @@ import {
 	AutoTooltip , 
 	AutoIconButton , 
     has_children , 
-    delete_node_by_path , 
-    add_nodes , 
     group_prototype, 
     AutoStack,
     paragraph_prototype, 
@@ -61,8 +59,8 @@ function HandleMath(editor: YEditor, inlinestyle_name: string, blockstyle_name: 
             let new_node = mathinline_style.makenode()
             new_node.children = [{text: inner_text}]
 
-            delete_node_by_path(editor , now_path)
-            add_nodes( editor , [
+            editor.delete_node_by_path(now_path)
+            editor.add_nodes([
                 {text: before_text} , 
                 new_node , 
                 {text: end_text} , 
@@ -89,8 +87,8 @@ function HandleMath(editor: YEditor, inlinestyle_name: string, blockstyle_name: 
             let new_node_left = paragraph_prototype(before_text)
             let new_node_right = paragraph_prototype(end_text)
 
-            delete_node_by_path(editor , now_path)
-            add_nodes( editor , [
+            editor.delete_node_by_path(now_path)
+            editor.add_nodes( [
                 new_node_left , 
                 new_node , 
                 new_node_right , 
@@ -104,9 +102,8 @@ function HandleMath(editor: YEditor, inlinestyle_name: string, blockstyle_name: 
     }
 
     let cnt = 0
-    while(_handle(editor.slate , [])){
+    while(_handle(editor.get_slate() , [])){
         cnt ++
-        console.log(editor.core.root)
         if(cnt > 100){
             console.log("太多数学...")
             break

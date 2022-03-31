@@ -42,7 +42,6 @@ import { GroupNode , StyledNode , paragraph_prototype , get_node_type } from "..
 import type { ValidParameter } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
-import { add_nodes , set_node , add_nodes_before , move_node } from "../../behaviours"
 
 import { is_same_node , node2path } from "../utils"
 

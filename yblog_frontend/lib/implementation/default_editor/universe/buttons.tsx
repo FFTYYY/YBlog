@@ -28,7 +28,6 @@ import {
 from "@mui/icons-material"
 
 import {Node} from "slate"
-import { delete_node , add_nodes_before , add_nodes_after , add_nodes , set_node , move_node} from "../../../behaviours"
 import type {  GroupNode , StructNode , StyledNode } from "../../../core/elements"
 import { paragraph_prototype , get_node_type } from "../../../core/elements"
 import { node2path } from "../../utils"
@@ -95,7 +94,7 @@ function DefaultParameterEditButton(props: UniversalComponent_Props & {
  * @param props.element 这个组件所服务的节点。
  */
 function DefaultCloseButton(props: UniversalComponent_Props){
-    return <AutoIconButton onClick={e=>{delete_node(props.editor , props.element)}} title="删除组件" icon={CloseIcon} />
+    return <AutoIconButton onClick={e=>{props.editor.delete_node(props.element)}} title="删除组件" icon={CloseIcon} />
 }
 
 /** 这个组件提供一个在组件的上下新建段落的节点。 
@@ -105,12 +104,12 @@ function DefaultCloseButton(props: UniversalComponent_Props){
 function NewParagraphButton(props: UniversalComponent_Props){
 	return <React.Fragment>
 		<AutoIconButton
-			onClick = { e => {add_nodes_before(props.editor , paragraph_prototype() , props.element ) }}
+			onClick = { e => {props.editor.add_nodes_before(paragraph_prototype() , props.element ) }}
 			title = "向上添加段落"
 			icon = {NorthIcon}
 		></AutoIconButton>
 		<AutoIconButton
-			onClick = { e => {add_nodes_after(props.editor , paragraph_prototype() , props.element ) }}
+			onClick = { e => {props.editor.add_nodes_after( paragraph_prototype() , props.element ) }}
 			title = "向下添加段落"
 			icon = {SouthIcon}
 		></AutoIconButton>
@@ -181,10 +180,10 @@ function DefaultSwicth(props: {editor: YEditor , element: StyledNode}){
 
         // constraints会自动处理更改，不用担心
         if(checked == false){ // 从开到关
-            set_node(editor , element , { relation: "separating" })
+            editor.set_node(element , { relation: "separating" })
         }
         if(checked == true){ // 从关到开
-            set_node( editor , element , { relation: "chaining" } )
+            editor.set_node(element , { relation: "chaining" } )
         }
 
     }

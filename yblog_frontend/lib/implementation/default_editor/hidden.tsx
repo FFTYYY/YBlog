@@ -18,9 +18,6 @@ import {
 } from "@mui/icons-material"
 import { Node, Editor } from "slate"
 
-import { set_node , replace_nodes } from "../../behaviours"
-
-
 import { AutoTooltip , ForceContain , AutoStackedPopper } from "../basic"
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../../core/elements"
 import { YEditor } from "../../editor"
@@ -49,7 +46,7 @@ function DefaultNewHidden(props: {editor: YEditor, element: StyledNode, anchor_e
                 return 
             
             let new_hiddens = [...element.hiddens , ...[abstractstyles[choice].makehidden()]]
-            set_node(editor , element , {hiddens: new_hiddens})
+            editor.set_node( element , {hiddens: new_hiddens})
         }
     }
 
@@ -125,7 +122,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
         
         // TODO：这里有个bug，slate的setNodes并不会立刻应用，这导致如果有多个setNodes，后面修改的会覆盖前面的。
         // 应用变换。
-        set_node(father_editor , father , { hiddens: new_hiddens })
+        father_editor.set_node( father , { hiddens: new_hiddens })
     }
 
     get_editor(){
@@ -160,7 +157,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
                         let subeditor = me.get_editor()
 
                         if(subeditor){
-                            replace_nodes(me.subeditor , subeditor.get_root() , me.props.son.children)
+                            me.subeditor.replace_nodes( subeditor.get_root() , me.props.son.children)
                             me.props.editor.add_delay_operation(`${me.son.idx}-hidden` , me.sub_apply.bind(me))
                         }
                     }}

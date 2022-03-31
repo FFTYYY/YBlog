@@ -2,10 +2,10 @@
  * @module 
  */
 
-import React from "react";
+import React from "react"
 import { createEditor , Node , BaseEditor , Path , BaseElement } from "slate"
 import { Slate, Editable, withReact, ReactEditor} from "slate-react"
-import { Editor, Transforms , Point , Text } from "slate"
+import { Editor , Point , Text } from "slate"
 import { withHistory } from "slate-history"
 
 import {
@@ -30,13 +30,13 @@ import { EditorCore } from "../core/core"
 import { withAllYEditorPlugins } from "../plugins/apply_all"
 import { StyleCollector } from "../core/stylecollector"
 import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
-import { add_nodes } from "../behaviours"
 
 export { YEditor }
 import { UtilsMixin } from "./utilsmixin"
 import { DelayOperationsMixin } from "./delayoperationsmixin"
 import { CollectionMixin } from "./collectionmixin"
 import { RenderMixin } from "./rendermixin"
+import { BehavioursMixin } from "./behavioursmixin"
 import type { EditorRenderer_Props , EditorRenderer_Func } from "./collectionmixin"
 import type { SlateRenderer_Props } from "./rendermixin"
 
@@ -67,21 +67,37 @@ class YEditor extends React.Component<{
     onFocusChange: ()=>void
     bindref: (ref:YEditor)=>void
 
+    // delay-operation mixins
     add_delay_operation: (key: string, subapply: (fat: YEditor)=>void)=>void
     apply_delay_operations: ()=>void
     
+    // collector mixins
     get_proxy: (type: StyleType , name: string) => Proxy
     get_renderer: (nodetype: NodeType, stylename?: string ) => EditorRenderer_Func
     
+    // render mixins
     update_value: (value: Node[]) => void
     renderElement: (props: SlateRenderer_Props) => any
     renderLeaf: (props: SlateRenderer_Props) => any
     // render: () => JSX.Element
 
+    // utils mixins
     get_onClick: (nodetype: StyledNodeType, stylename: string) => ( ()=>void )
     get_root: ()=>GroupNode
     get_real_parameters: (node: StyledNode) => ValidParameter
     
+    // behaviours mixins
+    set_node: <T extends Node = StyledNode>(node: T, new_val: Partial<T>) => void
+    delete_node: (node: Node) => void
+    move_node: (node_from: Node, position_to: number[]) => void
+    add_nodes: (nodes: (Node[]) | Node, path: number[]) => void
+    add_nodes_before: (nodes: (Node[]) | Node, target_node: Node) => void
+    add_nodes_after: (nodes: (Node[]) | Node, target_node: Node) => void
+    replace_nodes: (father_node: StyledNode, nodes: Node[]) => void
+    add_nodes_here: (nodes: (Node[]) | Node) => void
+    wrap_nodes: <T extends Node & {children: Node[]} = StyledNode>(node: T, match: (n:Node)=>boolean) => void
+    delete_node_by_path: (path: number[]) => void
+
     use_mixins(){
         this.add_delay_operation    = DelayOperationsMixin.add_delay_operation.bind(this)
         this.apply_delay_operations = DelayOperationsMixin.apply_delay_operations.bind(this)
@@ -99,6 +115,16 @@ class YEditor extends React.Component<{
         this.get_root = UtilsMixin.get_root.bind(this)
         this.get_real_parameters = UtilsMixin.get_real_parameters.bind(this)
 
+        this.set_node = BehavioursMixin.set_node.bind(this)
+        this.delete_node = BehavioursMixin.delete_node.bind(this)
+        this.move_node = BehavioursMixin.move_node.bind(this)
+        this.add_nodes = BehavioursMixin.add_nodes.bind(this)
+        this.add_nodes_before = BehavioursMixin.add_nodes_before.bind(this)
+        this.add_nodes_after = BehavioursMixin.add_nodes_after.bind(this)
+        this.replace_nodes = BehavioursMixin.replace_nodes.bind(this)
+        this.add_nodes_here = BehavioursMixin.add_nodes_here.bind(this)
+        this.wrap_nodes = BehavioursMixin.wrap_nodes.bind(this)
+        this.delete_node_by_path = BehavioursMixin.delete_node_by_path.bind(this)
     }
 
     constructor(props){
@@ -143,6 +169,10 @@ class YEditor extends React.Component<{
         if(type == undefined)
             return Object.keys(this.proxies).reduce((obj , k)=>({...obj , k: Object.keys(this.proxies[k])}) , {})
         return this.proxies[type] ? Object.keys(this.proxies[type]) : []
+    }
+
+    is_root(node: Node){
+        return is_styled(node) && node.idx == this.state.root.idx
     }
 }
 // applyMixins(YEditor , [CollectionMixin , DelayOperationsMixin , RenderMixin , UtilsMixin])
