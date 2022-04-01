@@ -43,7 +43,7 @@ import {
 
 import { Node, Editor } from "slate"
 
-import { StructNode , StyledNode , paragraph_prototype , get_node_type } from "../../core/elements"
+import { StructNode , StyledNode , paragraph_prototype , get_node_type , get_param_val } from "../../core/elements"
 import type { ValidParameter } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
@@ -80,13 +80,13 @@ let StructPaper = (props: PaperProps & {element: StructNode}) => <ComponentPaper
  * @returns 一个用于渲染group的组件。
  */
 function get_DefaultStructEditor_with_RightBar({
-    get_label       = ((p:ValidParameter)=>p.title.val as string)   ,
+    get_label       = (n:StructNode)=>get_param_val(n,"label") as string, 
     get_widths      = (n,p)=>[]                                 ,
     rightbar_extra  = (props) => <></>                          , 
     surrounder      = (props) => <>{props.children}</>          , 
 } : {
-    get_label       ?: ((p:ValidParameter)=>string)                         ,
-    get_widths      ?: ((num_children: number, parameters:any)=>number[])   ,
+    get_label       ?: (n:StructNode)=>string , 
+    get_widths      ?: ((num_children: number, node:StructNode)=>number[])   ,
     rightbar_extra  ?: (props: UniversalComponent_Props) => any             , 
     surrounder      ?: (props: UniversalComponent_Props & {children: any}) => any , 
 }): EditorRenderer_Func{
@@ -94,15 +94,14 @@ function get_DefaultStructEditor_with_RightBar({
     return (props: EditorRenderer_Props) => {
         let element = props.element as StructNode
         let editor  = props.editor
-        let parameters = editor.get_real_parameters(element)
-        let label   = get_label(parameters)
+        let label   = get_label(element)
         let E       = rightbar_extra
         let SUR     = surrounder
 
         let children = element.children
         
         // 获得元素的相对长度
-        let widths = get_widths(element.num_children , parameters)
+        let widths = get_widths(element.num_children , element)
         widths = widths.splice(0,children.length) // 确保为widths元素不少
         while(widths.length < children.length) // 确保widths元素不多
             widths.push(1)

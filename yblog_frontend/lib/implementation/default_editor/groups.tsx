@@ -38,7 +38,7 @@ import {
 
 import { Node, Editor } from "slate"
 
-import { GroupNode , StyledNode , paragraph_prototype , get_node_type } from "../../core/elements"
+import { GroupNode , StyledNode , paragraph_prototype , get_node_type , get_param_val } from "../../core/elements"
 import type { ValidParameter } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
@@ -75,11 +75,11 @@ let GroupPaper = (props: PaperProps & {element: GroupNode}) => <ComponentPaper {
  * @returns 一个用于渲染group的组件。
  */
 function get_DefaultGroupEditor_with_AppBar({
-    get_label     = (p:ValidParameter)=>p.label.val as string, 
+    get_label       = (n:GroupNode)=>get_param_val(n,"label") as string, 
     appbar_extra  = (props) => <></> , 
     surrounder    = (props) => <>{props.children}</>
 }: {
-    get_label       ?: (p:ValidParameter)=>string , 
+    get_label       ?: (n:GroupNode)=>string , 
     appbar_extra    ?: (props: UniversalComponent_Props) => any, 
     surrounder      ?: (props: UniversalComponent_Props & {children: any}) => any ,
 }): EditorRenderer_Func{
@@ -87,7 +87,7 @@ function get_DefaultGroupEditor_with_AppBar({
     return (props: EditorRenderer_Props) => {
         let element = props.element as GroupNode
         let editor = props.editor
-        let label   = get_label(editor.get_real_parameters(element))
+        let label   = get_label(element)
 
         let E = appbar_extra
         let SUR = surrounder
@@ -121,11 +121,11 @@ function get_DefaultGroupEditor_with_AppBar({
  * @returns 一个用于渲染group的组件。
 */
 function get_DefaultGroupEditor_with_RightBar({
-    get_label       = (p:ValidParameter)=>p.label.val as string, 
+    get_label       = (n:GroupNode)=>get_param_val(n,"label") as string, 
     rightbar_extra  = (props) => <></> , 
     surrounder      = (props) => <>{props.children}</>
 }: {
-    get_label       ?: (p:ValidParameter)=>string , 
+    get_label       ?: (n:GroupNode)=>string , 
     rightbar_extra  ?: (props: UniversalComponent_Props) => any, 
     surrounder      ?: (props: UniversalComponent_Props & {children: any}) => any ,
 }): EditorRenderer_Func{
@@ -133,7 +133,7 @@ function get_DefaultGroupEditor_with_RightBar({
     return (props: EditorRenderer_Props) => {
         let element = props.element as GroupNode
         let editor = props.editor
-        let label   = get_label(editor.get_real_parameters(element))
+        let label   = get_label(element)
         let E = rightbar_extra
         let SUR = surrounder
 

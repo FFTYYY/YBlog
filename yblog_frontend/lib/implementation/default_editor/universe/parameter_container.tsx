@@ -137,8 +137,9 @@ class DefaultParameterContainer extends React.Component <{
                         name = {key}
                         val = {me.state.parameters[key]}
                         onChange = {(v)=>{
-                            me.setState({parameters: {...me.state.parameters , [key]: v}})
-                            me.onUpdate(me.state.parameters)
+                            let new_parameters = {...me.state.parameters , [key]: v}
+                            me.setState({parameters: new_parameters})
+                            me.onUpdate(new_parameters)
                         }}
                     />
                 </ListItem>
@@ -177,10 +178,7 @@ class DefaultParameterWithEditor extends React.Component<UniversalComponent_Prop
             
             // 这是一个延迟操作。
             props.editor.add_delay_operation( `${props.element.idx}-parameter` , (father_editor: YEditor) => {
-                father_editor.set_node( props.element , has_prox ? 
-                    { proxy_info: {...element.proxy_info , proxy_params: newval}} : //如果有代理，就更新代理参数。
-                    { parameters: newval }   // 如果没有代理，就更新原始参数。
-                )
+                father_editor.auto_set_parameter( props.element , newval)
             })
         }
         return <DefaultParameterContainer

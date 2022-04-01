@@ -27,6 +27,7 @@ export {
 	get_node_type , 
 	is_certain_style , 
     new_struct_child , 
+    get_param_val , 
 }
 export type {
 	StyledNodeType , 
@@ -276,3 +277,6 @@ function new_struct_child(){
     return node
 }
 
+function get_param_val(element: StyledNode , key: string){
+    return element.parameters[key].val
+}
