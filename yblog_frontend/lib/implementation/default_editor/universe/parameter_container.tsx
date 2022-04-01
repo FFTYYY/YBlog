@@ -12,10 +12,12 @@ import {
     Button , 
     Drawer , 
     Box , 
+    Select , 
     Switch , 
     MenuItem  , 
     Divider, 
     List , 
+    FormControlLabel  , 
     ListItem, 
 } from "@mui/material"
 import { 
@@ -109,14 +111,24 @@ class DefaultParameterContainer extends React.Component <{
             />
         }
         if(type == "boolean"){
-            return <TextField 
-                onBlur = {e=>{onChange(e.target.value == "true")}}
-                //select // TODO 这里如果设置成select有个bug，使得点击的时候页面并没有刷新，但是drawer会消失。
-                {...standard_props}
-            >
-                <MenuItem key={0} value="true" >true</MenuItem>
-                <MenuItem key={1} value="false">false</MenuItem>
-            </TextField>
+            let [checked , set_checked] = React.useState(val as boolean)
+            return <FormControlLabel 
+                label = {name} 
+                control = {<Switch 
+                    defaultChecked = {val as boolean}
+                    onChange = {e=>set_checked(e.currentTarget.checked)}
+                    onBlur = {()=>onChange(checked)}
+                />} 
+                sx = {{marginLeft: "5%"}}
+            />
+            //return <TextField 
+            //     //onBlur = {e=>{onChange(e.target.value == "true")}}
+            //     select // TODO 这里如果设置成select有个bug，使得点击的时候页面并没有刷新，但是drawer会消失。
+            //     {...standard_props}
+            // >
+            //     <MenuItem key={0} value="true" ><Typography>true</Typography></MenuItem>
+            //     <MenuItem key={1} value="false"><Typography>false</Typography></MenuItem>
+            // </TextField>
         }
         return <></>
     }

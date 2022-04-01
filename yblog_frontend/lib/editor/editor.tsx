@@ -57,7 +57,7 @@ class YEditor extends React.Component<{
 },{
     slate: ReactEditor
     root: GroupNode
-    delay_operations: { [subnode_idx: number]: (fat: YEditor)=>void }
+    // delay_operations: { [subnode_idx: number]: (fat: YEditor)=>void }
 }> {
     proxies: {[key in StyleType]: {[name: string]: Proxy}}
     renderers: StyleCollector<EditorRenderer_Func>
@@ -68,6 +68,8 @@ class YEditor extends React.Component<{
     onKeyPress: (e: React.KeyboardEvent<HTMLDivElement>) => void
     onFocusChange: ()=>void
     bindref: (ref:YEditor)=>void
+
+    delay_operations: { [subnode_idx: number]: (fat: YEditor)=>void }
 
     // delay-operation mixins
     add_delay_operation: (key: string, subapply: (fat: YEditor)=>void)=>void
@@ -132,10 +134,12 @@ class YEditor extends React.Component<{
             root: group_prototype("root" , {
                 title: {type: "string" , val: ""} , 
             }) , 
-            delay_operations: {} , 
+            // delay_operations: {} , 
         }
 
         this.use_mixins()
+
+        this.delay_operations = {}
     }
 
     componentDidMount(){
