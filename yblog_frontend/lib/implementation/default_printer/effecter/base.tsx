@@ -2,7 +2,6 @@
  * @module
  */
 import { Node } from "slate"
-import { Printer } from "../../../printer"
 import type { EnterEffectFunc , ExitEffectFunc } from "../../../printer"
 import type { PrinterEnv , PrinterContext } from "../../../printer"
 
@@ -44,6 +43,10 @@ class BasicEffector<NODETYPE = Node>{
         env = this.ensure_env(env)
         env[this.env_key] = val
         return env
+    }
+
+    check_context(context: PrinterContext): boolean{
+        return context[this.context_key] != undefined
     }
 
     get_context(context: PrinterContext): any{

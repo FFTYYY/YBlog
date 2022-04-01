@@ -11,7 +11,6 @@ import type {
     BoxProps , 
 } from "@mui/material"
 
-
 import { Node } from "slate"
 import type  { PrinterRenderFunc_Props } from "../../printer"
 import { GroupNode , StyledNode} from "../../core/elements"
@@ -35,13 +34,15 @@ function get_DefaultParagraphPrinter(){
 
     return {
         render_func: (props: PrinterRenderFunc_Props) => {
+            let con = props.context
 
-            let extra = consumer_effector.get_context(props.context) // 需要额外插入在前面的元素。
-            let [ bro_ele , bro_info ] = (brother_effector.get_context(props.context) || [undefined , undefined]) as [ StyledNode , any ]
-
-            if(extra == undefined){
+            // 在编辑器刚刚初始化时，root中什么都没有，因此也没有context，但是此时会渲染一个paragraph。
+            if(!(consumer_effector.check_context(con) && brother_effector.get_context(con))){
                 return <PrinterParagraphBox ></PrinterParagraphBox>
             }
+
+            let extra = consumer_effector.get_context(con) // 需要额外插入在前面的元素。
+            let [ bro_ele , bro_info ] = (brother_effector.get_context(con) || [undefined , undefined]) as [ StyledNode , any ]
 
             let small_margin = bro_info && bro_info["small_margin"] // 兄弟是否让自己设置一个小的margin。
 
