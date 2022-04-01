@@ -37,4 +37,11 @@ def JSONDecode(s):
     s = s.strip()
     if s == "":
         return {}
-    return json.loads(s)
+    
+    ret = {}
+    try:
+        ret = json.loads(s)
+    except json.JSONDecodeError:
+        pass
+
+    return ret

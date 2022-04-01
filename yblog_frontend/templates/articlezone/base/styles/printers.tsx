@@ -105,8 +105,9 @@ var brightwords_printer = (()=>{
 			let my_order = num2chinese(order[order.length - 1])
 			let title = get_param_val(props.element,"title")  // 标题
 			let alias = get_param_val(props.element,"prefix") // 前缀
+			let ordering = get_param_val(props.element,"ordering")
 			
-			return <PrinterStructureBoxText inline>{title} {my_order}{alias ? ` (${alias})` : ""}</PrinterStructureBoxText>
+			return <PrinterStructureBoxText inline>{title}{ordering ? " "+my_order : ""}{alias ? ` (${alias})` : ""}</PrinterStructureBoxText>
 		} , 
 		outer: (props) => {
 			return <PrinterPartBox subtitle_like>{props.children}</PrinterPartBox>

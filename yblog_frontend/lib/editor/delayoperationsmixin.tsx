@@ -38,15 +38,17 @@ let DelayOperationsMixin = {
      */
     add_delay_operation(key: string, subapply: (fat: YEditor)=>void){
         let me = this as any as YEditor
-        me.setState({delay_operations: {...me.state.delay_operations , [key]: subapply}})
+        me.delay_operations[key] = subapply
+        // me.setState({delay_operations: {...me.state.delay_operations , [key]: subapply}})
     } , 
 
     /** 这个函数应用所有临时操作。 */
     apply_delay_operations(){
         let me = this as any as YEditor
-        Object.values(me.state.delay_operations).map((subapply)=>{
+        Object.values(me.delay_operations).map((subapply)=>{
             subapply(me)
         })
-        me.setState({delay_operations: {}})
+        // me.setState({delay_operations: {}})
+        me.delay_operations = {}
     } , 
 }

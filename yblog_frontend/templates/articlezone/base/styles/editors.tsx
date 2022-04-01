@@ -54,12 +54,12 @@ var mathblock_editor    = get_DefaultGroupEditor_with_RightBar({
     rightbar_extra: (props) => {/** 在右侧提供一个用于快速输入退出符号的文本框。 */
         let universal_props = {variant: "standard" as "standard" , sx: {width: "2rem"}}
         let label = <Typography sx={{fontSize: "0.7rem"}}>extra</Typography>
-        let exit_default = get_param_val(props.element , "exit") // 注意，这里假设exit必不用代理。
+        let close_default = get_param_val(props.element , "close") // 注意，这里假设close必不用代理。
         return <React.Fragment>
-            <TextField {...universal_props} label={label} defaultValue={exit_default} onChange = {(e)=>{
+            <TextField {...universal_props} label={label} defaultValue={close_default} onChange = {(e)=>{
                 let val = e.target.value
                 let node = props.element
-                props.editor.auto_set_parameter( node , {exit: {type: "string" , val: val}})
+                props.editor.auto_set_parameter( node , {close: {type: "string" , val: val}})
             }}/>
         </ React.Fragment>
     }
@@ -83,10 +83,10 @@ var image_editor = get_DefaultDisplayerEditor({
     render_element: (props) => {
         let [ url , set_url ] = React.useState("")
         let target = get_param_val(props.element , "target") as string
-        let internal = get_param_val(props.element , "internal")
+        let type = get_param_val(props.element , "type")
 
         React.useEffect(()=>{(async ()=>{
-            if(internal){
+            if(type == "internal"){
                 let resource_info = await Interaction.get.resource_info(target)
                 if(!resource_info.url){
                     set_url("")
@@ -114,7 +114,7 @@ var image_editor = get_DefaultDisplayerEditor({
 var alignedwords_editor = get_DefaultStructEditor_with_RightBar({
     get_label: (n)=>get_param_val(n,"label") as string, 
     get_widths: (num,node)=>{
-        return (get_param_val(node , "width") as string).split(",").map(x=>x=="" ? 1 : parseInt(x))
+        return (get_param_val(node , "widths") as string).split(",").map(x=>x=="" ? 1 : parseInt(x))
     }
 })
 
