@@ -9,7 +9,7 @@ class Concept(models.Model):
 
 	name = models.CharField(max_length = SHORT_STR_LENGTH)
 	meta = models.CharField(max_length = SHORT_STR_LENGTH , choices = [ [x,x] for x in CONCEPT_METAS ])
-	fixed_params   = models.TextField(default = "{'_meta': {'functions':[]}}" , null = True , blank = True)
+	fixed_params   = models.TextField(default = "{}" , null = True , blank = True)
 	default_params = models.TextField(default = "{}" , null = True , blank = True)
 
 	def __str__(self):
@@ -37,7 +37,8 @@ class Node(models.Model):
 		if self.content.strip() == "":
 			return notitle
 		root = json.loads(self.content)
-		if (root.get("parameters") is None) or (root["parameters"].get("title") is None):
+		if (root.get("parameters") is None) or (root["parameters"].get("title") is None or \
+				root["parameters"]["title"].get("val") is None):
 			return notitle
 		title = root["parameters"]["title"]
 		if title.strip() == "":

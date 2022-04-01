@@ -43,20 +43,31 @@ class Proxy{
     /** 给定一个代理的参数列表，返回一个真实的参数列表。 */
     get_real_parameters(params: ValidParameter){
         let ret = {}
-        let ref = {...this.target_style.parameter_prototype , ...this.default_parameters} // 默认值列表。
+        let ref = this.target_style.parameter_prototype // 默认值列表。
         for(let k in ref){
 
             if(this.fixed_parameters[k] != undefined){
                 let v = this.fixed_parameters[k]
-                if(v.type != "function"){
+                if(v.type == "function"){
+                    let func = (new Function(`return ${v.val}`))()
+                    ret[k] = func(params)
+                }
+                else{
                     ret[k] = v
                 }
             }
             else{
-                if(params[k] == undefined)
-                    ret[k] = ref[k] // 使用默认值。
-                else
-                    ret[k] = params[k] // 使用给出的值。
+                if(params[k] == undefined){
+                    if(this.default_parameters[k] == undefined){ // 使用原始的默认值
+                        ret[k] = ref[k] 
+                    }
+                    else{ // 使用代理的默认值。
+                        ret[k] = this.default_parameters[k]
+                    }
+                }
+                else{ // 使用给出的值。
+                    ret[k] = params[k] 
+                }
             }
 
         }

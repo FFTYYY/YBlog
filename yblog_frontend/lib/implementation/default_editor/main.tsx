@@ -27,6 +27,7 @@ import { ThemeProvider , createTheme , styled } from "@mui/material/styles"
 import type { Theme , ThemeOptions } from "@mui/material/styles"
 
 import { Node } from "slate"
+import { ReactEditor } from "slate-react"
 
 import { YEditor } from "../../editor"
 import { object_foreach , merge_object } from "../utils"
@@ -285,6 +286,7 @@ class DefaultEditor extends React.Component <{
     core: EditorCore
     proxies: {[key in StyleType]: {[name: string]: Proxy}}
     renderers: StyleCollector<EditorRenderer_Func>
+    plugin?: (editor: YEditor , slate: ReactEditor) => ReactEditor
 
 	onUpdate?: (newval: Node[]) => void
 	onFocusChange?: ()=>void
@@ -298,6 +300,7 @@ class DefaultEditor extends React.Component <{
     core: EditorCore
     proxies: {[key in StyleType]: {[name: string]: Proxy}}
     renderers: StyleCollector<EditorRenderer_Func>
+    plugin?: (editor: YEditor , slate: ReactEditor) => ReactEditor
 
 	is_selecting: () => boolean
 	flush_key_state: (keydown: boolean , e: React.KeyboardEvent<HTMLDivElement>) => void
@@ -332,6 +335,7 @@ class DefaultEditor extends React.Component <{
 		this.core 		= props.core
 		this.proxies 	= props.proxies
 		this.renderers 	= props.renderers
+		this.plugin 	= props.plugin
 
 
 		this.onUpdate = props.onUpdate || ((newval: Node[])=>{})
@@ -401,6 +405,7 @@ class DefaultEditor extends React.Component <{
 					core 		= {me.core}
 					proxies 	= {me.proxies}
 					renderers 	= {me.renderers}
+					plugin 		= {me.plugin}
 
 					onUpdate = {me.onUpdate}
 					onFocusChange = {me.onFocusChange} 
