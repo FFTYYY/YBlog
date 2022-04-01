@@ -74,28 +74,21 @@ let UtilsMixin = {
     /** 获得用于渲染的节点树。 */
     get_root(){
         let me = this as any as YEditor
-
-        function parse_node(original_node: Node){
-            let node = {...original_node}
-            if(is_styled(node)){
-                node.parameters = me.get_real_parameters(node)
-            }
-            if(has_children(node)){
-                node.children = node.children.map(subnode=>parse_node(subnode))
-            }
-            return node
-        }
-
-        return parse_node(me.state.root)
+        return me.state.root
     } , 
 
     /** 对于一个有样式的节点，如果其有代理，就返回代理解析过的参数，否则返回本来的参数。 */
-    get_real_parameters(node: StyledNode){
+    deproxy(node: StyledNode , proxy_params?: ValidParameter){
         let me = this as any as YEditor
+
+        proxy_params = proxy_params || node.proxy_info.proxy_params
+        if(proxy_params == undefined){
+            return node.parameters
+        }
 
         if(node.proxy_info.proxy_name && me.get_proxy(node.type , node.proxy_info.proxy_name)){
             let proxy = me.get_proxy(node.type , node.proxy_info.proxy_name)
-            return proxy.get_real_parameters(node.proxy_info.proxy_params) // 将节点的参数替换成真实参数。
+            return proxy.get_real_parameters(proxy_params) // 将节点的参数替换成真实参数。
         }
         return node.parameters
     }  ,  

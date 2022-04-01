@@ -14,6 +14,7 @@ import {
     YEditor , 
 
     EditorUnselecableBox , 
+    get_param_val , 
 } from "../../../../lib"
 import { Interaction , url_from_root } from "../interaction"
 
@@ -43,7 +44,7 @@ export {
 var paragraph_editor = DefaultParagraphEditor
 
 var brightwords_editor  = get_DefaultGroupEditor_with_AppBar({})
-var subsection_editor   = get_DefaultGroupEditor_with_AppBar({get_label: (p)=>`次节：${p.title}`})
+var subsection_editor   = get_DefaultGroupEditor_with_AppBar({get_label: (n)=>`次节：${get_param_val(n,"title")}`})
 var normalwords_editor  = get_DefaultGroupEditor_with_RightBar({})
 var formatted_editor    = get_DefaultGroupEditor_with_RightBar({})
 var followwords_editor  = get_DefaultGroupEditor_with_RightBar({})
@@ -53,12 +54,12 @@ var mathblock_editor    = get_DefaultGroupEditor_with_RightBar({
     rightbar_extra: (props) => {/** 在右侧提供一个用于快速输入退出符号的文本框。 */
         let universal_props = {variant: "standard" as "standard" , sx: {width: "2rem"}}
         let label = <Typography sx={{fontSize: "0.7rem"}}>extra</Typography>
-        let exit_default = props.element.parameters.exit.val || "" // 注意，这里假设exit必不用代理。
+        let exit_default = get_param_val(props.element , "exit") // 注意，这里假设exit必不用代理。
         return <React.Fragment>
             <TextField {...universal_props} label={label} defaultValue={exit_default} onChange = {(e)=>{
                 let val = e.target.value
                 let node = props.element
-                props.editor.set_node( node , {parameters: {...node.parameters, exit: {type: "string" , val: val}}})
+                props.editor.auto_set_parameter( node , {exit: {type: "string" , val: val}})
             }}/>
         </ React.Fragment>
     }
@@ -66,7 +67,7 @@ var mathblock_editor    = get_DefaultGroupEditor_with_RightBar({
 let subwords_editor     = get_DefaultGroupEditor_with_RightBar({})
 
 var newpara_editor      = DefaultNewParagraphEditor
-var sectioner_editor    = get_DefaultSplitterEditor({get_title: (p) => p.title})
+var sectioner_editor    = get_DefaultSplitterEditor({get_title: (n) => get_param_val(n,"title") as string})
 var ender_editor        = get_DefaultSplitterEditor({get_title: () => "章节"})
 
 
@@ -78,14 +79,14 @@ var mathinline_editor   = get_DefaultInlineEditor({surrounder: (props)=><>{props
 
 var image_editor = get_DefaultDisplayerEditor({
     get_label: ()=>"图片" , 
-    is_empty: (p)=>!!(p.target) , 
+    is_empty: (n)=>!!get_param_val(n , "target") , 
     render_element: (props) => {
-        let p = props.parameters
         let [ url , set_url ] = React.useState("")
-        let target = p.target.val as string
+        let target = get_param_val(props.element , "target") as string
+        let internal = get_param_val(props.element , "internal")
 
         React.useEffect(()=>{(async ()=>{
-            if(p.internal){
+            if(internal){
                 let resource_info = await Interaction.get.resource_info(target)
                 if(!resource_info.url){
                     set_url("")
@@ -100,20 +101,20 @@ var image_editor = get_DefaultDisplayerEditor({
             }
         })()})
 
+        let p_width = get_param_val(props.element , "width")
+        let p_height = get_param_val(props.element , "height")
 
-        let width = p.width.val > 0 ? `${p.width}rem` : "100%"
-        let height = p.height.val > 0 ? `${p.height}rem` : "100%"
         return <img src={url || undefined } style={{
-            width: width, 
-            height: height , 
+            width: p_width > 0 ? `${p_width}rem` : "100%", 
+            height: p_height > 0 ? `${p_height}rem` : "100%" , 
         }}/>
     } , 
 })
 
 var alignedwords_editor = get_DefaultStructEditor_with_RightBar({
-    get_label: (p)=>p.label.val as string, 
-    get_widths: (n,p)=>{
-        return p.widths.split(",").map(x=>x=="" ? 1 : parseInt(x))
+    get_label: (n)=>get_param_val(n,"label") as string, 
+    get_widths: (num,node)=>{
+        return (get_param_val(node , "width") as string).split(",").map(x=>x=="" ? 1 : parseInt(x))
     }
 })
 

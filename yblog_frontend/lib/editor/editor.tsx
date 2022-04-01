@@ -84,7 +84,7 @@ class YEditor extends React.Component<{
     // utils mixins
     get_onClick: (nodetype: StyledNodeType, stylename: string) => ( ()=>void )
     get_root: ()=>GroupNode
-    get_real_parameters: (node: StyledNode) => ValidParameter
+    deproxy: (node: StyledNode , proxy_params?: ValidParameter) => ValidParameter
     
     // behaviours mixins
     set_node: <T extends Node = StyledNode>(node: T, new_val: Partial<T>) => void
@@ -97,34 +97,15 @@ class YEditor extends React.Component<{
     add_nodes_here: (nodes: (Node[]) | Node) => void
     wrap_nodes: <T extends Node & {children: Node[]} = StyledNode>(node: T, match: (n:Node)=>boolean) => void
     delete_node_by_path: (path: number[]) => void
+    auto_set_parameter: (node: StyledNode, parameters: ValidParameter) => void
 
     use_mixins(){
-        this.add_delay_operation    = DelayOperationsMixin.add_delay_operation.bind(this)
-        this.apply_delay_operations = DelayOperationsMixin.apply_delay_operations.bind(this)
 
-        
-        this.get_proxy = CollectionMixin.get_proxy.bind(this)
-        this.get_renderer = CollectionMixin.get_renderer.bind(this)
-        
-        this.update_value = RenderMixin.update_value.bind(this)
-        this.renderElement = RenderMixin.renderElement.bind(this)
-        this.renderLeaf = RenderMixin.renderLeaf.bind(this)
-        this.render = RenderMixin.render.bind(this)
-
-        this.get_onClick = UtilsMixin.get_onClick.bind(this)
-        this.get_root = UtilsMixin.get_root.bind(this)
-        this.get_real_parameters = UtilsMixin.get_real_parameters.bind(this)
-
-        this.set_node = BehavioursMixin.set_node.bind(this)
-        this.delete_node = BehavioursMixin.delete_node.bind(this)
-        this.move_node = BehavioursMixin.move_node.bind(this)
-        this.add_nodes = BehavioursMixin.add_nodes.bind(this)
-        this.add_nodes_before = BehavioursMixin.add_nodes_before.bind(this)
-        this.add_nodes_after = BehavioursMixin.add_nodes_after.bind(this)
-        this.replace_nodes = BehavioursMixin.replace_nodes.bind(this)
-        this.add_nodes_here = BehavioursMixin.add_nodes_here.bind(this)
-        this.wrap_nodes = BehavioursMixin.wrap_nodes.bind(this)
-        this.delete_node_by_path = BehavioursMixin.delete_node_by_path.bind(this)
+        Object.assign(this , DelayOperationsMixin)
+        Object.assign(this , CollectionMixin)
+        Object.assign(this , RenderMixin)
+        Object.assign(this , UtilsMixin)
+        Object.assign(this , BehavioursMixin)
     }
 
     constructor(props){

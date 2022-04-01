@@ -21,7 +21,7 @@ import {
 
 
 import { InlineStyle , EditorCore} from "../../core/core"
-import { InlineNode , StyledNode } from "../../core/elements"
+import { InlineNode , StyledNode , get_param_val } from "../../core/elements"
 import type { ValidParameter } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
@@ -49,11 +49,11 @@ export { get_DefaultInlineEditor }
  * 见https://github.com/ianstormtaylor/slate/issues/4811
  */
 function get_DefaultInlineEditor({
-    get_label       = (p)=>p.label.val as string , 
+    get_label       = (n:InlineNode)=>get_param_val(n,"label") as string, 
     surrounder      = (props) => <React.Fragment>{props.children}</React.Fragment> , 
     rightbar_extra  = (props) => <></> , 
 }: {
-    get_label       ?: (p: ValidParameter)=>string , 
+    get_label       ?: (n:InlineNode)=>string , 
     surrounder      ?: (props: UniversalComponent_Props & {children: any}) => any , 
     rightbar_extra  ?: (props: UniversalComponent_Props) => any  , 
 
@@ -61,7 +61,7 @@ function get_DefaultInlineEditor({
     return (props: EditorRenderer_Props) => {
         let element = props.element as InlineNode
         let editor  = props.editor
-        let label   = get_label(editor.get_real_parameters(element))
+        let label   = get_label(element)
         let Extra = rightbar_extra
         let SUR = surrounder
 

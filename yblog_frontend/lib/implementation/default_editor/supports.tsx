@@ -26,7 +26,7 @@ from "@mui/icons-material"
 
 import { Node } from "slate"
 
-import { SupportNode , paragraph_prototype} from "../../core/elements"
+import { SupportNode , paragraph_prototype , get_param_val } from "../../core/elements"
 import type { ValidParameter} from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 
@@ -87,12 +87,12 @@ function DefaultNewParagraphEditor(props: EditorRenderer_Props){
 }
 
 /** 这个函数返回一个默认的分界符组件。 */
-function get_DefaultSplitterEditor({get_title = (p:any)=>p.title as string}: {get_title?: (p:any)=>string}){
+function get_DefaultSplitterEditor({get_title = (n)=>get_param_val(n,"title") as string}: {get_title?: (n:SupportNode)=>string}){
     return (props: EditorRenderer_Props) => {
 
         let editor = props.editor
         let element = props.element as SupportNode
-        let title = get_title(element.parameters)
+        let title = get_title(element)
         return <UnselecableBox><ComponentBox>
             <Divider>
                 <Paper variant="outlined">
@@ -126,24 +126,23 @@ function get_DefaultSplitterEditor({get_title = (p:any)=>p.title as string}: {ge
  * @param render_element 如何在编辑视图中渲染元素。默认为用 <img> 来渲染。
 */
 function get_DefaultDisplayerEditor({
-    get_label       = (p)=>p.label.val as string , 
-    is_empty        = (p)=>!!(p["url"]) , 
-    render_element  = (props)=><img src={props.parameters.url.val as string}/>, 
+    get_label       = (n:SupportNode)=>get_param_val(n,"label") as string, 
+    is_empty        = (n:SupportNode)=>!!(get_param_val(n,"url")) , 
+    render_element  = (props)=><img src={get_param_val(props.element,"url") as string}/>, 
 } : {
-    get_label       ?: (p: ValidParameter)=>string , 
-    is_empty        ?: (p: ValidParameter)=>boolean , 
-    render_element  ?: (props: {parameters: ValidParameter})=>any , 
+    get_label       ?: (n:SupportNode)=>string , 
+    is_empty        ?: (n:SupportNode)=>boolean , 
+    render_element  ?: (props: {element:SupportNode})=>any , 
 }){
     return (props: EditorRenderer_Props) => {
         let editor = props.editor
         let element = props.element as SupportNode
-        let parameters = editor.get_real_parameters(element)
-        let label = get_label(parameters)
+        let label = get_label(element)
         let R = render_element
 
         return <ComponentPaper is_inline>{props.children}<UnselecableBox>
             <AutoStack force_direction="row">
-                {is_empty(parameters) ? <R parameters={parameters} /> : label }
+                {is_empty(element) ? <R element={element} /> : label }
                 <AutoStackedPopperWithButton
                     close_on_otherclick
                     button_class = {IconButton}
@@ -160,7 +159,7 @@ function get_DefaultDisplayerEditor({
                     <Typography>{label}</Typography>
                     <DefaultParameterEditButton editor={editor} element={element} />
                     <NewParagraphButton         editor={editor} element={element} />
-                    <DefaultCloseButton editor={editor} element={element} />
+                    <DefaultCloseButton         editor={editor} element={element} />
                 </AutoStackedPopperWithButton>
             </AutoStack>
         </UnselecableBox></ComponentPaper>

@@ -39,7 +39,7 @@ import { Node , Transforms , Element } from "slate"
 import { createEditor , BaseEditor , Path , BaseElement } from "slate"
 import { Slate, Editable, withReact} from "slate-react"
 
-import { withAllStyles , withAllPrinters , withAllEditors , make_proxy } from "../base/styles"
+import { withAllStyles , withAllPrinters , withAllEditors , make_proxy , withNecessaryProxies , } from "../base/styles"
 import { Interaction } from "../base/interaction"
 import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
 import { my_theme } from "../base/construction/theme"
@@ -90,13 +90,13 @@ class App extends  React.Component<App_Props , {
 		this.state = {
 			printer: withAllPrinters( new Printer( this.core ) ) , 
 			
-			editor_proxies: {
+			editor_proxies: withNecessaryProxies({
 				inline: {},
 				group: {}, 
 				struct: {},
 				support: {} ,  
 				abstract: {} , 
-			} , 
+			}) , 
 		}
 
 		this.editor_ref  = React.createRef()
@@ -105,13 +105,13 @@ class App extends  React.Component<App_Props , {
 
 	/** 完全不知道这是什么逻辑。 */
 	async componentDidMount(){
-		let proxies = {
+		let proxies = withNecessaryProxies({
 			inline: {},
 			group: {}, 
 			struct: {},
 			support: {} ,  
 			abstract: {} , 
-		}
+		})
 		let node_concepts = await Interaction.get.concept() // 从后端获得所有概念。
 		for(let [name , meta_name , fixed_params , default_params ] of node_concepts){
 

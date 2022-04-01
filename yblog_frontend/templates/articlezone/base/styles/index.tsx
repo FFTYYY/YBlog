@@ -3,10 +3,10 @@ import * as E from "./editors"
 import * as S from  "./styles"
 import { YEditor , StyleCollector } from "../../../../lib"
 import { Printer , EditorCore , Proxy } from  "../../../../lib"
-import { GroupStyle , InlineStyle , AbstractStyle , SupportStyle , StructStyle ,  } from "../../../../lib"
+import { GroupStyle , InlineStyle , AbstractStyle , SupportStyle , StructStyle , StyleType } from "../../../../lib"
 import type { EditorRenderer_Func , PrinterRenderer } from "../../../../lib"
 
-export { withAllStyles , withAllPrinters , withAllEditors , make_proxy }
+export { withAllStyles , withAllPrinters , withAllEditors , make_proxy , withNecessaryProxies }
 
 var type2class = {
     group: GroupStyle , 
@@ -67,14 +67,27 @@ function withAllEditors(editor: StyleCollector<EditorRenderer_Func>): StyleColle
         let editor_func = style_editor_printer[name][1]
         editor.set(editor_func , style.type , style.name)
     }
+
+    editor.set( E.paragraph_editor , "paragraph" )
     return editor
 }
+
+function withNecessaryProxies(proxies: {[key in StyleType]: {[name: string]: Proxy}}){
+    proxies["support"][S.newpara_style.name] = make_proxy(S.newpara_style.name , S.newpara_style.name , {} , {})
+    proxies["support"][S.sectioner_style.name] = make_proxy(S.sectioner_style.name , S.sectioner_style.name , {} , {})
+    proxies["support"][S.ender_style.name] = make_proxy(S.ender_style.name , S.ender_style.name , {} , {})
+    proxies["group"][S.subsection_style.name] = make_proxy(S.subsection_style.name , S.subsection_style.name , {} , {})
+    return proxies
+}
+
+
 
 function make_proxy(meta_name:string , name: string , fixed_params: any, default_params: any){
     let [meta_style , meta_editor , meta_printer] = style_editor_printer[meta_name]
     let proxy = new Proxy(name , meta_style , fixed_params , default_params)
     return proxy
 }
+
 
 // function make_new_style(meta_name:string , proxy_name: string , fixed_params: any, default_params: any){
 //     let [meta_style , meta_editor , meta_printer] = style_editor_printer[meta_name]

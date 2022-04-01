@@ -2,7 +2,7 @@
  * @module
 */
 import { is_same_node , node2path } from "../implementation/utils"
-import { StyledNode } from "../core/elements"
+import { StyledNode , ValidParameter } from "../core/elements"
 import { Transforms, Node, Editor } from "slate"
 import { YEditor } from "./editor"
 
@@ -20,6 +20,30 @@ let BehavioursMixin = {
     
         Transforms.setNodes<T>(me.get_slate() , new_val , {at: node2path(me.get_slate() , node)})
     } , 
+
+    /** 如果一个节点有代理，这个函数就修改代理，同时修改参数，否则只修改参数。 */
+    auto_set_parameter(node: StyledNode, parameters: ValidParameter){
+        let me = this as any as YEditor
+        if(node.proxy_info && node.proxy_info.proxy_name){ // 这个节点有代理
+            
+            let new_proxy_params = {...node.proxy_info.proxy_params , ...parameters}
+            let new_node = {...node , proxy_info: {...node.proxy_info ,  proxy_params: new_proxy_params}}
+            let new_params = me.deproxy(new_node , new_proxy_params)
+
+            // 同时设置参数和代理。
+            me.set_node(node , {
+                parameters: {...node.parameters , ...new_params} , 
+                proxy_info: {
+                    ... node.proxy_info , 
+                    proxy_params: new_proxy_params , 
+                }
+            })
+        }
+        else{ // 只需要设置参数。
+            me.set_node(node , {parameters: {...node.parameters , ...parameters} , })
+        }
+    } , 
+
 
     /** 这个函数删除一个节点。 */
     delete_node(node: Node){
