@@ -52,6 +52,8 @@ class YEditor extends React.Component<{
     onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void
     onKeyUp?: (e: React.KeyboardEvent<HTMLDivElement>) => void
     onKeyPress?: (e: React.KeyboardEvent<HTMLDivElement>) => void
+
+    plugin?: (editor: YEditor , slate: ReactEditor) => ReactEditor
 },{
     slate: ReactEditor
     root: GroupNode
@@ -122,8 +124,11 @@ class YEditor extends React.Component<{
         this.renderers  = props.renderers
         this.proxies    = props.proxies
 
+        let me = this
+        let withOutherPlugin = this.props.plugin || ((x,y)=>y)
+
         this.state = {
-            slate: withReact(createEditor() as ReactEditor) , 
+            slate: withOutherPlugin(me , withAllYEditorPlugins( withReact(createEditor() as ReactEditor) ) as ReactEditor), 
             root: group_prototype("root" , {
                 title: {type: "string" , val: ""} , 
             }) , 
@@ -139,6 +144,9 @@ class YEditor extends React.Component<{
 
     get_slate(){
         return this.state.slate
+    }
+    set_slate(slate: ReactEditor){
+        this.setState({slate: slate})
     }
 
     /** 返回储存了的渲染器的名称列表 */

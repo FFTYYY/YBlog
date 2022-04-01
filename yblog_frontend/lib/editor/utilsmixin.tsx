@@ -63,7 +63,7 @@ let UtilsMixin = {
                     me.add_nodes_here(node) // 在当前选中位置插入节点。
                 }
                 else{ // 如果有节点，就把所有子节点打包成一个inline节点。
-                    me.wrap_nodes(node  , (n:Node)=>Text.isText(n)) // 所有子节点中是文本的那些。
+                    me.wrap_nodes(node  , (n:Node)=>{console.log(n);return Text.isText(n)}) // 所有子节点中是文本的那些。
                 }
             }
         }

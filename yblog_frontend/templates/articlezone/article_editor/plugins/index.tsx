@@ -1,4 +1,5 @@
 import { Editor , Node  } from "slate"
+import { ReactEditor } from "slate-react"
 import { 
     GroupNode , 
     get_node_type , 
@@ -20,9 +21,9 @@ let plugins = [
     C.set_style_ensure_parameters , 
 ]
 
-function withAllPlugins(editor: YEditor): YEditor{
+function withAllPlugins(editor: YEditor, slate: ReactEditor): ReactEditor{
     for(let plugin of plugins){
-        editor = plugin(editor)
+        slate = plugin(editor , slate)
     }
-    return editor
+    return slate
 }

@@ -205,6 +205,8 @@ class App extends  React.Component<App_Props , {
 						}
 					}}
 					extra_buttons = {<ExtraButtons />}
+
+					plugin = { withAllPlugins }
 				/>
 			</Box>
 

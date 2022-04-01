@@ -1,4 +1,5 @@
 import { Editor , Node , Transforms} from "slate"
+import { ReactEditor } from "slate-react"
 import { 
     GroupNode , 
     get_node_type , 
@@ -13,7 +14,10 @@ import { newpara_style , sectioner_style , ender_style  } from "../../base/style
 
 export { set_force_sectioner , set_style_ensure_parameters , set_normalize_status }
 
+/** 在某些状态写可以豁免检查。 */
 var status = {
+
+    /** 当前是否在初始化文档。 */
     initializing: false , 
 }
 
@@ -22,9 +26,9 @@ function set_normalize_status(val){
 }
 
 /** 这个插件强迫编辑器的开头恰好是小节线，结尾恰好是章节线。且章节线不能出现在结尾以外的位置。 */
-function set_force_sectioner(editor: YEditor): YEditor{
-    const normalizeNode = editor.slate.normalizeNode
-    editor.slate.normalizeNode = (entry: [Node, number[]]) => {
+function set_force_sectioner(editor: YEditor, slate: ReactEditor): ReactEditor{
+    const normalizeNode = slate.normalizeNode
+    slate.normalizeNode = (entry: [Node, number[]]) => {
         let [_node , path] = entry
 
         if(status.initializing){
@@ -34,37 +38,38 @@ function set_force_sectioner(editor: YEditor): YEditor{
 
         if(path.length == 0){
             let node = _node as {children: Node[]} & typeof _node
-            let num_num = node.children.length
+            let nc = node.children.length
 
             // 开头不是小节线的情况。
-            if(num_num == 0 || !is_certain_style(node.children[0] ,  "support" , "小节线") ){
-                Transforms.insertNodes(editor.slate , sectioner_style.makenode() , {at: [0]})
+            if(nc == 0 || !is_certain_style(node.children[0] ,  "support" , "小节线") ){
+                editor.add_nodes(sectioner_style.makenode() , [0])
                 return 
             }
 
             // 结尾不是章节线的情况。
-            if(!is_certain_style(node.children[num_num-1] ,  "support" , "章节线")){
-                Transforms.insertNodes(editor.slate , ender_style.makenode() , {at: [num_num]})
+            if(!is_certain_style(node.children[nc-1] ,  "support" , "章节线")){
+                editor.add_nodes(ender_style.makenode() , [nc])
                 return 
             }
         }
 
         if(is_certain_style(_node , "support" , "章节线")){
-            if(path.length != 1 || path[0] != editor.slate.children.length-1){ // 不是最后一个节点
-                Transforms.removeNodes(editor.slate , {at: path})
+            if(path.length != 1 || path[0] != slate.children.length-1){ // 不是最后一个节点
+                editor.delete_node_by_path(path)
                 return 
             }
         }
 
         normalizeNode(entry)
     }
-    return editor
+    return slate
 }
 
 /** 这个插件强迫每个有样式的节点具有其参数原型所规定的参数。 */
-function set_style_ensure_parameters(editor: YEditor): YEditor{
-    const normalizeNode = editor.slate.normalizeNode
-    editor.slate.normalizeNode = (entry: [Node, number[]]) => {
+function set_style_ensure_parameters(editor: YEditor, slate: ReactEditor): ReactEditor{
+    const normalizeNode = slate.normalizeNode
+
+    slate.normalizeNode = (entry: [Node, number[]]) => {
         let [_node , path] = entry
 
         if(is_styled(_node)){
@@ -87,14 +92,14 @@ function set_style_ensure_parameters(editor: YEditor): YEditor{
                 }
             }
             if(flag){
-                set_node(editor , node , {parameters: new_parameters})
+                editor.set_node( node , {parameters: new_parameters})
                 return
             }
         }
         
         normalizeNode(entry)
     }
-    return editor
+    return slate
 }
 
 
