@@ -14,47 +14,70 @@ import {
 	Paper , 
 	Divider ,  
 } from "@mui/material"
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-import type { ThemeOptions } from '@mui/material/styles';
-import { Printer } from "../../printer"
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
+import type { ThemeOptions } from "@mui/material/styles"
+
+import { YPrinter , PrinterRenderer } from "../../printer"
 import { default_theme  } from "../basic"
 import { PrinterBackgroundPaper } from "./basic"
+import { StyleCollector } from "../../core/stylecollector"
+import { EditorCore } from "../../core/core"
 
 export { DefaultPrinter }
 
-interface DefaultPrinter_Props{
-	printer: Printer
-	theme?: ThemeOptions
-}
 
 /** 
  * 这个组件提供一个开箱即用的默认渲染器组件。
  */
-class DefaultPrinter extends React.Component <DefaultPrinter_Props> {
-    printer: Printer
-	main: React.RefObject<any>
+class DefaultPrinter extends React.Component <{
+	
+    renderers: StyleCollector<PrinterRenderer>
 
-	constructor(props: DefaultPrinter_Props) {
+    /** 编辑器核心。 */
+    core: EditorCore
+	theme?: ThemeOptions
+}> {
+
+    renderers: StyleCollector<PrinterRenderer>
+    core: EditorCore
+	theme?: ThemeOptions
+	printer_ref: React.RefObject<YPrinter>
+
+	constructor(props) {
 		super(props)
 
-		this.printer = props.printer
+		this.core = props.core
+		this.renderers = props.renderers
+		this.theme = props.theme
 
-		this.main = React.createRef()
+		this.printer_ref = React.createRef()
     }
 
+	get_printer(){
+		if(this.printer_ref && this.printer_ref.current){
+			return this.printer_ref.current
+		}
+		return undefined
+	}
+
 	scroll_to(path: number[]){
-		if(this.main.current != undefined)
-			this.main.current.scroll_to(path)
+		let printer = this.get_printer()
+		if(printer){
+			printer.scroll_to(path)
+		}
 	}
 
     render() {
-		let theme = merge_object(default_theme , this.props.theme)
-		let main = this.main
+		let theme = default_theme
+		if(this.theme){
+			theme = merge_object(default_theme , this.theme)
+		}
 
 		return <ThemeProvider theme={createTheme(theme)}><PrinterBackgroundPaper>
-            <Printer.Component
-				ref = {main}
-			    printer = {this.printer}
+            <YPrinter
+				core = {this.core}
+				renderers = {this.renderers}
+				ref = {this.printer_ref}
 		    />
         </PrinterBackgroundPaper></ThemeProvider>
 	}

@@ -11,7 +11,7 @@ import { StyleCollector } from "./core/stylecollector"
 import { GlobalInfo , GlobalInfoProvider } from "./globalinfo"
 import { DoSomething } from "./implementation/utils"
 
-export { Printer , make_print_renderer }
+export { YPrinter , make_print_renderer , default_printer_renderers }
 export type { 
     PrinterRenderFunc_Props , 
     EnterEffectFunc , 
@@ -30,8 +30,9 @@ type ExitEffectFunc  = (element: Node, env: PrinterEnv, context: PrinterContext)
 
 
 /** 这个类是 Printer 的组件类。*/
-class _PrinterComponent extends React.Component<{
-    printer: Printer
+class YPrinter extends React.Component<{
+    renderers: StyleCollector<PrinterRenderer>
+    core: EditorCore
 } , {
     /** 经过解析的根节点。 */
     root: GroupNode
@@ -40,14 +41,13 @@ class _PrinterComponent extends React.Component<{
     contexts: PrinterContext
 }>{
 
-    /** 使用的输出器。 */
-    printer: Printer
-
-    /** 渲染出来的节点的引用。从路径映射到节点。 */
-    sub_refs: {[key: string]: any}
+    renderers: StyleCollector<PrinterRenderer>
 
     /** 编辑器核心。 */
     core: EditorCore
+
+    /** 渲染出来的节点的引用。从路径映射到节点。 */
+    sub_refs: {[key: string]: any}
 
     /** 用来记录自己在`core`处的`notification`。 */
     notification_key: number
@@ -64,11 +64,9 @@ class _PrinterComponent extends React.Component<{
             contexts: {} , 
         }
 
-        this.printer = props.printer
-        this.core = this.printer.core
+        this.renderers = props.renderers
+        this.core = props.core
         
-        let me = this
-
         this.sub_refs = {}
     }
 
@@ -98,7 +96,7 @@ class _PrinterComponent extends React.Component<{
         return ref
     }
     set_ref(path: (number | string)[] , val: any){
-        this.refs[this.get_path_id(path)] = val
+        this.sub_refs[this.get_path_id(path)] = val
         return path
     }
     
@@ -118,63 +116,12 @@ class _PrinterComponent extends React.Component<{
         })
     }
 
-
-    /** 递归地渲染节点。 
-     * @param props.element 当前渲染的节点。
-     * @param props.contexts 全体节点的上下文。
-     * @param props.now_path 当前节点的路径。 
-    */
-    _sub_component(props: {element: Node , contexts: {[idx: number]: PrinterContext}, now_path: (number | string)[]}){
-        let element = props.element
-        let me = this
-        let ThisFunction = this._sub_component.bind(this)
-        let printer = this.printer
-        let contexts = props.contexts
-        let path = props.now_path // 用路径表示的节点id。和node.idx不一样，这是视图相关的节点名。
-        
-        type has_children = Node & {children: Node[]}
-        type has_text = Node & {text: string}
-
-        let type = get_node_type(element)
-        if(type == "text"){
-            let R = printer.get("text")
-            let anchor = <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
-            let text:any = (element as has_text).text
-            return <React.Fragment>
-                {anchor}
-                <R.render_func element={element} context={{anchor: anchor}}>{text}</R.render_func>
-            </React.Fragment>
-        }
-        let children = (element as has_children).children
-
-        let name = undefined // 如果name是undefined，则get_renderer会返回默认样式。
-        let styled = is_styled(element)
-        if(styled){
-            name = (element as StyledNode).name
-        }
-        
-        let R = printer.get(type , name)
-        let anchor = <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
-        // TODO 注意 anchor 会储存到context中，这是一个不好的设计。
-        return <React.Fragment>
-            { anchor }
-            <R.render_func element={ element } context={{ anchor: anchor , ...contexts[this.get_path_id(path)] }} >{
-                Object.keys(children).map((subidx) => <ThisFunction
-                    key      = {subidx}
-                    element  = {children[subidx]} 
-                    contexts = {contexts}
-                    now_path = {[...path , subidx]}
-                />)
-            }</R.render_func>
-        </React.Fragment>
-    }
-
     /** 这个函数在实际渲染组件之前，获得每个组件的环境。 
      * @param props._node 当前节点。
      * @param props.now_env 当前环境。
      * @param props.now_path 从根到当前节点的路径。
     */
-    build_envs(_node: Node, now_env: PrinterEnv, contexts: PrinterContext, now_path: (number | string)[]){
+     build_envs(_node: Node, now_env: PrinterEnv, contexts: PrinterContext, now_path: (number | string)[]){
         let path = now_path // 用路径表示的节点id。和node.idx不一样，这是视图相关的节点名。
         this.set_ref(path , React.createRef()) // 初始化 refs
 
@@ -189,8 +136,8 @@ class _PrinterComponent extends React.Component<{
             name = node.name
         }
         
-        let printer = this.printer
-        let R = printer.get(type , name)
+        let renderers = this.renderers
+        let R = renderers.get(type , name)
 
         // 获得进入时的活动结果。
         let [_env , _context] = R.enter_effect(node , now_env)
@@ -210,6 +157,57 @@ class _PrinterComponent extends React.Component<{
         return [new_env , contexts]
     }
 
+
+    /** 递归地渲染节点。 
+     * @param props.element 当前渲染的节点。
+     * @param props.contexts 全体节点的上下文。
+     * @param props.now_path 当前节点的路径。 
+    */
+    _sub_component(props: {element: Node , contexts: {[idx: number]: PrinterContext}, now_path: (number | string)[]}){
+        let element = props.element
+        let me = this
+        let ThisFunction = this._sub_component.bind(this)
+        let renderers = this.renderers
+        let contexts = props.contexts
+        let path = props.now_path // 用路径表示的节点id。和node.idx不一样，这是视图相关的节点名。
+        
+        type has_children = Node & {children: Node[]}
+        type has_text = Node & {text: string}
+
+        let type = get_node_type(element)
+        if(type == "text"){
+            let R = renderers.get("text")
+            let anchor = <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
+            let text:any = (element as has_text).text
+            return <React.Fragment>
+                {anchor}
+                <R.render_func element={element} context={{anchor: anchor}}>{text}</R.render_func>
+            </React.Fragment>
+        }
+        let children = (element as has_children).children
+
+        let name = undefined // 如果name是undefined，则get_renderer会返回默认样式。
+        let styled = is_styled(element)
+        if(styled){
+            name = (element as StyledNode).name
+        }
+        
+        let R = renderers.get(type , name)
+        let anchor = <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
+        // TODO 注意 anchor 会储存到context中，这是一个不好的设计。
+        return <React.Fragment>
+            { anchor }
+            <R.render_func element={ element } context={{ anchor: anchor , ...contexts[this.get_path_id(path)] }} >{
+                Object.keys(children).map((subidx) => <ThisFunction
+                    key      = {subidx}
+                    element  = {children[subidx]} 
+                    contexts = {contexts}
+                    now_path = {[...path , subidx]}
+                />)
+            }</R.render_func>
+        </React.Fragment>
+    }
+
     render(){
         let me = this
         let R = this._sub_component.bind(this)
@@ -218,7 +216,7 @@ class _PrinterComponent extends React.Component<{
             "refs": me.sub_refs , 
             "root": me.state.root , 
             "core": me.core , 
-            "printer": me.printer , 
+            "renderers": me.renderers , 
             "printer_component": me , 
         }
 
@@ -259,6 +257,16 @@ function make_print_renderer(
     }
 }
 
+let default_printer_renderers = {
+    text      : make_print_renderer((props: PrinterRenderFunc_Props)=><>{props.children}</>) , 
+    inline    : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+    paragraph : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+    group     : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+    struct    : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+    support   : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+}
+
+/*
 class Printer extends StyleCollector<PrinterRenderer>{
 
     static Component = _PrinterComponent
@@ -276,4 +284,4 @@ class Printer extends StyleCollector<PrinterRenderer>{
         )
     }
 }
-
+*/

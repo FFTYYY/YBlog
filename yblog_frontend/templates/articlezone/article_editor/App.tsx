@@ -19,7 +19,6 @@ import {
 import {
 	YEditor , 
 	EditorCore , 
-	Printer , 
 	DefaultPrinter , 
 	DefaultEditor , 
 	AutoStack , 
@@ -30,6 +29,9 @@ import {
 	EditorRenderer_Props , 
 	StyleType , 
 	Proxy , 
+	default_printer_renderers , 
+	default_editor_renderers , 
+	PrinterRenderer , 
 
 } from "../../../lib"
 
@@ -57,16 +59,17 @@ interface App_Props{
 interface App_State{
 	flags?: number
 	editor?: YEditor
-	printer?: Printer
 }
 
 class App extends  React.Component<App_Props , {
 	editor_proxies: {[key in StyleType]: {[name: string]: Proxy}}
-	printer?: Printer 
 }>{
 	core: EditorCore
+
 	editor_renderers: StyleCollector<EditorRenderer_Func>
-	printer_ref: any
+	printer_renderers: StyleCollector<PrinterRenderer>
+
+	printer_ref: React.RefObject<DefaultPrinter>
 	editor_ref: React.RefObject<DefaultEditor>
 
 	constructor(props: App_Props){
@@ -78,18 +81,10 @@ class App extends  React.Component<App_Props , {
 				type: "string" , 
 			} , 
 		}) )
-		this.editor_renderers = withAllEditors( new StyleCollector<EditorRenderer_Func>(this.core , {
-			text      : (props: EditorRenderer_Props)=><span>{props.children}</span> , 
-            inline    : (props: EditorRenderer_Props)=><span>{props.children}</span> , 
-            paragraph : (props: EditorRenderer_Props)=><div>{props.children}</div> , 
-            group     : (props: EditorRenderer_Props)=><div>{props.children}</div> , 
-            struct    : (props: EditorRenderer_Props)=><div>{props.children}</div> , 
-            support   : (props: EditorRenderer_Props)=><div>{props.children}</div> , 
-		}) )
+		this.editor_renderers = withAllEditors( new StyleCollector<EditorRenderer_Func>(this.core , default_editor_renderers) )
+		this.printer_renderers = withAllPrinters( new StyleCollector<PrinterRenderer>(this.core , default_printer_renderers) )
 
-		this.state = {
-			printer: withAllPrinters( new Printer( this.core ) ) , 
-			
+		this.state = {			
 			editor_proxies: withNecessaryProxies({
 				inline: {},
 				group: {}, 
@@ -135,6 +130,12 @@ class App extends  React.Component<App_Props , {
 	get_editor(){
 		if(this.editor_ref && this.editor_ref.current){
 			return this.editor_ref.current.get_editor()
+		}
+		return undefined
+	}
+	get_printer(){
+		if(this.printer_ref && this.printer_ref.current){
+			return this.printer_ref.current.get_printer()
 		}
 		return undefined
 	}
@@ -200,8 +201,10 @@ class App extends  React.Component<App_Props , {
 					}}
 					onUpdate = {(v)=>{
 						// console.log(me.core.root)
-						if(me.printer_ref && me.printer_ref.current){
-							me.printer_ref.current.forceUpdate()
+						let printer = me.get_printer()
+						let editor = me.get_editor()
+						if(printer && editor){
+							printer.update(editor.get_root())
 						}
 					}}
 					extra_buttons = {<ExtraButtons />}
@@ -217,31 +220,14 @@ class App extends  React.Component<App_Props , {
 				top: "0" , 
 				height: "100%" , 
 			}}>
-				{/* <DefaultPrinter
-					printer = {me.state.printer}
+				<DefaultPrinter
 					ref = {this.printer_ref}
+
+					core = {this.core}
+					renderers = {this.printer_renderers}
+				
 					theme = {my_theme}
-				/> */}
-				{(()=>{
-					function V({js}){
-						if(js == undefined)
-							return <></>
-						if(typeof(js) == "string" || typeof(js) == "number" || typeof(js) == "boolean")
-							return <div>{js}</div>
-						return <>{Object.keys(js).map((k,idx)=><div key={idx}>
-							[{k}] :
-							<div  style={{marginLeft: "20px"}}><V js={js[k]}/></div>
-						</div>)}</>
-					}
-					class R extends React.Component{
-						constructor(props){
-							super(props)
-						}
-						// render(){return <div>{JSON.stringify( (me.get_editor()||{get_root:()=>{}}).get_root() )}</div>}
-						render(){return <V js={(me.get_editor()||{get_root:()=>{}}).get_root()} />}
-					}
-					return <R ref ={me.printer_ref}></R>
-				})()}
+				/>
 			</Box>
 		</Box>
 	}
@@ -280,3 +266,70 @@ class App extends  React.Component<App_Props , {
 }
 
 export default App
+
+
+/**	以下是一个调试用的mainpart。
+ * 
+ * return <Box sx={props.sx}>
+			<Box sx = {{
+				position: "absolute" , 
+				width: "49%" ,
+				left: "0%" , 
+				top: "0" , 
+				height: "100%" , 
+			}}>
+				<DefaultEditor 
+					ref 		= {me.editor_ref}
+					core 		= {me.core}
+					renderers 	= {me.editor_renderers}
+					proxies 	= {me.state.editor_proxies}
+					
+					theme = {my_theme}
+
+					onFocusChange = {()=>{
+						// if(slate.selection && me.printer_ref  && me.printer_ref.current){
+						// 	me.printer_ref.current.scroll_to(slate.selection.focus.path)
+						// }
+					}}
+					onUpdate = {(v)=>{
+						// console.log(me.core.root)
+						if(me.printer_ref && me.printer_ref.current){
+							me.printer_ref.current.forceUpdate()
+						}
+					}}
+					extra_buttons = {<ExtraButtons />}
+
+					plugin = { withAllPlugins }
+				/>
+			</Box>
+
+			<Box sx = {{
+				position: "absolute" , 
+				width: "49%" ,
+				left: "51%" , 
+				top: "0" , 
+				height: "100%" , 
+			}}>
+				{(()=>{
+					function V({js}){
+						if(js == undefined)
+							return <></>
+						if(typeof(js) == "string" || typeof(js) == "number" || typeof(js) == "boolean")
+							return <div>{js}</div>
+						return <>{Object.keys(js).map((k,idx)=><div key={idx}>
+							[{k}] :
+							<div  style={{marginLeft: "20px"}}><V js={js[k]}/></div>
+						</div>)}</>
+					}
+					class R extends React.Component{
+						constructor(props){
+							super(props)
+						}
+						// render(){return <div>{JSON.stringify( (me.get_editor()||{get_root:()=>{}}).get_root() )}</div>}
+						render(){return <V js={(me.get_editor()||{get_root:()=>{}}).get_root()} />}
+					}
+					return <R ref ={me.printer_ref}></R>
+				})()}
+			</Box>
+		</Box>
+ */
