@@ -7,7 +7,6 @@ import {
 
 import {
 	EditorCore , 
-	Printer , 
 	
 	GroupStyle , 
 	AbstractStyle , 
@@ -38,6 +37,7 @@ import {
 	idx2path , 
 
 	remtimes , 
+	get_param_val , 
 } from "../../../../lib"
 import type {
 	PrinterRenderer , 
@@ -83,7 +83,7 @@ export {
 var subsection_printer = (()=>{
 	let printer = get_DefaultBlockPrinter({
 		outer: (props) => {
-			let title = props.element.parameters.title
+			let title = get_param_val(props.element , "title")
 			return <PrinterPartBox>
 			<PrinterPartBox subtitle_like>{title}</PrinterPartBox>
 			{props.children}
@@ -96,15 +96,15 @@ var subsection_printer = (()=>{
 
 /** 『昭言』表示一段需要专门的、需要强调的话。如定理。 */
 var brightwords_printer = (()=>{
-	let orderer = (e: GroupNode) => new OrderEffector(`order/${e.parameters.title}` , `order/${e.parameters.title}`)
+	let orderer = (e: GroupNode) => new OrderEffector(`order/${get_param_val(e,"title")}` , `order/${get_param_val(e,"title")}`)
 
 	let printer = get_DefaultBlockPrinter({
 		extra_effectors: [orderer] , 
 		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
 			let order = orderer(props.element).get_context(props.context)
 			let my_order = num2chinese(order[order.length - 1])
-			let title = props.element.parameters.title  // 标题
-			let alias = props.element.parameters.prefix // 前缀
+			let title = get_param_val(props.element,"title")  // 标题
+			let alias = get_param_val(props.element,"prefix") // 前缀
 			
 			return <PrinterStructureBoxText inline>{title} {my_order}{alias ? ` (${alias})` : ""}</PrinterStructureBoxText>
 		} , 
@@ -123,13 +123,13 @@ var normalwords_printer = (()=>{
 		extra_effectors: [orderer] , 
 		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
 			let order = orderer(props.element).get_context(props.context)
-			let ordering = props.element.parameters.ordering // 是否使用标号
-			let prefix = props.element.parameters.prefix // 前缀
+			let ordering = get_param_val(props.element , "ordering") // 是否使用标号
+			let prefix = get_param_val(props.element , "prefix") // 前缀
 			return <PrinterStructureBoxText inline>{ordering ? `[${order}] ` : ""}{prefix}</PrinterStructureBoxText>
 		} , 
 
 		inject_suf: (props: {element: GroupNode , context: PrinterContext}) => {
-			let suffix = props.element.parameters.suffix // 后缀
+			let suffix = get_param_val(props.element , "suffix") // 后缀
 			return <PrinterStructureBoxText inline leftmargin>{suffix}</PrinterStructureBoxText>
 		} , 
 		outer: (props) => <PrinterPartBox>{props.children}</PrinterPartBox> , 
@@ -142,8 +142,8 @@ var normalwords_printer = (()=>{
 var followwords_printer = (()=>{
 	return get_DefaultBlockPrinter({
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
-			let title = props.element.parameters.title // 标题
-			let close = props.element.parameters.close // 结尾
+			let title = get_param_val(props.element , "title") // 标题
+			let close = get_param_val(props.element , "close") // 结尾
 			return <AutoStack force_direction="column">
 				{title ? <PrinterStructureBoxText>{title}</PrinterStructureBoxText> : <></>}
 				<PrinterNewLevelBox><PrinterWeakenText>{props.children}</PrinterWeakenText></PrinterNewLevelBox>
@@ -157,8 +157,8 @@ var followwords_printer = (()=>{
 var mount_printer = (()=>{
 	return get_DefaultBlockPrinter({
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
-			let title = props.element.parameters.title // 标题
-			let close = props.element.parameters.close // 结尾
+			let title = get_param_val(props.element , "title") // 标题
+			let close = get_param_val(props.element , "close") // 结尾
 			return <AutoStack force_direction="column">
 				{title ? <PrinterStructureBoxText>{title}</PrinterStructureBoxText> : <></>}
 				<PrinterDisplayText align="center">{props.children}</PrinterDisplayText>
@@ -200,8 +200,8 @@ var sectioner_printer = (()=>{
 		render_func: (props: PrinterRenderFunc_Props) => {
 			let order = orderer.get_context(props.context)
 			let element = props.element as GroupNode
-			let title = element.parameters.title
-			let alone = element.parameters.alone
+			let title = get_param_val(element , "title")
+			let alone = get_param_val(element , "alone")
 
 			// 如果是`alone`的就不显示序号惹。
 			let order_word = alone ? <></> : <PrinterStructureBoxText inline>第{num2chinese(order)}节</PrinterStructureBoxText>
@@ -254,7 +254,7 @@ var alignedwords_printer = (()=>{
 	return get_DefaultStructPrinter({
 		small_margin_enter: true ,  // 将其作为类似于段落的对象，不要前后空一大坨。
 		small_margin_exit : true , 
-		get_widths: (element: StructNode) => (element.parameters.widths as string).split(",").map(x=>x=="" ? 1 : parseInt(x))
+		get_widths: (element: StructNode) => (get_param_val(element , "widths") as string).split(",").map(x=>x=="" ? 1 : parseInt(x))
 	})
 })()
 
@@ -284,9 +284,9 @@ var mathblock_printer = (()=>{
 	return get_DefaultBlockPrinter({
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
 			let value 	= Node.string(props.element)
-			let suffix 	= props.element.parameters.suffix || ""
-			let close 	= props.element.parameters.close || ""
-			let environ = props.element.parameters.environ
+			let suffix 	= get_param_val(props.element , "suffix")
+			let close 	= get_param_val(props.element , "close")
+			let environ = get_param_val(props.element , "environ")
 			let environ_enter = environ ? `\\begin{${environ}}` : ""
 			let environ_exit  = environ ? `\\end{${environ}}`   : ""
 
@@ -305,12 +305,13 @@ var mathblock_printer = (()=>{
 var image_printer = (()=>{
 	return get_DefaultInlinePrinter<SupportNode>({
 		outer: (props: {element: SupportNode , context: PrinterContext, children: any}) => {
-			let p = props.element.parameters
+			let type = get_param_val(props.element , "type") as string
+			let target = get_param_val(props.element , "target") as string
 			let [ url , set_url ] = React.useState("")
 
 			React.useEffect(()=>{(async ()=>{
-				if(p.type == "internal"){
-					let resource_info = await Interaction.get.resource_info(p.target as string)
+				if(type == "internal"){
+					let resource_info = await Interaction.get.resource_info(target)
 					if(!resource_info.url){
 						set_url("")
 					}
@@ -320,16 +321,16 @@ var image_printer = (()=>{
 					// 其实直接`set_url(resource_info.url)`也行，套一层`url_from_root`主要是为了调试方便。
 				}
 				else{
-					set_url(p.target as string)
+					set_url(target)
 				}
 			})()})
 	
-			let width = p.width > 0 ? `${p.width}rem` : "100%"
-			let height = p.height > 0 ? `${p.height}rem` : "100%"
+			let p_width = get_param_val(props.element , "width")
+			let p_height = get_param_val(props.element , "height")
 			// TODO 这玩意儿每次编辑都会重新加载，有点蛋疼....
-			return <img src={url || undefined} style={{
-				width: width, 
-				height: height , 
+			return <img src = {url || undefined} style = {{
+				width: p_width > 0 ? `${p_width}rem` : "100%", 
+				height: p_height > 0 ? `${p_height}rem` : "100%" , 
 			}}/>
 		} , 
 	})
@@ -341,8 +342,8 @@ var link_printer = (()=>{
 	return get_DefaultInlinePrinter<InlineNode>({
 		outer: (props: {element: InlineNode , context: PrinterContext, children: any}) => {
 
-			let target = props.element.parameters.target as string
-			let type = props.element.parameters.type as string
+			let target = get_param_val(props.element , "target") as string
+			let type = get_param_val(props.element , "type") as string
 
 			if(type == "index"){// 如果是跳转到本文内。
 				let taridx = Number(target)
@@ -368,8 +369,8 @@ var link_printer = (()=>{
 
 var subwords_printer = (()=>{
 	let orderer = (e: GroupNode) => new OrderEffector<GroupNode>(
-		`order/${e.parameters.label}` , 
-		`order/${e.parameters.label}` , 
+		`order/${get_param_val(e , "label")}` , 
+		`order/${get_param_val(e , "label")}` , 
 		(e) => e.relation == "separating"
 	)
 	return get_DefaultBlockPrinter<GroupNode>({
@@ -377,7 +378,7 @@ var subwords_printer = (()=>{
 		extra_effectors: [orderer] , 
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
 			let order = orderer(props.element).get_context(props.context)
-			let ordering = props.element.parameters.ordering
+			let ordering = get_param_val(props.element , "ordering")
 			return <React.Fragment><AutoStack force_direction="row">
 				{/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
 				<PrinterOldLevelBox>

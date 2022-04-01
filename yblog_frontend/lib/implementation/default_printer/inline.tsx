@@ -35,10 +35,15 @@ function get_DefaultParagraphPrinter(){
 
     return {
         render_func: (props: PrinterRenderFunc_Props) => {
-            let extra = consumer_effector.get_context(props.context) // 需要额外插入在前面的元素。
-            let [ bro_ele , bro_info ] = brother_effector.get_context(props.context) as [ StyledNode , any ]
 
-            let small_margin = bro_info["small_margin"] // 兄弟是否让自己设置一个小的margin。
+            let extra = consumer_effector.get_context(props.context) // 需要额外插入在前面的元素。
+            let [ bro_ele , bro_info ] = (brother_effector.get_context(props.context) || [undefined , undefined]) as [ StyledNode , any ]
+
+            if(extra == undefined){
+                return <PrinterParagraphBox ></PrinterParagraphBox>
+            }
+
+            let small_margin = bro_info && bro_info["small_margin"] // 兄弟是否让自己设置一个小的margin。
 
             let margin_flag = (bro_ele != undefined) && ( bro_ele.type == "group" || bro_ele.type == "struct" )
             let margin_sx = {marginTop: small_margin ?
