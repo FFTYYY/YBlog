@@ -176,8 +176,6 @@ class App extends  React.Component<App_Props , {
 		let me = this
 		let ExtraButtons = this.extra_buttons.bind(this)
 
-		let haha = ""
-
 		return <Box sx={props.sx}>
 			<Box sx = {{
 				position: "absolute" , 
@@ -200,7 +198,7 @@ class App extends  React.Component<App_Props , {
 						// }
 					}}
 					onUpdate = {(v)=>{
-						// console.log(me.core.root)
+						
 						let printer = me.get_printer()
 						let editor = me.get_editor()
 						if(printer && editor){
@@ -250,7 +248,7 @@ class App extends  React.Component<App_Props , {
 			}}>
 				<SaveButton save_func={me.save_content.bind(me)}/>
 				<FileManageButton />
-				<HandleMathBuutton editor={me.get_editor()} />
+				<HandleMathBuutton get_editor={()=>me.get_editor()} /> 
 			</FlexibleDrawer>
 
 			<MainPart sx={{

@@ -31,6 +31,8 @@ export { HandleMathBuutton }
 function HandleMath(editor: YEditor, inlinestyle_name: string, blockstyle_name: string){
 
     function _handle(now_node: Node , now_path: number[]){
+        // console.log(now_node)
+
         if(has_children(now_node)){
             for(let idx in now_node.children){
                 let c = now_node.children[idx]
@@ -55,9 +57,11 @@ function HandleMath(editor: YEditor, inlinestyle_name: string, blockstyle_name: 
             let end_text = text.slice(match_end,text.length)
             let inner_text = match_tex.slice(1 , match_tex.length-1)
 
-            let mathinline_style = editor.core.get_style("inline" , inlinestyle_name)
-            let new_node = mathinline_style.makenode()
+            let mathinline_proxy = editor.proxies["inline"][inlinestyle_name]
+            let new_node = mathinline_proxy.makenode()
             new_node.children = [{text: inner_text}]
+
+            // editor.set_node(now_node , new_node)
 
             editor.delete_node_by_path(now_path)
             editor.add_nodes([
@@ -80,8 +84,8 @@ function HandleMath(editor: YEditor, inlinestyle_name: string, blockstyle_name: 
             let end_text = text.slice(match_end,text.length)
             let inner_text = match_tex.slice(2 , match_tex.length-2)
 
-            let mathblock_style = editor.core.get_style("group" , blockstyle_name)
-            let new_node = mathblock_style.makenode()
+            let mathblock_proxy = editor.proxies["group"][blockstyle_name]
+            let new_node = mathblock_proxy.makenode()
             new_node.children = [{text: inner_text}]
 
             let new_node_left = paragraph_prototype(before_text)
@@ -102,16 +106,16 @@ function HandleMath(editor: YEditor, inlinestyle_name: string, blockstyle_name: 
     }
 
     let cnt = 0
-    while(_handle(editor.get_slate() , [])){
+    while(_handle(editor.get_root() , [])){
         cnt ++
-        if(cnt > 100){
+        if(cnt > 0){
             console.log("太多数学...")
             break
         }
     }
 }
 
-function HandleMathBuutton(props: {editor: YEditor}){
+function HandleMathBuutton(props: {get_editor: ()=>YEditor}){ // 弟啊你神经啊
     const [anchor, set_anchor] = React.useState<HTMLButtonElement | null>(null)
     const [inlinemath, set_inlinemath] = React.useState<string>("数学-行内")
     const [blockmath, set_blockmath] = React.useState<string>("数学-块")
@@ -171,7 +175,7 @@ function HandleMathBuutton(props: {editor: YEditor}){
                 variant = "outlined"
                 sx = {{width: "50%" , marginX: "auto" , marginY: "0.5rem"}}
                 onClick = {()=>{
-                    HandleMath(props.editor , inlinemath , blockmath)
+                    HandleMath(props.get_editor() , inlinemath , blockmath)
                 }}
             >开始！</Button>
         </AutoStack></Popover>
