@@ -36,17 +36,17 @@ function DefaultNewHidden(props: {editor: YEditor, element: StyledNode, anchor_e
 
     let element = props.element 
     let editor = props.editor
-    let abstractstyles = editor.core.styles.abstract
+    let abstractproxies = editor.proxies.abstract
     let onClose = props.onClose || ((e:any)=>{})
 
     function get_onClick(choice: string | undefined){
         return (e: any)=>{
             onClose(e)
 
-            if(choice == undefined || abstractstyles[choice] == undefined)
+            if(choice == undefined || abstractproxies[choice] == undefined)
                 return 
             
-            let new_hiddens = [...element.hiddens , ...[abstractstyles[choice].makehidden()]]
+            let new_hiddens = [...element.hiddens , ...[abstractproxies[choice].makehidden()]]
             editor.set_node( element , {hiddens: new_hiddens})
         }
     }
@@ -56,7 +56,7 @@ function DefaultNewHidden(props: {editor: YEditor, element: StyledNode, anchor_e
         open = {props.open}
         onClose = {onClose}
     >
-        {Object.keys(abstractstyles).map(name=>{
+        {Object.keys(abstractproxies).map(name=>{
             return <MenuItem onClick={get_onClick(name)} key={name}>{name}</ MenuItem>
         })}
     </Menu>
@@ -127,9 +127,9 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
     }
 
     get_editor(){
-        if(!(this.editor_ref && this.editor_ref.current))
+        if(!(this.editor_ref && this.editor_ref.current && this.editor_ref.current.get_editor()))
             return undefined
-        return this.editor_ref.current
+        return this.editor_ref.current.get_editor()
     }
 
 	render() {
@@ -144,6 +144,14 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             SlideProps = {{
                 onExited: () => {
                     me.father_editor.apply_delay_operations()
+                    me.father_editor.add_delay_operation(`${me.son.idx}-hidden` , me.sub_apply.bind(me))
+                } , 
+                onEnter: ()=>{
+                    let subeditor = me.get_editor()
+                    if(subeditor){
+                        subeditor.replace_nodes( subeditor.get_root() , me.props.son.children)
+                        me.props.editor.add_delay_operation(`${me.son.idx}-hidden` , me.sub_apply.bind(me))
+                    }
                 }
             }}
         >
@@ -153,15 +161,6 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
                     core        = {me.father_editor.core}
                     proxies     = {me.father_editor.proxies}
                     renderers   = {me.father_editor.renderers}
-
-                    onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
-                        let subeditor = me.get_editor()
-
-                        if(subeditor){
-                            me.subeditor.replace_nodes( subeditor.get_root() , me.props.son.children)
-                            me.props.editor.add_delay_operation(`${me.son.idx}-hidden` , me.sub_apply.bind(me))
-                        }
-                    }}
                 />
             </ForceContain.Provider>
         </Drawer>

@@ -32,7 +32,7 @@ import {
 	default_printer_renderers , 
 	default_editor_renderers , 
 	PrinterRenderer , 
-
+	group_prototype , 
 } from "../../../lib"
 
 import { ReactEditor } from "slate-react"
@@ -111,19 +111,16 @@ class App extends  React.Component<App_Props , {
 		this.setState({ editor_proxies: proxies })
 
 		var root = await Interaction.get.content()
-		root = root || {children: [paragraph_prototype("")] , parameters: {
-			title: {
-				val: "" , 
-				type: "string" , 
-			} , 
-		}}
+		root = root || group_prototype("root" , {
+			title: {val: "" , type: "string"}
+		})
 		set_normalize_status({initializing: true})
 
 		while(!this.get_editor()); // 确保editor已经存在...
 		let editor = this.get_editor()
 
 		editor.replace_nodes(editor.get_root() , root.children) // 将全部节点替换为获得的节点
-		editor.set_node(editor.get_root() , {parameters: root.parameters})
+		editor.set_node(editor.get_root() , {parameters: root.parameters , hiddens: root.hiddens})
 		this.editor_ref.current.forceUpdate()
 
 		set_normalize_status({initializing: false})
@@ -214,6 +211,7 @@ class App extends  React.Component<App_Props , {
 					}}
 					onUpdate = {()=>{
 						me.update_printer()
+						console.log(me.get_editor().get_root())
 					}}
 					extra_buttons = {<ExtraButtons />}
 
