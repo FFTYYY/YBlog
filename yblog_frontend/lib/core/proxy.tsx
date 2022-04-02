@@ -81,6 +81,13 @@ class Proxy{
         node.parameters = this.get_real_parameters(node.proxy_info.proxy_params) // 更新真实参数。
         return node
     }
+    makehidden(){
+        let node = this.target_style.makehidden()
+        node.proxy_info.proxy_name = this.name
+        node.proxy_info.proxy_params = this.get_proxy_parameters(node.parameters) // 创建代理参数。
+        node.parameters = this.get_real_parameters(node.proxy_info.proxy_params) // 更新真实参数。
+        return node
+    }
 
     get_styletype(){
         return this.target_style.type
