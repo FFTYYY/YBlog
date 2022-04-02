@@ -65,11 +65,17 @@ var formatted_style   = new GroupStyle   ("格示"   , make( { label: "格示" ,
 var strong_style      = new InlineStyle  ("强调"   , make( { label: "强调" }) , {...univ_lab})
 var delete_style      = new InlineStyle  ("刊调"   , make( { label: "刊调" }) , {...univ_lab})
 let link_style        = new InlineStyle  ("链调"   , 
-    {... make( { label: "链接" , target: "" } ) , type: {val: "index" , type: "choice" , choices: ["index" , "outer-index" , "http"]}}, 
+    {
+        ... make( { label: "链接" , target: "" } ) , 
+        type: {val: "index" , type: "choice" , choices: ["index" , "outer-index" , "http"]}
+    }, 
     { ...univ_lab , target: "如何查找目标" , type: "目标格式（ index / outer-index / http ）" }
 )
 var image_style       = new SupportStyle ("图调"   , 
-    make( { label: "图片" , target: "" , type: "internal" , width: 10 , height: -1} ) , 
+    {
+        ...make( { label: "图片" , target: ""  , width: 10 , height: -1} )  , 
+        type: {val: "internal" , type: "choice" , choices: ["internal" , "http"]}
+    }, 
     {...univ_lab , target: "如何查找目标" , type: "目标格式（ internal / http ）" , width: "图片宽度（rem）" , height: "图片高度（rem）"}  , 
     { forceInline: true }
 )
