@@ -75,12 +75,7 @@ class App extends  React.Component<App_Props , {
 	constructor(props: App_Props){
 		super(props)
 
-		this.core = withAllStyles( new EditorCore([] , {
-			title: {
-				val: "" , 
-				type: "string" , 
-			} , 
-		}) )
+		this.core = withAllStyles( new EditorCore([]) )
 		this.editor_renderers = withAllEditors( new StyleCollector<EditorRenderer_Func>(this.core , default_editor_renderers) )
 		this.printer_renderers = withAllPrinters( new StyleCollector<PrinterRenderer>(this.core , default_printer_renderers) )
 
@@ -116,7 +111,12 @@ class App extends  React.Component<App_Props , {
 		this.setState({ editor_proxies: proxies })
 
 		var root = await Interaction.get.content()
-		root = root || {children: [paragraph_prototype("")] , parameters: {}}
+		root = root || {children: [paragraph_prototype("")] , parameters: {
+			title: {
+				val: "" , 
+				type: "string" , 
+			} , 
+		}}
 		set_normalize_status({initializing: true})
 
 		while(!this.get_editor()); // 确保editor已经存在...
@@ -167,7 +167,7 @@ class App extends  React.Component<App_Props , {
 	extra_buttons(props: {}){
 		let me = this
 		return <React.Fragment>
-			<label>
+			<Box sx={{marginX: "auto"}}><label>
 				<input 
 					type = "file"  
 					style = {{display: "none"}}
@@ -177,12 +177,13 @@ class App extends  React.Component<App_Props , {
 						}
 					}}
 				/>
+				
 				<AutoIconButton 
 					title = "上传"
 					icon = {DriveFolderUploadIcon}
 					component = "span"
 				/>
-			</label>
+			</label></Box>
 		</React.Fragment>
 	}
 

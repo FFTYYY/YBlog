@@ -7,6 +7,7 @@ import React, {useState , createRef} from "react"
 
 import {
     Button ,
+    Box , 
     Menu , 
     MenuItem , 
     Drawer , 
@@ -218,8 +219,13 @@ function DefaultHiddenEditorButtons(props: {editor: YEditor , element: StyledNod
     // TODO：root的hiddens不能正常更新。
 
     return <>
-        <AutoTooltip title="新建抽象"><IconButton onClick={e=>set_menu_new_ae(e.currentTarget)}><AddBoxIcon/></IconButton></AutoTooltip>
-        <AutoTooltip title="编辑抽象"><IconButton onClick={e=>set_menu_edit_ae(e.currentTarget)}><FilterNoneIcon/></IconButton></AutoTooltip>
+        <Box sx={{marginX: "auto"}}><AutoTooltip title="新建抽象">
+            <IconButton onClick={e=>set_menu_new_ae(e.currentTarget)}><AddBoxIcon/></IconButton>
+        </AutoTooltip></Box>
+        <Box sx={{marginX: "auto"}}><AutoTooltip title="编辑抽象">
+            <IconButton onClick={e=>set_menu_edit_ae(e.currentTarget)}><FilterNoneIcon/></IconButton>
+        </AutoTooltip></Box>
+        
         <DefaultNewHidden 
             editor = {editor} 
             element = {element} 

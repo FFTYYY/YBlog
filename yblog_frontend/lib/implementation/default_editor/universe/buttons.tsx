@@ -75,8 +75,8 @@ function DefaultParameterEditButton(props: UniversalComponent_Props & {
     let [ open , set_open ] = useState(false) // 抽屉是否打开
     let onClose = props.onClose || ((e:any)=>{})
     
-    return <>
-        <AutoIconButton onClick={e=>set_open(true)} title="设置参数" icon={SettingsIcon} />
+    return <Box sx={{marginX: "auto"}}>
+        <AutoIconButton onClick={e=>set_open(true)} title="设置参数" icon={SettingsIcon}/>
         <DefaultParameterWithEditorWithDrawer 
             editor = {props.editor} 
             element = {props.element} 
@@ -86,7 +86,7 @@ function DefaultParameterEditButton(props: UniversalComponent_Props & {
                 set_open(false); 
             }} 
         />
-    </>
+    </ Box>
 }
 
 
