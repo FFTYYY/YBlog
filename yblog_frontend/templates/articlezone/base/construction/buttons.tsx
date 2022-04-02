@@ -18,33 +18,54 @@ import { PostSnackbar } from "./snackbar"
 
 export { SaveButton }
 
-function SaveButton(props: {save_func: (()=>Promise<boolean>)}){
+class SaveButton extends React.Component<{
+    save_func: (()=>Promise<boolean>)
+} , {
+    snackbar_open: boolean
+    status: boolean
+}>{
+    constructor(props){
+        super(props)
 
-    let [snackbar_open , set_snackbar_open] = React.useState<boolean>(false)
-    let [status , set_status] = React.useState<boolean>(false)
+        this.state = {
+            snackbar_open: false , 
+            status: false , 
+        }
+    }
 
-    return <React.Fragment>
-        <FlexibleItem
-            close_item = {
-                <AutoTooltip title="保存"><IconButton size="small">
-                    <SaveIcon fontSize="small" color="primary"/>
-                </IconButton></AutoTooltip>
-            }
-            open_item = {<Button startIcon={<SaveIcon/>} color="primary">保存</Button>}
-            onClick = {()=>{
-                props.save_func().then(ret=>{
-                    set_status(ret)
-                    set_snackbar_open(true)
-                })
-            }}
-            no_button
-        />
-        <PostSnackbar 
-            info_sucess = "保存成功"
-            info_fail = "保存失败"
-            open = {snackbar_open}
-            status = {status}
-            onClose = {()=>set_snackbar_open(false)}     
-        />
-    </React.Fragment>
+    click(){
+        this.props.save_func().then(ret=>{
+            this.setState({
+                status: ret , 
+                snackbar_open: true , 
+            })
+        })
+    }
+
+    render(){
+        let me = this
+
+        return <React.Fragment>
+            <FlexibleItem
+                close_item = {
+                    <AutoTooltip title="保存"><IconButton size="small">
+                        <SaveIcon fontSize="small" color="primary"/>
+                    </IconButton></AutoTooltip>
+                }
+                open_item = {<Button startIcon={<SaveIcon/>} color="primary">保存</Button>}
+                onClick = {()=>{
+                    me.click()
+                }}
+                no_button
+            />
+            <PostSnackbar 
+                info_sucess = "保存成功"
+                info_fail = "保存失败"
+                open = {me.state.snackbar_open}
+                status = {me.state.status}
+                onClose = {()=>me.setState({snackbar_open:false})}     
+            />
+        </React.Fragment>
+    }
 }
+

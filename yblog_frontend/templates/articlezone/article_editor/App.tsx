@@ -71,6 +71,7 @@ class App extends  React.Component<App_Props , {
 
 	printer_ref: React.RefObject<DefaultPrinter>
 	editor_ref: React.RefObject<DefaultEditor>
+	savebutton_ref: React.RefObject<SaveButton>
 
 	constructor(props: App_Props){
 		super(props)
@@ -91,9 +92,9 @@ class App extends  React.Component<App_Props , {
 
 		this.editor_ref  = React.createRef()
 		this.printer_ref = React.createRef()
+		this.savebutton_ref = React.createRef()
 	}
 
-	/** 完全不知道这是什么逻辑。 */
 	async componentDidMount(){
 		let proxies = withNecessaryProxies({
 			inline: {},
@@ -138,7 +139,13 @@ class App extends  React.Component<App_Props , {
 		}
 		return undefined
 	}
-	
+	get_save_button(){
+		if(this.savebutton_ref && this.savebutton_ref.current){
+			return this.savebutton_ref.current
+		}
+		return undefined
+	}
+
 	async save_content(){
 		let editor = this.get_editor()
 		if(editor){
@@ -205,13 +212,21 @@ class App extends  React.Component<App_Props , {
 					theme = {my_theme}
 
 					onFocusChange = {()=>{
-						// if(slate.selection && me.printer_ref  && me.printer_ref.current){
-						// 	me.printer_ref.current.scroll_to(slate.selection.focus.path)
-						// }
+						let printer = me.get_printer()
+						let editor = me.get_editor()
+						if(printer && editor){
+							printer.scroll_to(editor.get_slate().selection.focus.path)
+						}
 					}}
 					onUpdate = {()=>{
+						// me.update_printer()
+					}}
+					onSave = {()=>{
 						me.update_printer()
-						console.log(me.get_editor().get_root())
+						let save_button = me.get_save_button()
+						if(save_button){
+							save_button.click()
+						}
 					}}
 					extra_buttons = {<ExtraButtons />}
 
@@ -254,7 +269,11 @@ class App extends  React.Component<App_Props , {
 			<FlexibleDrawer sx={{
 				marginRight: "1%"
 			}}>
-				<SaveButton save_func={me.save_content.bind(me)}/>
+				<SaveButton 
+					ref = {me.savebutton_ref}
+					save_func = {me.save_content.bind(me)}
+
+				/>
 				<FileManageButton />
 				<HandleMathBuutton get_editor={()=>me.get_editor()} /> 
 			</FlexibleDrawer>
