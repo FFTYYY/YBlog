@@ -53,7 +53,7 @@ class EditorCore{
      * @param styles 初始的样式列表。
      * @param root_parameters 根节点的参数列表。
      */
-    constructor(styles: Style<StyleType>[] , root_parameters: ValidParameter){
+    constructor(styles: Style<StyleType>[] ){
         this.styles = {
             "inline": {},
             "group": {}, 
