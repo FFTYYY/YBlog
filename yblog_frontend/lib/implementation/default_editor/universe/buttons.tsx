@@ -82,7 +82,8 @@ function DefaultParameterEditButton(props: UniversalComponent_Props & {
             element = {props.element} 
             open = {open} 
             onClose = {e=>{ 
-                onClose(e); set_open(false); 
+                onClose(e)
+                set_open(false); 
             }} 
         />
     </>
