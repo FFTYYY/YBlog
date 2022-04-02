@@ -18,7 +18,11 @@ var flush_math = new DoSomething(()=>{
 } , 3000)
 
 function flush_mathjax(){
-    flush_math.go()
+    // flush_math.go()
+    let MathJax = (window as any).MathJax
+    if(MathJax != undefined && MathJax.typesetPromise != undefined){
+        MathJax.typesetPromise()
+    }
 }
 
 function MathJaxContext(props: {children: any}){
