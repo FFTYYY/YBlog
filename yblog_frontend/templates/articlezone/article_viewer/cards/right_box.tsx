@@ -29,7 +29,7 @@ import { num2chinese } from "../../base/utils"
 import {
 	YEditor , 
 	EditorCore , 
-	Printer , 
+	GroupNode , 
 	DefaultPrinter , 
 	DefaultEditor , 
 	AutoStack , 
@@ -48,6 +48,7 @@ import {
     PrinterOldLevelBox , 
     PrinterBackgroundPaper , 
 	get_DefaultStructPrinter , 
+    get_param_val , 
 } from "../../../../lib"
 import { Node } from "slate"
 import { LeftBasic } from "./left_basic"
@@ -67,10 +68,9 @@ function find_sectioner(root: Node){
 }
 
 /** 这个组件在显示一个章节内部的导航。导航到每个小节线和章节线。 */
-function RightBox(props: {core: EditorCore , onScroll: (path: number[])=>void}){
+function RightBox(props: {root: GroupNode , onScroll: (path: number[])=>void}){
 
-    let root = props.core.root
-    let sectioners = find_sectioner(root)
+    let sectioners = find_sectioner(props.root)
 
     return <Box sx={(theme)=>({
             ...theme.printer.typography.body , 
@@ -87,7 +87,7 @@ function RightBox(props: {core: EditorCore , onScroll: (path: number[])=>void}){
             if(is_certain_style(node , "support" , "小节线")){
                 title = <React.Fragment>
                     <Box component = "span" sx={{marginRight: "1rem"}}>{num2chinese(Number(idx)+1)}</Box>
-                    <Box component = "span">{node.parameters.title}</Box>
+                    <Box component = "span">{get_param_val(node , "title")}</Box>
                 </React.Fragment>
             }
             return <Box key={idx} sx={{
