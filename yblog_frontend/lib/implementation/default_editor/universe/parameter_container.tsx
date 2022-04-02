@@ -132,19 +132,21 @@ class DefaultParameterContainer extends React.Component <{
             let [choice_val , set_choice_val] = React.useState(val as string)
 
             return <FormControl sx = {{marginLeft: "5%" , width: "100%"}}>
-            <FormLabel>{name}</FormLabel>
-            <RadioGroup
-                defaultValue = {val}
-                value = {choice_val}
-                onChange = {e=>set_choice_val(e.target.value)}
-                onMouseLeave = {(e)=>onChange(choice_val)}
-            >
-                {choices.map((c,idx)=><FormControlLabel sx={{marginLeft: "5%"}} key={idx} value={c} label={c} control={<Radio />}/>)}
-            </RadioGroup>
-          </FormControl>
-            
-                    
-
+                <FormLabel>{name}</FormLabel>
+                <RadioGroup
+                    defaultValue = {val}
+                    value = {choice_val}
+                    onChange = {e=>{
+                        set_choice_val(e.target.value)
+                    }}
+                    onMouseLeave = {(e)=>{ // RadioGroup的onBlur很诡异，所以用了这个来代替。
+                        if(choice_val != val) // 只有修改过，才提交修改
+                            onChange(choice_val)
+                    }}
+                >
+                    {choices.map((c,idx)=><FormControlLabel sx={{marginLeft: "5%"}} key={idx} value={c} label={c} control={<Radio />}/>)}
+                </RadioGroup>
+            </FormControl>        
         }
         return <></>
     }
