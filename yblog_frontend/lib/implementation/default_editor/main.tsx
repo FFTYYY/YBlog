@@ -197,10 +197,9 @@ class DefaultButtonbar extends React.Component<{
 }
 
 
-let NoKeyboardOpMixin = {
+let KeyOpsMixin = {
 	is_selecting(){
 		let me = this as any as DefaultEditor
-
 		return me.state.ctrl_key["q"]
 	} , 
 
@@ -231,52 +230,63 @@ let NoKeyboardOpMixin = {
 	prevent_key_down(e: React.KeyboardEvent<HTMLDivElement>){
 		let me = this as any as DefaultEditor
 
-		if(!me.is_selecting()){
-			return false
+		if(me.state.ctrl_key["Control"] && e.key == "s"){ // ctrl + s
+			me.onSave() // 调用保存回调函数。
+			e.preventDefault()
+			return true
 		}
-		if(me.buttonbar_ref && me.buttonbar_ref.current){
-			let buttonbar = me.buttonbar_ref.current
-			if(e.key == "ArrowLeft" || e.key == "ArrowRight" || e.key == "ArrowDown" || e.key == "ArrowUp" || e.key == "Enter"){
-				e.preventDefault()
-				return true
-			}
-		}
-	} , 
-
-	handle_key_press(e: React.KeyboardEvent<HTMLDivElement>){
-		let me = this as any as DefaultEditor
-
-		if(!me.is_selecting())
-			return false
-		if(me.buttonbar_ref && me.buttonbar_ref.current){
-			let buttonbar = me.buttonbar_ref.current
-			if(e.key == "ArrowLeft"){
-				buttonbar.move({x: -1})
-				e.preventDefault()
-				return true
-			}
-			if(e.key == "ArrowRight"){
-				buttonbar.move({x: 1})
-				e.preventDefault()
-				return true
-			}
-			if(e.key == "ArrowDown"){
-				buttonbar.move({y: 1})
-				e.preventDefault()
-				return true
-			}
-			if(e.key == "ArrowUp"){
-				buttonbar.move({y: -1})
-				e.preventDefault()
-				return true
-			}
-			if(e.key == "Enter"){
-				buttonbar.force_click()
-				e.preventDefault()
-				return true
+		if(me.is_selecting()){
+			if(me.buttonbar_ref && me.buttonbar_ref.current){
+				let buttonbar = me.buttonbar_ref.current
+				if(e.key == "ArrowLeft" || e.key == "ArrowRight" || e.key == "ArrowDown" || e.key == "ArrowUp" || e.key == "Enter"){
+					e.preventDefault()
+					return true
+				}
 			}
 		}
 		return false
+	} , 
+
+	handle_key_up(e: React.KeyboardEvent<HTMLDivElement>){
+		let me = this as any as DefaultEditor
+		if(me.state.ctrl_key["Control"] && e.key == "s"){
+			
+			e.preventDefault()
+			return true
+		}
+		if(me.is_selecting()){
+			if(me.buttonbar_ref && me.buttonbar_ref.current){
+				let buttonbar = me.buttonbar_ref.current
+				if(e.key == "ArrowLeft"){
+					buttonbar.move({x: -1})
+					e.preventDefault()
+					return true
+				}
+				if(e.key == "ArrowRight"){
+					buttonbar.move({x: 1})
+					e.preventDefault()
+					return true
+				}
+				if(e.key == "ArrowDown"){
+					buttonbar.move({y: 1})
+					e.preventDefault()
+					return true
+				}
+				if(e.key == "ArrowUp"){
+					buttonbar.move({y: -1})
+					e.preventDefault()
+					return true
+				}
+				if(e.key == "Enter"){
+					buttonbar.force_click()
+					e.preventDefault()
+					return true
+				}
+			}
+			return false
+		}
+		return false
+		
 	} , 
 }
 
@@ -292,6 +302,7 @@ class DefaultEditor extends React.Component <{
 	onUpdate?: (newval: Node[]) => void
 	onFocusChange?: ()=>void
 	onMount?: () => void
+	onSave?: ()=>void
 	theme?: ThemeOptions
 	extra_buttons?: any
 
@@ -309,21 +320,21 @@ class DefaultEditor extends React.Component <{
 	is_selecting: () => boolean
 	flush_key_state: (keydown: boolean , e: React.KeyboardEvent<HTMLDivElement>) => void
 	prevent_key_down: (e: React.KeyboardEvent<HTMLDivElement>) => boolean
-	handle_key_press: (e: React.KeyboardEvent<HTMLDivElement>) => boolean
+	handle_key_up: (e: React.KeyboardEvent<HTMLDivElement>) => boolean
 	
-
 	onUpdate: (newval: Node[]) => void
 	onMount: ()=>void
 	onFocusChange: ()=>void
+	onSave: ()=> void
 
 	editor_ref		: React.RefObject<YEditor>
 	buttonbar_ref	: React.RefObject<DefaultButtonbar>
 
 	use_mixins(){
-		this.is_selecting 		= NoKeyboardOpMixin.is_selecting.bind(this)
-		this.flush_key_state 	= NoKeyboardOpMixin.flush_key_state.bind(this)
-		this.prevent_key_down 	= NoKeyboardOpMixin.prevent_key_down.bind(this)
-		this.handle_key_press 	= NoKeyboardOpMixin.handle_key_press.bind(this)
+		this.is_selecting 		= KeyOpsMixin.is_selecting.bind(this)
+		this.flush_key_state 	= KeyOpsMixin.flush_key_state.bind(this)
+		this.prevent_key_down 	= KeyOpsMixin.prevent_key_down.bind(this)
+		this.handle_key_up 		= KeyOpsMixin.handle_key_up.bind(this)
 	}
 
 	constructor(props) {
@@ -346,6 +357,7 @@ class DefaultEditor extends React.Component <{
 		this.onUpdate = props.onUpdate || ((newval: Node[])=>{})
 		this.onMount  = props.onMount || (()=>{})
 		this.onFocusChange  = props.onFocusChange || (()=>{})
+		this.onSave = props.onSave || (()=>{})
 
 		this.editor_ref = React.createRef<YEditor>()
 		this.buttonbar_ref = React.createRef<DefaultButtonbar>()
@@ -412,13 +424,12 @@ class DefaultEditor extends React.Component <{
 					onFocusChange = {me.onFocusChange} 
 					onKeyDown = {e=>{
 						this.flush_key_state(true , e)
-						return this.prevent_key_down(e)
+						return this.prevent_key_down(e) // 这个函数没有副作用，唯一的用处是判断是否阻止传递
 					}}
 					onKeyUp = {e=>{
 						this.flush_key_state(false , e)
-						return this.handle_key_press(e) // 抬起来也是一种press
+						return this.handle_key_up(e) // 抬起来也是一种press
 					}}
-					// onKeyPress = {e=>this.handle_key_press(e)}
 				/>
 			</EditorComponentEditingBox></Box>
 
