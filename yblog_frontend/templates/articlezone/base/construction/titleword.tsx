@@ -1,5 +1,6 @@
 import React from "react"
 import { Interaction } from "../interaction"
+import { get_param_val } from "../../../../lib" 
 
 export { TitleWord }
 
@@ -15,7 +16,7 @@ class TitleWord extends React.Component<{node_id: number} , {title: string | und
 
     async componentDidMount() {
         let root = await Interaction.get.content(this.props.node_id)
-        this.setState({title: root.parameters.title}) 
+        this.setState({title: get_param_val(root , "title") as string}) 
     }
 
     render(){

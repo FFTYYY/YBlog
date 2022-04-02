@@ -282,5 +282,7 @@ function new_struct_child(){
 }
 
 function get_param_val(element: StyledNode , key: string){
-    return element.parameters[key].val
+    if(element.parameters[key])
+        return element.parameters[key].val
+    return undefined
 }

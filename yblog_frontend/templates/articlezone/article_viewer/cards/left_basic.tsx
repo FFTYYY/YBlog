@@ -17,6 +17,8 @@ import {
 	EditorCore , 
 	AutoStack , 
     AutoTooltip , 
+    GroupNode , 
+    get_param_val , 
 } from "../../../../lib"
 import { Nodetree } from "../../base/nodetree"
 import type { raw_info_item } from "../../base/nodetree"
@@ -152,7 +154,7 @@ class Navigation extends React.Component<{} , {
 
 /** 这个组件显示一些基本的信息。 */
 class BasicInformation extends React.Component<{
-    core: EditorCore
+    root: GroupNode
 } , {
     create_time: any , 
     modify_time: any , 
@@ -177,7 +179,7 @@ class BasicInformation extends React.Component<{
 
     render(){
         let me = this
-        let title = this.props.core.root.parameters.title
+        let title = get_param_val(this.props.root , "title")
 
         // TODO use theme
         let ItemBox = (props: {title: string, content: string}) => { 
@@ -202,13 +204,13 @@ class BasicInformation extends React.Component<{
 }
 
 /** 这个组件是左边基本信息部分的总体。 */
-class LeftBasic extends React.Component<{core: EditorCore}>{
+class LeftBasic extends React.Component<{root: GroupNode}>{
     constructor(props){
         super (props)
     }
     render(){
         return <Box sx = {(theme)=>({...theme.printer.typography.body})}>
-            <BasicInformation core={this.props.core}/>
+            <BasicInformation root={this.props.root}/>
             <Divider sx={{fontSize: "0.8rem"}}><Chip sx={{fontSize: "0.8rem"}} label="导航" /></Divider>
             <Navigation />
         </Box>

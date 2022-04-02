@@ -17,53 +17,67 @@ import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 import {
 	YEditor , 
 	EditorCore , 
-	Printer , 
 	DefaultPrinter , 
 	DefaultEditor , 
 	AutoStack , 
-
-    PrinterStructureBoxText  , 
+	AutoIconButton , 
+	paragraph_prototype , 
+	StyleCollector , 
+	EditorRenderer_Func , 
+	EditorRenderer_Props , 
+	StyleType , 
+	Proxy , 
+	default_printer_renderers , 
+	default_editor_renderers , 
+	PrinterRenderer , 
+	group_prototype ,
+	PrinterStructureBoxText , 
+	GroupNode , 
+	get_param_val , 
 } from "../../../lib"
-// import { make_new_style , withNecessaryPrinter , withNecessaryStyle} from "../base/styles"
+import { withAllStyles } from "../base/styles"
 import { my_theme } from "../base/construction/theme"
 import { LeftBox , RightBox } from "./cards"
 import { Interaction , BackendData } from "../base/interaction"
 import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../base/mathjax"
+import { withAllPrinters } from "../base/styles"
 
 // import "react-perfect-scrollbar/dist/css/styles.css"
 // import PerfectScrollbar from "react-perfect-scrollbar"
 
-class App extends  React.Component{
+class App extends  React.Component<{} , {
+	root: GroupNode
+}>{
 	core: EditorCore
-    printer: Printer
+	printer_renderers: StyleCollector<PrinterRenderer>
 	printer_ref: React.RefObject<DefaultPrinter>
-    
+
 	constructor(props){
 		super(props)
 
-		this.core    = withNecessaryStyle( new EditorCore([] , {
-			title: ""
-		}) )
-        this.printer = withNecessaryPrinter( new Printer( this.core ) )
+		this.core = withAllStyles( new EditorCore([]) )
+		this.printer_renderers = withAllPrinters( new StyleCollector<PrinterRenderer>(this.core , default_printer_renderers) )
 
 		this.printer_ref = React.createRef<DefaultPrinter>()
+		this.state = {
+			root: group_prototype("root" , {title: {val: "" , type: "string"}})
+		}
+	}
+
+	get_printer(){
+		if(this.printer_ref && this.printer_ref.current){
+			return this.printer_ref.current.get_printer()
+		}
+		return undefined
 	}
 
 	async componentDidMount(){
-
-        /** 获得内容。 */
 		var root = await Interaction.get.content()
-		this.core.update_root(root)
-
-        /** 获得样式。 */
-        var node_concepts = await Interaction.get.concept()
-		for(let [name , meta_name , fixed_params , default_params , extra_params] of node_concepts){
-			let [style , editor , printer] = make_new_style(meta_name , name , fixed_params , default_params , extra_params)
-			this.core.add_style(style)
-			if(style.type != "abstract")
-				this.printer.update_renderer(printer , style.type , style.name)
-		}
-        this.forceUpdate()
+		this.setState({root: root})
+		
+		while(!this.get_printer());
+		let printer = this.get_printer()
+		printer.update(root)
 	}
 
 	render(){
@@ -78,7 +92,7 @@ class App extends  React.Component{
 				height: "96%" , 
 				width: "17%" , 
 			}}>
-				<LeftBox core={me.printer.core} />
+				<LeftBox root={me.state.root} />
 			</Box>
 
 			<Box sx={{
@@ -96,7 +110,9 @@ class App extends  React.Component{
 					top: "1%" , 
 					height: "3%" , 
 				}}>
-					<PrinterStructureBoxText sx={{textAlign: "center"}}>{me.printer.core.root.parameters.title}</PrinterStructureBoxText>
+					<PrinterStructureBoxText sx={{textAlign: "center"}}>{
+						get_param_val(me.state.root , "title")
+					}</PrinterStructureBoxText>
 				</Box>
 				<Box sx = {{
 					position: "absolute" , 
@@ -106,9 +122,13 @@ class App extends  React.Component{
 					height: "94%" , 
 				}}>
 					<DefaultPrinter
-						printer = {me.printer}
-						theme = {my_theme}
+
 						ref = {me.printer_ref}
+
+						core = {this.core}
+						renderers = {this.printer_renderers}
+
+						theme = {my_theme}
 					/>
 				</Box>
 			</Box>
@@ -121,10 +141,11 @@ class App extends  React.Component{
 				width: "17%" , 
 			}}>
 				<RightBox 
-					core = {me.printer.core} 
+					root = {me.state.root} 
 					onScroll = {(path)=>{
-						if(me.printer_ref && me.printer_ref.current){
-							me.printer_ref.current.scroll_to(path)
+						let printer = this.get_printer()
+						if(printer){
+							printer.scroll_to(path)
 						}
 					}}
 				/>
