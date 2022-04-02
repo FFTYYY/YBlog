@@ -19,6 +19,10 @@ import {
     List , 
     FormControlLabel  , 
     ListItem, 
+    FormControl , 
+    FormLabel  , 
+    RadioGroup , 
+    Radio  , 
 } from "@mui/material"
 import { 
     TreeItem , 
@@ -36,6 +40,7 @@ import type { ValidParameter , ValidParameterItem } from "../../../core/elements
 import { YEditor } from "../../../editor"
 import { is_same_node , node2path } from "../../utils"
 import { EditorStructureTypography as StructureTypography } from "../basic"
+import { AutoStackedPopperWithButton } from "./buttons"
 
 export { 
     DefaultParameterContainer , 
@@ -89,7 +94,7 @@ class DefaultParameterContainer extends React.Component <{
         let name = props.name
         let type = props.val.type
         let val = props.val.val
-        let onChange = (v)=>props.onChange({type: type,val: v})
+        let onChange = (v)=>props.onChange({...props.val , val: v})
         let standard_props = {
             defaultValue: val ,
             label: name, 
@@ -121,14 +126,25 @@ class DefaultParameterContainer extends React.Component <{
                 />} 
                 sx = {{marginLeft: "5%"}}
             />
-            //return <TextField 
-            //     //onBlur = {e=>{onChange(e.target.value == "true")}}
-            //     select // TODO 这里如果设置成select有个bug，使得点击的时候页面并没有刷新，但是drawer会消失。
-            //     {...standard_props}
-            // >
-            //     <MenuItem key={0} value="true" ><Typography>true</Typography></MenuItem>
-            //     <MenuItem key={1} value="false"><Typography>false</Typography></MenuItem>
-            // </TextField>
+        }
+        if(props.val.type == "choice"){ // 帮助sb ts认识到下面的choices是合法的。
+            let choices = props.val.choices
+            let [choice_val , set_choice_val] = React.useState(val as string)
+
+            return <FormControl sx = {{marginLeft: "5%" , width: "100%"}}>
+            <FormLabel>{name}</FormLabel>
+            <RadioGroup
+                defaultValue = {val}
+                value = {choice_val}
+                onChange = {e=>set_choice_val(e.target.value)}
+                onMouseLeave = {(e)=>onChange(choice_val)}
+            >
+                {choices.map((c,idx)=><FormControlLabel sx={{marginLeft: "5%"}} key={idx} value={c} label={c} control={<Radio />}/>)}
+            </RadioGroup>
+          </FormControl>
+            
+                    
+
         }
         return <></>
     }

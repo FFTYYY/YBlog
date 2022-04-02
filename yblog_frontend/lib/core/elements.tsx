@@ -64,7 +64,11 @@ type NodeType = StyledNodeType | "paragraph" | "text"
 type GroupRelationType = "chaining" | "separating"
 
 /** 参数可以接受的叶子节点的类型。 */
-type ValidParameterItem = {type: "string" , val: string} | {type: "number" , val: number} | {type: "boolean" , val: boolean}
+type ValidParameterItem = 
+    {type: "string" , val: string} | 
+    {type: "number" , val: number} | 
+    {type: "boolean" , val: boolean} | 
+    {type: "choice" , val: string , choices: string[]}
 
 /** 合法的节点参数对象。 */
 type ValidParameter<Item = ValidParameterItem> = {[key:string]: Item}

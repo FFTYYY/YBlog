@@ -65,7 +65,7 @@ var formatted_style   = new GroupStyle   ("格示"   , make( { label: "格示" ,
 var strong_style      = new InlineStyle  ("强调"   , make( { label: "强调" }) , {...univ_lab})
 var delete_style      = new InlineStyle  ("刊调"   , make( { label: "刊调" }) , {...univ_lab})
 let link_style        = new InlineStyle  ("链调"   , 
-    make( { label: "链接" , target: "" , type: false} ) , 
+    {... make( { label: "链接" , target: "" } ) , type: {val: "index" , type: "choice" , choices: ["index" , "outer-index" , "http"]}}, 
     { ...univ_lab , target: "如何查找目标" , type: "目标格式（ index / outer-index / http ）" }
 )
 var image_style       = new SupportStyle ("图调"   , 
