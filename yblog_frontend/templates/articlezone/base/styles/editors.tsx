@@ -54,12 +54,12 @@ var mathblock_editor    = get_DefaultGroupEditor_with_RightBar({
     rightbar_extra: (props) => {/** 在右侧提供一个用于快速输入退出符号的文本框。 */
         let universal_props = {variant: "standard" as "standard" , sx: {width: "2rem"}}
         let label = <Typography sx={{fontSize: "0.7rem"}}>extra</Typography>
-        let close_default = get_param_val(props.element , "close") // 注意，这里假设close必不用代理。
+        let exit_default = get_param_val(props.element , "exit") // 注意，这里假设close必不用代理。
         return <React.Fragment>
-            <TextField {...universal_props} label={label} defaultValue={close_default} onChange = {(e)=>{
+            <TextField {...universal_props} label={label} defaultValue={exit_default} onChange = {(e)=>{
                 let val = e.target.value
                 let node = props.element
-                props.editor.auto_set_parameter( node , {close: {type: "string" , val: val}})
+                props.editor.auto_set_parameter( node , {exit: {type: "string" , val: val}})
             }}/>
         </ React.Fragment>
     }

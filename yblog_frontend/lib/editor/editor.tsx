@@ -130,7 +130,16 @@ class YEditor extends React.Component<{
         let withOutherPlugin = this.props.plugin || ((x,y)=>y)
 
         this.state = {
-            slate: withOutherPlugin(me , withAllYEditorPlugins( withReact(createEditor() as ReactEditor) ) as ReactEditor), 
+            slate: withOutherPlugin(me , 
+                withAllYEditorPlugins( 
+                    withHistory(
+                        withReact(
+                            createEditor() as ReactEditor
+                        ) 
+                    )
+                ) as ReactEditor
+            ), 
+
             root: group_prototype("root" , {
                 title: {type: "string" , val: ""} , 
             }) , 
