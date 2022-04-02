@@ -214,7 +214,7 @@ class App extends  React.Component<App_Props , {
 					onFocusChange = {()=>{
 						let printer = me.get_printer()
 						let editor = me.get_editor()
-						if(printer && editor){
+						if(printer && editor && editor.get_slate().selection){
 							printer.scroll_to(editor.get_slate().selection.focus.path)
 						}
 					}}
