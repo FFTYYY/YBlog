@@ -62,7 +62,6 @@ class DefaultParameterContainer extends React.Component <{
     /** 更改时的回调函数。 */
     onUpdate?: (newval: ValidParameter) => void
 } , {
-    parameters: ValidParameter
 }>{
     onUpdate: (newval: any) => void
 
@@ -72,10 +71,6 @@ class DefaultParameterContainer extends React.Component <{
      */
     constructor(props){
         super(props)
-
-        this.state = {
-            parameters: this.props.parameters
-        }
 
         this.onUpdate = props.onUpdate || ( (newval: any) => {} )
     }
@@ -159,16 +154,17 @@ class DefaultParameterContainer extends React.Component <{
     render(){
         let me = this
 
+        // console.log("state" , this.props.parameters)
+
         let R = this.RenderValue.bind(this)
         return <List>
-            {Object.keys(me.state.parameters).map((key,idx)=>{
+            {Object.keys(me.props.parameters).map((key,idx)=>{
                 return <ListItem key = {idx}>
                     <R 
                         name = {key}
-                        val = {me.state.parameters[key]}
+                        val = {me.props.parameters[key]}
                         onChange = {(v)=>{
-                            let new_parameters = {...me.state.parameters , [key]: v}
-                            me.setState({parameters: new_parameters})
+                            let new_parameters = {...me.props.parameters , [key]: v}
                             me.onUpdate(new_parameters)
                         }}
                     />
@@ -211,6 +207,7 @@ class DefaultParameterWithEditor extends React.Component<UniversalComponent_Prop
                 father_editor.auto_set_parameter( props.element , newval)
             })
         }
+
         return <DefaultParameterContainer
             parameters = { has_prox ? element.proxy_info.proxy_params : element.parameters }
             onUpdate = { newval=>temp_update_value(newval) }

@@ -117,13 +117,15 @@ class App extends  React.Component<App_Props , {
 
 		var root = await Interaction.get.content()
 		root = root || {children: [paragraph_prototype("")] , parameters: {}}
-
 		set_normalize_status({initializing: true})
 
-		// let to_remove = this.state.editor.slate.children.map((_,idx)=>Number(idx))
-		// Transforms.removeNodes(this.state.editor.slate , {at: to_remove}) // 删除所有现存子节点
-		// Transforms.insertNodes(this.state.editor.slate , root.children , {at: [0]}) // 插入内容
-		
+		while(!this.get_editor()); // 确保editor已经存在...
+		let editor = this.get_editor()
+
+		editor.replace_nodes(editor.get_root() , root.children) // 将全部节点替换为获得的节点
+		editor.set_node(editor.get_root() , {parameters: root.parameters})
+		this.editor_ref.current.forceUpdate()
+
 		set_normalize_status({initializing: false})
 	}
 
@@ -141,13 +143,25 @@ class App extends  React.Component<App_Props , {
 	}
 	
 	async save_content(){
-		// var data = {"content": this.core.root}
-		// return await Interaction.post.content(data)
+		let editor = this.get_editor()
+		if(editor){
+			var data = {"content": editor.get_root()}
+			return await Interaction.post.content(data)
+		}
+		return false
 	}
 	async post_file(files: any){
 		var form_data = new FormData()
 		form_data.append("file" , files[0])
 		return await Interaction.post.file(form_data)
+	}
+
+	update_printer(){ // 将printer显示的信息替换为最新的正在编辑的版本。
+		let printer = this.get_printer()
+		let editor = this.get_editor()
+		if(printer && editor){
+			printer.update(editor.get_root())
+		}
 	}
 
 	extra_buttons(props: {}){
@@ -197,13 +211,8 @@ class App extends  React.Component<App_Props , {
 						// 	me.printer_ref.current.scroll_to(slate.selection.focus.path)
 						// }
 					}}
-					onUpdate = {(v)=>{
-						
-						let printer = me.get_printer()
-						let editor = me.get_editor()
-						if(printer && editor){
-							printer.update(editor.get_root())
-						}
+					onUpdate = {()=>{
+						me.update_printer()
 					}}
 					extra_buttons = {<ExtraButtons />}
 

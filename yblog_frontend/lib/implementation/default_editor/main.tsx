@@ -31,7 +31,8 @@ import { ReactEditor } from "slate-react"
 
 import { YEditor } from "../../editor"
 import { object_foreach , merge_object } from "../utils"
-import type { StyleType , NodeType , StyledNodeType } from "../../core/elements"
+import type { StyleType , NodeType , StyledNodeType , GroupNode } from "../../core/elements"
+import { group_prototype } from "../../core/elements"
 import { EditorCore } from "../../core/core"
 import { Proxy } from "../../core/proxy"
 
@@ -296,6 +297,9 @@ class DefaultEditor extends React.Component <{
 
 } , {
 	ctrl_key: any
+
+	/** 这个代理编辑器也需要维护（同步）一份`root`，这是为了能在此编辑器内执行设置参数等操作。*/
+	root: GroupNode
 }> {
     core: EditorCore
     proxies: {[key in StyleType]: {[name: string]: Proxy}}
@@ -329,6 +333,7 @@ class DefaultEditor extends React.Component <{
 
 		this.state = {
 			ctrl_key: {} , // 只在按下ctrl的状态下有效，记录哪些键被按下了
+			root: undefined , 
 		}
 
 		
@@ -353,27 +358,20 @@ class DefaultEditor extends React.Component <{
 	}
 
 	get_root(){
-		let editor = this.get_editor()
-		if(editor){
-			return editor.get_root()
-		}
-		return undefined
+		return this.state.root
 	}
 
 	componentDidMount(): void {
 		let me = this
 		this.onMount()	
 
-		/** 非得要再刷新一下，react是不是有病啊 */
-		this.forceUpdate()
-		// this.notification_key = Math.floor( Math.random() * 233333 )
-		// let layzy_update = new DoSomething( ()=>{me.forceUpdate()} , 5000)
-		// this.editor.core.add_notificatioon(()=>layzy_update.go() , `editor-${this.notification_key}`)
+		while(!this.get_editor()); // 确保editor存在
+		let editor = this.get_editor()
+		this.setState({root: editor.get_root()})
 	}
 	componentWillUnmount(): void {
 		// this.editor.core.remove_notificatioon(`editor-${this.notification_key}`)
 	}
-
 
 	render() {
 	
@@ -407,7 +405,10 @@ class DefaultEditor extends React.Component <{
 					renderers 	= {me.renderers}
 					plugin 		= {me.plugin}
 
-					onUpdate = {me.onUpdate}
+					onUpdate = {(v)=>{
+						me.setState({root: me.get_editor().get_root()}) // 同步自身的root。
+						me.onUpdate(v)
+					}}
 					onFocusChange = {me.onFocusChange} 
 					onKeyDown = {e=>{
 						this.flush_key_state(true , e)
@@ -433,8 +434,8 @@ class DefaultEditor extends React.Component <{
 					return <></>
 				}
 				return <AutoStack force_direction="column">
-					<DefaultParameterEditButton editor={editor} element={root} />
-					<DefaultHiddenEditorButtons editor={editor} element={root} />
+					<DefaultParameterEditButton editor={editor} element={me.state.root} />
+					<DefaultHiddenEditorButtons editor={editor} element={me.state.root} />
 					{me.props.extra_buttons}
 					<Divider />
 					<DefaultButtonbar editor={editor} selecting={me.is_selecting()} ref={me.buttonbar_ref}/>
