@@ -241,12 +241,12 @@ function support_prototype(name: string , parameter_proto: ValidParameter , flag
 
 /** 这个函数判断一个节点是否是样式节点。 */
 function is_styled(node: Node): node is StyledNode{
-	return "type" in node
+	return node && (node["type"] != undefined)
 }
 
 /** 这个函数判断一个节点是否有子节点。 */
 function has_children(node: Node): node is {children: Node[]}{
-	return "children" in node
+	return node && (node["children"] != undefined)
 }
 
 /** 这个函数判断一个节点是否是段落节点。 */
