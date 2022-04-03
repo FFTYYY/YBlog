@@ -37,7 +37,9 @@ import {
 	idx2path , 
 
 	remtimes , 
-	get_param_val , 
+	get_param_val ,
+	is_styled , 
+	has_children , 
 } from "../../../../lib"
 import type {
 	PrinterRenderer , 
@@ -359,9 +361,43 @@ var link_printer = (()=>{
 					</Link>
 				}}</GlobalInfo.Consumer>
 			}
+			if(type == "http"){// 如果是跳转到外部链接。
+				return <Link href={target}>{props.children}</Link>
+			}
+			if(type == "outer-index"){ // 如果是跳转到另一个文章中的元素。
+				let [tar_page , tar_idx] = target.split(":")
+				let [ root , set_root ] = React.useState<Node | undefined>(undefined)
+				useEffect(()=>{
+					Interaction.get.content(Number(tar_page)).then(data=>{set_root(data)})
+				} , []) // 传入空依赖确保这个函数只被调用一次。
 
-			// 如果是跳转到外部链接。
-			return <Link href={target}>{props.children}</Link>
+				let find_target_idx = (node: Node , targ_idx: number) => {
+
+					if(is_styled(node)){
+						if(node.idx == targ_idx){
+							return node
+						}
+					}
+					if(has_children(node)){
+						for(let c of node.children){
+							let res = find_target_idx(c , targ_idx)
+							if(res != undefined){
+								return res
+							}
+						}
+					}
+					return undefined
+				}
+				if(root == undefined){
+					return <></>
+				}
+				let tar_node = find_target_idx(root , Number(tar_idx))
+				let tar_label = get_param_val(tar_node , "label")
+
+				// TODO
+				return <Link href="#">{tar_label}</Link>
+			}
+
 
 		}
 	})

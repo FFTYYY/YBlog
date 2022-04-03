@@ -186,14 +186,17 @@ class YPrinter extends React.Component<{
         }
         let children = (element as has_children).children
 
-        let name = undefined // 如果name是undefined，则get_renderer会返回默认样式。
+        let name = undefined // 如果name是undefined，则get_renderer会返回默认样式。]
+        let idx = undefined
         let styled = is_styled(element)
+        let anchor = <span style={{display: "hidden"}} ref={me.get_ref(path , true)} />
         if(styled){
             name = (element as StyledNode).name
+            idx = (element as StyledNode).idx
+            anchor = <span style={{display: "hidden"}} ref={me.get_ref(path , true)} id={`yconcept-${idx}`}/>
         }
         
         let R = renderers.get(type , name)
-        let anchor = <span style={{display: "hidden"}} ref={me.get_ref(path , true)}/>
         // TODO 注意 anchor 会储存到context中，这是一个不好的设计。
         return <React.Fragment>
             { anchor }
