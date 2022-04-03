@@ -44,7 +44,7 @@ var w_univ_par = {
     ordering: {
         val: "chinese" , 
         type: "choice" as "choice" ,
-        choices: ["chinese" , "arab" , "arab-circle" , "none" , "chinese-bracket" , "number-bracket"] ,
+        choices: ["chinese" , "arab" , "arab-circle" , "chinese-bracket" , "number-bracket" , "none" ] ,
     }
 }
 
