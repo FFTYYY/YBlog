@@ -14,6 +14,7 @@ var flush_math = new DoSomething(()=>{
     let MathJax = (window as any).MathJax
     if(MathJax != undefined && MathJax.typesetPromise != undefined){
         MathJax.typesetPromise()
+        MathJax.texReset()
     }
 } , 3000)
 
@@ -24,16 +25,23 @@ function flush_mathjax(){
     //     MathJax.typesetPromise()
     // }
 }
-
 function MathJaxContext(props: {children: any}){
     React.useEffect(() => {
         let script = $(`
             ${""/** mathjax配置。必须先于mathjax的引入。 */}
             <script defer>
                 MathJax = {
+                    ${""/*loader: {load: ["[tex]/tagformat"]},*/}
+
                     tex: {
+                        packages: {"[+]": ["tagformat"]} , 
                         inlineMath: [["${MATHJAX_INLINE_START}", "${MATHJAX_INLINE_END}"]] , 
                         displayMath: [["${MATHJAX_BLOCK_START}", "${MATHJAX_BLOCK_END}"]] , 
+                        tags: "ams" , 
+                        ${""/*tagformat: {
+                            number: (n) => n.toString(),
+                            tag:    (tag) => '(' + tag + ')',
+                        } , */}
                     },
                     svg: {
                         fontCache: "global" , 

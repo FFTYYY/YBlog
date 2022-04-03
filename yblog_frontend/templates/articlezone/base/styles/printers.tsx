@@ -82,6 +82,30 @@ export {
 
 // TODO 重写printer，把所有title prefix 啥的全都用上。
 
+/** 根据给定的编号和编号格式，生成编号字符串。 */
+function make_oerder_str(order: number , ordering: string){
+	if(ordering == "chinese"){
+		return num2chinese(order)
+	}
+	if(ordering == "arab"){
+		return `${order}`
+	}
+	if(ordering == "arab-circle"){
+		if(order > 0 && order <= 20){
+			let m = ["①","②","③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱","⑲", "⑳"]
+			return m[order-1]
+		}
+		return `(${order})`
+	}
+	if(ordering == "chinese-bracket"){
+		return `【${num2chinese(order)}】`
+	}
+	if(ordering == "number-bracket"){
+		return `[${order}]`
+	}
+	return ""
+}
+
 /** 『次节』表示小节内的一个小小节。 */
 var subsection_printer = (()=>{
 	let printer = get_DefaultBlockPrinter({
@@ -104,13 +128,22 @@ var brightwords_printer = (()=>{
 	let printer = get_DefaultBlockPrinter({
 		extra_effectors: [orderer] , 
 		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
-			let order = orderer(props.element).get_context(props.context)
-			let my_order = num2chinese(order[order.length - 1])
+			let orders = orderer(props.element).get_context(props.context)
+			let order = orders[orders.length-1]
+
 			let title = get_param_val(props.element,"title")  // 标题
 			let alias = get_param_val(props.element,"prefix") // 前缀
-			let ordering = get_param_val(props.element,"ordering")
+			let order_str = make_oerder_str(order , get_param_val(props.element,"ordering") as string)
+
+			let inject_content = `${title}`
+			if(order_str){
+				inject_content = inject_content + ` ${order_str}`
+			}
+			if(alias){
+				inject_content = inject_content + ` （${alias}）`
+			}
 			
-			return <PrinterStructureBoxText inline>{title}{ordering ? " "+my_order : ""}{alias ? ` (${alias})` : ""}</PrinterStructureBoxText>
+			return <PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
 		} , 
 		outer: (props) => {
 			return <PrinterPartBox subtitle_like>{props.children}</PrinterPartBox>
@@ -127,9 +160,18 @@ var normalwords_printer = (()=>{
 		extra_effectors: [orderer] , 
 		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
 			let order = orderer(props.element).get_context(props.context)
-			let ordering = get_param_val(props.element , "ordering") // 是否使用标号
 			let prefix = get_param_val(props.element , "prefix") // 前缀
-			return <PrinterStructureBoxText inline>{ordering ? `[${order}] ` : ""}{prefix}</PrinterStructureBoxText>
+			let order_str = make_oerder_str(order , get_param_val(props.element,"ordering") as string)
+
+			let inject_content = ""
+			if(order_str){
+				inject_content = inject_content + `${order_str} `
+			}
+			if(prefix){
+				inject_content = inject_content + prefix
+			}
+
+			return <PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
 		} , 
 
 		inject_suf: (props: {element: GroupNode , context: PrinterContext}) => {
@@ -210,9 +252,7 @@ var sectioner_printer = (()=>{
 			// 如果是`alone`的就不显示序号惹。
 			let order_word = alone ? <></> : <PrinterStructureBoxText inline>第{num2chinese(order)}节</PrinterStructureBoxText>
 			let title_word = title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>
-			return <Divider>
-				{order_word}{title_word}
-			</Divider>
+			return <Divider>{order_word}{title_word}</Divider>
 		} , 
 		enter_effect: (element: SupportNode, env: PrinterEnv): [PrinterEnv,PrinterContext] => {    
 			let ret: [PrinterEnv , PrinterContext] = [ env , {} ]
@@ -327,11 +367,11 @@ var image_printer = (()=>{
 				else{
 					set_url(target)
 				}
-			})()})
+			})()} , [props.element])
 	
 			let p_width = get_param_val(props.element , "width")
 			let p_height = get_param_val(props.element , "height")
-			// TODO 这玩意儿每次编辑都会重新加载，有点蛋疼....
+
 			return <img src = {url || undefined} style = {{
 				width: p_width > 0 ? `${p_width}rem` : "100%", 
 				height: p_height > 0 ? `${p_height}rem` : "100%" , 
@@ -404,7 +444,7 @@ var link_printer = (()=>{
 					}
 				}
 
-				// TODO
+				// TODO 加上编号。
 				return <Link href={urls.view.content(tar_page , {linkto: tar_idx})}>{children}</Link>
 			}
 
@@ -412,7 +452,6 @@ var link_printer = (()=>{
 		}
 	})
 })()
-
 
 var subwords_printer = (()=>{
 	let orderer = (e: GroupNode) => new OrderEffector<GroupNode>(
@@ -425,11 +464,12 @@ var subwords_printer = (()=>{
 		extra_effectors: [orderer] , 
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
 			let order = orderer(props.element).get_context(props.context)
-			let ordering = get_param_val(props.element , "ordering")
+			let order_str = make_oerder_str(order , get_param_val(props.element , "ordering") as string)
+
 			return <React.Fragment><AutoStack force_direction="row">
 				{/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
 				<PrinterOldLevelBox>
-					{ordering ? <PrinterParagraphBox>{num2chinese(order)}</PrinterParagraphBox> : <></>}
+					{order_str ? <PrinterParagraphBox>{order_str}</PrinterParagraphBox> : <></>}
 				</PrinterOldLevelBox>
 				<Box>{props.children}</Box>
 			</AutoStack></React.Fragment>
