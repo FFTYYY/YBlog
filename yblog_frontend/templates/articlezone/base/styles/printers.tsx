@@ -55,7 +55,7 @@ import type {
 import { num2chinese } from "../utils"
 import PerfectScrollbar from "perfect-scrollbar"
 import { MathJaxInline , MathJaxBlock } from "../mathjax"
-import { Interaction , url_from_root } from "../interaction"
+import { Interaction , url_from_root , urls } from "../interaction"
 
 export {
 	brightwords_printer , 
@@ -365,10 +365,12 @@ var link_printer = (()=>{
 				return <Link href={target}>{props.children}</Link>
 			}
 			if(type == "outer-index"){ // 如果是跳转到另一个文章中的元素。
-				let [tar_page , tar_idx] = target.split(":")
+				let [_tar_page , _tar_idx] = target.split(":")
+				let [ tar_page ,  tar_idx] = [ Number(_tar_page)  , Number(_tar_idx) ]
+
 				let [ root , set_root ] = React.useState<Node | undefined>(undefined)
 				useEffect(()=>{
-					Interaction.get.content(Number(tar_page)).then(data=>{set_root(data)})
+					Interaction.get.content(tar_page).then(data=>{set_root(data)})
 				} , []) // 传入空依赖确保这个函数只被调用一次。
 
 				let find_target_idx = (node: Node , targ_idx: number) => {
@@ -391,11 +393,11 @@ var link_printer = (()=>{
 				if(root == undefined){
 					return <></>
 				}
-				let tar_node = find_target_idx(root , Number(tar_idx))
+				let tar_node = find_target_idx(root , tar_idx)
 				let tar_label = get_param_val(tar_node , "label")
 
 				// TODO
-				return <Link href="#">{tar_label}</Link>
+				return <Link href={urls.view.content(tar_page , {linkto: tar_idx})}>{tar_label}</Link>
 			}
 
 

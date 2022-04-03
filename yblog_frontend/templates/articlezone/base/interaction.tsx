@@ -109,7 +109,13 @@ var urls = {
         manage_recourse    : (resourceid: number) => url_from_root( `post/manage_recourse/${resourceid}` ) , 
     } , 
     view: {
-        content: (nodeid: number) => url_from_root( `view/content/${nodeid}` ) , 
+        content: (nodeid: number , options: {linkto?: number} = {}) => {
+            let linkto = options.linkto
+            if(linkto != undefined){
+                return url_from_root( `view/content/${nodeid}?linkto=${linkto}` ) 
+            }
+            return url_from_root( `view/content/${nodeid}` ) 
+        }, 
     }
 }
 
