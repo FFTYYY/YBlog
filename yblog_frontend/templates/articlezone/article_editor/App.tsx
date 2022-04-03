@@ -177,9 +177,11 @@ class App extends  React.Component<App_Props , {
 	update_printer(){ // 将printer显示的信息替换为最新的正在编辑的版本。
 		let printer = this.get_printer()
 		let editor = this.get_editor()
-		if(printer && editor){
-			printer.update(editor.get_root())
+		if(!(printer && editor)){
+			return
 		}
+		printer.update(editor.get_root())
+
 	}
 
 	extra_buttons(props: {}){
