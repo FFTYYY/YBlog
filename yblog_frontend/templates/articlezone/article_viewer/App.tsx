@@ -11,7 +11,6 @@ import {
 	Container , 
 } from "@mui/material"
 
-import $ from "jquery"
 
 import { Node , Transforms , Element } from "slate"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
@@ -43,6 +42,7 @@ import { LeftBox , RightBox } from "./cards"
 import { Interaction , BackendData } from "../base/interaction"
 import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../base/mathjax"
 import { withAllPrinters } from "../base/styles"
+import { linkto } from "../base/linkto"
 
 // import "react-perfect-scrollbar/dist/css/styles.css"
 // import PerfectScrollbar from "react-perfect-scrollbar"
@@ -85,16 +85,8 @@ class App extends  React.Component<{} , {
 
 		//初始化跳转
 		if(BackendData.linkto){
-			let element = $(`#yconcept-${BackendData.linkto}`)
-			if(element){
-				
-				element[0].scrollIntoView({
-					behavior: "smooth" , 
-					block: "center"
-				})
-			}
-		}
-		
+			linkto(printer , Number(BackendData.linkto))
+		}		
 	}
 
 	render(){
