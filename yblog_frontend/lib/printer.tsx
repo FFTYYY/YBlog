@@ -105,7 +105,7 @@ class YPrinter extends React.Component<{
      * @param path path数组。
      */
     scroll_to(path: number[]){
-        // TODO 如果是新建一行，调用这个函数的时候这行还没创建好，因此会返回undefined。（不过好像问题也不大就是了...）
+
         let ref = this.get_ref(path)
         if(ref == undefined){
             return 
@@ -197,7 +197,7 @@ class YPrinter extends React.Component<{
         }
         
         let R = renderers.get(type , name)
-        // TODO 注意 anchor 会储存到context中，这是一个不好的设计。
+        // XXX 注意 anchor 会储存到context中，这是一个不好的设计。
         return <React.Fragment>
             { anchor }
             <R.render_func element={ element } context={{ anchor: anchor , ...contexts[this.get_path_id(path)] }} >{
