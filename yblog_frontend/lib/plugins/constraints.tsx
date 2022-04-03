@@ -4,7 +4,7 @@
  * @module
  */
 
-import { Transforms, Element, Node , Editor } from "slate"
+import { Element, Node , Editor } from "slate"
 import { 
     get_node_type , 
     paragraph_prototype , 
@@ -93,18 +93,18 @@ function constraint_paste(yeditor: YEditor , slate: Editor): Editor{
                 for(let i = 0;i < node.num_children - node.children.length;i++){
                     newnodes.push(new_struct_child())
                 }
-                Transforms.insertNodes<GroupNode>(slate , newnodes , {at: [...path,node.children.length]})
+                yeditor.add_nodes(newnodes , [...path,node.children.length])
                 return 
             }
             if(node.children.length > node.num_children){
                 // 删除末尾的节点。
-                Transforms.removeNodes(slate , {at: [...path,node.children.length-1]})
+                yeditor.delete_node_by_path([...path,node.children.length-1])
                 return 
             }
             for(let subidx in node.children){
                 let subnode = node.children[subidx]
                 if( get_node_type(subnode) != "group"){
-                    Transforms.removeNodes(slate , {at: [...path,parseInt(subidx)]})
+                    yeditor.delete_node_by_path([...path,parseInt(subidx)])
                     return 
                 }
             }
@@ -159,12 +159,12 @@ function constraint_relation(yeditor: YEditor , slate: Editor): Editor{
 
                 // 不允许一个关系是 separating 的 group 节点前面还是 group
                 if(is_relation_type(last_node)    && now_node.relation == "separating"){
-                    Transforms.insertNodes(slate , paragraph_prototype() , {at: [...path,subidx]})
+                    yeditor.add_nodes(paragraph_prototype() , [...path,subidx])
                     return
                 }
                 // 不允许一个关系是 chaining 的 group 节点前面不是 group
                 if((!is_relation_type(last_node)) && now_node.relation == "chaining"){
-                    Transforms.moveNodes(slate , {at: [...path,subidx-1] , to: [...path,subidx]})
+                    yeditor.move_node_by_path([...path,subidx-1] , [...path,subidx])
                     return
                 }
             }

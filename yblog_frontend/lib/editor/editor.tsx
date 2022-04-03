@@ -117,6 +117,7 @@ class YEditor extends React.Component<{
     set_node: <T extends Node = StyledNode>(node: T, new_val: Partial<T>) => void
     delete_node: (node: Node) => void
     move_node: (node_from: Node, position_to: number[]) => void
+    move_node_by_path: (position_from: number[], position_to: number[]) => void
     add_nodes: (nodes: (Node[]) | Node, path: number[]) => void
     add_nodes_before: (nodes: (Node[]) | Node, target_node: Node) => void
     add_nodes_after: (nodes: (Node[]) | Node, target_node: Node) => void
