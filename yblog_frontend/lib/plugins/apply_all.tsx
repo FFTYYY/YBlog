@@ -5,21 +5,23 @@
 
 import { Editor } from "slate"
 
-import { constraint_struct , constraint_relation } from "./constraints"
+import { constraint_struct , constraint_relation , constraint_paste } from "./constraints"
 import { set_inline , set_support } from "./styles"
+import { YEditor } from "../editor"
 
 export {withAllYEditorPlugins}
 
-var plugins: ((editor: Editor)=>Editor)[] = [
+var plugins: ((yeditor: YEditor , slate: Editor)=>Editor)[] = [
     constraint_struct , 
     constraint_relation , 
+    constraint_paste , 
     set_inline , 
     set_support , 
 ]
 
-function withAllYEditorPlugins(editor: Editor): Editor{
+function withAllYEditorPlugins(yeditor: YEditor , slate: Editor): Editor{
     for(let plg of plugins){
-       editor = plg(editor)
+        slate = plg(yeditor , slate)
     }
-    return editor
+    return slate
 }

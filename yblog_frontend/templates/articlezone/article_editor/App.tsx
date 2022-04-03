@@ -35,6 +35,7 @@ import {
 	group_prototype, 
 	is_styled,
 	has_children, 
+	set_normalize_status , 
 } from "../../../lib"
 
 import { ReactEditor } from "slate-react"
@@ -49,7 +50,7 @@ import { linkto } from "../base/linkto"
 import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
 import { my_theme } from "../base/construction/theme"
 import { SaveButton } from "../base/construction/buttons"
-import { withAllPlugins , set_normalize_status } from "./plugins"
+import { withAllPlugins } from "./plugins"
 import { MathJaxContext } from "../base/mathjax"
 import { FileManageButton } from "./buttons/manage_files"
 import { HandleMathBuutton } from "./buttons/handle_math"

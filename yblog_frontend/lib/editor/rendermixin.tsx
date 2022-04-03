@@ -23,7 +23,7 @@ import type { StyledNodeType , InlineNode , GroupNode , StructNode , SupportNode
 import { Proxy } from "../core/proxy"
 import { get_node_type , is_styled , new_struct_child , ValidParameter } from "../core/elements"
 import { EditorCore } from "../core/core"
-import { withAllYEditorPlugins } from "../plugins/apply_all"
+import { set_normalize_status } from "../plugins/constraints"
 import { StyleCollector } from "../core/stylecollector"
 import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
 
@@ -135,8 +135,13 @@ let RenderMixin = {
                     renderLeaf    = {me.renderLeaf.bind(me)}
                     onClick       = {e=>{me.onFocusChange()}}
     
-                    onCopy = {async (e)=>{
+                    onCopy = {(e)=>{
                         return true // 虽然不知道是什么原理，但是返回`true`会使得`slate`只向粘贴板中输入文本。
+                    }}
+
+                    onPaste = {()=>{
+                        set_normalize_status({pasting: true})
+                        return false
                     }}
     
                     onKeyDown = {e=>me.onKeyDown(e)}

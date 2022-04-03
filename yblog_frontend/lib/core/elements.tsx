@@ -28,6 +28,7 @@ export {
 	is_certain_style , 
     new_struct_child , 
     get_param_val , 
+    gene_idx , 
 }
 export type {
 	StyledNodeType , 
