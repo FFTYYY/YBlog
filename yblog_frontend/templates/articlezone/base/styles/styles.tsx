@@ -66,7 +66,7 @@ var strong_style      = new InlineStyle  ("强调"   , make( { label: "强调" }
 var delete_style      = new InlineStyle  ("刊调"   , make( { label: "刊调" }) , {...univ_lab})
 let link_style        = new InlineStyle  ("链调"   , 
     {
-        ... make( { label: "链接" , target: "" } ) , 
+        ... make( { label: "链接" , target: "" , autotext: false} ) , 
         type: {val: "index" , type: "choice" , choices: ["index" , "outer-index" , "http"]}
     }, 
     { ...univ_lab , target: "如何查找目标" , type: "目标格式（ index / outer-index / http ）" }
