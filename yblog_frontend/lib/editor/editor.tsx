@@ -41,6 +41,10 @@ import type { EditorRenderer_Props , EditorRenderer_Func } from "./collectionmix
 import type { SlateRenderer_Props } from "./rendermixin"
 
 
+/** 编辑器。
+ * 一个编辑器需要知道所有样式、代理的信息，并维护一个节点树。其会渲染一个可编辑的页面来修改这个节点树。
+ * 编辑器也需要一个渲染器表，不过这个渲染器表是在编辑时使用的。
+ */
 class YEditor extends React.Component<{
     core: EditorCore
     proxies: {[key in StyleType]: {[name: string]: Proxy}}
@@ -59,16 +63,35 @@ class YEditor extends React.Component<{
     root: GroupNode
     // delay_operations: { [subnode_idx: number]: (fat: YEditor)=>void }
 }> {
+    /** 代理表。 */
     proxies: {[key in StyleType]: {[name: string]: Proxy}}
+
+    /** 渲染器表。 */
     renderers: StyleCollector<EditorRenderer_Func>
+
+    /** 编辑器核心。 */
     core: EditorCore
+
+    /** 节点树更新时的回调。 */
     onUpdate: (v: any) => void
+
+    /** 按键按下的回调。 */
     onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void
+
+    /** 按键弹起的回调。 */
     onKeyUp: (e: React.KeyboardEvent<HTMLDivElement>) => void
+
+    /** 按键按下弹起的回调。 */
     onKeyPress: (e: React.KeyboardEvent<HTMLDivElement>) => void
+
+    /** 改变光标位置的回调。 */
     onFocusChange: ()=>void
+
+    // TODELETE 没用。
+    /** 绑定`ref`用的回调。 */
     bindref: (ref:YEditor)=>void
 
+    /** 稍后修改操作表。 */
     delay_operations: { [subnode_idx: number]: (fat: YEditor)=>void }
 
     // delay-operation mixins
@@ -103,8 +126,8 @@ class YEditor extends React.Component<{
     delete_node_by_path: (path: number[]) => void
     auto_set_parameter: (node: StyledNode, parameters: ValidParameter) => void
 
+    /** 这个函数将所有的混入对象赋值。 */
     use_mixins(){
-
         Object.assign(this , DelayOperationsMixin)
         Object.assign(this , CollectionMixin)
         Object.assign(this , RenderMixin)
@@ -155,9 +178,15 @@ class YEditor extends React.Component<{
         this.bindref(this)
     }
 
+    // XXX 下面这些操作可能应该移到 utilsmixin 里面去。
+
+    /** 获得编辑器所使用的`slate`编辑器对象。 */
     get_slate(){
         return this.state.slate
     }
+
+    // TODELETE 这个方法好像根本没有引用啊...
+    /** 设置编辑器所使用的`slate`编辑器对象。只在初始化时调用。 */
     set_slate(slate: ReactEditor){
         this.setState({slate: slate})
     }
@@ -172,7 +201,7 @@ class YEditor extends React.Component<{
             return Object.keys(this.proxies).reduce((obj , k)=>({...obj , k: Object.keys(this.proxies[k])}) , {})
         return this.proxies[type] ? Object.keys(this.proxies[type]) : []
     }
-
+    /** 判断一个节点是否是根。 */
     is_root(node: Node){
         return is_styled(node) && node.idx == this.state.root.idx
     }

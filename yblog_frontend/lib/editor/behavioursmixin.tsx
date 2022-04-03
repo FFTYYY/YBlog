@@ -8,9 +8,12 @@ import { YEditor } from "./editor"
 
 export { BehavioursMixin }
 
+/** 这个混入对象提供所有跟节点树操作有关的函数。
+ * 基本上就是`slate`的`Transforms`的代理。
+ */
 let BehavioursMixin = {
     
-    /** 这个函数修改节点的某个属性。相当于 slate.Transforms.setNodes */
+    /** 这个函数修改节点的某个属性。相当于`slate.Transforms.setNodes`。 */
     set_node<T extends Node = StyledNode>(node: T, new_val: Partial<T>){
         let me = this as any as YEditor
         if(me.is_root(node)){

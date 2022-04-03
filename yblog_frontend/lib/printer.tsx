@@ -1,4 +1,6 @@
-/** 这个组件提供输出器的基础定义。 */
+/** 这个组件提供输出器的基础定义。 
+ * 输出器接受一个节点树，并输出一个渲染好的页面。
+*/
 
 import { Node } from "slate"
 import React, { ContextType } from "react"
@@ -29,7 +31,12 @@ type EnterEffectFunc = (element: Node, env: PrinterEnv)                         
 type ExitEffectFunc  = (element: Node, env: PrinterEnv, context: PrinterContext)  => [PrinterEnv , PrinterContext]
 
 
-/** 这个类是 Printer 的组件类。*/
+/** 输出器组件。
+ * 输出器会维护一系列渲染器，并使用对应的渲染器递归地渲染节点树。
+ * 
+ * 输出器给每个节点维护两套查找方式，一个是按标号（`idx`）查找，这个用来唯一地识别某个节点，另一个是按路径（`pathid`）查找，这个
+ * 用来识别一些和路径相关的信息（比如自动滚动）。
+*/
 class YPrinter extends React.Component<{
     renderers: StyleCollector<PrinterRenderer>
     core: EditorCore
@@ -49,8 +56,10 @@ class YPrinter extends React.Component<{
     /** 渲染出来的节点的引用。从路径映射到节点。 */
     sub_refs: {[key: string]: any}
 
+    // TODELETE 这个没用的
     /** 用来记录自己在`core`处的`notification`。 */
     notification_key: number
+    
 
     /**
      * 
@@ -70,7 +79,10 @@ class YPrinter extends React.Component<{
         this.sub_refs = {}
     }
 
-    
+    /** 更新输出器的节点树信息。 
+     * 注意输出器并不会从全局状态获取树信息，而是在特定操作下才更新。
+     * 这样设计是因为实时刷新太慢了（尤其是数学公式很多的情况下，mathjax要人命...）。
+    */
     update(root: GroupNode){
         this.sub_refs = {}
         let [_ , contexts] = this.build_envs(root , {} , {} , [])
@@ -81,11 +93,16 @@ class YPrinter extends React.Component<{
     }
 
 
-    // 根据路径生成唯一的表示。
+    /** 根据路径生成节点的唯一的表示。
+     */
     get_path_id(path: (number | string)[]): string{
         return JSON.stringify(path.map(x=>Number(x)))
     }
 
+    /** 根据路径获得某个节点的`ref`。 
+     * @param path 路径。
+     * @param binding 是否是因为要绑定`ref`而调用此函数的。
+    */
     get_ref(path: (number | string)[] , binding = false){
         let ref = this.sub_refs[this.get_path_id(path)]
         if(!binding){
@@ -95,6 +112,10 @@ class YPrinter extends React.Component<{
         }
         return ref
     }
+
+    /** 根据路径设置某个节点的`ref`。
+     * 这个函数的唯一作用是初始化`ref`。
+    */
     set_ref(path: (number | string)[] , val: any){
         this.sub_refs[this.get_path_id(path)] = val
         return path
@@ -121,7 +142,7 @@ class YPrinter extends React.Component<{
      * @param props.now_env 当前环境。
      * @param props.now_path 从根到当前节点的路径。
     */
-     build_envs(_node: Node, now_env: PrinterEnv, contexts: PrinterContext, now_path: (number | string)[]){
+    build_envs(_node: Node, now_env: PrinterEnv, contexts: PrinterContext, now_path: (number | string)[]){
         let path = now_path // 用路径表示的节点id。和node.idx不一样，这是视图相关的节点名。
         this.set_ref(path , React.createRef()) // 初始化 refs
 
@@ -248,6 +269,7 @@ interface PrinterRenderer{
     exit_effect: ExitEffectFunc
 }
 
+/** 这个函数帮助快速生成没有前作用器的渲染器。 */
 function make_print_renderer(
     render_func: (props: PrinterRenderFunc_Props) => any , 
     enter_effect: EnterEffectFunc = (e,v)=>[v,{}] , 
@@ -260,6 +282,7 @@ function make_print_renderer(
     }
 }
 
+/** 默认的渲染器列表。这个变量可以在创建`YPrinters`时作为`renderers`的默认值。 */
 let default_printer_renderers = {
     text      : make_print_renderer((props: PrinterRenderFunc_Props)=><>{props.children}</>) , 
     inline    : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
