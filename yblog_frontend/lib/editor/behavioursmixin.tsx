@@ -69,6 +69,13 @@ let BehavioursMixin = {
         })
     } , 
 
+    move_node_by_path(position_from: number[], position_to: number[]){
+        let me = this as any as YEditor
+        Transforms.moveNodes(me.get_slate() , {
+            at: position_from , 
+            to: position_to , 
+        })
+    } , 
         
     /** 这个函数插入一个或者系列节点。 */
     add_nodes(nodes: (Node[]) | Node, path: number[]){
