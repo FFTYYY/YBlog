@@ -11,6 +11,8 @@ import {
 	Container , 
 } from "@mui/material"
 
+import $ from "jquery"
+
 import { Node , Transforms , Element } from "slate"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 	
@@ -72,12 +74,27 @@ class App extends  React.Component<{} , {
 	}
 
 	async componentDidMount(){
+
+		//获得内容
 		var root = await Interaction.get.content()
 		this.setState({root: root})
 		
 		while(!this.get_printer());
 		let printer = this.get_printer()
 		printer.update(root)
+
+		//初始化跳转
+		if(BackendData.linkto){
+			let element = $(`#yconcept-${BackendData.linkto}`)
+			if(element){
+				
+				element[0].scrollIntoView({
+					behavior: "smooth" , 
+					block: "center"
+				})
+			}
+		}
+		
 	}
 
 	render(){

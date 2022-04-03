@@ -35,6 +35,8 @@ import {
 	group_prototype , 
 } from "../../../lib"
 
+import $ from "jquery"
+
 import { ReactEditor } from "slate-react"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 import { Node , Transforms , Element } from "slate"
@@ -42,7 +44,7 @@ import { createEditor , BaseEditor , Path , BaseElement } from "slate"
 import { Slate, Editable, withReact} from "slate-react"
 
 import { withAllStyles , withAllPrinters , withAllEditors , make_proxy , withNecessaryProxies , } from "../base/styles"
-import { Interaction } from "../base/interaction"
+import { BackendData, Interaction } from "../base/interaction"
 import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
 import { my_theme } from "../base/construction/theme"
 import { SaveButton } from "../base/construction/buttons"
@@ -133,6 +135,18 @@ class App extends  React.Component<App_Props , {
 		while(!this.get_printer());
 		let printer = this.get_printer()
 		printer.update(root)
+
+		//初始化跳转
+		if(BackendData.linkto){
+			let element = $(`#yconcept-${BackendData.linkto}`)
+			if(element){
+				
+				element[0].scrollIntoView({
+					behavior: "smooth" , 
+					block: "center"
+				})
+			}
+		}
 	}
 
 	get_editor(){
