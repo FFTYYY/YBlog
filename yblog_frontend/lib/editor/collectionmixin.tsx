@@ -41,6 +41,7 @@ interface EditorRenderer_Props{
 /** Editor 的子渲染组件的类型。*/
 type EditorRenderer_Func = (props: EditorRenderer_Props) => any
 
+/** 这个混入对象实现了所有和查询有关的操作。 */
 let CollectionMixin = {
  
     /** 询问一个代理。 */

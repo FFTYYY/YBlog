@@ -105,9 +105,17 @@ type StyledNodeBase = {
     /** 节点的 flag 。 */
     flags: StyledNodeFlag
 
-    /** 编辑器使用何种代理来编辑这个节点。 */
+    /** 节点所使用的代理的信息。 */
     proxy_info: {
+
+        /** 代理名称。如果这一项被设置为空值（`""`），就代表这个节点不使用代理。 */
         proxy_name: string
+
+        // XXX 目前是储存了代理参数的，可以试试删掉。
+        /** 代理参数。
+         * 注意，这个值实际上是临时的，只有编辑时需要使用代理参数。
+         * 而且代理参数可以从真实参数唯一地确定（反之亦然），因此不必储存。
+         */
         proxy_params?: any
     }
 }
@@ -281,6 +289,7 @@ function new_struct_child(){
     return node
 }
 
+/** 这个函数询问一个函数的参数的某一项。 */
 function get_param_val(element: StyledNode , key: string){
     if(element.parameters[key])
         return element.parameters[key].val

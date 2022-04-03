@@ -30,6 +30,7 @@ import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
 import { YEditor } from "./editor"
 export { UtilsMixin }
 
+/** 这个混入对象实现一些实用功能。 */
 let UtilsMixin = {
 
     /** 这个函数帮助用户构建按钮。返回一个函数，这个函数表示要新建对应*样式*节点时的行为。

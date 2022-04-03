@@ -41,6 +41,7 @@ interface SlateRenderer_Props{
     leaf?: Node
 }
 
+/** 这个混入对象实现所有和渲染编辑器相关的操作。 */
 let RenderMixin = {
     
     /** 
