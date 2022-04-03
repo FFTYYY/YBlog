@@ -250,7 +250,6 @@ let KeyOpsMixin = {
 	handle_key_up(e: React.KeyboardEvent<HTMLDivElement>){
 		let me = this as any as DefaultEditor
 		if(me.state.ctrl_key["Control"] && e.key == "s"){
-			
 			e.preventDefault()
 			return true
 		}

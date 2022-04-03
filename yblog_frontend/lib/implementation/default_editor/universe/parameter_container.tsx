@@ -228,6 +228,7 @@ function DefaultParameterWithEditorWithDrawer(props: UniversalComponent_Props & 
     onClose?: (e:any)=>void
 }){
     let onClose = props.onClose || ((e:any)=>{})
+
     return <Drawer 
         anchor = {"left"}
         open = {props.open}

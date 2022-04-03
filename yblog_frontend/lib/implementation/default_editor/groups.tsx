@@ -138,14 +138,14 @@ function get_DefaultGroupEditor_with_RightBar({
         let SUR = surrounder
 
         return <GroupPaper element={element}>
-            <AutoStack force_direction="row">
+            <SimpleAutoStack force_direction="row">
                 <ComponentEditorBox autogrow>
                     <SUR editor={editor} element={element}>{props.children}</SUR>
                 </ComponentEditorBox>                
                 <UnselecableBox sx={{textAlign: "center"}}>
-                    <SimpleAutoStack>
-                        <StructureTypography variant="overline">{label}</StructureTypography>
+                    <AutoStack>
                         <E editor={editor} element={element}/>
+                        <StructureTypography variant="overline">{label}</StructureTypography>
                         <AutoStackedPopperWithButton
                             close_on_otherclick
                             button_class = {IconButton}
@@ -161,9 +161,9 @@ function get_DefaultGroupEditor_with_RightBar({
                             <DefaultCloseButton         editor={editor} element={element} />
                             <NewParagraphButton         editor={editor} element={element} />
                         </AutoStackedPopperWithButton>
-                    </SimpleAutoStack>
+                    </AutoStack>
                 </UnselecableBox>
-            </AutoStack>
+            </SimpleAutoStack>
         </GroupPaper>
     }
 }

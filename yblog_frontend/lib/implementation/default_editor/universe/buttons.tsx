@@ -62,6 +62,7 @@ function AutoIconButton(props:{
     </AutoTooltip>
 }
 
+// PureComponent  效率更高。
 /**
  * 这个组件向具体的编辑器和具体的节点提供 DefaultParameterContainer ，同时还提供一个按钮。
  * @param props.editor 这个组件所服务的编辑器。
@@ -69,24 +70,36 @@ function AutoIconButton(props:{
  * @param props.open 抽屉是否打开。
  * @param props.onClose 抽屉关闭时的行为。
  */
-function DefaultParameterEditButton(props: UniversalComponent_Props & {
+class DefaultParameterEditButton extends React.PureComponent <UniversalComponent_Props & {
     onClose?: (e:any)=>void , 
-}){
-    let [ open , set_open ] = useState(false) // 抽屉是否打开
-    let onClose = props.onClose || ((e:any)=>{})
-    
-    return <Box sx={{marginX: "auto"}}>
-        <AutoIconButton onClick={e=>set_open(true)} title="设置参数" icon={SettingsIcon}/>
-        <DefaultParameterWithEditorWithDrawer 
-            editor = {props.editor} 
-            element = {props.element} 
-            open = {open} 
-            onClose = {e=>{ 
-                onClose(e)
-                set_open(false); 
-            }} 
-        />
-    </ Box>
+}, {
+    open: boolean
+}>{
+    constructor(props){
+        super(props)
+
+        this.state = {
+            open: false
+        }
+    }
+    render(){
+        let props = this.props
+        let onClose = props.onClose || ((e:any)=>{})
+        let me = this
+
+        return <Box sx={{marginX: "auto"}}>
+            <AutoIconButton onClick={e=>me.setState({open:true})} title="设置参数" icon={SettingsIcon}/>
+            <DefaultParameterWithEditorWithDrawer 
+                editor = {props.editor} 
+                element = {props.element} 
+                open = {me.state.open} 
+                onClose = {e=>{ 
+                    onClose(e)
+                    me.setState({open:false})
+                }} 
+            />
+        </ Box>
+    }
 }
 
 
