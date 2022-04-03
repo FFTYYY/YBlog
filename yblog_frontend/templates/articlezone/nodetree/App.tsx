@@ -232,7 +232,7 @@ class App extends React.Component<{},App_State>{
         let me = this
         let DragableTreeItem = this.DragableTreeItem.bind(this)
 
-        //TODO： 做一个展开/折叠的样式，不然看起来像是有bug。
+        //TODO 做一个展开/折叠的样式，不然看起来像是有bug。
         return <>{Object.values(nownode.sons).map((subnode:info_item, idx:number)=>{
             return <DragableTreeItem
                 key = {`${idx}`} 

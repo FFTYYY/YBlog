@@ -53,7 +53,7 @@ function MathJaxContext(props: {children: any}){
                 }
             </script>
         `)
-        // TODO 不知道是否应该用cdn版本
+        // XXX 不知道是否应该用cdn版本
         import ("mathjax/es5/tex-svg.js")
 
         $("head").append(script)

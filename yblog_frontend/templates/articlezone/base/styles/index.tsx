@@ -94,7 +94,7 @@ function make_proxy(meta_name:string , name: string , fixed_params: any, default
 //     let [meta_style , meta_editor , meta_printer] = style_editor_printer[meta_name]
 //     let meta_type = type2class[meta_style.type]
     
-//     let parameters = {...meta_style.parameter_prototype , ...default_params} // TODO 使用 fixed_params
+//     let parameters = {...meta_style.parameter_prototype , ...default_params} // \TODO 使用 fixed_params
 //     let parameter_labels = meta_style.parameter_labels
 //     let flags = meta_style.flags 
 

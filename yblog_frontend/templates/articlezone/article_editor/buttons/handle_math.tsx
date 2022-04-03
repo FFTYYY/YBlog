@@ -43,7 +43,7 @@ function HandleMath(editor: YEditor, inlinestyle_name: string, blockstyle_name: 
             return 
         }
 
-        // TODO 可能用Transforms.collapse会比较好
+        // XXX 可能用Transforms.collapse会比较好
         let text = now_node.text
         let match_inline = /([^\$]|^)(\$[^\$]+?\$)([^\$]|$)/.exec(text)
         let match_block  = /\$\$[^\$]+?\$\$/.exec(text)

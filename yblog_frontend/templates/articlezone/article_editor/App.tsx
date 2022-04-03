@@ -32,7 +32,9 @@ import {
 	default_printer_renderers , 
 	default_editor_renderers , 
 	PrinterRenderer , 
-	group_prototype , 
+	group_prototype, 
+	is_styled,
+	has_children, 
 } from "../../../lib"
 
 import { ReactEditor } from "slate-react"
@@ -96,6 +98,25 @@ class App extends  React.Component<App_Props , {
 		this.savebutton_ref = React.createRef()
 	}
 
+	set_proxy_params(editor: YEditor , root: Node){
+		function _set_proxy_params(node: Node){
+			if(is_styled(node)){
+				if(node.proxy_info && node.proxy_info.proxy_name){
+					let proxy = editor.get_proxy(node.type , node.proxy_info.proxy_name)
+					let proxy_params = proxy.get_proxy_parameters(node.parameters)
+					node.proxy_info.proxy_params = proxy_params
+				}
+			}
+			if(has_children(node)){
+				for(let c of node.children){
+					_set_proxy_params(c)
+				}
+			}
+		}
+		_set_proxy_params(root)
+		return root
+	}
+
 	async componentDidMount(){
 
 		/** 初始化所有概念信息。 */
@@ -123,6 +144,8 @@ class App extends  React.Component<App_Props , {
 
 		while(!this.get_editor()); // 确保editor已经存在...
 		let editor = this.get_editor()
+
+		root = this.set_proxy_params(editor , root) // 初始化代理参数。
 
 		editor.replace_nodes(editor.get_root() , root.children) // 将全部节点替换为获得的节点
 		editor.set_node(editor.get_root() , {parameters: root.parameters , hiddens: root.hiddens})

@@ -80,8 +80,6 @@ export {
 	subsection_printer , 
 }
 
-// TODO 重写printer，把所有title prefix 啥的全都用上。
-
 /** 根据给定的编号和编号格式，生成编号字符串。 */
 function make_oerder_str(order: number , ordering: string){
 	if(ordering == "chinese"){
@@ -336,7 +334,6 @@ var mathblock_printer = (()=>{
 
 			value = `${environ_enter}${value}\\text{${suffix}}${environ_exit}`
 			
-			// TODO anchor 的滚动动作会被mathjax刷新给打断。
 			return <React.Fragment>
 				{props.context.anchor}
 				<MathJaxBlock>{value}</MathJaxBlock>
@@ -406,7 +403,6 @@ var link_printer = (()=>{
 						}
 					}
 
-					// TODO 似乎可以用react-router
 					return <Link 
 						component = "button" 
 						onClick = {e=>{value.printer_component.scroll_to(tar_path)}}

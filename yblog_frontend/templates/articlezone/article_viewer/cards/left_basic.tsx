@@ -181,7 +181,7 @@ class BasicInformation extends React.Component<{
         let me = this
         let title = get_param_val(this.props.root , "title")
 
-        // TODO use theme
+        // XXX use theme
         let ItemBox = (props: {title: string, content: string}) => { 
             return <Box
                 sx = {(theme)=>({marginBottom: "1rem"})}
