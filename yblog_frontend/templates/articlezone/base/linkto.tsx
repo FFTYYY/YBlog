@@ -23,6 +23,6 @@ function linkto(printer: YPrinter , target_idx: number ){
             return 
         }
 
-        next.css({border: "2px solid #999944"})
+        next.css({border: "2px solid #ccbb44"})
     })
 }

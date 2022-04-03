@@ -91,8 +91,22 @@ function set_style_ensure_parameters(editor: YEditor, slate: ReactEditor): React
                     flag = true
                 }
             }
-            if(flag){
-                editor.set_node( node , {parameters: new_parameters})
+
+            if(flag){ // 有修改
+                if(node.proxy_info && node.proxy_info.proxy_name){ // 有代理，则需要更新代理
+                    let proxy = editor.get_proxy(style_type , node.proxy_info.proxy_name)
+                    let new_proxy_params = proxy.get_proxy_parameters(new_parameters)
+                    editor.set_node( node , {
+                        parameters: new_parameters , 
+                        proxy_info: {
+                            ...node.proxy_info , 
+                            proxy_params: new_proxy_params
+                        }
+                    })
+                }
+                else{ // 只需要设置参数
+                    editor.set_node( node , {parameters: new_parameters})
+                }
                 return
             }
         }
