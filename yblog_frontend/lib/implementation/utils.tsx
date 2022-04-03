@@ -14,6 +14,7 @@ export {
     rem2num , 
     num2rem , 
     DoSomething , 
+    idx2node , 
 }
 
 /** 将`xxxrem`形式的字符串转换成数字。 */
@@ -84,6 +85,15 @@ function idx2path(root: Node, idx: number | string): Path{
     return undefined
 }
 
+/** 获得一个路径对应的节点。 */
+function idx2node(root: Node, idx: number | string): Node{
+    for(let [nd , path] of Node.descendants(root)){
+        if(is_styled(nd) && `${nd.idx}` == `${idx}`){
+            return nd
+        }
+    }
+    return undefined
+}
 
 // 递归合并两个对象的每一项。
 function merge_object(obj_1: any, obj_2: any){
