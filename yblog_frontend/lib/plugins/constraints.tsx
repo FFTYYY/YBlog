@@ -12,12 +12,66 @@ import {
     text_prototype, 
     inline_prototype ,
     new_struct_child , 
+    is_styled , 
+    gene_idx , 
 } from "../core/elements"
 import type {StructNode , GroupNode , InlineNode} from "../core/elements"
+import { YEditor } from "../editor"
 import { is_same_node } from "../implementation/utils"
 import { JsxFragment } from "typedoc/dist/lib/utils/jsx.elements"
 
-export { constraint_struct , constraint_relation }
+export { constraint_struct , constraint_relation , set_normalize_status , get_normalize_status , constraint_paste }
+
+/** 某些检查只在特定状态下生效。 */
+var status = {
+
+    /** 当前是否在初始化文档。 */
+    initializing: false , 
+
+    /** 当前是否在粘贴对象。 */
+    pasting: false , 
+
+}
+
+function set_normalize_status(val){
+    status = {...status , ...val}
+}
+function get_normalize_status(key){
+    return status[key]
+}
+
+/** 这个插件要求所有节点的`idx`互不相同。
+ * 为了效率，只在复制粘贴时开启检查（因为只有粘贴可能导致此问题）。
+ */
+function constraint_paste(yeditor: YEditor , slate: Editor): Editor{
+    const normalizeNode = slate.normalizeNode
+
+    slate.normalizeNode = (entry:[Node, number[]]) => {
+
+        if(!get_normalize_status("pasting")){ // 如果没有在粘贴，就直接退出。
+            normalizeNode(entry)
+            return 
+        }
+
+        let idxs = {}
+        for(let [node,path] of Node.descendants(slate)){
+            if(!is_styled(node)){
+                continue
+            }
+            if(idxs[node.idx]){
+                yeditor.set_node(node , {idx: gene_idx()}) // 为当前节点重新生成编号。
+                return 
+            }
+            idxs[node.idx] = true
+        }
+
+        //如果检查了所有地方，都没有问题，就认为粘贴结束。
+        set_normalize_status({pasting: false} )
+
+        normalizeNode(entry)
+    }
+    return slate
+}
 
 /**
  * 这个插件修复所有和`StructNode`相关的错误。具体来说每个`StructNode`的子节点数必须恰好等于其`num_children`属性。
@@ -25,10 +79,10 @@ export { constraint_struct , constraint_relation }
  * @param editor 这个constraint服务的编辑器。
  * @returns editor
  */
- function constraint_struct(editor: Editor): Editor{
-    const normalizeNode = editor.normalizeNode
+ function constraint_struct(yeditor: YEditor , slate: Editor): Editor{
+    const normalizeNode = slate.normalizeNode
 
-    editor.normalizeNode = (entry:[Node, number[]]) => {
+    slate.normalizeNode = (entry:[Node, number[]]) => {
         const [_node , path]: [Node, number[]] = entry
 
         if(get_node_type(_node) == "struct"){
@@ -39,18 +93,18 @@ export { constraint_struct , constraint_relation }
                 for(let i = 0;i < node.num_children - node.children.length;i++){
                     newnodes.push(new_struct_child())
                 }
-                Transforms.insertNodes<GroupNode>(editor , newnodes , {at: [...path,node.children.length]})
+                Transforms.insertNodes<GroupNode>(slate , newnodes , {at: [...path,node.children.length]})
                 return 
             }
             if(node.children.length > node.num_children){
                 // 删除末尾的节点。
-                Transforms.removeNodes(editor , {at: [...path,node.children.length-1]})
+                Transforms.removeNodes(slate , {at: [...path,node.children.length-1]})
                 return 
             }
             for(let subidx in node.children){
                 let subnode = node.children[subidx]
                 if( get_node_type(subnode) != "group"){
-                    Transforms.removeNodes(editor , {at: [...path,parseInt(subidx)]})
+                    Transforms.removeNodes(slate , {at: [...path,parseInt(subidx)]})
                     return 
                 }
             }
@@ -58,7 +112,7 @@ export { constraint_struct , constraint_relation }
 
         normalizeNode(entry)
     }
-    return editor
+    return slate
 }
 
 
@@ -67,17 +121,17 @@ export { constraint_struct , constraint_relation }
  * 具体来说，任何`relation`为`separating`的节点之前都必须是`paragraph`，而
  * 任何`relation`为`chaining`的`group`之前都必须是一个具有`relation`属性的节点。
  * 如果一个节点本身是兄弟中的第一个，则其`relation`是无所谓的。
- * @param editor 这个constraint服务的编辑器。
- * @returns editor
+ * @param slate 这个constraint服务的编辑器。
+ * @returns slate
  */
-function constraint_relation(editor: Editor): Editor{
-    const normalizeNode = editor.normalizeNode
+function constraint_relation(yeditor: YEditor , slate: Editor): Editor{
+    const normalizeNode = slate.normalizeNode
 
     let is_relation_type = (node: Node) => {
         return get_node_type(node) == "group" || get_node_type(node) == "struct"
     }
 
-    editor.normalizeNode = (entry:[Node, number[]]) => {
+    slate.normalizeNode = (entry:[Node, number[]]) => {
         const [node , path]: [Node, number[]] = entry
         let idx = path.length - 1
 
@@ -105,17 +159,17 @@ function constraint_relation(editor: Editor): Editor{
 
                 // 不允许一个关系是 separating 的 group 节点前面还是 group
                 if(is_relation_type(last_node)    && now_node.relation == "separating"){
-                    Transforms.insertNodes(editor , paragraph_prototype() , {at: [...path,subidx]})
+                    Transforms.insertNodes(slate , paragraph_prototype() , {at: [...path,subidx]})
                     return
                 }
                 // 不允许一个关系是 chaining 的 group 节点前面不是 group
                 if((!is_relation_type(last_node)) && now_node.relation == "chaining"){
-                    Transforms.moveNodes(editor , {at: [...path,subidx-1] , to: [...path,subidx]})
+                    Transforms.moveNodes(slate , {at: [...path,subidx-1] , to: [...path,subidx]})
                     return
                 }
             }
         }
         normalizeNode(entry)
     }
-    return editor
+    return slate
 }

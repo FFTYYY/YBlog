@@ -6,17 +6,18 @@
 import { Transforms, Element, Node , Editor } from "slate"
 import { get_node_type , GroupNode , paragraph_prototype , is_styled , StyledNode } from "../core/elements"
 
+import { YEditor } from "../editor"
 export { set_inline , set_support }
 
 /** 
  * 这个插件告诉编辑器所有 InlineNode 要作为 inline 样式渲染。
- * @param editor 这个插件服务的编辑器。
- * @returns editor
+ * @param slate 这个插件服务的编辑器。
+ * @returns slate
  */
-function set_inline(editor: Editor): Editor{
-    const isInline = editor.isInline
+function set_inline(yeditor: YEditor , slate: Editor): Editor{
+    const isInline = slate.isInline
 
-    editor.isInline = (element: Element): boolean => {
+    slate.isInline = (element: Element): boolean => {
         if(is_styled(element)){
             let node = element as StyledNode
             if(node.flags.forceInline)
@@ -27,15 +28,15 @@ function set_inline(editor: Editor): Editor{
         return isInline(element) || get_node_type(element) == "inline"
     }
 
-    return editor
+    return slate
 }
 /** 
  * 这个插件告诉编辑器所有 SupportNode 要作为空节点处理。
  */
-function set_support(editor: Editor): Editor{
-    const isVoid = editor.isVoid
+function set_support(yeditor: YEditor , slate: Editor): Editor{
+    const isVoid = slate.isVoid
 
-    editor.isVoid = (element: Element): boolean => {
+    slate.isVoid = (element: Element): boolean => {
         if(is_styled(element)){
             let node = element as StyledNode
             if(node.flags.forceVoid)
@@ -45,5 +46,5 @@ function set_support(editor: Editor): Editor{
         return isVoid(element) || get_node_type(element) == "support"
     }
 
-    return editor
+    return slate
 }

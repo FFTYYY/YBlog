@@ -8,22 +8,13 @@ import {
     paragraph_prototype , 
     YEditor , 
     is_styled , 
+    set_normalize_status , 
+    get_normalize_status , 
 } from "../../../../lib"
 import type { StyledNode } from "../../../../lib"
 import { newpara_style , sectioner_style , ender_style  } from "../../base/styles/styles"
 
-export { set_force_sectioner , set_style_ensure_parameters , set_normalize_status }
-
-/** 在某些状态写可以豁免检查。 */
-var status = {
-
-    /** 当前是否在初始化文档。 */
-    initializing: false , 
-}
-
-function set_normalize_status(val){
-    status = {...status , ...val}
-}
+export { set_force_sectioner , set_style_ensure_parameters }
 
 /** 这个插件强迫编辑器的开头恰好是小节线，结尾恰好是章节线。且章节线不能出现在结尾以外的位置。 */
 function set_force_sectioner(editor: YEditor, slate: ReactEditor): ReactEditor{
@@ -31,7 +22,7 @@ function set_force_sectioner(editor: YEditor, slate: ReactEditor): ReactEditor{
     slate.normalizeNode = (entry: [Node, number[]]) => {
         let [_node , path] = entry
 
-        if(status.initializing){
+        if(get_normalize_status("initializing")){
             normalizeNode(entry)
             return 
         }

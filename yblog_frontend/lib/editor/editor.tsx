@@ -154,7 +154,7 @@ class YEditor extends React.Component<{
 
         this.state = {
             slate: withOutherPlugin(me , 
-                withAllYEditorPlugins( 
+                withAllYEditorPlugins( me , 
                     withHistory(
                         withReact(
                             createEditor() as ReactEditor
