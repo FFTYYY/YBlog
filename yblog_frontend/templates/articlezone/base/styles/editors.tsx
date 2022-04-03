@@ -52,7 +52,7 @@ var mount_editor        = get_DefaultGroupEditor_with_RightBar({})
 var display_editor      = get_DefaultGroupEditor_with_RightBar({})
 var mathblock_editor    = get_DefaultGroupEditor_with_RightBar({
     rightbar_extra: (props) => {/** 在右侧提供一个用于快速输入退出符号的文本框。 */
-        let universal_props = {variant: "standard" as "standard" , sx: {width: "2rem"}}
+        let universal_props = {variant: "standard" as "standard" , sx: {width: "2rem" , marginBottom: "0.5rem" , hright: "1rem"}}
         let label = <Typography sx={{fontSize: "0.7rem"}}>extra</Typography>
         let exit_default = get_param_val(props.element , "exit") // 注意，这里假设close必不用代理。
         return <React.Fragment>

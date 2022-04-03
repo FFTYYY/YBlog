@@ -96,6 +96,8 @@ class App extends  React.Component<App_Props , {
 	}
 
 	async componentDidMount(){
+
+		/** 初始化所有概念信息。 */
 		let proxies = withNecessaryProxies({
 			inline: {},
 			group: {}, 
@@ -111,6 +113,7 @@ class App extends  React.Component<App_Props , {
 		}
 		this.setState({ editor_proxies: proxies })
 
+		/** 初始化编辑器初始值。 */
 		var root = await Interaction.get.content()
 		root = root || group_prototype("root" , {
 			title: {val: "" , type: "string"}
@@ -125,6 +128,11 @@ class App extends  React.Component<App_Props , {
 		this.editor_ref.current.forceUpdate()
 
 		set_normalize_status({initializing: false})
+
+		// 初始化渲染器。
+		while(!this.get_printer());
+		let printer = this.get_printer()
+		printer.update(root)
 	}
 
 	get_editor(){

@@ -122,6 +122,9 @@ let RenderMixin = {
                 editor = {slate} 
                 value = {me.state.root.children} 
                 onChange = {value => {
+                    if(JSON.stringify(value) == JSON.stringify(this.state.root.children)){
+                        return
+                    }
                     me.update_value(value)
                     me.onFocusChange()
                 }}
