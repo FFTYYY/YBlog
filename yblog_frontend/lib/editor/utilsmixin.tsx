@@ -26,9 +26,11 @@ import { EditorCore } from "../core/core"
 import { withAllYEditorPlugins } from "../plugins/apply_all"
 import { StyleCollector } from "../core/stylecollector"
 import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
-
+import { set_normalize_status } from "../plugins/constraints"
 import { YEditor } from "./editor"
 export { UtilsMixin }
+
+import {Transforms} from "slate"
 
 /** 这个混入对象实现一些实用功能。 */
 let UtilsMixin = {
@@ -43,18 +45,34 @@ let UtilsMixin = {
         /** 创建节点的函数。 */
         let proxy = me.get_proxy(nodetype , stylename)
 
-        if(nodetype == "group" || nodetype == "support" || nodetype == "struct")
+        if(nodetype == "support" || nodetype == "struct")
         {        
             return () => {
                 let node = proxy.makenode()
                 me.add_nodes_here(node) // 在当前选中位置插入节点。
             }
         }
+        if(nodetype == "group"){
+            return ()=>{
+                let selection = me.get_slate().selection
+                let flag = true
+                if (selection != undefined)
+                    flag = JSON.stringify(selection.anchor) == JSON.stringify(selection.focus) // 是否没有选择
+                
+                let node = proxy.makenode()
+                if(flag){ // 没有选东西，直接添加节点
+                    me.add_nodes_here(node) // 在当前选中位置插入节点。
+                }
+                else{ // 选了东西，打包节点。
+                    me.wrap_selected_nodes(node , {split: false})
+                }
+            }
+        }
         if(nodetype == "inline"){
 
             return ()=>{
-                let selection = me.state.slate.selection
-                let flag = true
+                let selection = me.get_slate().selection
+                let flag = true // 是否没有选择任何东西
                 if(selection != undefined)
                     flag = JSON.stringify(selection.anchor) == JSON.stringify(selection.focus) // 是否没有选择
 
@@ -64,7 +82,7 @@ let UtilsMixin = {
                     me.add_nodes_here(node) // 在当前选中位置插入节点。
                 }
                 else{ // 如果有节点，就把所有子节点打包成一个inline节点。
-                    me.wrap_nodes(node  , (n:Node)=>{console.log(n);return Text.isText(n)}) // 所有子节点中是文本的那些。
+                    me.wrap_selected_nodes(node  , {match: (n:Node)=>Text.isText(n) , split: true}) // 所有子节点中是文本的那些。
                 }
             }
         }

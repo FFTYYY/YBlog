@@ -5,7 +5,7 @@ import { is_same_node , node2path } from "../implementation/utils"
 import { StyledNode , ValidParameter } from "../core/elements"
 import { Transforms, Node, Editor } from "slate"
 import { YEditor } from "./editor"
-
+import { set_normalize_status } from "../plugins/constraints"
 export { BehavioursMixin }
 
 /** 这个混入对象提供所有跟节点树操作有关的函数。
@@ -109,15 +109,29 @@ let BehavioursMixin = {
         Transforms.insertNodes(me.get_slate() , nodes)
     } , 
 
-    /** 把一个有层次的节点打包成一个节点。 */
-    wrap_nodes<T extends Node & {children: Node[]} = StyledNode>(node: T, match: (n:Node)=>boolean){
+    /** 把当前选择的区域打包成一个节点。 
+     * @param options.match 判断子节点中哪些要打包的函数。
+     * @param options.split 是否允许分裂父节点。
+    */
+    wrap_selected_nodes<T extends Node & {children: Node[]} = StyledNode>(
+        node: T, 
+        options:{
+            match?: (n:Node)=>boolean , 
+            split?: boolean , 
+        }
+    )
+    {
         let me = this as any as YEditor
+        if(options.split){ // 分裂节点有可能造成多个相同`idx`的节点，因此需要开启特殊检查。
+            set_normalize_status({pasting: true})
+        }
+        
         Transforms.wrapNodes<T>(
             me.get_slate() , 
             node , 
-            { 
-                match: match , 
-                split: true , 
+            {
+                match: options.match , 
+                split: options.split , 
             }
         )
     } , 

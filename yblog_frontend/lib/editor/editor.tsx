@@ -123,7 +123,10 @@ class YEditor extends React.Component<{
     add_nodes_after: (nodes: (Node[]) | Node, target_node: Node) => void
     replace_nodes: (father_node: StyledNode, nodes: Node[]) => void
     add_nodes_here: (nodes: (Node[]) | Node) => void
-    wrap_nodes: <T extends Node & {children: Node[]} = StyledNode>(node: T, match: (n:Node)=>boolean) => void
+    wrap_selected_nodes: <T extends Node & {children: Node[]} = StyledNode>(
+        node: T, 
+        options:{match?: (n:Node)=>boolean , split?: boolean }
+    ) => void
     delete_node_by_path: (path: number[]) => void
     auto_set_parameter: (node: StyledNode, parameters: ValidParameter) => void
     unwrap_node: (node: Node) => void
