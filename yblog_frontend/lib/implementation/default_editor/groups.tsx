@@ -68,6 +68,7 @@ let GroupPaper = (props: PaperProps & {element: GroupNode}) => <ComponentPaper {
     sx = { props.element.relation == "chaining" ? { marginTop: "0" } : {} }
 />
 
+// TODO 区分两种删除按钮，一种是直接删，一种是转为文本。
 /** 这个函数返回一个默认的带应用栏的 group 组件。用于比较大的 group 组件。
  * @param get_label 从参数列表获得 title 的方法。
  * @param appbar_extra 要额外向 appbar 里添加的组件。
@@ -79,7 +80,7 @@ function get_DefaultGroupEditor_with_AppBar({
     appbar_extra  = (props) => <></> , 
     surrounder    = (props) => <>{props.children}</>
 }: {
-    get_label       ?: (n:GroupNode)=>string , 
+    get_label       ?: (n:GroupNode)=>string ,  
     appbar_extra    ?: (props: UniversalComponent_Props) => any, 
     surrounder      ?: (props: UniversalComponent_Props & {children: any}) => any ,
 }): EditorRenderer_Func{

@@ -44,6 +44,7 @@ class FileManager extends React.Component<{} , {
 		this.effect()
 	}
 
+	// TODO 添加一个删除按钮
 	SubCard(props: {id: number , name: string , url: string}){
 		let me = this
 		let [resource_id,name,url] = [props.id , props.name , props.url]
