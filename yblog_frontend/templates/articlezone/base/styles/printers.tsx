@@ -130,15 +130,17 @@ var brightwords_printer = (()=>{
 			let order = orders[orders.length-1]
 
 			let title = get_param_val(props.element,"title")  // 标题
-			let alias = get_param_val(props.element,"prefix") // 前缀
+			let prefix = get_param_val(props.element,"prefix") // 前缀
 			let order_str = make_oerder_str(order , get_param_val(props.element,"ordering") as string)
 
+			console.log(props.element.parameters)
+			
 			let inject_content = `${title}`
 			if(order_str){
 				inject_content = inject_content + ` ${order_str}`
 			}
-			if(alias){
-				inject_content = inject_content + ` （${alias}）`
+			if(prefix){
+				inject_content = inject_content + ` （${prefix}）`
 			}
 			
 			return <PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>

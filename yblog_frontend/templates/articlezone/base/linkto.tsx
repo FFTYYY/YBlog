@@ -10,7 +10,7 @@ export { linkto }
 function linkto(printer: YPrinter , target_idx: number ){
     $(document).ready(()=>{
         let element = $(`#yconcept-${target_idx}`)
-        if(!element){
+        if((!element) || element.length <= 0){
             return
         }
         element[0].scrollIntoView({

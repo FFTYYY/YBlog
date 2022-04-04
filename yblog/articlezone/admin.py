@@ -1,5 +1,4 @@
 from django.contrib import admin
-from matplotlib import widgets
 from .models import Node , Concept , Comment , Resource
 from django import forms
 from django_json_widget.widgets import JSONEditorWidget
