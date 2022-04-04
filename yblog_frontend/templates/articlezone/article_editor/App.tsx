@@ -146,7 +146,8 @@ class App extends  React.Component<App_Props , {
 		while(!this.get_editor()); // 确保editor已经存在...
 		let editor = this.get_editor()
 
-		root = this.set_proxy_params(editor , root) // 初始化代理参数。
+		// TODO 不应该在读入时初始化proxy_params，而应该设置一个constraint来保证proxy_params更新。
+		// root = this.set_proxy_params(editor , root) // 初始化代理参数。
 
 		editor.replace_nodes(editor.get_root() , root.children) // 将全部节点替换为获得的节点
 		editor.set_node(editor.get_root() , {parameters: root.parameters , hiddens: root.hiddens})
@@ -160,7 +161,7 @@ class App extends  React.Component<App_Props , {
 		printer.update(root)
 
 		//初始化跳转
-		if(BackendData.linkto){
+		if(BackendData.linkto && BackendData.linkto != "None"){
 			linkto(printer , Number(BackendData.linkto))
 		}
 	}

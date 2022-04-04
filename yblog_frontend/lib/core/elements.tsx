@@ -66,10 +66,10 @@ type GroupRelationType = "chaining" | "separating"
 
 /** 参数可以接受的叶子节点的类型。 */
 type ValidParameterItem = 
-    {type: "string" , val: string} | 
-    {type: "number" , val: number} | 
-    {type: "boolean" , val: boolean} | 
-    {type: "choice" , val: string , choices: string[]}
+    {type: "string" , val: string , init?: string} | 
+    {type: "number" , val: number , init?: string} | 
+    {type: "boolean" , val: boolean , init?: string} | 
+    {type: "choice" , val: string , choices: string[] , init?: string}
 
 /** 合法的节点参数对象。 */
 type ValidParameter<Item = ValidParameterItem> = {[key:string]: Item}

@@ -76,7 +76,11 @@ class Proxy{
                 let v = this.fixed_parameters[k]
                 if(v.type == "function"){
                     let func = (new Function(`return ${v.val}`))()
-                    ret[k] = func(params)
+                    let new_v = func(params)
+                    ret[k] = {
+                        "val": new_v , 
+                        "type": typeof new_v , 
+                    }
                 }
                 else{
                     ret[k] = v
@@ -95,7 +99,6 @@ class Proxy{
                     ret[k] = params[k] 
                 }
             }
-
         }
         return ret
     }
