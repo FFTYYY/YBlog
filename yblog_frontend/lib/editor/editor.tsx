@@ -126,6 +126,7 @@ class YEditor extends React.Component<{
     wrap_nodes: <T extends Node & {children: Node[]} = StyledNode>(node: T, match: (n:Node)=>boolean) => void
     delete_node_by_path: (path: number[]) => void
     auto_set_parameter: (node: StyledNode, parameters: ValidParameter) => void
+    unwrap_node: (node: Node) => void
 
     /** 这个函数将所有的混入对象赋值。 */
     use_mixins(){
