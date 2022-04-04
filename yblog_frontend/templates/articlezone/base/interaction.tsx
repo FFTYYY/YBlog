@@ -107,6 +107,7 @@ var urls = {
         nodetree: (nodeid: number) => url_from_root( `post/nodetree/${nodeid}` ) , 
         file    : (nodeid: number) => url_from_root( `post/file/${nodeid}` ) , 
         manage_recourse    : (resourceid: number) => url_from_root( `post/manage_recourse/${resourceid}` ) , 
+        delete_resource    : (resourceid: number) => url_from_root( `post/delete_recourse` ) , 
     } , 
     view: {
         content: (nodeid: number , options: {linkto?: number} = {}) => {
@@ -153,12 +154,18 @@ var Interaction = {
             headers: {
                 "Content-Type": "multipart/form-data"
             } ,
-        }) ,         
+        }) ,  
+        // XXX 或许该把 manage_recourse 的id也放到data里。
         manage_recourse: async (upload: boolean, data: any, resource_id: number) => {
             let config = upload?  { headers: { "Content-Type": "multipart/form-data" } , } : {}
             let status = (await axios.post( urls.post.manage_recourse(resource_id) , data, config)).data.status
             return status
         }, 
+        delete_resource: async(resource_id: number) => {
+            return (await axios.post( urls.post.delete_resource(resource_id) , {
+                id: resource_id // 注意id是放在data里的。
+            })).data.status
+        }
     }
 }
 

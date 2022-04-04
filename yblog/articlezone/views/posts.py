@@ -5,6 +5,7 @@ from ..constants import SHORT_STR_LENGTH
 from .utils import debug_convenient , JSONDecode , must_login , node_can_view
 from django import forms
 import pdb
+import os
 
 FAIL = JsonResponse({"status": False})
 SUCCESS = JsonResponse({"status": True})
@@ -82,6 +83,8 @@ def post_upload_file(request , node_id):
 	
 	resource = Resource(name = file.name , file = file , father_id = node_id)
 	resource.save()
+	resource.name = os.path.basename(resource.file.name) #django会自动更名以防止冲突，这里将资源名改为django更名后的名称。
+	resource.save()
 
 	return SUCCESS
 
@@ -104,6 +107,23 @@ def post_manage_resource(request , resource_id):
 		name = data["name"]
 		resource.name = name
 		resource.save()
+	else:
+		return FAIL
+
+	return SUCCESS
+
+@debug_convenient
+@must_login(FAIL)
+def post_delete_resource(request):
+
+	if request.method != "POST":
+		return FAIL
+	
+	if request.body != b"": # 删除文件
+		data = JSONDecode(request.body)
+		res_id = data["id"]
+		resource = Resource.objects.get(id = res_id)
+		resource.delete()
 	else:
 		return FAIL
 

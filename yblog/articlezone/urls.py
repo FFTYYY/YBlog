@@ -1,6 +1,7 @@
 from django.urls import path
 from .views.views import edit_node_view , edit_nodetree_view , read_node_view
-from .views.posts import post_nodetree , post_node_content , post_node_comments , post_node_comments , post_upload_file , post_manage_resource
+from .views.posts import post_nodetree , post_node_content , post_node_comments , post_node_comments
+from .views.posts import post_upload_file , post_manage_resource , post_delete_resource
 from .views.gets import get_nodetree , get_node_concepts , get_node_comments , get_node_create_time , get_node_content
 from .views.gets import  get_node_resources , get_node_resource_info , get_node_son_ids , get_node_father_id
 from functools import partial
@@ -27,5 +28,6 @@ urlpatterns = [
     path("post/nodetree/<int:node_id>"          , post_nodetree) , 
 
     path("post/file/<int:node_id>"              , post_upload_file) , 
-    path("post/manage_recourse/<int:resource_id>" , post_manage_resource)
+    path("post/manage_recourse/<int:resource_id>" , post_manage_resource) , 
+    path("post/delete_recourse"                 , post_delete_resource) , 
 ]
