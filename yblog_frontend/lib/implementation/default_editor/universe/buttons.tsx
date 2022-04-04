@@ -24,10 +24,11 @@ import {
     Settings as SettingsIcon , 
     North as NorthIcon , 
     South as SouthIcon , 
+    MoveUp as MoveUpIcon  , 
 }
 from "@mui/icons-material"
 
-import {Node} from "slate"
+import {Node , Text} from "slate"
 import type {  GroupNode , StructNode , StyledNode } from "../../../core/elements"
 import { paragraph_prototype , get_node_type } from "../../../core/elements"
 import { node2path } from "../../utils"
@@ -35,6 +36,7 @@ import { YEditor } from "../../../editor"
 import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "../../basic/direction_control"
 import type { AutoStackedPopper_Props } from "../../basic/direction_control"
 import { DefaultParameterWithEditorWithDrawer , UniversalComponent_Props } from "./parameter_container" 
+import { editor } from "../../.."
 
 export {    
     DefaultParameterEditButton , 
@@ -43,6 +45,7 @@ export {
 	NewParagraphButton , 
     DefaultSwicth , 
     AutoIconButton , 
+    DefaultSoftDeleteButton , 
 }
 
 /** 这个函数是一个语法糖，用于自动创建按钮 */
@@ -109,6 +112,28 @@ class DefaultParameterEditButton extends React.PureComponent <UniversalComponent
  */
 function DefaultCloseButton(props: UniversalComponent_Props){
     return <AutoIconButton onClick={e=>{props.editor.delete_node(props.element)}} title="删除组件" icon={CloseIcon} />
+}
+
+
+import {Transforms} from "slate"
+/** 这个组件提供一个删除节点，但是将其子节点移动到节点外的按钮。 
+ * @param props.editor 这个组件所服务的编辑器。
+ * @param props.element 这个组件所服务的节点。
+ * @param props.puretext 是否将子组件作为纯文本。
+ */
+function DefaultSoftDeleteButton(props: UniversalComponent_Props & {puretext?: boolean}){
+    return <AutoIconButton onClick={e=>{
+        if(props.puretext){
+            // XXX 可能保留内部样式会比较好...
+            let text = Node.string(props.element)
+            let path = node2path(props.editor.get_root() , props.element)
+            props.editor.delete_node_by_path(path)
+            props.editor.add_nodes(paragraph_prototype(text) , path)
+        }
+        else{
+            props.editor.unwrap_node(props.element)
+        }
+    }} title="解除组件" icon={MoveUpIcon} />
 }
 
 /** 这个组件提供一个在组件的上下新建段落的节点。 

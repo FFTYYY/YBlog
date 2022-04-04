@@ -45,7 +45,14 @@ import { YEditor } from "../../editor"
 
 import { is_same_node , node2path } from "../utils"
 
-import { DefaultParameterEditButton , DefaultCloseButton , AutoStackedPopperWithButton , NewParagraphButton , DefaultSwicth } from "./universe/buttons"
+import { 
+    DefaultParameterEditButton , 
+    DefaultCloseButton , 
+    AutoStackedPopperWithButton , 
+    NewParagraphButton , 
+    DefaultSwicth ,
+    DefaultSoftDeleteButton , 
+} from "./universe/buttons"
 import { DefaultHiddenEditorButtons } from "./hidden"
 
 import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "../basic"
@@ -103,6 +110,7 @@ function get_DefaultGroupEditor_with_AppBar({
                         <DefaultSwicth              editor={editor} element={element} />
                         <NewParagraphButton         editor={editor} element={element} />
                         <DefaultCloseButton         editor={editor} element={element} />
+                        <DefaultSoftDeleteButton    editor={editor} element={element} />
                         <E                          editor={editor} element={element} />
                     </AutoStack></Toolbar>
                 </UnselecableBox >
@@ -160,6 +168,7 @@ function get_DefaultGroupEditor_with_RightBar({
                             <DefaultHiddenEditorButtons editor={editor} element={element} />
                             <DefaultSwicth              editor={editor} element={element} />
                             <DefaultCloseButton         editor={editor} element={element} />
+                            <DefaultSoftDeleteButton    editor={editor} element={element} />
                             <NewParagraphButton         editor={editor} element={element} />
                         </AutoStackedPopperWithButton>
                     </AutoStack>

@@ -69,6 +69,12 @@ let BehavioursMixin = {
         })
     } , 
 
+    /** 这个组件把节点的子节点提升到顶层。 */
+    unwrap_node(node: Node){
+        let me = this as any as YEditor
+        Transforms.unwrapNodes(me.get_slate() , {at: node2path(me.get_root() , node)})
+    } , 
+
     move_node_by_path(position_from: number[], position_to: number[]){
         let me = this as any as YEditor
         Transforms.moveNodes(me.get_slate() , {

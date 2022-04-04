@@ -50,7 +50,14 @@ import { YEditor } from "../../editor"
 
 import { is_same_node , node2path } from "../utils"
 
-import { DefaultParameterEditButton , DefaultCloseButton , AutoStackedPopperWithButton , NewParagraphButton , DefaultSwicth } from "./universe/buttons"
+import { 
+    DefaultParameterEditButton , 
+    DefaultCloseButton , 
+    AutoStackedPopperWithButton , 
+    NewParagraphButton , 
+    DefaultSwicth  , 
+    DefaultSoftDeleteButton , 
+} from "./universe/buttons"
 import { DefaultHiddenEditorButtons } from "./hidden"
 
 import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "../basic"
@@ -110,7 +117,7 @@ function get_DefaultStructEditor_with_RightBar({
         let [nc_val, set_nc_val] = React.useState<number>(element.num_children) // 用来输入有多少个子节点的输入框。
 
         React.useEffect(()=>{
-            // TODO 这个operation的名字应该规范一下...
+            // XXX 这个operation的名字应该规范一下...
             editor.add_delay_operation(`${element.idx}-struct` , ()=>{
                 editor.set_node(element , {num_children: nc_val})
             })
@@ -153,6 +160,7 @@ function get_DefaultStructEditor_with_RightBar({
                             <DefaultHiddenEditorButtons editor={editor} element={element} />
                             <DefaultSwicth              editor={editor} element={element} />
                             <DefaultCloseButton         editor={editor} element={element} />
+                            <DefaultSoftDeleteButton    editor={editor} element={element} puretext />
                             <NewParagraphButton         editor={editor} element={element} />
                             <TextField 
                                 sx      ={{width: "5rem"}}
