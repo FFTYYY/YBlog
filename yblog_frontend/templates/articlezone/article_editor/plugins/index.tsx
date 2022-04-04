@@ -12,9 +12,7 @@ import {
 
 import * as C from "./constraints"
 
-export { withAllPlugins , set_normalize_status}
-
-let set_normalize_status = C.set_normalize_status
+export { withAllPlugins}
 
 let plugins = [ 
     C.set_force_sectioner ,
