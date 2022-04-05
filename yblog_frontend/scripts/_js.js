@@ -1,33 +1,18 @@
-import { GroupStyle , InlineStyle , AbstractStyle , SupportStyle , StructStyle } from "../../../../lib"
 
-
-
-export { 
-    brightwords_style , 
-    followwords_style , 
-    dimwords_style , 
-    mount_style , 
-    display_style , 
-    newpara_style , 
-    sectioner_style , 
-    ender_style , 
-    strong_style , 
-    image_style , 
-    alignedwords_style , 
-    delete_style , 
-    link_style , 
-    subwords_style , 
-    mathinline_style , 
-    mathblock_style ,
-    formatted_style , 
-    subsection_style , 
+class GroupStyle{
+    constructor(name , params , labels , flags){
+        this.name = name
+        this.parameter_prototype = params
+        this.parameter_labels = labels
+        this.flags = flags
+    }
 }
+let StructStyle = AbstractStyle = InlineStyle = SupportStyle = GroupStyle
 
-// js的处理器 识别不了ts标志，所以放到SPLIT前面
-let type_string : "string" = "string"
-let type_choice : "choice" = "choice"
+let type_string = "string"
+let type_choice = "choice"
 
-// --- SPLIT ----
+
 // ↑是为了给处理用的python脚本一个定位标志。
 
 /** 这个函数为参数添加上类型。 */
@@ -107,3 +92,16 @@ var newpara_style     = new SupportStyle ("新段"   , make( { } ) ) // 这个�
 var subsection_style  = new GroupStyle   ("次节"   , make( { label: "次节" , title: "" } ) )
 var sectioner_style   = new SupportStyle ("小节线" , make( { label: "小节" , title: "" , alone: false , } ) )
 var ender_style       = new SupportStyle ("章节线" , make( { label: "章" , } ) )
+
+    let to_export = [brightwords_style,followwords_style,subwords_style,alignedwords_style,dimwords_style,mathblock_style,mount_style,display_style,formatted_style,strong_style,delete_style,link_style,image_style,mathinline_style,newpara_style,subsection_style,sectioner_style,ender_style]
+    let to_output = ()=>{
+        let ret = {}
+        for(let x of to_export){
+            ret[x.name] = {
+                parameters: x.parameter_prototype , 
+                labels: x.parameter_labels
+            }
+        }
+        console.log(JSON.stringify(ret))
+    }
+    to_output()
