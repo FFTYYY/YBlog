@@ -55,10 +55,33 @@ class Proxy{
     */
     get_proxy_parameters(params: ValidParameter){
         let ret = {}
-        let ref = {...this.target_style.parameter_prototype , ...this.default_parameters, ...params} // 参数列表，但是应用默认值。
+
+        let merge = (a: any,b: any) => {
+            if(typeof(a) != "object"){ // a是基本类型
+                return b
+            }
+            if(a.length != undefined){ // a是数组
+                return b
+            }
+
+            let ret = {...a}
+            for(let k in b){
+                if(b[k] != undefined){
+                    if(typeof(b[k] == "object")){ // 合并子对象
+                        ret[k] = {...ret[k] , ...b[k]}
+                    }
+                    else{
+                        ret[k] = b[k]
+                    }
+                }
+            }
+            return ret
+        }
+
+        let ref = merge( merge(this.target_style.parameter_prototype , this.default_parameters) , params)
         for(let k in ref){
             if(this.fixed_parameters[k] == undefined){ // 只有当一个参数不是fixed时才是可修改的。
-                ret[k] = ref[k]
+                ret[k] = merge(ret[k] , ref[k])
             }
         }
         return ret

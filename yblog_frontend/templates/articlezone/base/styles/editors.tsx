@@ -21,7 +21,6 @@ import { Interaction , url_from_root } from "../interaction"
 
 export { 
     brightwords_editor , 
-    normalwords_editor , 
     followwords_editor , 
     mount_editor , 
     display_editor , 

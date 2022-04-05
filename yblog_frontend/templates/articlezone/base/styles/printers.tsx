@@ -68,7 +68,6 @@ export {
 	strong_printer , 
 	space_printer , 
 	paragraph_printer , 
-	normalwords_printer , 
 	image_printer , 
 	alignedwords_printer , 
 	delete_printer , 
@@ -132,8 +131,6 @@ var brightwords_printer = (()=>{
 			let title = get_param_val(props.element,"title")  // 标题
 			let prefix = get_param_val(props.element,"prefix") // 前缀
 			let order_str = make_oerder_str(order , get_param_val(props.element,"ordering") as string)
-
-			console.log(props.element.parameters)
 			
 			let inject_content = `${title}`
 			if(order_str){
@@ -186,10 +183,36 @@ var normalwords_printer = (()=>{
 
 /** 『随言』表示附属性质的话。比如注释、证明。 */
 var followwords_printer = (()=>{
+	let orderer = (e: GroupNode) => new OrderEffector("order/follow" , "order/follow")
+
 	return get_DefaultBlockPrinter({
+		extra_effectors: [orderer] , 
+
+		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
+			let order = orderer(props.element).get_context(props.context)
+			let prefix = get_param_val(props.element , "prefix") // 前缀
+			let order_str = make_oerder_str(order , get_param_val(props.element,"ordering") as string)
+
+			let inject_content = ""
+			if(order_str){
+				inject_content = inject_content + `${order_str} ` // 注入编号
+			}
+			if(prefix){
+				inject_content = inject_content + prefix // 注入前缀
+			}
+
+			return <PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
+		} , 
+
+		inject_suf: (props: {element: GroupNode , context: PrinterContext}) => {
+			let suffix = get_param_val(props.element , "suffix") // 注入后缀
+			return <PrinterStructureBoxText inline leftmargin>{suffix}</PrinterStructureBoxText>
+		} , 
+
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
 			let title = get_param_val(props.element , "title") // 标题
 			let close = get_param_val(props.element , "close") // 结尾
+			// followwords 不论如何都会有额外的缩进。
 			return <AutoStack force_direction="column">
 				{title ? <PrinterStructureBoxText>{title}</PrinterStructureBoxText> : <></>}
 				<PrinterNewLevelBox><PrinterWeakenText>{props.children}</PrinterWeakenText></PrinterNewLevelBox>
@@ -451,6 +474,7 @@ var link_printer = (()=>{
 	})
 })()
 
+/** 『属言』表示一段正式的，但是处于附属地位的话。 */
 var subwords_printer = (()=>{
 	let orderer = (e: GroupNode) => new OrderEffector<GroupNode>(
 		`order/${get_param_val(e , "label")}` , 

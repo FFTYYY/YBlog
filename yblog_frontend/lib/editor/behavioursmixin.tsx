@@ -119,8 +119,7 @@ let BehavioursMixin = {
             match?: (n:Node)=>boolean , 
             split?: boolean , 
         }
-    )
-    {
+    ){
         let me = this as any as YEditor
         if(options.split){ // 分裂节点有可能造成多个相同`idx`的节点，因此需要开启特殊检查。
             set_normalize_status({pasting: true})
