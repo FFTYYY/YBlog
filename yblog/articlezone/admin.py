@@ -78,10 +78,13 @@ class ConceptAdmin(admin.ModelAdmin):
             meta_info = CONCEPT_METAS.get(meta_name)
             if meta_info is None:
                 break
-            params , labels = meta_info
+            params , labels = meta_info["parameters"] , meta_info["labels"] 
 
-            default_info = beautiful_str(["参数名" , "默认值" , "介绍"] , [
-                [pname , params.get(pname) , labels.get(pname)]
+            get_val  = lambda name: "" if params.get(name) is None else params[name].get("val")
+            get_type = lambda name: "" if params.get(name) is None else params[name].get("type")
+
+            default_info = beautiful_str(["参数名" , "默认值" , "类型" , "介绍"] , [
+                [pname , get_val(pname) , get_type(pname) , labels.get(pname)]
                 for pname in params
             ])
 
