@@ -21,6 +21,9 @@ export {
     subsection_style , 
 }
 
+// --- PURE
+// ↑是为了给处理用的python脚本一个定位标志。
+
 /** 这个函数为参数添加上类型。 */
 function make(dict: {[key: string]: string | boolean | number}){
     return Object.keys(dict).reduce((obj , k)=>({...obj ,[k]: {
@@ -58,7 +61,10 @@ var w_univ_lab = {
 
 var brightwords_style = new GroupStyle   ("昭言"   , {...w_univ_par , ...make({label: "昭言"})} , {...w_univ_lab})
 var followwords_style = new GroupStyle   ("随言"   , {...w_univ_par , ...make({label: "随言"})} , {...w_univ_lab})
-let subwords_style    = new GroupStyle   ("属言"   , {...w_univ_par , ...make({label: "属言"})} , {...w_univ_lab})
+let subwords_style    = new GroupStyle   ("属言"   , 
+    {...w_univ_par , ...make({label: "属言" , clustering: true})} , 
+    {...w_univ_lab , clustering: "是否只在连缀的时候设置编号"}
+)
 var alignedwords_style= new StructStyle  ("齐言"   , 
     {...w_univ_par , ...make({ label: "齐言" , widths: "1"}) } , 
     {...w_univ_lab , widths: "（相对）宽度列表，用逗号分隔"} , 

@@ -120,7 +120,10 @@ var subsection_printer = (()=>{
 
 /** 『昭言』表示一段需要专门的、需要强调的话。如定理。 */
 var brightwords_printer = (()=>{
-	let orderer = (e: GroupNode) => new OrderEffector(`order/${get_param_val(e,"title")}` , `order/${get_param_val(e,"title")}`)
+	let orderer = (e: GroupNode) => new OrderEffector(
+		`order/${get_param_val(e,"label")}` , 
+		`order/${get_param_val(e,"label")}`
+		)
 
 	let printer = get_DefaultBlockPrinter({
 		extra_effectors: [orderer] , 
@@ -149,78 +152,101 @@ var brightwords_printer = (()=>{
 	return printer
 })()
 
-/** 『常言』表示一般的一段话，但是可以有一些结构。 */
-var normalwords_printer = (()=>{
-	let orderer = (e: GroupNode) => new OrderEffector("order/normal" , "order/normal")
-
-	let printer = get_DefaultBlockPrinter({
-		extra_effectors: [orderer] , 
-		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
-			let order = orderer(props.element).get_context(props.context)
-			let prefix = get_param_val(props.element , "prefix") // 前缀
-			let order_str = make_oerder_str(order , get_param_val(props.element,"ordering") as string)
-
-			let inject_content = ""
-			if(order_str){
-				inject_content = inject_content + `${order_str} `
-			}
-			if(prefix){
-				inject_content = inject_content + prefix
-			}
-
-			return <PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
-		} , 
-
-		inject_suf: (props: {element: GroupNode , context: PrinterContext}) => {
-			let suffix = get_param_val(props.element , "suffix") // 后缀
-			return <PrinterStructureBoxText inline leftmargin>{suffix}</PrinterStructureBoxText>
-		} , 
-		outer: (props) => <PrinterPartBox>{props.children}</PrinterPartBox> , 
-	})
-	return printer
-})()
-
-
 /** 『随言』表示附属性质的话。比如注释、证明。 */
 var followwords_printer = (()=>{
-	let orderer = (e: GroupNode) => new OrderEffector("order/follow" , "order/follow")
+	let orderer = (e: GroupNode) => new OrderEffector(
+		`order/${get_param_val(e,"label")}` , 
+		`order/${get_param_val(e,"label")}`
+	)
 
 	return get_DefaultBlockPrinter({
 		extra_effectors: [orderer] , 
 
 		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
-			let order = orderer(props.element).get_context(props.context)
 			let prefix = get_param_val(props.element , "prefix") // 前缀
-			let order_str = make_oerder_str(order , get_param_val(props.element,"ordering") as string)
-
-			let inject_content = ""
-			if(order_str){
-				inject_content = inject_content + `${order_str} ` // 注入编号
-			}
-			if(prefix){
-				inject_content = inject_content + prefix // 注入前缀
-			}
-
-			return <PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
+			
+			if(prefix)
+				return <PrinterStructureBoxText inline>{prefix}</PrinterStructureBoxText>
+			return <></>
 		} , 
-
+		// FIXME suffix的行为是不对的。
 		inject_suf: (props: {element: GroupNode , context: PrinterContext}) => {
 			let suffix = get_param_val(props.element , "suffix") // 注入后缀
-			return <PrinterStructureBoxText inline leftmargin>{suffix}</PrinterStructureBoxText>
+			if(suffix)
+				return <PrinterStructureBoxText inline leftmargin>{suffix}</PrinterStructureBoxText>
+			return <></>
 		} , 
 
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
 			let title = get_param_val(props.element , "title") // 标题
 			let close = get_param_val(props.element , "close") // 结尾
+			let order = orderer(props.element).get_context(props.context) // 编号
+			let order_str = make_oerder_str(order , get_param_val(props.element,"ordering") as string) // 编号字符串儿
+
+			let title_content = `${title}`
+			if(order_str){
+				title_content = title_content + ` ${order_str}` // 注入前缀
+			}
+
 			// followwords 不论如何都会有额外的缩进。
 			return <AutoStack force_direction="column">
-				{title ? <PrinterStructureBoxText>{title}</PrinterStructureBoxText> : <></>}
+				{title_content ? <PrinterStructureBoxText>{title_content}</PrinterStructureBoxText> : <></>}
 				<PrinterNewLevelBox><PrinterWeakenText>{props.children}</PrinterWeakenText></PrinterNewLevelBox>
 				{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
 			</AutoStack>
 		} , 
 	})
 })()
+
+/** 『属言』表示一段正文的，但是处于附属地位的话。 */
+var subwords_printer = (()=>{
+	let orderer = (e: GroupNode) => new OrderEffector<GroupNode>(
+		`order/${get_param_val(e , "label")}` , 
+		`order/${get_param_val(e , "label")}` , 
+		(e) => get_param_val(e,"clustering") && e.relation == "separating"
+	)
+	return get_DefaultBlockPrinter<GroupNode>({
+		small_margin_enter: true , //前面不要空一坨
+		extra_effectors: [orderer] , 
+		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
+			let prefix = get_param_val(props.element , "prefix") // 前缀
+			
+			if(prefix)
+				return <PrinterStructureBoxText inline>{prefix}</PrinterStructureBoxText>
+			return <></>
+		} , 
+
+		inject_suf: (props: {element: GroupNode , context: PrinterContext}) => {
+			let suffix = get_param_val(props.element , "suffix") // 注入后缀
+			if(suffix)
+				return <PrinterStructureBoxText inline leftmargin>{suffix}</PrinterStructureBoxText>
+			return <></>
+		} , 
+		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
+			let title = get_param_val(props.element , "title") // 标题
+			let close = get_param_val(props.element , "close") // 结尾
+			let order = orderer(props.element).get_context(props.context)
+			let order_str = make_oerder_str(order , get_param_val(props.element , "ordering") as string)
+
+			let title_content = `${title}`
+			if(order_str){
+				title_content = title_content + ` ${order_str}` // 注入前缀
+			}
+			return <React.Fragment>
+				<AutoStack force_direction="column">
+					<AutoStack>
+						<PrinterOldLevelBox> {/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
+							{title_content ? <PrinterParagraphBox>{title_content}</PrinterParagraphBox> : <></>}
+						</PrinterOldLevelBox>
+					<Box>{props.children}</Box>
+					</AutoStack>
+					{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
+				</AutoStack>
+			</React.Fragment>
+		} , 
+	})
+})()
+
 
 /** 『裱示』表示一段正式的展示。如引用一首诗。 */
 var mount_printer = (()=>{
@@ -474,29 +500,5 @@ var link_printer = (()=>{
 	})
 })()
 
-/** 『属言』表示一段正式的，但是处于附属地位的话。 */
-var subwords_printer = (()=>{
-	let orderer = (e: GroupNode) => new OrderEffector<GroupNode>(
-		`order/${get_param_val(e , "label")}` , 
-		`order/${get_param_val(e , "label")}` , 
-		(e) => e.relation == "separating"
-	)
-	return get_DefaultBlockPrinter<GroupNode>({
-		small_margin_enter: true , //前面不要空一坨
-		extra_effectors: [orderer] , 
-		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
-			let order = orderer(props.element).get_context(props.context)
-			let order_str = make_oerder_str(order , get_param_val(props.element , "ordering") as string)
-
-			return <React.Fragment><AutoStack force_direction="row">
-				{/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
-				<PrinterOldLevelBox>
-					{order_str ? <PrinterParagraphBox>{order_str}</PrinterParagraphBox> : <></>}
-				</PrinterOldLevelBox>
-				<Box>{props.children}</Box>
-			</AutoStack></React.Fragment>
-		} , 
-	})
-})()
 
 var paragraph_printer 	= get_DefaultParagraphPrinter()
