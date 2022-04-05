@@ -28,7 +28,6 @@ var style_editor_printer: {
     [S.sectioner_style.name]    : [S.sectioner_style    , E.sectioner_editor    , O.sectioner_printer] , 
     [S.ender_style.name]        : [S.ender_style        , E.ender_editor        , O.ender_printer] , 
     [S.strong_style.name]       : [S.strong_style       , E.strong_editor       , O.strong_printer] , 
-    [S.normalwords_style.name]  : [S.normalwords_style  , E.normalwords_editor  , O.normalwords_printer] , 
     [S.alignedwords_style.name] : [S.alignedwords_style , E.alignedwords_editor , O.alignedwords_printer] , 
     [S.image_style.name]        : [S.image_style        , E.image_editor        , O.image_printer] , 
     [S.delete_style.name]       : [S.delete_style       , E.delete_editor       , O.delete_printer] , 

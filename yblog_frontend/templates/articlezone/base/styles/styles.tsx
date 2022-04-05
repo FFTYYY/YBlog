@@ -10,7 +10,6 @@ export {
     sectioner_style , 
     ender_style , 
     strong_style , 
-    normalwords_style , 
     image_style , 
     alignedwords_style , 
     delete_style , 
@@ -58,7 +57,6 @@ var w_univ_lab = {
 }
 
 var brightwords_style = new GroupStyle   ("昭言"   , {...w_univ_par , ...make({label: "昭言"})} , {...w_univ_lab})
-var normalwords_style = new GroupStyle   ("常言"   , {...w_univ_par , ...make({label: "常言"})} , {...w_univ_lab})
 var followwords_style = new GroupStyle   ("随言"   , {...w_univ_par , ...make({label: "随言"})} , {...w_univ_lab})
 let subwords_style    = new GroupStyle   ("属言"   , {...w_univ_par , ...make({label: "属言"})} , {...w_univ_lab})
 var alignedwords_style= new StructStyle  ("齐言"   , 

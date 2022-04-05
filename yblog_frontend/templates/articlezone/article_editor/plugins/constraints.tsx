@@ -73,9 +73,13 @@ function set_style_ensure_parameters(editor: YEditor, slate: ReactEditor): React
                 normalizeNode(entry)
                 return 
             }
+
+            let has_proxy = node.proxy_info && node.proxy_info.proxy_name
+            let flag = false // 是否进行了修正
+
+            // 修复参数
             let p = style.parameter_prototype
             let new_parameters = {...node.parameters}
-            let flag = false // 是否进行了修正
             for(let k of Object.keys(p)){
                 if(new_parameters[k] == undefined){
                     new_parameters[k] = p[k]
@@ -83,15 +87,39 @@ function set_style_ensure_parameters(editor: YEditor, slate: ReactEditor): React
                 }
             }
 
+            // 修复代理参数
+            let new_prox_p = {}
+            if(has_proxy){
+                let proxy = editor.get_proxy(style_type , node.proxy_info.proxy_name)
+                let p = proxy.get_proxy_parameters(new_parameters)
+                new_prox_p = {... (node.proxy_info.proxy_params || {})}
+                for(let k of Object.keys(p)){
+                    if(new_prox_p[k] == undefined){
+                        new_prox_p[k] = p[k]
+                        flag = true
+                    }
+                    else{
+                        if(new_prox_p[k].type == "choice"){ // 更新choices的选项
+                            if( JSON.stringify(new_prox_p[k].choices) != JSON.stringify(p[k].choices)){
+                                new_prox_p[k] = {
+                                    val: new_prox_p[k].val , 
+                                    type: "choice" ,
+                                    choices: p[k].choices , 
+                                }
+                                flag = true
+                            }
+                        }
+                    }
+                }
+            }
+
             if(flag){ // 有修改
-                if(node.proxy_info && node.proxy_info.proxy_name){ // 有代理，则需要更新代理
-                    let proxy = editor.get_proxy(style_type , node.proxy_info.proxy_name)
-                    let new_proxy_params = proxy.get_proxy_parameters(new_parameters)
+                if(has_proxy){ // 有代理，则需要更新代理
                     editor.set_node( node , {
                         parameters: new_parameters , 
                         proxy_info: {
                             ...node.proxy_info , 
-                            proxy_params: new_proxy_params
+                            proxy_params: new_prox_p , // 设置新的代理参数
                         }
                     })
                 }
