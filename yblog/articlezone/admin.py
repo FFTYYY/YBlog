@@ -6,7 +6,7 @@ from functools import partial
 from .constants import CONCEPT_METAS
 from YTools.universe.beautiful_str import beautiful_str
 class NodeAdmin(admin.ModelAdmin):
-    add_form_template 	 = "admin_customize/node_add.html"
+    add_form_template 	 = "customize_admin/node_add.html"
 
     filter_horizontal = ["concepts"]
     list_display = ["get_title" , "id" , "can_public_view" ]

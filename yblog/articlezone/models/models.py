@@ -83,7 +83,7 @@ class Node(models.Model):
 
 		self.update_time = timezone.now()
 		
-		if self.father is not None:
+		if self.father is not None and self.id is not None:
 			mine = set(self.concepts.all())
 			fath = self.father.get_all_concepts()
 			if len(fath - mine) > 0:
