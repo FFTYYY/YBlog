@@ -58,7 +58,14 @@ class App extends React.Component<{},App_State>{
 
     /** 生命周期钩子。这个函数在初始化时向后端询问节点树的信息。 */
     async componentDidMount(){
-        let raw_nodetree = await Interaction.get.nodetree() as raw_info_item[]
+        let raw_nodetree = []
+        if(BackendData.shallow){
+            raw_nodetree = await Interaction.get.shallowtree() as raw_info_item[]
+        }
+        else{
+
+            raw_nodetree = await Interaction.get.nodetree() as raw_info_item[]
+        }
         this.setState( {
             // 注意将自己的`id`作为根节点`id`传入。
             nodetree: this.state.nodetree.update_rawinfo(raw_nodetree , BackendData.node_id) , 
@@ -262,7 +269,14 @@ class App extends React.Component<{},App_State>{
             }
         }
 
-		return await Interaction.post.nodetree( {"nodetree": to_update} )
+        let status = true
+        let bs = 5
+        for(let i = 0;i < to_update.length;i += bs){
+            status = status && (await Interaction.post.nodetree( {"nodetree": to_update.slice(i,i+bs)} ))
+            console.log(`${i} / ${to_update.length}`) // TODO 搞成好看点的提示信息。
+        }
+
+		return status
     }
 
     render(){

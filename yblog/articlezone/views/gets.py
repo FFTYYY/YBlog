@@ -80,7 +80,27 @@ def get_nodetree(request , node_id):
 			if node_can_view(request , x) # 只返回能被看见的节点的信息
 		]
 	})
+
+@debug_convenient
+def get_nodetree_shallow(request , node_id):
+	if node_id == 0:
+		lis = Node.objects.get(id = 0).get_sons(2)
+	else:
+		lis = Node.objects.get(id = node_id).get_sons(2)
 	
+	return JsonResponse({
+		"data": [ 
+			[
+				x.id, 
+				x.father.id if x.father is not None else -1, 
+				x.index_in_father , 
+				x.secret ,
+			] 
+			for x in lis
+			if node_can_view(request , x) # 只返回能被看见的节点的信息
+		]
+	})
+
 @debug_convenient
 def get_node_resources(request , node_id):
 	node = Node.objects.get(id = node_id)
