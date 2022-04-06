@@ -84,7 +84,7 @@ def get_nodetree(request , node_id):
 @debug_convenient
 def get_nodetree_shallow(request , node_id):
 	if node_id == 0:
-		lis = Node.objects.get(id = 0).get_sons(2)
+		lis = Node.objects.get(id = 1).get_sons(2)
 	else:
 		lis = Node.objects.get(id = node_id).get_sons(2)
 	
