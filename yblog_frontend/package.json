@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "clean_1": "rmdir ..\\yblog\\articlezone\\templates /s /q && mkdir ..\\yblog\\articlezone\\templates",
+    "clean_1": "rmdir ..\\yblog\\articlezone\\templates\\articlezone /s /q && mkdir ..\\yblog\\articlezone\\templates\\articlezone",
     "clean_2": "rmdir ..\\yblog\\articlezone\\static /s /q && mkdir ..\\yblog\\articlezone\\static",
     "clean": "npm run clean_1 && npm run clean_2",
     "build": "npm run clean && tsc && vite build",

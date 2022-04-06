@@ -1,0 +1,19 @@
+{% include "admin/change_form.html" %}
+<script>
+
+    window.onload = () => {
+        let url = window.location.search
+        if(url[0] != "?"){
+            return 
+        }
+        url = url.slice(1,url.length)
+        for(let par of url.split("&")){
+            let [k,v] = par.split("=")
+            if(k == "father_id"){
+                var inp = document.getElementById("id_father")
+			    inp.value = Number(v)
+            }
+        }
+    }
+</script>
+
