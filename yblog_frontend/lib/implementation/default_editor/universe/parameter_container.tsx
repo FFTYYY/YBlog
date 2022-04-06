@@ -189,11 +189,6 @@ class DefaultParameterContainer extends React.Component <{
 
     componentDidUpdate(): void {
         this.onUpdate = this.props.onUpdate || ( (newval: any) => {} )
-
-        this.item_refs = Object.keys(this.props.parameters).reduce((obj , key)=>{
-            obj[key] = React.createRef<ParameterItem>()
-            return obj
-        } , {})
     }    
 
     get_parameters(){
