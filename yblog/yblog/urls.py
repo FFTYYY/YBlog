@@ -22,4 +22,12 @@ from .settings import MEDIA_ROOT , MEDIA_URL , STATIC_URL , STATIC_ROOT
 urlpatterns = [
     path("" , include("articlezone.urls")) , 
     path("admin/", admin.site.urls),
-] + static(MEDIA_URL , document_root = MEDIA_ROOT) + static(STATIC_URL , document_root = STATIC_ROOT)
+]
+
+
+from django.conf import settings
+# 强迫Django Serve这些资源
+settings.DEBUG = True
+urlpatterns = urlpatterns + static(MEDIA_URL , document_root = MEDIA_ROOT) 
+urlpatterns = urlpatterns + static(STATIC_URL , document_root = STATIC_ROOT)
+settings.DEBUG = False
