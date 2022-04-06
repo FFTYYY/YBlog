@@ -25,7 +25,11 @@ class NodeAdmin(admin.ModelAdmin):
                     visualbility_desc = "因为其父节点的<code>secret</code>属性，此节点不可见。"
             desc_edit_content  =   "<a href='/edit/content/{obj_id}'>编辑内容</a>".format(obj_id = node.id)
             desc_edit_struct   =   "<a href='/edit/structure/{obj_id}'>编辑子节点结构</a>".format(obj_id = node.id) \
-                               +   "<a href='/edit/structure/' style='margin-left:2%;'>编辑全局结构</a>"
+                               +   "<a href='/edit/structure/0' style='margin-left:2%;'>编辑全局结构</a>"
+            if node.father is not None:
+                desc_edit_struct = desc_edit_struct + \
+                    "<a href='/edit/structure/{fat_id}' style='margin-left:2%;'>编辑父节点结构</a>".format(fat_id = node.father.id)
+
                                
         return [
             ["可见性" , {

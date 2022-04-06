@@ -46,6 +46,7 @@ function is_secret(tree: Nodetree , node: info_item){
 }
 
 class App extends React.Component<{},App_State>{
+    raw_nodetree?: raw_info_item[]
     constructor(props: {}){
         super(props)
         this.state = {
@@ -64,6 +65,7 @@ class App extends React.Component<{},App_State>{
 
             expanded: Object.values(raw_nodetree).map( (val:raw_info_item)=>val[1] )
         } )
+        this.raw_nodetree = raw_nodetree
     }
 
     
@@ -245,7 +247,22 @@ class App extends React.Component<{},App_State>{
     }
 
     async save_nodetree(){
-		return await Interaction.post.nodetree( {"nodetree": this.state.nodetree.get_raw()} )
+        let orig_raw_info = this.raw_nodetree
+        let raw_info_convenient = orig_raw_info.reduce((obj,dat)=>{
+            let [id,father_id,idx_in_father,secret] = dat
+            obj[id] = [father_id,idx_in_father,secret]
+            return obj
+        } , {})
+        let raw_info = this.state.nodetree.get_raw()
+        let to_update = []
+        for(let [id,father_id,idx_in_father,secret] of raw_info){
+            let my_dat = [father_id,idx_in_father,secret]
+            if( JSON.stringify(my_dat) != JSON.stringify(raw_info_convenient[id]) ){ // 如果有修改
+                to_update.push([id,father_id,idx_in_father,secret])
+            }
+        }
+
+		return await Interaction.post.nodetree( {"nodetree": to_update} )
     }
 
     render(){

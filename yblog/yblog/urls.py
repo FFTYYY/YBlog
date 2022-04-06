@@ -27,7 +27,8 @@ urlpatterns = [
 
 from django.conf import settings
 # 强迫Django Serve这些资源
+OLD_DEBUG = settings.DEBUG
 settings.DEBUG = True
 urlpatterns = urlpatterns + static(MEDIA_URL , document_root = MEDIA_ROOT) 
 urlpatterns = urlpatterns + static(STATIC_URL , document_root = STATIC_ROOT)
-settings.DEBUG = False
+settings.DEBUG = OLD_DEBUG
