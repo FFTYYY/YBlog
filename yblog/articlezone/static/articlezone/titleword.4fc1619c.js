@@ -1,0 +1,1 @@
+import{a as e,j as a,F as s}from"./jsx-runtime.71fbd6ab.js";import{I as o,a4 as r}from"./snackbar.3cf9a897.js";class l extends e.PureComponent{constructor(t){super(t);this.state={title:void 0}}async componentDidMount(){let t=await o.get.content(this.props.node_id);this.setState({title:r(t,"title")})}render(){return a(s,{children:this.state.title})}}export{l as T};

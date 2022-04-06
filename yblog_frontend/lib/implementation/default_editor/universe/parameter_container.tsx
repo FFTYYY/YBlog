@@ -72,9 +72,6 @@ class ParameterItem extends React.Component <{
         this.setState({val: this.props.parameter_item.val})
     }
 
-    componentDidMount(){ // react是不是有病啊
-        this.update()
-    }
     componentDidUpdate(prev_props, prev_state){
         if(prev_props.parameter_item.val != this.props.parameter_item.val){ // 更新了props
             this.update()
@@ -183,8 +180,10 @@ class DefaultParameterContainer extends React.Component <{
     constructor(props){
         super(props)
 
-        this.item_refs = {}
-
+        this.item_refs = Object.keys(this.props.parameters).reduce((obj , key)=>{
+            obj[key] = React.createRef<ParameterItem>()
+            return obj
+        } , {})
         this.onUpdate = props.onUpdate || ( (newval: any) => {} )
     }
 
