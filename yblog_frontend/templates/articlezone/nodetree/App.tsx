@@ -4,6 +4,7 @@ import {
     Divider , 
     Checkbox  , 
     Typography , 
+    Link , 
 } from "@mui/material"
 import {
     TreeItem , TreeView , 
@@ -19,7 +20,7 @@ import { HTML5Backend } from "react-dnd-html5-backend"
 
 import { SaveButton } from "../base/construction/buttons"
 import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
-import { Interaction , BackendData } from "../base/interaction"
+import { Interaction , BackendData , url_from_root } from "../base/interaction"
 import { Nodetree } from "../base/nodetree"
 import { TitleWord } from "../base/construction/titleword"
 import type { info_item , raw_info_item } from "../base/nodetree"
@@ -217,6 +218,7 @@ class App extends React.Component<{},App_State>{
                                 this.setState({nodetree: new_tree})
                             }}
                         />
+                        <Link href={url_from_root(`/edit/content/${my_id}`)}>编辑</Link>
                     </AutoStack></Box>
                 }
                 nodeId = {`${my_id}`}

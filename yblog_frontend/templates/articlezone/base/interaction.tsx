@@ -30,13 +30,13 @@ var BackendData = {
     /** 当前用户是否已经登录。 
      * 注意，这个只是对于登录与否的用户可以渲染不同的页面（例如编辑按钮），不要将危险操作放在前端并依赖这个变量来控制。
     */
-    logged_in: get_backend_data("logged_in").toLocaleLowerCase() == "true" , 
+    logged_in: String(get_backend_data("logged_in")).toLocaleLowerCase() == "true" , 
 
     /** 当页面初始化好后跳转到哪里。 */
     linkto: get_backend_data("linkto") , 
 
     /** 只对nodetree有效，是否只编辑一层子节点。 */
-    shallow: get_backend_data("shallow").toLocaleLowerCase() == "true"  , 
+    shallow: String(get_backend_data("shallow")).toLocaleLowerCase() == "true"  , 
 }
 
 
