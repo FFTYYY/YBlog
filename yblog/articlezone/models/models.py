@@ -36,7 +36,7 @@ class Node(models.Model):
 		notitle = "<NoTitle: {0}>".format(self.id)
 		if self.content.strip() == "":
 			return notitle
-		return notitle
+
 		root = json.loads(self.content)
 		if (root.get("parameters") is None) or (root["parameters"].get("title") is None) or \
 				(root["parameters"]["title"].get("val") is None):
