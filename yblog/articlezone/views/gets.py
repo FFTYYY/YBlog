@@ -64,9 +64,11 @@ def get_node_create_time(request , node_id):
 def get_nodetree(request , node_id):
 
 	if node_id == 0:
-		lis = Node.objects.all()
+		lis = Node.objects.all().sort("index_in_father")
 	else:
 		lis = Node.objects.get(id = node_id).get_sons()
+	lis = list(lis)
+	lis.sort(key = lambda nd: nd.index_in_father)
 	
 	return JsonResponse({
 		"data": [ 
@@ -84,9 +86,11 @@ def get_nodetree(request , node_id):
 @debug_convenient
 def get_nodetree_shallow(request , node_id):
 	if node_id == 0:
-		lis = Node.objects.get(id = 1).get_sons(2)
+		lis = Node.objects.get(id = 1).get_sons(2).sort("index_in_father")
 	else:
 		lis = Node.objects.get(id = node_id).get_sons(2)
+	lis = list(lis)
+	lis.sort(key = lambda nd: nd.index_in_father)
 	
 	return JsonResponse({
 		"data": [ 
@@ -146,7 +150,10 @@ def get_node_son_ids(request , node_id):
 		lis = Node.objects.filter(father = None)
 	else:
 		lis = Node.objects.filter(father_id = node_id)
-	
+		
+	lis = list(lis)
+	lis.sort(key = lambda nd: nd.index_in_father)
+
 	# 只返回能被看见的节点的信息
 	return JsonResponse({
 		"son_ids": [ x.id for x in lis if node_can_view(request , x) ]

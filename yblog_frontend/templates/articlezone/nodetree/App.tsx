@@ -272,7 +272,7 @@ class App extends React.Component<{},App_State>{
         }
 
         let status = true
-        let bs = 5
+        let bs = 50
         for(let i = 0;i < to_update.length;i += bs){
             status = status && (await Interaction.post.nodetree( {"nodetree": to_update.slice(i,i+bs)} ))
             console.log(`${i} / ${to_update.length}`) // TODO 搞成好看点的提示信息。
