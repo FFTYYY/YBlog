@@ -56,12 +56,14 @@ class Node(models.Model):
 			return self.father.can_public_view()
 		return True
 
-	def get_sons(self):
+	def get_sons(self , max_depth = 999):
 		'''返回所有子节点，包括自己。'''
+		if max_depth < 0:
+			return set()
 
 		all_sons = set()
 		for son in Node.objects.filter(father_id = self.id):
-			all_sons = all_sons | son.get_sons()
+			all_sons = all_sons | son.get_sons(max_depth - 1)
 		all_sons.add(self)
 		return all_sons
 

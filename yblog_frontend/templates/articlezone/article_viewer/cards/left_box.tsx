@@ -14,9 +14,10 @@ import {
 	EditorCore , 
     GroupNode , 
 } from "../../../../lib"
+import { Interaction , BackendData } from "../../base/interaction"
 import { LeftBasic } from "./left_basic"
 import { LeftComments } from "./left_comments"
-
+import { LeftEdit } from "./left_edit"
 export {LeftBox}
 
 
@@ -27,8 +28,11 @@ function LeftBox(props: {root: GroupNode}){
         <TabList onChange={(e,v)=>set_active_tab(v)} variant="scrollable" scrollButtons="auto">
             <Tab label = "基本" value = "1"/>
             <Tab label = "留言" value = "2"/>
+            { BackendData.logged_in ? <Tab label = "编辑" value = "3"/> : <></> }
+
         </TabList >
         <TabPanel value = "1" ><LeftBasic root={props.root}/></TabPanel>
         <TabPanel value = "2" ><LeftComments /></TabPanel>
+        { BackendData.logged_in ? <TabPanel value = "3" ><LeftEdit /></TabPanel> : <></> }
     </Box></TabContext>
 }

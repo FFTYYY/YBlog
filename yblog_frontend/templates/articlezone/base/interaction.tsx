@@ -34,6 +34,9 @@ var BackendData = {
 
     /** 当页面初始化好后跳转到哪里。 */
     linkto: get_backend_data("linkto") , 
+
+    /** 只对nodetree有效，是否只编辑一层子节点。 */
+    shallow: get_backend_data("shallow").toLocaleLowerCase() == "true"  , 
 }
 
 
@@ -93,6 +96,7 @@ var urls = {
     get:{
         content     : (nodeid: number)  => url_from_root( `get/node/content/${nodeid}` ) , 
         nodetree    : (nodeid: number)  => url_from_root( `get/nodetree/${nodeid}` ) , 
+        shallowtree : (nodeid: number)  => url_from_root( `get/nodetree_shallow/${nodeid}` ) , 
         concept     : (nodeid: number)  => url_from_root( `get/node/concepts/${nodeid}` ) , 
         create_time : (nodeid: number)  => url_from_root( `get/node/create_time/${nodeid}` ) , 
         comments    : (nodeid: number)  => url_from_root( `get/node/comments/${nodeid}` ) , 
@@ -126,6 +130,7 @@ var Interaction = {
     get: {
         content     :(nodeid?: number) => get_node_information(urls.get.content     , "content"  , nodeid), 
         nodetree    :(nodeid?: number) => get_node_information(urls.get.nodetree    , "data"     , nodeid), 
+        shallowtree :(nodeid?: number) => get_node_information(urls.get.shallowtree , "data"     , nodeid), 
         concept     :(nodeid?: number) => get_node_information(urls.get.concept     , "concepts" , nodeid), 
         create_time :(nodeid?: number) => get_node_information(urls.get.create_time , undefined  , nodeid), 
         comments    :(nodeid?: number) => get_node_information(urls.get.comments    , "comments" , nodeid), 

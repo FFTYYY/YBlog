@@ -18,10 +18,19 @@ def edit_node_view(request , node_id):
 @must_login(Http404())
 def edit_nodetree_view(request , node_id = None):
 
+    return render(request , "articlezone/nodetree_index.html" , {
+        "node_id": node_id , 
+        "logged_in": request.user.is_authenticated , 
+    })
+
+@debug_convenient
+@must_login(Http404())
+def edit_nodetree_shallow_view(request , node_id = None):
 
     return render(request , "articlezone/nodetree_index.html" , {
         "node_id": node_id , 
         "logged_in": request.user.is_authenticated , 
+        "shallow": True , 
     })
 
 @debug_convenient

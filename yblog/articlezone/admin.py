@@ -6,6 +6,8 @@ from functools import partial
 from .constants import CONCEPT_METAS
 from YTools.universe.beautiful_str import beautiful_str
 class NodeAdmin(admin.ModelAdmin):
+    add_form_template 	 = "admin_customize/node_add.html"
+
     filter_horizontal = ["concepts"]
     list_display = ["get_title" , "id" , "can_public_view" ]
     raw_id_fields = ["father"]
@@ -24,11 +26,18 @@ class NodeAdmin(admin.ModelAdmin):
                 else:
                     visualbility_desc = "因为其父节点的<code>secret</code>属性，此节点不可见。"
             desc_edit_content  =   "<a href='/edit/content/{obj_id}'>编辑内容</a>".format(obj_id = node.id)
-            desc_edit_struct   =   "<a href='/edit/structure/{obj_id}'>编辑子节点结构</a>".format(obj_id = node.id) \
-                               +   "<a href='/edit/structure/0' style='margin-left:2%;'>编辑全局结构</a>"
+
+            make_edit_tree = lambda id,text: "<a href='/edit/structure/{0}' style='margin-left:3.675%;'>{1}</a>".format(id,text)
+            make_edit_shal = lambda id,text: "<a href='/edit/shallow_structure/{0}' style='margin-left:2%;'>{1}</a>".format(id,text)
+
+            desc_edit_struct   =   make_edit_tree(node.id , "编辑子节点结构") + make_edit_tree(0 , "编辑全局结构")
             if node.father is not None:
-                desc_edit_struct = desc_edit_struct + \
-                    "<a href='/edit/structure/{fat_id}' style='margin-left:2%;'>编辑父节点结构</a>".format(fat_id = node.father.id)
+                desc_edit_struct = desc_edit_struct + make_edit_tree(node.father.id , "编辑父节点结构")
+            desc_edit_struct = desc_edit_struct + "<br />"
+
+            desc_edit_struct   = desc_edit_struct + make_edit_shal(node.id , "（浅）编辑子节点结构") + make_edit_shal(0 , "（浅）编辑全局结构")
+            if node.father is not None:
+                desc_edit_struct = desc_edit_struct + make_edit_shal(node.father.id , "（浅）编辑父节点结构")
 
                                
         return [
