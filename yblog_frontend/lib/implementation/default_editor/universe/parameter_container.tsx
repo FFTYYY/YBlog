@@ -67,6 +67,19 @@ class ParameterItem extends React.Component <{
         this.name = props.name
         this.type = props.parameter_item.type
     }
+    
+    update(){
+        this.setState({val: this.props.parameter_item.val})
+    }
+
+    componentDidMount(){ // react是不是有病啊
+        this.update()
+    }
+    componentDidUpdate(prev_props, prev_state){
+        if(prev_props.parameter_item.val != this.props.parameter_item.val){ // 更新了props
+            this.update()
+        }
+    }
 
     get_item(){
         let ret = {
@@ -170,17 +183,19 @@ class DefaultParameterContainer extends React.Component <{
     constructor(props){
         super(props)
 
-        this.item_refs = Object.keys(props.parameters).reduce((obj , key)=>{
-            obj[key] = React.createRef<ParameterItem>()
-            return obj
-        } , {})
+        this.item_refs = {}
 
         this.onUpdate = props.onUpdate || ( (newval: any) => {} )
     }
 
-    // componentDidUpdate(): void {
-    //     this.onUpdate = this.props.onUpdate || ( (newval: any) => {} )
-    // }    
+    componentDidUpdate(): void {
+        this.onUpdate = this.props.onUpdate || ( (newval: any) => {} )
+
+        this.item_refs = Object.keys(this.props.parameters).reduce((obj , key)=>{
+            obj[key] = React.createRef<ParameterItem>()
+            return obj
+        } , {})
+    }    
 
     get_parameters(){
         let me = this
