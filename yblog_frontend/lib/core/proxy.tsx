@@ -54,36 +54,40 @@ class Proxy{
      * @param params 给出的真实参数列表。
     */
     get_proxy_parameters(params: ValidParameter){
-        let ret = {}
-
-        let merge = (a: any,b: any) => {
-            if(typeof(a) != "object"){ // a是基本类型
-                return b
-            }
-            if(a.length != undefined){ // a是数组
-                return b
-            }
-
+        let merge = (a: any,b: any , choices_b: boolean) => {
             let ret = {...a}
             for(let k in b){
-                if(b[k] != undefined){
-                    if(typeof(b[k] == "object")){ // 合并子对象
-                        ret[k] = {...ret[k] , ...b[k]}
-                    }
-                    else{
-                        ret[k] = b[k]
+                if(ret[k] == undefined){
+                    ret[k] = b[k]
+                }
+                if(b[k].val != undefined && b[k].val != ret[k].val){ // 更新值
+                    ret[k].val = b[k].val
+                }
+                if(b[k].type != undefined && b[k].type != ret[k].type){ // 更新类型
+                    ret[k].type = b[k].type
+                }
+                if(ret[k].type == "choice"){ // 对于选项，要特殊对待。
+                    if(b[k].choices != undefined && JSON.stringify(b[k].choices) != JSON.stringify(ret[k].choices)){
+                        if(choices_b){ // 以b的choices为准。
+                            ret[k].choices = b[k].choices
+                        }
                     }
                 }
             }
             return ret
         }
 
-        let ref = merge( merge(this.target_style.parameter_prototype , this.default_parameters) , params)
+        
+        let ref = merge(this.target_style.parameter_prototype , this.default_parameters , true) // 默认参数是选项的权威
+        ref = merge(ref , params , false) // 已经给出的参数不是选项的权威。
+
+        let ret = {}
         for(let k in ref){
             if(this.fixed_parameters[k] == undefined){ // 只有当一个参数不是fixed时才是可修改的。
-                ret[k] = merge(ret[k] , ref[k])
+                ret[k] = ref[k]
             }
         }
+
         return ret
     }
 

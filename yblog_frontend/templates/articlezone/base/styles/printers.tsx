@@ -97,7 +97,7 @@ function make_oerder_str(order: number , ordering: string){
 	if(ordering == "chinese-bracket"){
 		return `【${num2chinese(order)}】`
 	}
-	if(ordering == "number-bracket"){
+	if(ordering == "arab-bracket"){
 		return `[${order}]`
 	}
 	return ""

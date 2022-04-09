@@ -53,7 +53,7 @@ var w_univ_par = {
     ordering: {
         val: "chinese" , 
         type: type_choice ,
-        choices: ["chinese" , "arab" , "arab-circle" , "chinese-bracket" , "number-bracket" , "none" ] ,
+        choices: ["chinese" , "arab" , "arab-circle" , "chinese-bracket" , "arab-bracket" , "none"] ,
     }
 }
 
@@ -105,5 +105,10 @@ var mathinline_style  = new InlineStyle  ("数学调" , make( { label: "数学"}
 
 var newpara_style     = new SupportStyle ("新段"   , make( { } ) ) // 这个元素不渲染，所以没有`label`。
 var subsection_style  = new GroupStyle   ("次节"   , make( { label: "次节" , title: "" } ) )
-var sectioner_style   = new SupportStyle ("小节线" , make( { label: "小节" , title: "" , alone: false , } ) )
+var sectioner_style   = new SupportStyle ("小节线" , make( { label: "小节" , title: "" , alone: false } ) )
 var ender_style       = new SupportStyle ("章节线" , make( { label: "章" , } ) )
+var showchildren_style = new SupportStyle ("展示子节点" , make( { 
+    label: "展示子节点" , 
+    showtitle: true , 
+    showending: false , 
+} ) )
