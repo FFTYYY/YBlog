@@ -60,6 +60,46 @@ function set_force_sectioner(editor: YEditor, slate: ReactEditor): ReactEditor{
 function set_style_ensure_parameters(editor: YEditor, slate: ReactEditor): ReactEditor{
     const normalizeNode = slate.normalizeNode
 
+    /** 
+     * @param init 目前的参数
+     * @param ref 作为参考的参数列表
+     * @return 修复之后的参数列表以及是否进行了修复。
+     */
+    let fix_parameters = (init , ref) => {
+        let newp = {...init}
+        let flag = false
+        // 确保参数的项目一致。
+        for(let k in ref){
+            if(newp[k] == undefined){ // 有不一样的参数
+                newp[k] = ref[k]
+                flag = true
+            }
+        }
+        for(let k in newp){
+            if(ref[k] == undefined){ // 有多余的参数。
+                delete newp[k]
+                flag = true
+            }
+        }
+
+        // 确保choices一致
+        for(let k in newp){
+            if(newp[k].type == "choice"){ // 更新choices的选项
+                if( JSON.stringify(newp[k].choices) != JSON.stringify(ref[k].choices)){
+                    newp[k] = {
+                        val: newp[k].val , 
+                        type: "choice" ,
+                        choices: ref[k].choices , 
+                    }
+                    flag = true
+                }
+            }
+        }
+
+        return [newp , flag]
+    }
+    
+
     slate.normalizeNode = (entry: [Node, number[]]) => {
         let [_node , path] = entry
 
@@ -75,58 +115,31 @@ function set_style_ensure_parameters(editor: YEditor, slate: ReactEditor): React
             }
 
             let has_proxy = node.proxy_info && node.proxy_info.proxy_name
-            let flag = false // 是否进行了修正
 
-            // 修复参数
-            let p = style.parameter_prototype
-            let new_parameters = {...node.parameters}
-            for(let k of Object.keys(p)){
-                if(new_parameters[k] == undefined){
-                    new_parameters[k] = p[k]
-                    flag = true
-                }
-            }
-
-            // 修复代理参数
-            let new_prox_p = {}
-            if(has_proxy){
+            if(has_proxy){ // 有代理参数的情况。
                 let proxy = editor.get_proxy(style_type , node.proxy_info.proxy_name)
-                let p = proxy.get_proxy_parameters(new_parameters)
-                new_prox_p = {... (node.proxy_info.proxy_params || {})}
-                for(let k of Object.keys(p)){
-                    if(new_prox_p[k] == undefined){
-                        new_prox_p[k] = p[k]
-                        flag = true
-                    }
-                    else{
-                        if(new_prox_p[k].type == "choice"){ // 更新choices的选项
-                            if( JSON.stringify(new_prox_p[k].choices) != JSON.stringify(p[k].choices)){
-                                new_prox_p[k] = {
-                                    val: new_prox_p[k].val , 
-                                    type: "choice" ,
-                                    choices: p[k].choices , 
-                                }
-                                flag = true
-                            }
-                        }
-                    }
-                }
-            }
+                let now_proxy_p = node.proxy_info.proxy_params || {} // 目前的代理参数
+                let now_style_p = node.parameters || {} // 目前的样式参数
+                
+                let [ proxy_p , proxy_f ] = fix_parameters( now_proxy_p , proxy.get_proxy_parameters({}) )
+                let [ style_p , style_f ] = fix_parameters( now_style_p , proxy.get_real_parameters(proxy_p) )
 
-            if(flag){ // 有修改
-                if(has_proxy){ // 有代理，则需要更新代理
+                if(proxy_f || style_f){ // 有改动
                     editor.set_node( node , {
-                        parameters: new_parameters , 
+                        parameters: style_p , 
                         proxy_info: {
                             ...node.proxy_info , 
-                            proxy_params: new_prox_p , // 设置新的代理参数
+                            proxy_params: proxy_p , // 设置新的代理参数
                         }
                     })
                 }
-                else{ // 只需要设置参数
-                    editor.set_node( node , {parameters: new_parameters})
+            }
+            else{ // 参数直接从样式获得的情况。
+                let now_style_p = node.parameters || {} // 目前的样式参数
+                let [ style_p , style_f ] = fix_parameters( now_style_p , style.parameter_prototype )
+                if(style_f){ // 有改动
+                    editor.set_node( node , {parameters: style_p })
                 }
-                return
             }
         }
         
