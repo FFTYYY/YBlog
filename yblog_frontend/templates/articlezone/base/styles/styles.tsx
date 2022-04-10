@@ -21,6 +21,7 @@ export {
     mathblock_style ,
     formatted_style , 
     subsection_style , 
+    showchildren_style , 
 }
 
 // js的处理器 识别不了ts标志，所以放到SPLIT前面
@@ -111,4 +112,5 @@ var showchildren_style = new SupportStyle ("展示子节点" , make( {
     label: "展示子节点" , 
     showtitle: true , 
     showending: false , 
+    inherit_env: false , 
 } ) )

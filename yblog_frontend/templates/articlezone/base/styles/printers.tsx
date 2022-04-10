@@ -40,7 +40,11 @@ import {
 	remtimes , 
 	get_param_val ,
 	is_styled , 
-	has_children , 
+	has_children, 
+	YPrinter , 
+	GlobalInfoProvider, 
+	group_prototype, 
+	StyledNode, 
 } from "../../../../lib"
 import type {
 	PrinterRenderer , 
@@ -77,6 +81,7 @@ export {
 	mathblock_printer , 
 	formatted_printer , 
 	subsection_printer , 
+	showchildren_printer , 
 }
 
 /** 根据给定的编号和编号格式，生成编号字符串。 */
@@ -499,6 +504,80 @@ var link_printer = (()=>{
 		}
 	})
 })()
+
+var showchildren_printer = (()=>{
+	return {
+        render_func: (props: PrinterRenderFunc_Props) => {
+            let element = props.element as SupportNode 
+			let printer_ref = React.useRef<YPrinter>()
+
+			React.useEffect(()=>{
+				if(!(printer_ref && printer_ref.current)){
+					return 
+				}
+				(async ()=>{
+					let sons = await Interaction.get.son_ids()
+					if(sons.length < 0){
+						return 
+					}
+
+					let meta_root = group_prototype("meta-root" , {})
+
+					for(let c_id of sons){
+						let c = await Interaction.get.content(c_id)
+
+						if(get_param_val(element,"showending") == false){
+
+							// TODO 这里还没搞完
+
+							for( let [subnode , subpath] of Node.descendants(c)){
+								if(!is_styled(subnode)){
+									continue
+								}
+								if(subnode.name == "章节线"){ // 找到章节线节点
+									let subpar = Node.descendant(c , subpath.slice(0,subpath.length - 1)) as StyledNode // 找到父节点
+									let tarinx = subpath[subpath.length - 1]
+									subpar.children = [
+										...subpar.children.slice(0,tarinx) , 
+										...subpar.children.slice(tarinx+1,subpar.children.length)
+									]
+								}
+							}
+						}
+
+						meta_root.children.push(c)
+					}
+
+					let init_env = get_param_val(element , "inherit_env") ? props.context.env : {}
+					printer_ref.current.update(meta_root , init_env)
+				})()
+
+			} , [ JSON.stringify(element.parameters) ])
+
+            return <GlobalInfo.Consumer>{globalinfo=>{
+				let printer = globalinfo.printer_component
+				return  <YPrinter
+					core = {printer.core}
+					renderers = {printer.renderers}
+					ref = {printer_ref}
+				/>
+
+			}}</GlobalInfo.Consumer>
+        } , 
+        enter_effect: (element: SupportNode, env: PrinterEnv): [PrinterEnv,PrinterContext] => {    
+            let ret: [PrinterEnv , PrinterContext] = [ env , {env: JSON.parse(JSON.stringify(env))} ] // 把env记到context里面去。
+    
+            return ret
+        } , 
+        exit_effect: (element: SupportNode, env: PrinterEnv , context: PrinterContext):[PrinterEnv,PrinterContext] => {    
+            let ret: [PrinterEnv , PrinterContext] = [ env , context ]
+    
+    
+            return ret
+        } , 
+    }
+})()
+
 
 
 var paragraph_printer 	= get_DefaultParagraphPrinter()

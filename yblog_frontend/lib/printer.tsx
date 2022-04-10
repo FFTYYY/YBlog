@@ -60,7 +60,6 @@ class YPrinter extends React.Component<{
     /** 用来记录自己在`core`处的`notification`。 */
     notification_key: number
     
-
     /**
      * 
      * @param props.printer 这个组件对应的输出器。
@@ -83,9 +82,9 @@ class YPrinter extends React.Component<{
      * 注意输出器并不会从全局状态获取树信息，而是在特定操作下才更新。
      * 这样设计是因为实时刷新太慢了（尤其是数学公式很多的情况下，mathjax要人命...）。
     */
-    update(root: GroupNode){
+    update(root: GroupNode , init_env = {}){
         this.sub_refs = {}
-        let [_ , contexts] = this.build_envs(root , {} , {} , [])
+        let [_ , contexts] = this.build_envs(root , init_env , {} , [])
         this.setState({
             root: root , 
             contexts: contexts , 
