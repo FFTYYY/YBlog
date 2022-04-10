@@ -39,7 +39,7 @@ import {
 } from "./basic"
 
 
-export { DefaultNewParagraphEditor , get_DefaultSplitterEditor , get_DefaultDisplayerEditor}
+export { DefaultNewParagraphEditor , get_DefaultSplitterEditor , get_DefaultDisplayerEditor , get_DefaultSupportEditor_with_RightBar}
 
 /** 这个函数返回一个用来新建段落的辅助节点。 */
 function DefaultNewParagraphEditor(props: EditorRenderer_Props){
@@ -143,6 +143,46 @@ function get_DefaultDisplayerEditor({
         return <ComponentPaper is_inline>{props.children}<UnselecableBox>
             <AutoStack force_direction="row">
                 {is_empty(element) ? <R element={element} /> : label }
+                <AutoStackedPopperWithButton
+                    close_on_otherclick
+                    button_class = {IconButton}
+                    button_props = {{
+                        sx: {
+                            height: "1rem" , 
+                            width: "1rem" , 
+                            margin: "0",
+                        } , 
+                        children: <KeyboardArrowDownIcon sx={{height: "1rem"}}/> ,
+                    }} 
+                    title = {"展开" + (label ? ` / ${label}` : "") }
+                >
+                    <Typography>{label}</Typography>
+                    <DefaultParameterEditButton editor={editor} element={element} />
+                    <NewParagraphButton         editor={editor} element={element} />
+                    <DefaultCloseButton         editor={editor} element={element} />
+                </AutoStackedPopperWithButton>
+            </AutoStack>
+        </UnselecableBox></ComponentPaper>
+    }
+}
+
+/** 这个函数返回一个用来显示元素的 *行内* 组件。 
+ * @param name 组件名
+ * @param init_parameters 初始参。
+*/
+function get_DefaultSupportEditor_with_RightBar({
+    get_label       = (n:SupportNode)=>get_param_val(n,"label") as string, 
+} : {
+    get_label       ?: (n:SupportNode)=>string , 
+}){
+    return (props: EditorRenderer_Props) => {
+        let editor = props.editor
+        let element = props.element as SupportNode
+        let label = get_label(element)
+
+        return <ComponentPaper is_inline>{props.children}<UnselecableBox>
+            <AutoStack force_direction="row">
+                { label }
                 <AutoStackedPopperWithButton
                     close_on_otherclick
                     button_class = {IconButton}
