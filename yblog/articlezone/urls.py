@@ -1,5 +1,5 @@
 from django.urls import path
-from .views.views import edit_node_view , edit_nodetree_view , read_node_view , edit_nodetree_shallow_view
+from .views.views import edit_node_view , edit_nodetree_view , read_node_view , edit_nodetree_shallow_view , read_node_pure_view
 from .views.posts import post_nodetree , post_node_content , post_node_comments , post_node_comments
 from .views.posts import post_upload_file , post_manage_resource , post_delete_resource
 from .views.gets import get_nodetree , get_node_concepts , get_node_comments , get_node_create_time , get_node_content
@@ -15,6 +15,7 @@ urlpatterns = [
     path("edit/shallow_structure/<int:node_id>" , edit_nodetree_shallow_view) , 
     path("edit/shallow_structure/"              , partial(edit_nodetree_shallow_view , node_id = 0)) , 
     path("view/content/<int:node_id>"           , read_node_view) , 
+    path("view/content/pure/<int:node_id>"      , read_node_pure_view) , 
 
     path("get/node/content/<int:node_id>"       , get_node_content) , 
     path("get/node/concepts/<int:node_id>"      , get_node_concepts) , 

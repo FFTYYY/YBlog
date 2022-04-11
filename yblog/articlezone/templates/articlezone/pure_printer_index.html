@@ -3,17 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>看看</title>
-    <script type="module" crossorigin src="/static/articlezone/viewer.bf6aa7d4.js"></script>
+    <title></title>
+    <script type="module" crossorigin src="/static/articlezone/pureprinter.55ea84e5.js"></script>
     <link rel="modulepreload" href="/static/articlezone/jsx-runtime.71fbd6ab.js">
     <link rel="modulepreload" href="/static/articlezone/titleword.139e2833.js">
     <link rel="modulepreload" href="/static/articlezone/theme.353168bd.js">
-    <link rel="modulepreload" href="/static/articlezone/snackbar.ba217997.js">
   </head>
   <body>
+    
     <div id="root" class = "mathjax_ignore"></div>
     
-
+    
 		<div style="display:none;" id="_data_node_id">{{node_id}}</div>
 		<div style="display:none;" id="_data_csrf">{{csrf_token}}</div>
 		<div style="display:none;" id="_data_logged_in">{{logged_in}}</div>
@@ -21,4 +21,24 @@
   </body>
 </html>
 
-  
+<script>
+  		// 向父节点发送信息。
+      window.addEventListener("message" , (e)=>{
+			if(e.data.verification != "showchildren" || e.data.son_id == undefined){
+				return
+			}
+
+			let my_height = -1
+			setInterval(()=>{ // 监听高度变化
+				if(my_height != document.body.scrollHeight){
+					my_height = document.body.scrollHeight
+					parent.postMessage({ // 向父节点发送消息
+						verification: "showchildren" , 
+						son_id: e.data.son_id , 
+						height: my_height , 
+					} , "*")
+				}
+			} , 200)
+		})
+
+</script>
