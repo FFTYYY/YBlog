@@ -11,6 +11,7 @@ export default defineConfig({
 				editor: "./templates/articlezone/article_editor_index.html" , 
 				viewer: "./templates/articlezone/article_viewer_index.html" , 
 				nodetree: "./templates/articlezone/nodetree_index.html" , 
+				pureprinter: "./templates/articlezone/pure_printer_index.html" , 
 			},
 		} , 
 		outDir: "../yblog/articlezone/" , 

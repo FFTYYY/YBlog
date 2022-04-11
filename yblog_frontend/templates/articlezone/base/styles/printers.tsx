@@ -1,5 +1,6 @@
 import { Node } from "slate"
 import React, { useEffect } from "react"
+import ReactDom from "react-dom"
 
 import {
 	Box , Link , Typography , Divider
@@ -58,9 +59,9 @@ import type {
 } from "../../../../lib"
 
 import { num2chinese } from "../utils"
-import PerfectScrollbar from "perfect-scrollbar"
 import { MathJaxInline , MathJaxBlock } from "../mathjax"
 import { Interaction , url_from_root , urls } from "../interaction"
+import { TitleWord } from "../construction/titleword"
 
 export {
 	brightwords_printer , 
@@ -509,60 +510,83 @@ var showchildren_printer = (()=>{
 	return {
         render_func: (props: PrinterRenderFunc_Props) => {
             let element = props.element as SupportNode 
-			let printer_ref = React.useRef<YPrinter>()
+
+			let [ sons , set_sons ] = React.useState([])
 
 			React.useEffect(()=>{
-				if(!(printer_ref && printer_ref.current)){
-					return 
-				}
 				(async ()=>{
-					let sons = await Interaction.get.son_ids()
-					if(sons.length < 0){
-						return 
-					}
-
-					let meta_root = group_prototype("meta-root" , {})
-
-					for(let c_id of sons){
-						let c = await Interaction.get.content(c_id)
-
-						if(get_param_val(element,"showending") == false){
-
-							// TODO 这里还没搞完
-
-							for( let [subnode , subpath] of Node.descendants(c)){
-								if(!is_styled(subnode)){
-									continue
-								}
-								if(subnode.name == "章节线"){ // 找到章节线节点
-									let subpar = Node.descendant(c , subpath.slice(0,subpath.length - 1)) as StyledNode // 找到父节点
-									let tarinx = subpath[subpath.length - 1]
-									subpar.children = [
-										...subpar.children.slice(0,tarinx) , 
-										...subpar.children.slice(tarinx+1,subpar.children.length)
-									]
-								}
-							}
-						}
-
-						meta_root.children.push(c)
-					}
-
-					let init_env = get_param_val(element , "inherit_env") ? props.context.env : {}
-					printer_ref.current.update(meta_root , init_env)
+					let son_ids = await Interaction.get.son_ids()
+					set_sons( son_ids )
 				})()
 
 			} , [ JSON.stringify(element.parameters) ])
 
-            return <GlobalInfo.Consumer>{globalinfo=>{
-				let printer = globalinfo.printer_component
-				return  <YPrinter
-					core = {printer.core}
-					renderers = {printer.renderers}
-					ref = {printer_ref}
-				/>
+            return <React.Fragment>{
+				sons.map((son_id , idx) => {
+					let SubIframe = (props: {}) => {
+						let iframe_ref = React.useRef<HTMLIFrameElement>()
+						let [ height , set_height ] = React.useState(0)
 
-			}}</GlobalInfo.Consumer>
+						let listen_to_resize = (e)=>{
+							if(e.data.verification != "showchildren" || e.data.son_id == undefined){
+								return
+							}
+							if(String(e.data.son_id) == String(son_id) && e.data.height != height){
+								set_height(e.data.height)
+							}
+						}
+
+						React.useEffect( ()=>{
+							window.addEventListener("message" , listen_to_resize)
+
+							return ()=>{
+								window.removeEventListener("message" , listen_to_resize)
+							}
+						}, [])
+
+						let iframe_height = `${height + 40}px`
+						let overflow = get_param_val(element , "scroll") ? "auto" : "hidden"
+
+						return <Box>
+							<Link href={urls.view.content(son_id)} underline="hover" >▶<TitleWord node_id={son_id}/></Link>
+							<Box sx={{
+								maxHeight: `${get_param_val(element , "max_height")}rem` , 
+								minHeight: `${get_param_val(element , "min_height")}rem` , 
+								overflow: overflow , 
+								borderLeft: "1px solid" , 
+								marginLeft: "2px" , 
+							}}>
+									<iframe 
+									ref = {iframe_ref}
+									src = {urls.view.pure_printer(son_id)} 
+									onLoad = {()=>{
+										iframe_ref.current.contentWindow.postMessage({
+											son_id: son_id , 
+											verification: "showchildren"
+										} , "*")
+									}}
+									style = {{
+										width: "100%" , 
+										border: "none" , 
+										height: iframe_height , 
+									}}
+								/>
+							</Box>
+							{(()=>{
+								if(overflow == "hidden"){
+									let inner_height = (height + 40) // 估计实际高度
+									let outer_height = Number(get_param_val(element , "max_height")) * 16 // 估计裁剪高度
+									if(outer_height > 0 && outer_height < inner_height){ // 估计有被截断
+										return <>...</>
+									}
+								}
+								return <></>
+							})()}
+						</Box>
+					}
+					return <SubIframe key = {idx} />
+				})
+			}</React.Fragment>
         } , 
         enter_effect: (element: SupportNode, env: PrinterEnv): [PrinterEnv,PrinterContext] => {    
             let ret: [PrinterEnv , PrinterContext] = [ env , {env: JSON.parse(JSON.stringify(env))} ] // 把env记到context里面去。

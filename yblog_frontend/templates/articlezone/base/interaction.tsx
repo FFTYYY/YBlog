@@ -121,6 +121,9 @@ var urls = {
             }
             return url_from_root( `view/content/${nodeid}` ) 
         }, 
+        pure_printer: (nodeid: number) => {
+            return url_from_root(`view/content/pure/${nodeid}`)
+        } , 
     }
 }
 

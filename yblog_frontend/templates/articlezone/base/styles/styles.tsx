@@ -110,7 +110,7 @@ var sectioner_style   = new SupportStyle ("小节线" , make( { label: "小节" 
 var ender_style       = new SupportStyle ("章节线" , make( { label: "章" , } ) )
 var showchildren_style = new SupportStyle ("展示子节点" , make( { 
     label: "展示子节点" , 
-    showtitle: true , 
-    showending: false , 
-    inherit_env: false , 
+    max_height: -1 , 
+    min_height: -1 , 
+    scroll: true , 
 } ) )

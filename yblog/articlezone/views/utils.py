@@ -1,7 +1,16 @@
 import json
 from django.http import HttpResponse , JsonResponse , Http404
 from django.conf import settings 
+from django.views.decorators.clickjacking import xframe_options_deny
+from django.views.decorators.clickjacking import xframe_options_sameorigin , xframe_options_exempt
 
+def allow_iframe(response_func):
+    '''这个包装器允许一个页面在iframe中出现。'''
+    if settings.DEBUG:
+        return xframe_options_exempt(response_func)
+    return xframe_options_sameorigin(response_func)
+
+        
 def node_can_view(request , node):
     '''判断一个节点是否可以输出到前端。如果已经登录，则输出true，否则根据model的secret属性而定。'''
     if settings.DEBUG:
