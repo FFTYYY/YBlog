@@ -54,6 +54,7 @@ import { withAllPlugins } from "./plugins"
 import { MathJaxContext } from "../base/mathjax"
 import { FileManageButton } from "./buttons/manage_files"
 import { HandleMathBuutton } from "./buttons/handle_math"
+import { BackendEdit , NodeStructEdit , NodeStructEditShallow } from "./buttons/edit_others"
 
 
 interface App_Props{
@@ -316,7 +317,10 @@ class App extends  React.Component<App_Props , {
 
 				/>
 				<FileManageButton />
-				<HandleMathBuutton get_editor={()=>me.get_editor()} /> 
+				<HandleMathBuutton get_editor={()=>me.get_editor()} />
+				<BackendEdit /> 
+				<NodeStructEdit /> 
+				<NodeStructEditShallow /> 
 			</FlexibleDrawer>
 
 			<MainPart sx={{
