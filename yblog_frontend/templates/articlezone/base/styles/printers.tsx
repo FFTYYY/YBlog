@@ -62,6 +62,7 @@ import { num2chinese } from "../utils"
 import { MathJaxInline , MathJaxBlock } from "../mathjax"
 import { Interaction , url_from_root , urls } from "../interaction"
 import { TitleWord } from "../construction/titleword"
+import { RightBox } from "../../article_viewer/cards"
 
 export {
 	brightwords_printer , 
@@ -548,15 +549,22 @@ var showchildren_printer = (()=>{
 						let overflow = get_param_val(element , "scroll") ? "auto" : "hidden"
 
 						return <Box>
-							<Link href={urls.view.content(son_id)} underline="hover" >▶<TitleWord node_id={son_id}/></Link>
+							<Link 
+								href = {urls.view.content(son_id)} 
+								underline = "hover" 
+								sx = {(theme)=>({
+									...theme.printer.typography.structure
+								})}
+							>▶<TitleWord node_id={son_id}/></Link>
 							<Box sx={{
 								maxHeight: `${get_param_val(element , "max_height")}rem` , 
 								minHeight: `${get_param_val(element , "min_height")}rem` , 
 								overflow: overflow , 
 								borderLeft: "1px solid" , 
 								marginLeft: "2px" , 
+								paddingLeft: "1rem" , 
 							}}>
-									<iframe 
+								<iframe 
 									ref = {iframe_ref}
 									src = {urls.view.pure_printer(son_id)} 
 									onLoad = {()=>{
