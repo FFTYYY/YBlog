@@ -99,7 +99,12 @@ var showchildren_style = new SupportStyle ("展示子节点" , make( {
     scroll: true , 
 } ) )
 
-    let to_export = [brightwords_style,followwords_style,subwords_style,alignedwords_style,dimwords_style,mathblock_style,mount_style,display_style,formatted_style,strong_style,delete_style,link_style,image_style,mathinline_style,newpara_style,subsection_style,sectioner_style,ender_style,showchildren_style]
+var insertchildren_style = new SupportStyle ("插入子节点" , make( { 
+    label: "插入子节点" , 
+    no_ender: true , 
+} ) )
+
+    let to_export = [brightwords_style,followwords_style,subwords_style,alignedwords_style,dimwords_style,mathblock_style,mount_style,display_style,formatted_style,strong_style,delete_style,link_style,image_style,mathinline_style,newpara_style,subsection_style,sectioner_style,ender_style,showchildren_style,insertchildren_style]
     let to_output = ()=>{
         let ret = {}
         for(let x of to_export){

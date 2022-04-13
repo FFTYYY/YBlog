@@ -84,11 +84,12 @@ class YPrinter extends React.Component<{
     */
     update(root: GroupNode , init_env = {}){
         this.sub_refs = {}
-        let [_ , contexts] = this.build_envs(root , init_env , {} , [])
+        let [end_env , contexts] = this.build_envs(root , init_env , {} , [])
         this.setState({
             root: root , 
             contexts: contexts , 
         })
+        return end_env
     }
 
 

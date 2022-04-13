@@ -61,7 +61,7 @@ import type {
 import { num2chinese } from "../utils"
 import { MathJaxInline , MathJaxBlock } from "../mathjax"
 // import { Interaction } from "../interaction" // 禁止使用全局变量
-import { url_from_root , urls , Interaction} from "../interaction"
+import { url_from_root , urls , Interaction, BackendData} from "../interaction"
 import { TitleWord } from "../construction/titleword"
 import { RightBox } from "../../article_viewer/cards"
 
@@ -85,6 +85,7 @@ export {
 	formatted_printer , 
 	subsection_printer , 
 	showchildren_printer , 
+	insertchildren_printer , 
 }
 
 /** 根据给定的编号和编号格式，生成编号字符串。 */
@@ -607,6 +608,135 @@ var showchildren_printer = (()=>{
 						})
 					}</React.Fragment>
 				}
+				return <I {...props}/>
+			}}</GlobalInfo.Consumer>
+        } , 
+        enter_effect: (element: SupportNode, env: PrinterEnv): [PrinterEnv,PrinterContext] => {    
+            let ret: [PrinterEnv , PrinterContext] = [ env , {env: JSON.parse(JSON.stringify(env))} ] // 把env记到context里面去。
+    
+            return ret
+        } , 
+        exit_effect: (element: SupportNode, env: PrinterEnv , context: PrinterContext):[PrinterEnv,PrinterContext] => {    
+            let ret: [PrinterEnv , PrinterContext] = [ env , context ]
+    
+    
+            return ret
+        } , 
+    }
+})()
+
+
+/** 这个组件追求这样的效果：将子文章渲染进当前节点，好像他们本来就是这个组件的子组件一样。
+ * 为了实现这一点，首先，在进入此节点时（前作用）记录一个当前环境。
+ * 然后，在渲染这个节点时，异步获取所有子节点的内容，并渲染相当于子节点个数的输出器。
+ * 在更新每个输出器的内容时，将当前环境传入，并以其吐出来的环境作为下一个输出器的输入环境（当前环境）。
+ * 这样环境可以在不同的输出器中流转，编号什么的都可以继承，好像他们是同一个输出器输出的一样。
+ * 
+ * 想必聪明的读者已经发现了问题：因为前作用不是异步的，本节点退出时的环境在前作用时就处理好了，因此在渲染时异步获取的子节点内容
+ * 不可能影响本文档里之后的其他组件的环境。换言之，如果这个组件没有被用在文档的末尾，那么在这个组件之后渲染的组件的环境都是不对的。
+ * 这个问题目前还没有解决，初步的思路是让前作用器可以是异步的，并在前作用时就计算一次环境，并获得正确的推出时环境，然后耨
+ * 在渲染时也（不得不）再计算一次环境。
+ * TODO 见上。
+ */
+var insertchildren_printer = (()=>{
+
+	/** 给定root，删掉章节线 */
+	function remove_endsectioner(root: GroupNode){
+		let cur_node = root as StyledNode
+		let fat = undefined
+		let idx_in_fat = -1
+		while(cur_node.name != "章节线"){
+			fat = cur_node
+			idx_in_fat = cur_node.children.length - 1
+			cur_node = cur_node.children[idx_in_fat] as StyledNode // 一直往最右下走
+		}
+		if(fat){
+			fat.children.pop(idx_in_fat)
+		}
+		return root
+	}
+
+	return {
+        render_func: (props: PrinterRenderFunc_Props) => {
+
+			let element = props.element as SupportNode 
+
+			return <GlobalInfo.Consumer>{globalinfo => {
+				class I extends React.Component<PrinterRenderFunc_Props , {
+					son_ids: any[]
+					init_envs: any[]
+				}>{
+					printer_refs: React.RefObject<YPrinter> []
+					constructor(props){
+						super(props)
+
+						this.state = {
+							son_ids: [] , 
+							init_envs: [] , 
+						}
+
+						this.printer_refs = []
+					}
+
+					get_ref(idx: number | string , to_assign: boolean = false){
+						if(this.printer_refs[idx] == undefined){
+							this.printer_refs[idx] = React.createRef()
+						}
+						if(to_assign){
+							return this.printer_refs[idx]
+						}
+						if(this.printer_refs[idx] == undefined || this.printer_refs[idx].current == undefined){
+							return undefined
+						}
+						return this.printer_refs[idx].current
+					}
+
+					async componentDidMount(){
+						let son_ids = await Interaction.get.son_ids(globalinfo.BackendData.node_id)
+						this.setState( {son_ids: son_ids} )
+
+						let init_envs = [ this.props.context["env"] ] // init_envs表示每个位置所用的初始env
+																	  // 第一个节点的env是context中保存的env
+						for(let idx in son_ids){
+							if(!this.get_ref(idx)){
+								continue
+							}
+							let cur_ref = this.get_ref(idx)
+							
+							let cur_root = await Interaction.get.content(son_ids[idx])
+							console.log(get_param_val(element , "no_ender"))
+							if(get_param_val(element , "no_ender")){ // 要求去掉章节线。
+								cur_root = remove_endsectioner(cur_root)
+							}
+
+
+							let cur_env = cur_ref.update(cur_root , init_envs[idx])
+							cur_env = JSON.parse(JSON.stringify(cur_env)) // deepcopy
+							init_envs.push(cur_env)
+						}
+						this.setState({init_envs: init_envs})
+					}
+
+					render(){
+						let props = this.props
+						let me = this
+
+						return <React.Fragment>{
+							me.state.son_ids.map((son_id , idx) => {
+								return <GlobalInfoProvider key = {idx} value = {{
+									BackendData: {...globalinfo.BackendData , node_id: son_id} // 老子真是天才！
+								}}>
+									<YPrinter 
+										ref = {this.get_ref(idx , true)}
+										core = {globalinfo.core}
+										renderers = {globalinfo.renderers}
+									/>
+								</GlobalInfoProvider>
+							})
+						}</React.Fragment>	
+					}
+				}
+
 				return <I {...props}/>
 			}}</GlobalInfo.Consumer>
         } , 
