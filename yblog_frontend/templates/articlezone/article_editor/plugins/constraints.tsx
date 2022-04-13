@@ -9,7 +9,9 @@ import {
     YEditor , 
     is_styled , 
     set_normalize_status , 
-    get_normalize_status , 
+    get_normalize_status, 
+    ValidParameter,
+    ValidParameterItem, 
 } from "../../../../lib"
 import type { StyledNode } from "../../../../lib"
 import { newpara_style , sectioner_style , ender_style  } from "../../base/styles/styles"
@@ -63,9 +65,10 @@ function set_style_ensure_parameters(editor: YEditor, slate: ReactEditor): React
     /** 
      * @param init 目前的参数
      * @param ref 作为参考的参数列表
+     * @param must 这些参数必须完全一致
      * @return 修复之后的参数列表以及是否进行了修复。
      */
-    let fix_parameters = (init , ref) => {
+    let fix_parameters = (init , ref , must = {}) => {
         let newp = {...init}
         let flag = false
 
@@ -97,9 +100,16 @@ function set_style_ensure_parameters(editor: YEditor, slate: ReactEditor): React
             }
         }
 
+        // 确保完全一致
+        for(let k in must){
+            if(newp[k].val != ref[k].val){
+                newp[k] = {...newp[k] , val: ref[k].val}
+                flag = true
+            }
+        }
+
         return [newp , flag]
-    }
-    
+    }    
 
     slate.normalizeNode = (entry: [Node, number[]]) => {
         let [_node , path] = entry
@@ -123,14 +133,11 @@ function set_style_ensure_parameters(editor: YEditor, slate: ReactEditor): React
                 let now_style_p = node.parameters || {} // 目前的样式参数
                 
                 let [ proxy_p , proxy_f ] = fix_parameters( now_proxy_p , proxy.get_proxy_parameters({}) )
-                let [ style_p , style_f ] = fix_parameters( now_style_p , proxy.get_real_parameters(proxy_p) )
+                let [ style_p , style_f ] = fix_parameters( now_style_p , proxy.get_real_parameters(proxy_p) , proxy.fixed_parameters )
                 
-                let after_fixed_style_p = proxy.merge_params(style_p , proxy.fixed_parameters) // 和fixed参数合并
-                let fixed_f = JSON.stringify(style_p) != JSON.stringify(after_fixed_style_p) // 是否因fixed进行了修改
-
-                if(proxy_f || style_f || fixed_f || fixed_f){ // 有改动
+                if(proxy_f || style_f){ // 有改动
                     editor.set_node( node , {
-                        parameters: after_fixed_style_p , 
+                        parameters: style_p , 
                         proxy_info: {
                             ...node.proxy_info , 
                             proxy_params: proxy_p , // 设置新的代理参数

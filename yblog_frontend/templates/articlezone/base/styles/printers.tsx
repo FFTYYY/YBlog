@@ -45,7 +45,8 @@ import {
 	YPrinter , 
 	GlobalInfoProvider, 
 	group_prototype, 
-	StyledNode, 
+	StyledNode,
+	AutoTooltip, 
 } from "../../../../lib"
 import type {
 	PrinterRenderer , 
@@ -449,6 +450,13 @@ var link_printer = (()=>{
 	return get_DefaultInlinePrinter<InlineNode>({
 		outer: (props: {element: InlineNode , context: PrinterContext, children: any}) => {
 
+			function cut_too_long(str: string , maxlen: number = 30){
+				if(str.length > maxlen){
+					str = str.slice(0,maxlen-3) + "..."
+				}
+				return str
+			}
+
 			let target = get_param_val(props.element , "target") as string
 			let type = get_param_val(props.element , "type") as string
 			let autotext = get_param_val(props.element , "autotext") as boolean
@@ -459,22 +467,22 @@ var link_printer = (()=>{
 				return <GlobalInfo.Consumer>{value => {
 					let root = value.root
 					let tar_path = idx2path( root , taridx )
+					let tar_node = idx2node( root , taridx )
 
 					let children = props.children
 					if(autotext){ // 自动决定参数
-						let tar_node = idx2node( root , taridx )
 						if(tar_node && is_styled(tar_node) && get_param_val(tar_node , "label") != undefined){
 							let label = get_param_val(tar_node , "label")
 							children = `此 ${label}`
 						}
 					}
 
-					return <Link 
+					return <AutoTooltip title={cut_too_long(Node.string(tar_node))}><Link 
 						component = "button" 
 						onClick = {e=>{value.printer_component.scroll_to(tar_path)}}
 					>
 						<Typography>{children}</Typography>
-					</Link>
+					</Link></AutoTooltip>
 				}}</GlobalInfo.Consumer>
 			}
 			if(type == "http"){// 如果是跳转到外部链接。
@@ -498,8 +506,8 @@ var link_printer = (()=>{
 				}
 
 				let children = props.children
+				let tar_node = idx2node( root , tar_idx )
 				if(autotext){ // 自动决定参数
-					let tar_node = idx2node( root , tar_idx )
 					if(tar_node && is_styled(tar_node) && get_param_val(tar_node , "label") != undefined){
 						let label = get_param_val(tar_node , "label")
 						children = `此 ${label}`
@@ -507,7 +515,9 @@ var link_printer = (()=>{
 				}
 
 				// TODO 加上编号。
-				return <Link href={urls.view.content(tar_page , {linkto: tar_idx})}>{children}</Link>
+				return <AutoTooltip title={cut_too_long(Node.string(tar_node))}>
+					<Link href={urls.view.content(tar_page , {linkto: tar_idx})}>{children}</Link>
+				</AutoTooltip>
 			}
 
 
