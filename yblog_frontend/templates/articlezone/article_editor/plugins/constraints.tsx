@@ -68,6 +68,7 @@ function set_style_ensure_parameters(editor: YEditor, slate: ReactEditor): React
     let fix_parameters = (init , ref) => {
         let newp = {...init}
         let flag = false
+
         // 确保参数的项目一致。
         for(let k in ref){
             if(newp[k] == undefined){ // 有不一样的参数
@@ -123,10 +124,13 @@ function set_style_ensure_parameters(editor: YEditor, slate: ReactEditor): React
                 
                 let [ proxy_p , proxy_f ] = fix_parameters( now_proxy_p , proxy.get_proxy_parameters({}) )
                 let [ style_p , style_f ] = fix_parameters( now_style_p , proxy.get_real_parameters(proxy_p) )
+                
+                let after_fixed_style_p = proxy.merge_params(style_p , proxy.fixed_parameters) // 和fixed参数合并
+                let fixed_f = JSON.stringify(style_p) != JSON.stringify(after_fixed_style_p) // 是否因fixed进行了修改
 
-                if(proxy_f || style_f){ // 有改动
+                if(proxy_f || style_f || fixed_f || fixed_f){ // 有改动
                     editor.set_node( node , {
-                        parameters: style_p , 
+                        parameters: after_fixed_style_p , 
                         proxy_info: {
                             ...node.proxy_info , 
                             proxy_params: proxy_p , // 设置新的代理参数

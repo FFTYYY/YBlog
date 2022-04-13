@@ -50,36 +50,36 @@ class Proxy{
         this.default_parameters = default_parameters
     }
 
+    merge_params(params_a: any,params_b: any , choices_b: boolean = true){
+        let ret = JSON.parse(JSON.stringify(params_a))
+        for(let k in params_b){
+            if(ret[k] == undefined){
+                ret[k] = params_b[k]
+            }
+            if(params_b[k].val != undefined && params_b[k].val != ret[k].val){ // 更新值
+                ret[k].val = params_b[k].val
+            }
+            if(params_b[k].type != undefined && params_b[k].type != ret[k].type){ // 更新类型
+                ret[k].type = params_b[k].type
+            }
+            if(ret[k].type == "choice"){ // 对于选项，要特殊对待。
+                if(params_b[k].choices != undefined && JSON.stringify(params_b[k].choices) != JSON.stringify(ret[k].choices)){
+                    if(choices_b){ // 以b的choices为准。
+                        ret[k].choices = params_b[k].choices
+                    }
+                }
+            }
+        }
+        return ret
+    }
+
     /** 给定一个真实的参数列表，返回一个代理的参数列表。 
      * @param params 给出的真实参数列表。
     */
     get_proxy_parameters(params: ValidParameter){
-        let merge = (a: any,b: any , choices_b: boolean) => {
-            let ret = {...a}
-            for(let k in b){
-                if(ret[k] == undefined){
-                    ret[k] = b[k]
-                }
-                if(b[k].val != undefined && b[k].val != ret[k].val){ // 更新值
-                    ret[k].val = b[k].val
-                }
-                if(b[k].type != undefined && b[k].type != ret[k].type){ // 更新类型
-                    ret[k].type = b[k].type
-                }
-                if(ret[k].type == "choice"){ // 对于选项，要特殊对待。
-                    if(b[k].choices != undefined && JSON.stringify(b[k].choices) != JSON.stringify(ret[k].choices)){
-                        if(choices_b){ // 以b的choices为准。
-                            ret[k].choices = b[k].choices
-                        }
-                    }
-                }
-            }
-            return ret
-        }
-
         
-        let ref = merge(this.target_style.parameter_prototype , this.default_parameters , true) // 默认参数是选项的权威
-        ref = merge(ref , params , false) // 已经给出的参数不是选项的权威。
+        let ref = this.merge_params(this.target_style.parameter_prototype , this.default_parameters , true) // 默认参数是选项的权威
+        ref = this.merge_params(ref , params , false) // 已经给出的参数不是选项的权威。
 
         let ret = {}
         for(let k in ref){
@@ -110,7 +110,7 @@ class Proxy{
                     }
                 }
                 else{
-                    ret[k] = v
+                    ret[k] = params[k] ? {...params[k] , ...v} : v // 优先用params来填充默认值。
                 }
             }
             else{
@@ -118,8 +118,8 @@ class Proxy{
                     if(this.default_parameters[k] == undefined){ // 使用原始的默认值
                         ret[k] = ref[k] 
                     }
-                    else{ // 使用代理的默认值。
-                        ret[k] = this.default_parameters[k]
+                    else{ // 使用代理的默认值。优先使用本来的默认值来填充默认值。
+                        ret[k] = ref[k] ? {...ref[k] , ...this.default_parameters[k]} : this.default_parameters[k]
                     }
                 }
                 else{ // 使用给出的值。

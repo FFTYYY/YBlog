@@ -242,10 +242,10 @@ var subwords_printer = (()=>{
 			return <React.Fragment>
 				<AutoStack force_direction="column">
 					<AutoStack>
-						<PrinterOldLevelBox> {/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
+						<PrinterOldLevelBox sx={{position: "relative"}}> {/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
 							{title_content ? <PrinterParagraphBox>{title_content}</PrinterParagraphBox> : <></>}
 						</PrinterOldLevelBox>
-					<Box>{props.children}</Box>
+						<Box>{props.children}</Box>
 					</AutoStack>
 					{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
 				</AutoStack>

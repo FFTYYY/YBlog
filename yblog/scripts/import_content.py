@@ -1,9 +1,11 @@
-import os, django
+from pathlib import Path
+import os , sys
+my_path = Path( os.path.dirname(os.path.abspath(__file__)) )
+
+import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "yblog.settings")
 django.setup()
 import json
-import os
-from pathlib import Path
 from articlezone.models.models import Node
 
 def parse(father_id , nodeinfo):
@@ -39,7 +41,7 @@ def parse(father_id , nodeinfo):
     print (node.id)
 
 def run():
-    my_path = Path( os.path.dirname(os.path.abspath(__file__)) )
+
 
     with open(my_path / "./export.json" , "r" , encoding = "utf-8") as fil:
         root = json.load(fil)
