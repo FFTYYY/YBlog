@@ -164,6 +164,7 @@ const PrinterBackgroundPaper = (props: BoxProps) => <Box
 			width: "100%" , 
 			overflowY: "auto" , 
 			wordWrap: "break-word" , 
+            paddingX: "2rem" , 
         }) , 
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}

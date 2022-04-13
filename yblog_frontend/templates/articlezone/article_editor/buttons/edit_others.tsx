@@ -19,13 +19,14 @@ import {
     FollowTheSigns as FollowTheSignsIcon , 
     AirlineSeatFlatAngled as AirlineSeatFlatAngledIcon  , 
     AirlineSeatFlatAngledOutlined as AirlineSeatFlatAngledOutlinedIcon  , 
+    AccessibleForward as AccessibleForwardIcon  , 
 } 
 from "@mui/icons-material"
 
 import { mathblock_style , mathinline_style } from "../../base/styles/styles"
 import React from "react"
 
-export { BackendEdit , NodeStructEdit , NodeStructEditShallow }
+export { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView }
 
 function ButtonLikeLink(props: {title: string , href: string , Icon: any}){
     let Icon = props.Icon
@@ -90,6 +91,15 @@ function NodeStructEditShallow(props: {}){
         title = "（浅）编辑子节点结构"
         href = {url_from_root(`/edit/shallow_structure/${BackendData.node_id}`)}
         Icon = {AirlineSeatFlatAngledOutlinedIcon}
+    />
+}
+
+function NodeView(props: {}){
+
+    return <ButtonLikeLink 
+        title = "预览页面（有什么必要吗）"
+        href = {url_from_root(`/view/content/${BackendData.node_id}`)}
+        Icon = {AccessibleForwardIcon }
     />
 }
 

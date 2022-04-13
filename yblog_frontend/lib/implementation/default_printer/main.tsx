@@ -12,7 +12,8 @@ import { object_foreach , merge_object } from "../utils"
 
 import { 
 	Paper , 
-	Divider ,  
+	Divider , 
+	Box ,  
 } from "@mui/material"
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 import type { ThemeOptions } from "@mui/material/styles"
@@ -74,11 +75,11 @@ class DefaultPrinter extends React.Component <{
 		}
 
 		return <ThemeProvider theme={createTheme(theme)}><PrinterBackgroundPaper>
-            <YPrinter
+			<YPrinter
 				core = {this.core}
 				renderers = {this.renderers}
 				ref = {this.printer_ref}
-		    />
+			/>
         </PrinterBackgroundPaper></ThemeProvider>
 	}
 }
