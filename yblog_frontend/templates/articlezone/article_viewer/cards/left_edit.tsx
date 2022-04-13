@@ -2,7 +2,8 @@ import React from "react"
 
 import {
     Tabs , Tab , Button , IconButton , 
-    Box , Divider , Typography , Link
+    Box , Divider , Typography , Link , 
+    LinkProps
 } from "@mui/material"
 import {
     TabContext  , 
@@ -19,6 +20,14 @@ import { Interaction , BackendData , url_from_root } from "../../base/interactio
 
 export { LeftEdit }
 
+let MyLink = (props: LinkProps)=>{
+    return <Link {...props} sx={(theme)=>({
+        marginTop: "0.2rem",
+        marginBottom: "0.3rem",
+        ...theme.printer.typography.body , 
+    })}></Link>
+}
+
 class LeftEdit extends React.Component<{} , {}>{
 
     constructor(props){
@@ -26,10 +35,11 @@ class LeftEdit extends React.Component<{} , {}>{
     }
     render(){
         return <Box><AutoStack force_direction = "column">
-            <Link underline = "hover" href = {url_from_root(`/edit/content/${BackendData.node_id}`)}>编辑内容</Link>
-            <Link underline = "hover" href = {url_from_root(`/edit/structure/${BackendData.node_id}`)}>编辑子节点树</Link>
-            <Link underline = "hover" href = {url_from_root(`/edit/shallow_structure/${BackendData.node_id}`)}>（浅）编辑子节点树</Link>
-            <Link underline = "hover" href = {url_from_root(`/admin/articlezone/node/add/?father_id=${BackendData.node_id}`)}>新建子节点</Link>
+            <MyLink underline="hover" href={url_from_root(`/edit/content/${BackendData.node_id}`)}>编辑内容</MyLink>
+            <MyLink underline="hover" href={url_from_root(`/edit/structure/${BackendData.node_id}`)}>编辑子节点树</MyLink>
+            <MyLink underline="hover" href={url_from_root(`/edit/shallow_structure/${BackendData.node_id}`)}>（浅）编辑子节点树</MyLink>
+            <MyLink underline="hover" href={url_from_root(`/admin/articlezone/node/add/?father_id=${BackendData.node_id}`)}>新建子节点</MyLink>
+            <MyLink underline="hover" href={url_from_root(`/admin/articlezone/node/${BackendData.node_id}/change/`)}>进入后台</MyLink>
         </AutoStack></Box>
     }
 }

@@ -56,7 +56,7 @@ import { withAllPlugins } from "./plugins"
 import { MathJaxContext } from "../base/mathjax"
 import { FileManageButton } from "./buttons/manage_files"
 import { HandleMathBuutton } from "./buttons/handle_math"
-import { BackendEdit , NodeStructEdit , NodeStructEditShallow } from "./buttons/edit_others"
+import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./buttons/edit_others"
 
 
 interface App_Props{
@@ -323,6 +323,7 @@ class App extends  React.Component<App_Props , {
 				<BackendEdit /> 
 				<NodeStructEdit /> 
 				<NodeStructEditShallow /> 
+				<NodeView />
 			</FlexibleDrawer>
 
 			<MainPart sx={{
