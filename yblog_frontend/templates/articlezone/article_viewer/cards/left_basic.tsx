@@ -169,7 +169,7 @@ class BasicInformation extends React.Component<{
     }
 
     async componentDidMount() {
-        let time_info = await Interaction.get.create_time()
+        let time_info = await Interaction.get.create_time(BackendData.node_id)
         this.setState({
             create_time: time_info.create_time , 
             modify_time: time_info.modify_time , 

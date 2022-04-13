@@ -60,7 +60,8 @@ import type {
 
 import { num2chinese } from "../utils"
 import { MathJaxInline , MathJaxBlock } from "../mathjax"
-import { Interaction , url_from_root , urls } from "../interaction"
+// import { Interaction } from "../interaction" // 禁止使用全局变量
+import { url_from_root , urls , Interaction} from "../interaction"
 import { TitleWord } from "../construction/titleword"
 import { RightBox } from "../../article_viewer/cards"
 
@@ -404,33 +405,39 @@ var mathblock_printer = (()=>{
 var image_printer = (()=>{
 	return get_DefaultInlinePrinter<SupportNode>({
 		outer: (props: {element: SupportNode , context: PrinterContext, children: any}) => {
-			let type = get_param_val(props.element , "type") as string
-			let target = get_param_val(props.element , "target") as string
-			let [ url , set_url ] = React.useState("")
-
-			React.useEffect(()=>{(async ()=>{
-				if(type == "internal"){
-					let resource_info = await Interaction.get.resource_info(target)
-					if(!resource_info.url){
-						set_url("")
-					}
-					else{
-						set_url(url_from_root(resource_info.url))
-					}
-					// 其实直接`set_url(resource_info.url)`也行，套一层`url_from_root`主要是为了调试方便。
-				}
-				else{
-					set_url(target)
-				}
-			})()} , [props.element])
+			return <GlobalInfo.Consumer>{globalinfo => {
+				function I(props: {element: SupportNode , context: PrinterContext, children: any}){
+					let type = get_param_val(props.element , "type") as string
+					let target = get_param_val(props.element , "target") as string
+					let [ url , set_url ] = React.useState("")
+		
+					React.useEffect(()=>{(async ()=>{
+						if(type == "internal"){
+							let resource_info = await Interaction.get.resource_info(target , globalinfo.BackendData.node_id)
+							if(!resource_info.url){
+								set_url("")
+							}
+							else{
+								set_url(url_from_root(resource_info.url))
+							}
+							// 其实直接`set_url(resource_info.url)`也行，套一层`url_from_root`主要是为了调试方便。
+						}
+						else{
+							set_url(target)
+						}
+					})()} , [props.element])
+			
+					let p_width = get_param_val(props.element , "width")
+					let p_height = get_param_val(props.element , "height")
+		
+					return <img src = {url || undefined} style = {{
+						width: p_width > 0 ? `${p_width}rem` : "100%", 
+						height: p_height > 0 ? `${p_height}rem` : "100%" , 
+					}}/>	
 	
-			let p_width = get_param_val(props.element , "width")
-			let p_height = get_param_val(props.element , "height")
-
-			return <img src = {url || undefined} style = {{
-				width: p_width > 0 ? `${p_width}rem` : "100%", 
-				height: p_height > 0 ? `${p_height}rem` : "100%" , 
-			}}/>
+				}
+				return <I {...props} />
+			}}</GlobalInfo.Consumer>
 		} , 
 	})
 })()
@@ -510,91 +517,98 @@ var link_printer = (()=>{
 var showchildren_printer = (()=>{
 	return {
         render_func: (props: PrinterRenderFunc_Props) => {
-            let element = props.element as SupportNode 
 
-			let [ sons , set_sons ] = React.useState([])
+			return <GlobalInfo.Consumer>{globalinfo => {
 
-			React.useEffect(()=>{
-				(async ()=>{
-					let son_ids = await Interaction.get.son_ids()
-					set_sons( son_ids )
-				})()
+				function I(props: PrinterRenderFunc_Props){
+					let element = props.element as SupportNode 
 
-			} , [ JSON.stringify(element.parameters) ])
-
-            return <React.Fragment>{
-				sons.map((son_id , idx) => {
-					let SubIframe = (props: {}) => {
-						let iframe_ref = React.useRef<HTMLIFrameElement>()
-						let [ height , set_height ] = React.useState(0)
-
-						let listen_to_resize = (e)=>{
-							if(e.data.verification != "showchildren" || e.data.son_id == undefined){
-								return
-							}
-							if(String(e.data.son_id) == String(son_id) && e.data.height != height){
-								set_height(e.data.height)
-							}
-						}
-
-						React.useEffect( ()=>{
-							window.addEventListener("message" , listen_to_resize)
-
-							return ()=>{
-								window.removeEventListener("message" , listen_to_resize)
-							}
-						}, [])
-
-						let iframe_height = `${height + 40}px`
-						let overflow = get_param_val(element , "scroll") ? "auto" : "hidden"
-
-						return <Box>
-							<Link 
-								href = {urls.view.content(son_id)} 
-								underline = "hover" 
-								sx = {(theme)=>({
-									...theme.printer.typography.structure
-								})}
-							>▶<TitleWord node_id={son_id}/></Link>
-							<Box sx={{
-								maxHeight: `${get_param_val(element , "max_height")}rem` , 
-								minHeight: `${get_param_val(element , "min_height")}rem` , 
-								overflow: overflow , 
-								borderLeft: "1px solid" , 
-								marginLeft: "2px" , 
-								paddingLeft: "1rem" , 
-							}}>
-								<iframe 
-									ref = {iframe_ref}
-									src = {urls.view.pure_printer(son_id)} 
-									onLoad = {()=>{
-										iframe_ref.current.contentWindow.postMessage({
-											son_id: son_id , 
-											verification: "showchildren"
-										} , "*")
-									}}
-									style = {{
-										width: "100%" , 
-										border: "none" , 
-										height: iframe_height , 
-									}}
-								/>
-							</Box>
-							{(()=>{
-								if(overflow == "hidden"){
-									let inner_height = (height + 40) // 估计实际高度
-									let outer_height = Number(get_param_val(element , "max_height")) * 16 // 估计裁剪高度
-									if(outer_height > 0 && outer_height < inner_height){ // 估计有被截断
-										return <>...</>
+					let [ sons , set_sons ] = React.useState([])
+		
+					React.useEffect(()=>{
+						(async ()=>{
+							let son_ids = await Interaction.get.son_ids(globalinfo.BackendData.node_id)
+							set_sons( son_ids )
+						})()
+		
+					} , [ JSON.stringify(element.parameters) ])
+		
+					return <React.Fragment>{
+						sons.map((son_id , idx) => {
+							let SubIframe = (props: {}) => {
+								let iframe_ref = React.useRef<HTMLIFrameElement>()
+								let [ height , set_height ] = React.useState(0)
+		
+								let listen_to_resize = (e)=>{
+									if(e.data.verification != "showchildren" || e.data.son_id == undefined){
+										return
+									}
+									if(String(e.data.son_id) == String(son_id) && e.data.height != height){
+										set_height(e.data.height)
 									}
 								}
-								return <></>
-							})()}
-						</Box>
-					}
-					return <SubIframe key = {idx} />
-				})
-			}</React.Fragment>
+		
+								React.useEffect( ()=>{
+									window.addEventListener("message" , listen_to_resize)
+		
+									return ()=>{
+										window.removeEventListener("message" , listen_to_resize)
+									}
+								}, [])
+		
+								let iframe_height = `${height + 40}px`
+								let overflow = get_param_val(element , "scroll") ? "auto" : "hidden"
+		
+								return <Box>
+									<Link 
+										href = {urls.view.content(son_id)} 
+										underline = "hover" 
+										sx = {(theme)=>({
+											...theme.printer.typography.structure
+										})}
+									>▶<TitleWord node_id={son_id}/></Link>
+									<Box sx={{
+										maxHeight: `${get_param_val(element , "max_height")}rem` , 
+										minHeight: `${get_param_val(element , "min_height")}rem` , 
+										overflow: overflow , 
+										borderLeft: "1px solid" , 
+										marginLeft: "2px" , 
+										paddingLeft: "1rem" , 
+									}}>
+										<iframe 
+											ref = {iframe_ref}
+											src = {urls.view.pure_printer(son_id)} 
+											onLoad = {()=>{
+												iframe_ref.current.contentWindow.postMessage({
+													son_id: son_id , 
+													verification: "showchildren"
+												} , "*")
+											}}
+											style = {{
+												width: "100%" , 
+												border: "none" , 
+												height: iframe_height , 
+											}}
+										/>
+									</Box>
+									{(()=>{
+										if(overflow == "hidden"){
+											let inner_height = (height + 40) // 估计实际高度
+											let outer_height = Number(get_param_val(element , "max_height")) * 16 // 估计裁剪高度
+											if(outer_height > 0 && outer_height < inner_height){ // 估计有被截断
+												return <>...</>
+											}
+										}
+										return <></>
+									})()}
+								</Box>
+							}
+							return <SubIframe key = {idx} />
+						})
+					}</React.Fragment>
+				}
+				return <I {...props}/>
+			}}</GlobalInfo.Consumer>
         } , 
         enter_effect: (element: SupportNode, env: PrinterEnv): [PrinterEnv,PrinterContext] => {    
             let ret: [PrinterEnv , PrinterContext] = [ env , {env: JSON.parse(JSON.stringify(env))} ] // 把env记到context里面去。
