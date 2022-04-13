@@ -17,7 +17,7 @@ import {
     EditorUnselecableBox , 
     get_param_val , 
 } from "../../../../lib"
-import { Interaction , url_from_root } from "../interaction"
+import { BackendData, Interaction , url_from_root } from "../interaction"
 
 
 export { 
@@ -88,7 +88,7 @@ var image_editor = get_DefaultDisplayerEditor({
 
         React.useEffect(()=>{(async ()=>{
             if(type == "internal"){
-                let resource_info = await Interaction.get.resource_info(target)
+                let resource_info = await Interaction.get.resource_info(target , BackendData.node_id)
                 if(!resource_info.url){
                     set_url("")
                 }

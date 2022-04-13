@@ -36,6 +36,8 @@ import {
 	is_styled,
 	has_children, 
 	set_normalize_status , 
+
+	GlobalInfoProvider , 
 } from "../../../lib"
 
 import { ReactEditor } from "slate-react"
@@ -129,7 +131,7 @@ class App extends  React.Component<App_Props , {
 			support: {} ,  
 			abstract: {} , 
 		})
-		let node_concepts = await Interaction.get.concept() // 从后端获得所有概念。
+		let node_concepts = await Interaction.get.concept(BackendData.node_id) // 从后端获得所有概念。
 		for(let [name , meta_name , fixed_params , default_params ] of node_concepts){
 
 			let proxy = make_proxy(meta_name , name , fixed_params , default_params)
@@ -138,7 +140,7 @@ class App extends  React.Component<App_Props , {
 		this.setState({ editor_proxies: proxies })
 
 		/** 初始化编辑器初始值。 */
-		var root = await Interaction.get.content()
+		var root = await Interaction.get.content(BackendData.node_id)
 		root = root || group_prototype("root" , {
 			title: {val: "" , type: "string"}
 		})
@@ -190,14 +192,14 @@ class App extends  React.Component<App_Props , {
 		let editor = this.get_editor()
 		if(editor){
 			var data = {"content": editor.get_root()}
-			return await Interaction.post.content(data)
+			return await Interaction.post.content(data , BackendData.node_id)
 		}
 		return false
 	}
 	async post_file(files: any){
 		var form_data = new FormData()
 		form_data.append("file" , files[0])
-		return await Interaction.post.file(form_data)
+		return await Interaction.post.file(form_data , BackendData.node_id)
 	}
 
 	update_printer(){ // 将printer显示的信息替换为最新的正在编辑的版本。
@@ -283,14 +285,14 @@ class App extends  React.Component<App_Props , {
 				top: "0" , 
 				height: "100%" , 
 			}}>
-				<DefaultPrinter
-					ref = {this.printer_ref}
-
-					core = {this.core}
-					renderers = {this.printer_renderers}
-				
-					theme = {my_theme}
-				/>
+				<GlobalInfoProvider value={{BackendData: BackendData.node_id}}>
+					<DefaultPrinter
+						ref = {this.printer_ref}
+						core = {this.core}
+						renderers = {this.printer_renderers}
+						theme = {my_theme}
+					/>
+				</GlobalInfoProvider>
 			</Box>
 		</Box>
 	}

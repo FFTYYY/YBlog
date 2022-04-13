@@ -75,7 +75,7 @@ class App extends  React.Component<{} , {
 	async componentDidMount(){
 
 		//获得内容
-		var root = await Interaction.get.content()
+		var root = await Interaction.get.content(BackendData.node_id)
 		this.setState({root: root})
 		
 		while(!this.get_printer());

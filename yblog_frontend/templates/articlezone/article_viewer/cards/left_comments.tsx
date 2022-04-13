@@ -7,7 +7,7 @@ import {
     Box , Divider , Typography , Link , TextField , Chip
 } from "@mui/material"
 import { PostSnackbar } from "../../base/construction/snackbar"
-import { Interaction } from "../../base/interaction"
+import { Interaction , BackendData } from "../../base/interaction"
 
 export { LeftComments }
 
@@ -25,7 +25,7 @@ class Comments extends React.Component<{} , {
 
     /** 刷新评论，重新从后台获取数据并更新状态。 */
     async update(){
-        let comments = await Interaction.get.comments() as [string,string][]
+        let comments = await Interaction.get.comments(BackendData.node_id) as [string,string][]
         comments = comments.reverse()
         this.setState({comments: comments})
     }
@@ -89,7 +89,7 @@ class NewComments extends React.Component<{
             status = await Interaction.post.comments({
                 content: me.state.content , 
                 name: me.state.name , 
-            })
+            } , BackendData.node_id)
         }
         me.setState({status: status , snakerbar_open: true})
 

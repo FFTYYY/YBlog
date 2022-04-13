@@ -19,7 +19,7 @@ import {
 	AutoIconButton , 
 } 
 from "../../../../lib"
-import { Interaction } from "../../base/interaction"
+import { BackendData, Interaction } from "../../base/interaction"
 import { FlexibleItem } from "../../base/construction/framework"
 import { PostSnackbar } from "../../base/construction/snackbar"
 
@@ -193,7 +193,7 @@ class FileManager extends React.Component<{} , {
 	}
 
 	async effect(){
-		let resources = ( await Interaction.get.resources() ) as [ id: number , name: string , url: string ][] 
+		let resources = ( await Interaction.get.resources(BackendData.node_id) ) as [ id: number , name: string , url: string ][] 
 		this.setState({resources: resources})
 		this.forceUpdate()
 	}

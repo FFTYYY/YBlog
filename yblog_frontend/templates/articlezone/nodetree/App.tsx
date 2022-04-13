@@ -61,11 +61,11 @@ class App extends React.Component<{},App_State>{
     async componentDidMount(){
         let raw_nodetree = []
         if(BackendData.shallow){
-            raw_nodetree = await Interaction.get.shallowtree() as raw_info_item[]
+            raw_nodetree = await Interaction.get.shallowtree(BackendData.node_id) as raw_info_item[]
         }
         else{
 
-            raw_nodetree = await Interaction.get.nodetree() as raw_info_item[]
+            raw_nodetree = await Interaction.get.nodetree(BackendData.node_id) as raw_info_item[]
         }
         this.setState( {
             // 注意将自己的`id`作为根节点`id`传入。
@@ -274,7 +274,7 @@ class App extends React.Component<{},App_State>{
         let status = true
         let bs = 50
         for(let i = 0;i < to_update.length;i += bs){
-            status = status && (await Interaction.post.nodetree( {"nodetree": to_update.slice(i,i+bs)} ))
+            status = status && (await Interaction.post.nodetree( {"nodetree": to_update.slice(i,i+bs)} , BackendData.node_id))
             console.log(`${i} / ${to_update.length}`) // TODO 搞成好看点的提示信息。
         }
 

@@ -131,14 +131,14 @@ var urls = {
 var Interaction = {
     /** 所有从后端读取数据的函数。 */
     get: {
-        content     :(nodeid?: number) => get_node_information(urls.get.content     , "content"  , nodeid), 
-        nodetree    :(nodeid?: number) => get_node_information(urls.get.nodetree    , "data"     , nodeid), 
-        shallowtree :(nodeid?: number) => get_node_information(urls.get.shallowtree , "data"     , nodeid), 
-        concept     :(nodeid?: number) => get_node_information(urls.get.concept     , "concepts" , nodeid), 
-        create_time :(nodeid?: number) => get_node_information(urls.get.create_time , undefined  , nodeid), 
-        comments    :(nodeid?: number) => get_node_information(urls.get.comments    , "comments" , nodeid), 
-        resources   :(nodeid?: number) => get_node_information(urls.get.resources   , "resources", nodeid), 
-        resource_info: async (resouce_name: string, nodeid?: number) => {
+        content     :(nodeid: number) => get_node_information(urls.get.content     , "content"  , nodeid), 
+        nodetree    :(nodeid: number) => get_node_information(urls.get.nodetree    , "data"     , nodeid), 
+        shallowtree :(nodeid: number) => get_node_information(urls.get.shallowtree , "data"     , nodeid), 
+        concept     :(nodeid: number) => get_node_information(urls.get.concept     , "concepts" , nodeid), 
+        create_time :(nodeid: number) => get_node_information(urls.get.create_time , undefined  , nodeid), 
+        comments    :(nodeid: number) => get_node_information(urls.get.comments    , "comments" , nodeid), 
+        resources   :(nodeid: number) => get_node_information(urls.get.resources   , "resources", nodeid), 
+        resource_info: async (resouce_name: string, nodeid: number) => {
             if(nodeid == undefined){
                 nodeid = BackendData.node_id
             }
@@ -149,16 +149,16 @@ var Interaction = {
             })).data
         } , 
         
-        son_ids     :(nodeid?: number) => get_node_information(urls.get.son_ids    , "son_ids" , nodeid), 
-        father_id   :(nodeid?: number) => get_node_information(urls.get.father_id  , "father_id", nodeid), 
+        son_ids     :(nodeid: number) => get_node_information(urls.get.son_ids    , "son_ids" , nodeid), 
+        father_id   :(nodeid: number) => get_node_information(urls.get.father_id  , "father_id", nodeid), 
     } , 
 
     /** 所有向后端发送数据的函数。 */
     post: {
-        content     :(data: any, nodeid?: number) => post_node_information(urls.post.content  , data , nodeid) , 
-        nodetree    :(data: any, nodeid?: number) => post_node_information(urls.post.nodetree , data , nodeid) , 
-        comments    :(data: any, nodeid?: number) => post_node_information(urls.post.comments , data , nodeid) , 
-        file        :(data: any, nodeid?: number) => post_node_information(urls.post.file     , data , nodeid , {
+        content     :(data: any, nodeid: number) => post_node_information(urls.post.content  , data , nodeid) , 
+        nodetree    :(data: any, nodeid: number) => post_node_information(urls.post.nodetree , data , nodeid) , 
+        comments    :(data: any, nodeid: number) => post_node_information(urls.post.comments , data , nodeid) , 
+        file        :(data: any, nodeid: number) => post_node_information(urls.post.file     , data , nodeid , {
             headers: {
                 "Content-Type": "multipart/form-data"
             } ,
