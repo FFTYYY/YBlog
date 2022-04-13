@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
+    "make_concept": "python .\\scripts\\make_concepts.py" , 
     "clean_1": "rmdir ..\\yblog\\articlezone\\templates\\articlezone /s /q && mkdir ..\\yblog\\articlezone\\templates\\articlezone",
     "clean_2": "rmdir ..\\yblog\\articlezone\\static /s /q && mkdir ..\\yblog\\articlezone\\static",
     "clean": "npm run clean_1 && npm run clean_2",
-    "build": "npm run clean && tsc && vite build",
+    "build": "npm run clean && npm run make_concept && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

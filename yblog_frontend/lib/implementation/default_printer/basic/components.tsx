@@ -133,7 +133,8 @@ const PrinterNewLevelBox = (props: BoxProps) => <Box
     {...props}
     sx = {[
         {
-            marginLeft: (theme) => theme.printer.margins.level , 
+            left: (theme) => theme.printer.margins.level , 
+            position: "relative" , 
         } ,
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}
@@ -149,6 +150,7 @@ const PrinterOldLevelBox = (props: BoxProps) => <Box
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}
 />
+
 
 /** 一个用来包裹一个部分的组件。 */
 const PrinterBackgroundPaper = (props: BoxProps) => <Box 
