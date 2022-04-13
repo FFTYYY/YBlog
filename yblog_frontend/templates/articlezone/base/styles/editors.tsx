@@ -40,6 +40,7 @@ export {
     formatted_editor , 
     subsection_editor , 
     showchildren_editor , 
+    insertchildren_editor , 
 } 
 
 var paragraph_editor = DefaultParagraphEditor
@@ -124,3 +125,7 @@ var showchildren_editor = get_DefaultSupportEditor_with_RightBar({
     get_label: (n)=>get_param_val(n,"label") as string, 
 })
 
+
+var insertchildren_editor = get_DefaultSupportEditor_with_RightBar({
+    get_label: (n)=>get_param_val(n,"label") as string, 
+})

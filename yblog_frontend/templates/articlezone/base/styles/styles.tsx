@@ -22,6 +22,7 @@ export {
     formatted_style , 
     subsection_style , 
     showchildren_style , 
+    insertchildren_style , 
 }
 
 // js的处理器 识别不了ts标志，所以放到SPLIT前面
@@ -113,4 +114,9 @@ var showchildren_style = new SupportStyle ("展示子节点" , make( {
     max_height: -1 , 
     min_height: -1 , 
     scroll: true , 
+} ) )
+
+var insertchildren_style = new SupportStyle ("插入子节点" , make( { 
+    label: "插入子节点" , 
+    no_ender: true , 
 } ) )

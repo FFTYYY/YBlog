@@ -38,6 +38,7 @@ var style_editor_printer: {
     [S.formatted_style.name]    : [S.formatted_style    , E.formatted_editor    , O.formatted_printer] , 
     [S.subsection_style.name]   : [S.subsection_style   , E.subsection_editor   , O.subsection_printer] , 
     [S.showchildren_style.name] : [S.showchildren_style , E.showchildren_editor , O.showchildren_printer] , 
+    [S.insertchildren_style.name] : [S.insertchildren_style , E.insertchildren_editor , O.insertchildren_printer] , 
 }
 
 function withAllStyles(core:EditorCore): EditorCore{
@@ -78,6 +79,7 @@ function withNecessaryProxies(proxies: {[key in StyleType]: {[name: string]: Pro
     proxies["support"][S.sectioner_style.name] = make_proxy(S.sectioner_style.name , S.sectioner_style.name , {} , {})
     proxies["support"][S.ender_style.name] = make_proxy(S.ender_style.name , S.ender_style.name , {} , {})
     proxies["support"][S.showchildren_style.name] = make_proxy(S.showchildren_style.name , S.showchildren_style.name , {} , {})
+    proxies["support"][S.insertchildren_style.name] = make_proxy(S.insertchildren_style.name , S.insertchildren_style.name , {} , {})
     proxies["group"][S.subsection_style.name] = make_proxy(S.subsection_style.name , S.subsection_style.name , {} , {})
     return proxies
 }
