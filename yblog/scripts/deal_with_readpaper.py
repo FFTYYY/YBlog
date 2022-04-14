@@ -12,6 +12,7 @@ import copy
 import re
 import random 
 import pdb
+import argparse
 
 def make_sectioner(title):
     return {
@@ -185,7 +186,14 @@ def search(root):
     
 
 def run():
-    tar_id = 2379
+    par = argparse.ArgumentParser()
+    par.add_argument("--nodeid" , type = int , default = -1)
+    par = par.parse_args()
+    
+    tar_id = par.nodeid
+    if tar_id <= 0:
+        print ("bad tar_id")
+        return 
 
     tar_node = Node.objects.get(id = tar_id)
     root = json.loads(tar_node.content)
