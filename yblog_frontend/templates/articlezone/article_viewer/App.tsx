@@ -34,6 +34,7 @@ import {
 	group_prototype ,
 	PrinterStructureBoxText , 
 	GroupNode , 
+	GlobalInfoProvider , 
 	get_param_val , 
 } from "../../../lib"
 import { withAllStyles } from "../base/styles"
@@ -130,15 +131,18 @@ class App extends  React.Component<{} , {
 					top: "5%" , 
 					height: "94%" , 
 				}}>
-					<DefaultPrinter
+					<GlobalInfoProvider value={{BackendData: BackendData.node_id}}>
+						<DefaultPrinter
 
-						ref = {me.printer_ref}
+							ref = {me.printer_ref}
 
-						core = {this.core}
-						renderers = {this.printer_renderers}
+							core = {this.core}
+							renderers = {this.printer_renderers}
 
-						theme = {my_theme}
-					/>
+							theme = {my_theme}
+						/>
+					</GlobalInfoProvider>
+
 				</Box>
 			</Box>
 			

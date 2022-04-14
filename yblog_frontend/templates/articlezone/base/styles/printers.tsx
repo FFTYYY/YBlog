@@ -714,7 +714,6 @@ var insertchildren_printer = (()=>{
 							let cur_ref = this.get_ref(idx)
 							
 							let cur_root = await Interaction.get.content(son_ids[idx])
-							console.log(get_param_val(element , "no_ender"))
 							if(get_param_val(element , "no_ender")){ // 要求去掉章节线。
 								cur_root = remove_endsectioner(cur_root)
 							}
