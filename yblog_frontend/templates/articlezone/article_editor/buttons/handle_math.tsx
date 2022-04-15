@@ -1,8 +1,9 @@
 /** 这个组件将$$等数学符号转换为节点。 */
 import { 
-	Snackbar , SnackbarOrigin , Button , IconButton , Drawer , Paper, Typography, Divider, Box, TextField , Popover , InputAdornment
+	Snackbar , SnackbarOrigin , Button , IconButton , Drawer , Paper, Typography, Divider, Box, TextField , Popover , InputAdornment , 
+    LinearProgress  , 
 } from "@mui/material"
-import { Node } from "slate"
+import { Node , Point , Transforms } from "slate"
 import { FlexibleItem } from "../../base/construction/framework"
 import {
 	YEditor , 
@@ -28,90 +29,234 @@ import React from "react"
 
 export { HandleMathBuutton }
 
-function HandleMath(editor: YEditor, inlinestyle_name: string, blockstyle_name: string){
+async function sleep(time: number){
+    return new Promise(resolve => setTimeout(resolve, time))
+}
 
-    function _handle(now_node: Node , now_path: number[]){
-        // console.log(now_node)
+async function HandleMath(editor: YEditor, inlinestyle_name: string, blockstyle_name: string , update_progress: ()=>void){
+
+    let now_prefer = undefined
+    let left = undefined
+    let left_point = undefined
+    let right_point = undefined
+    function _search_$(now_node: Node , now_path: number[]){
+
+        if(left_point && right_point){
+            return 
+        }
+
+        if(now_node["type"] == "group" && now_node["proxy_info"] && now_node["proxy_info"]["proxy_name"] == blockstyle_name){ // 不处理已经在块内的
+            return
+        }
+        if(now_node["type"] == "inline" && now_node["proxy_info"] && now_node["proxy_info"]["proxy_name"] == inlinestyle_name){ // 不处理已经在块内的
+            return
+        }
 
         if(has_children(now_node)){
             for(let idx in now_node.children){
                 let c = now_node.children[idx]
-                if(_handle(c , [...now_path , Number(idx)])){ // 只要修复了一处，就立刻返回。
-                    return true
-                }
+                _search_$(c , [...now_path , Number(idx)]) 
             }
             return 
         }
 
-        // XXX 可能用Transforms.collapse会比较好
         let text = now_node.text
-        let match_inline = /([^\$]|^)(\$[^\$]+?\$)([^\$]|$)/.exec(text)
-        let match_block  = /\$\$[^\$]+?\$\$/.exec(text)
-        if(match_inline){
-            let match = match_inline
-            let match_start = match.index + match[1].length // `match[1]`匹配的是开头字符
-            let match_tex = match[2] // `match[2]`匹配中间只要部分
-            let match_end = match.index + match[1].length + match_tex.length // 总之是`match_tex`结束的位置。
+        for(let i = 0;i < text.length;i++){
+            if(text[i] == "$"){
+                if(i != 0 && text[i-1] == "\\"){ // 转义
+                    continue
+                }
+                if(left == "$"){
+                    right_point = {
+                        path: now_path , 
+                        offset: i+1 ,  
+                    }
+                    return 
+                }
+                if(left == "$$"){
+                    if(i != text.length-1 && text[i+1] == "$"){
+                        right_point = {
+                            path: now_path , 
+                            offset: i+2 ,  
+                        }
+                        return
+                    }
+                    continue
+                }
+                if(left == undefined){
+                    if(i != text.length-1 && text[i+1] == "$" && now_prefer != "$"){
+                        left = "$$"
+                        left_point = {
+                            path: now_path , 
+                            offset: i ,  
+                        }
+                        i ++ // 跳过下一个
+                        continue
+                    }
+                    else if(now_prefer != "$$"){
+                        left = "$"
+                        left_point = {
+                            path: now_path , 
+                            offset: i ,  
+                        }
+                        continue
+                    }
+                }
+            }
+        }
+    }
 
-            let before_text = text.slice(0,match_start)
-            let end_text = text.slice(match_end,text.length)
-            let inner_text = match_tex.slice(1 , match_tex.length-1)
+    function search(prefer = undefined){
+        left = undefined
+        left_point = undefined
+        right_point = undefined
+        now_prefer = prefer
+        _search_$(editor.get_root() , [])
+        if(left_point && right_point){
+            return [left , left_point , right_point]
+        }
+        return [undefined , undefined , undefined]
+    }
 
-            let mathinline_proxy = editor.proxies["inline"][inlinestyle_name]
-            let new_node = mathinline_proxy.makenode()
-            new_node.children = [{text: inner_text}]
+    function _delete_$(now_node: Node , now_path: number[] , now_style: string[], now_idx: number , now_xdi: number){
 
-            // editor.set_node(now_node , new_node)
+        let flag_block = false
+        let flag_inline = false
 
-            editor.delete_node_by_path(now_path)
-            editor.add_nodes([
-                {text: before_text} , 
-                new_node , 
-                {text: end_text} , 
-            ] , now_path )
+        if(now_node["type"] == "group" && now_node["proxy_info"] && now_node["proxy_info"]["proxy_name"] == blockstyle_name){
+            flag_block = true
+        }
+        if(now_node["type"] == "inline" && now_node["proxy_info"] && now_node["proxy_info"]["proxy_name"] == inlinestyle_name){
+            flag_inline = true
+        }
+
+        if(has_children(now_node)){
+            let new_style = now_style
+            if(flag_block){
+                new_style = [...new_style , "$$"]
+            }
+            if(flag_inline){
+                new_style = [...new_style , "$"]
+            }
+            for(let idx in now_node.children){
+                let c = now_node.children[idx]
+                let modified = _delete_$(
+                    c , 
+                    [...now_path , Number(idx)] , 
+                    new_style ,
+                    Number(idx) , 
+                    now_node.children.length-1-Number(idx) , 
+                ) 
+                if(modified){
+                    return true
+                }
+            }
+            return false
+        }
+
+        let text = now_node.text
+        let offset_from_head = -1
+        let offset_to_head = -1
+        let offset_from_end = -1
+        let offset_to_end = -1
+        if(now_style.length > 0 && now_style[now_style.length-1] == "$$"){
+            if(now_idx == 0 && text.startsWith("$$")){
+                offset_from_head = 0
+                offset_to_head = 2
+            }
+            if(now_xdi == 0 && text.endsWith("$$")){
+                offset_from_end = text.length - 2
+                offset_to_end = text.length
+            }
+        }
+        if(now_style.length > 0 && now_style[now_style.length-1] == "$"){
+            if(now_idx == 0 && text.startsWith("$")){
+                offset_from_head = 0
+                offset_to_head = 1
+            }
+            if(now_xdi == 0 && text.endsWith("$")){
+                offset_from_end = text.length - 1
+                offset_to_end = text.length
+            }
+        }
+        if(offset_from_head >= 0 || offset_to_head >= 0 || offset_from_end >= 0 || offset_to_end >= 0){
             
+            if(offset_from_end >= 0){
+                Transforms.delete(editor.get_slate() , {
+                    at: {
+                        anchor: {
+                            path: now_path , 
+                            offset: offset_from_end , 
+                        } , 
+                        focus: {
+                            path: now_path , 
+                            offset: offset_to_end , 
+                        }
+                    }
+                })
+            }
+            if(offset_from_head >= 0){
+
+                Transforms.delete(editor.get_slate() , {
+                    at: {
+                        anchor: {
+                            path: now_path , 
+                            offset: offset_from_head , 
+                        } , 
+                        focus: {
+                            path: now_path , 
+                            offset: offset_to_head , 
+                        }
+                    }
+                })
+            }
 
             return true
         }
-
-        if(match_block){
-            let match = match_block
-            let match_start = match.index
-            let match_tex = match[0]
-            let match_end = match.index + match_tex.length
-
-            let before_text = text.slice(0,match_start)
-            let end_text = text.slice(match_end,text.length)
-            let inner_text = match_tex.slice(2 , match_tex.length-2)
-
-            let mathblock_proxy = editor.proxies["group"][blockstyle_name]
-            let new_node = mathblock_proxy.makenode()
-            new_node.children = [{text: inner_text}]
-
-            let new_node_left = paragraph_prototype(before_text)
-            let new_node_right = paragraph_prototype(end_text)
-
-            editor.delete_node_by_path(now_path)
-            editor.add_nodes( [
-                new_node_left , 
-                new_node , 
-                new_node_right , 
-            ] , now_path )
-            
-
-            return true    
-        }
-
         return false
     }
 
+    async function normalize(){
+        let delete_cnt = 0
+        while(_delete_$(editor.get_root() , [] , [] , 0 , 0) && delete_cnt < 100){
+            await sleep(10)
+            delete_cnt ++
+        }
+        if(delete_cnt > 100){
+            console.log("好多删除...")
+        }
+    }
+
+    let maxcnt = 100
     let cnt = 0
-    while(_handle(editor.get_root() , [])){
-        cnt ++
-        if(cnt > 0){
-            console.log("太多数学...")
+    let proxy_block  = editor.proxies[ "group"][ blockstyle_name]
+    let proxy_inline = editor.proxies["inline"][inlinestyle_name]
+
+    while(cnt < maxcnt){
+        let [_ , from , to] = search("$$")
+        if(from == undefined){
             break
         }
+        editor.wrap_nodes(proxy_block.makenode() , from , to , {split: true})
+        await sleep(10)
+        normalize()
+        cnt ++
+        update_progress()
+    }
+    while(cnt < maxcnt){
+        let [_ , from , to] = search("$")
+        if(from == undefined){
+            break
+        }
+        editor.wrap_nodes(proxy_inline.makenode() , from , to , {split: true})
+        await sleep(10)
+        normalize()
+        cnt ++
+        update_progress()
+    }
+
+    if(cnt >= maxcnt){
+        console.log("好多数学...")
     }
 }
 
@@ -119,6 +264,16 @@ function HandleMathBuutton(props: {get_editor: ()=>YEditor}){ // 弟啊你神经
     const [anchor, set_anchor] = React.useState<HTMLButtonElement | null>(null)
     const [inlinemath, set_inlinemath] = React.useState<string>("数学-行内")
     const [blockmath, set_blockmath] = React.useState<string>("数学-块")
+    const [progress, set_progress] = React.useState<number>(0)
+    const [terminating, set_terminating] = React.useState<boolean>(false)
+
+    let get_$_num = ()=>{ // 询问当前还有多少个$
+        let editor = props.get_editor()
+        let root = editor.get_root()
+        let match = Node.string(root).match(/\$/g)
+        return match ? match.length : 0
+    }
+
     return <React.Fragment>
         <FlexibleItem
             close_item = {
@@ -171,11 +326,33 @@ function HandleMathBuutton(props: {get_editor: ()=>YEditor}){ // 弟啊你神经
                     set_blockmath(e.target.value)
                 }}
             />
+            <Typography>进度：{
+                parseInt(String(progress * 10000)) / 100
+            }%{terminating ? "（暂停）": ""}</Typography>
+            <LinearProgress  
+                variant = "determinate"
+                value = {progress * 100}
+            />
             <Button
                 variant = "outlined"
                 sx = {{width: "50%" , marginX: "auto" , marginY: "0.5rem"}}
-                onClick = {()=>{
-                    HandleMath(props.get_editor() , inlinemath , blockmath)
+                onClick = {async ()=>{
+                    let init_$num = get_$_num()
+                    set_terminating(false)
+                    await HandleMath(props.get_editor() , inlinemath , blockmath , ()=>{
+                        let $num = get_$_num()
+                        let new_progress = 0
+                        if(init_$num == 0){
+                            new_progress = 1
+                        }
+                        else{
+                            new_progress = 1 - $num / init_$num
+                        }
+                        if(new_progress != progress){
+                            set_progress(new_progress)
+                        }
+                    })
+                    set_terminating(true)
                 }}
             >开始！</Button>
         </AutoStack></Popover>

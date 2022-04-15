@@ -3,7 +3,7 @@
 */
 import { is_same_node , node2path } from "../implementation/utils"
 import { StyledNode , ValidParameter } from "../core/elements"
-import { Transforms, Node, Editor } from "slate"
+import { Transforms, Node, Editor , Point } from "slate"
 import { YEditor } from "./editor"
 import { set_normalize_status } from "../plugins/constraints"
 export { BehavioursMixin }
@@ -22,6 +22,16 @@ let BehavioursMixin = {
         }
     
         Transforms.setNodes<T>(me.get_slate() , new_val , {at: node2path(me.get_slate() , node)})
+    } , 
+    /** 这个函数修改节点的某个属性。相当于`slate.Transforms.setNodes`。 */
+    set_node_by_path<T extends Node = StyledNode>(path:number[] , new_val: Partial<T>){
+        let me = this as any as YEditor
+        if(path == []){
+            me.setState({root: {...me.state.root , ...new_val}})
+            return 
+        }
+    
+        Transforms.setNodes<T>(me.get_slate() , new_val , {at: path})
     } , 
 
     /** 如果一个节点有代理，这个函数就修改代理，同时修改参数，否则只修改参数。 */
@@ -113,7 +123,7 @@ let BehavioursMixin = {
      * @param options.match 判断子节点中哪些要打包的函数。
      * @param options.split 是否允许分裂父节点。
     */
-    wrap_selected_nodes<T extends Node & {children: Node[]} = StyledNode>(
+     wrap_selected_nodes<T extends Node & {children: Node[]} = StyledNode>(
         node: T, 
         options:{
             match?: (n:Node)=>boolean , 
@@ -134,6 +144,39 @@ let BehavioursMixin = {
             }
         )
     } , 
+
+    /** 把当前选择的区域打包成一个节点。 
+     * @param options.match 判断子节点中哪些要打包的函数。
+     * @param options.split 是否允许分裂父节点。
+    */
+    wrap_nodes<T extends Node & {children: Node[]} = StyledNode>(
+        node: T, 
+        from: Point , 
+        to: Point , 
+        options:{
+            match?: (n:Node)=>boolean , 
+            split?: boolean , 
+        }
+    ){
+        let me = this as any as YEditor
+        if(options.split){ // 分裂节点有可能造成多个相同`idx`的节点，因此需要开启特殊检查。
+            set_normalize_status({pasting: true})
+        }
+        
+        Transforms.wrapNodes<T>(
+            me.get_slate() , 
+            node , 
+            {
+                at: {
+                    anchor: from , 
+                    focus: to , 
+                } , 
+                match: options.match , 
+                split: options.split , 
+            }
+        )
+    } , 
+
 
     /** 这个函数把某个节点的全部子节点替换成给定节点。 */
     replace_nodes(father_node: StyledNode, nodes: Node[]){

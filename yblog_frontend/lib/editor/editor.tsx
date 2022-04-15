@@ -115,6 +115,7 @@ class YEditor extends React.Component<{
     
     // behaviours mixins
     set_node: <T extends Node = StyledNode>(node: T, new_val: Partial<T>) => void
+    set_node_by_path: <T extends Node = StyledNode>(path:number[] , new_val: Partial<T>) => void
     delete_node: (node: Node) => void
     move_node: (node_from: Node, position_to: number[]) => void
     move_node_by_path: (position_from: number[], position_to: number[]) => void
@@ -126,6 +127,15 @@ class YEditor extends React.Component<{
     wrap_selected_nodes: <T extends Node & {children: Node[]} = StyledNode>(
         node: T, 
         options:{match?: (n:Node)=>boolean , split?: boolean }
+    ) => void
+    wrap_nodes: <T extends Node & {children: Node[]} = StyledNode>(
+        node: T, 
+        from: Point , 
+        to: Point , 
+        options:{
+            match?: (n:Node)=>boolean , 
+            split?: boolean , 
+        }
     ) => void
     delete_node_by_path: (path: number[]) => void
     auto_set_parameter: (node: StyledNode, parameters: ValidParameter) => void
