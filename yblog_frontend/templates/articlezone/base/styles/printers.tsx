@@ -242,11 +242,16 @@ var subwords_printer = (()=>{
 			if(order_str){
 				title_content = title_content + ` ${order_str}` // 注入前缀
 			}
+
+			let title_jsx = <>{title_content}</>
+			if(title_content.length > 5){
+				title_jsx = <Typography sx={{fontSize: "0.5rem"}}>{title_content}</Typography>
+			}
 			return <React.Fragment>
 				<AutoStack force_direction="column">
 					<AutoStack>
 						<PrinterOldLevelBox sx={{position: "relative"}}> {/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
-							{title_content ? <PrinterParagraphBox>{title_content}</PrinterParagraphBox> : <></>}
+							{title_content ? <PrinterParagraphBox>{title_jsx}</PrinterParagraphBox> : <></>}
 						</PrinterOldLevelBox>
 						<Box>{props.children}</Box>
 					</AutoStack>
