@@ -162,7 +162,7 @@ class LeftComments extends React.Component<{} , {}>{
                 ...theme.printer.typography.structure , 
                 overflowY: "auto" , 
                 position: "absolute" , 
-                top: "5%" , 
+                top: "4rem" , 
                 bottom: "2%" , 
                 left: "0" , 
                 right: "0" , 

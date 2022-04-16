@@ -63,13 +63,13 @@ class Navigation extends React.Component<{} , {
     WordsWithButton(props:{words: any , onClick?: ((e)=>void) , title?: any, icon?: any, url: string}){
         let Icon = props.icon
         return <Box sx={{marginTop: "0.5rem"}}><AutoStack>
-            {
+            <Box sx={{flex: "0 0 1.5rem"}}>{
                 Icon 
                 ? <AutoTooltip title={props.title}><IconButton size="small" sx={{height: "0.9rem", marginY: "auto"}} onClick={props.onClick}>
                     <Icon sx={{fontSize: "0.9rem"}}/>
                 </IconButton></AutoTooltip>
                 : <></>
-            }
+            }</ Box>
             <Link 
                 sx = {(theme)=>({fontSize: "0.9rem"})} 
                 underline = "hover" 
@@ -144,7 +144,7 @@ class Navigation extends React.Component<{} , {
 
         return <Box sx={{marginTop: "0.5rem"}}><AutoStack force_direction="column">
             {<F node_id = {now_id}/>}
-            <Box sx={{marginLeft: (theme)=>theme.printer.margins.level}}>{
+            <Box sx={{marginLeft: "1rem"}}>{
                 now_son_ids.map((son_id , idx)=><React.Fragment key={idx}><S node_id={son_id}/></React.Fragment>)
             }</Box>
         </AutoStack></Box>
@@ -209,7 +209,13 @@ class LeftBasic extends React.Component<{root: GroupNode}>{
         super (props)
     }
     render(){
-        return <Box sx = {(theme)=>({...theme.printer.typography.body})}>
+        return <Box sx = {(theme)=>({
+            ...theme.printer.typography.body , 
+            overflowY: "auto" , 
+            position: "absolute" , 
+            top: "4rem",
+            bottom : "2%" ,  
+        })}>
             <BasicInformation root={this.props.root}/>
             <Divider sx={{fontSize: "0.8rem"}}><Chip sx={{fontSize: "0.8rem"}} label="导航" /></Divider>
             <Navigation />

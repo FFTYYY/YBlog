@@ -76,27 +76,37 @@ function RightBox(props: {root: GroupNode , onScroll: (path: number[])=>void}){
             ...theme.printer.typography.body , 
             position: "relative" , 
             top: "30%" , 
+            height: "40%" , 
+            width: "auto" , 
     })}>
         <Typography color="text.secondary" sx={(theme)=>({
             ...theme.printer.typography.body , 
             fontSize: "0.9rem" , 
         })}>章内目录</Typography>
-        {sectioners.map((val,idx)=>{
-            let [node, path] = val
-            let title = <>章节</>
-            if(is_certain_style(node , "support" , "小节线")){
-                title = <React.Fragment>
-                    <Box component = "span" sx={{marginRight: "1rem"}}>{num2chinese(Number(idx)+1)}</Box>
-                    <Box component = "span">{get_param_val(node , "title")}</Box>
-                </React.Fragment>
-            }
-            return <Box key={idx} sx={{
-                marginTop: "0.2rem" , 
-            }}><Link 
-                component = "button" 
-                underline = "hover"
-                onClick = {(e)=>{props.onScroll(path)}}
-            ><Typography sx={{fontSize: "0.8rem"}}>{title}</Typography></Link></Box>
-        })}
+        <Box sx={{ 
+            position: "absolute" , 
+            top: "2rem" , 
+            bottom: "2rem" , 
+            overflowY: "auto" , 
+            width: "100%" , 
+        }}>
+            {sectioners.map((val,idx)=>{
+                let [node, path] = val
+                let title = <>章节</>
+                if(is_certain_style(node , "support" , "小节线")){
+                    title = <React.Fragment>
+                        <Box component = "span" sx={{marginRight: "1rem"}}>{num2chinese(Number(idx)+1)}</Box>
+                        <Box component = "span">{get_param_val(node , "title")}</Box>
+                    </React.Fragment>
+                }
+                return <Box key={idx} sx={{
+                    marginTop: "0.2rem" , 
+                }}><Link 
+                    component = "button" 
+                    underline = "hover"
+                    onClick = {(e)=>{props.onScroll(path)}}
+                ><Typography sx={{fontSize: "0.8rem"}}>{title}</Typography></Link></Box>
+            })}
+        </Box>
     </Box>
 }

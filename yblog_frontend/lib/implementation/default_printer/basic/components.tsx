@@ -144,9 +144,10 @@ const PrinterNewLevelBox = (props: BoxProps) => <Box
 const PrinterOldLevelBox = (props: BoxProps) => <Box 
     {...props}
     sx = {[
-        {
-            width: (theme) => theme.printer.margins.level , 
-        } ,
+        (theme)=>({
+            width: theme.printer.margins.level , 
+            flex: `0 0 ${theme.printer.margins.level}` , 
+        }) ,
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}
 />
