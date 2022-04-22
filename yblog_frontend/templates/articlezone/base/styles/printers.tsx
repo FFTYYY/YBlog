@@ -126,7 +126,7 @@ class ReferenceEffector<NT extends StyledNode> extends BasicEffector<NT>{
 		this.get_name = get_name
 	}
 	enter_effect(element: NT, env: any, context: any): [any, any] {
-		env = this.set_context(context , this.get_name(element , env , context))
+		context = this.set_context(context , this.get_name(element , env , context))
 		return [env , context]
 	}
 }
