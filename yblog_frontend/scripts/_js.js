@@ -38,7 +38,15 @@ var w_univ_par = {
     ordering: {
         val: "chinese" , 
         type: type_choice ,
-        choices: ["chinese" , "arab" , "arab-circle" , "chinese-bracket" , "arab-bracket" , "none"] ,
+        choices: [
+            "chinese" , // 一
+            "arab" ,  // 1
+            "arab-circle" ,  // ①
+            "chinese-bracket" , // 【一】
+            "arab-bracket" ,  // [1]
+            "arab-round-bracket" ,  // 1)
+            "none"
+        ] ,
     }
 }
 
@@ -66,7 +74,7 @@ var mathblock_style   = new GroupStyle   ("数学言" ,
     {...w_univ_par , ...make({ label: "数学" , environ: "align"})} , 
     {...w_univ_lab , environ: "环境"} , 
 )
-var mount_style       = new GroupStyle   ("裱示"   , {...w_univ_par , ...make({label: "裱示"})} , {...w_univ_lab})
+var mount_style       = new GroupStyle   ("裱示"   , {...w_univ_par , ...make({label: "裱示" , center: true})} , {...w_univ_lab})
 var display_style     = new GroupStyle   ("彰示"   , {...w_univ_par , ...make({label: "彰示"})} , {...w_univ_lab})
 var formatted_style   = new GroupStyle   ("格示"   , {...w_univ_par , ...make({label: "格示"})} , {...w_univ_lab})
 var strong_style      = new InlineStyle  ("强调"   , make( { label: "强调" }) , {...univ_lab})
