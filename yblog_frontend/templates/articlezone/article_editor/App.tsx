@@ -210,6 +210,10 @@ class App extends  React.Component<App_Props , {
 		}
 		printer.update(editor.get_root())
 
+		if(editor.get_slate().selection){
+			setTimeout(()=>{printer.scroll_to(editor.get_slate().selection.focus.path)} , 50) // 等待printer建立ref
+																							  // react是不是傻逼啊
+		}
 	}
 
 	extra_buttons(props: {}){
@@ -255,13 +259,8 @@ class App extends  React.Component<App_Props , {
 					
 					theme = {my_theme}
 
-					onFocusChange = {()=>{
-						let printer = me.get_printer()
-						let editor = me.get_editor()
-						if(printer && editor && editor.get_slate().selection){
-							printer.scroll_to(editor.get_slate().selection.focus.path)
-						}
-					}}
+					// onFocusChange = {()=>{
+					// }}
 					onUpdate = {()=>{
 						// me.update_printer()
 					}}
