@@ -18,6 +18,7 @@ import { newpara_style , sectioner_style , ender_style  } from "../../base/style
 
 export { set_force_sectioner , set_style_ensure_parameters }
 
+
 /** 这个插件强迫编辑器的开头恰好是小节线，结尾恰好是章节线。且章节线不能出现在结尾以外的位置。 */
 function set_force_sectioner(editor: YEditor, slate: ReactEditor): ReactEditor{
     const normalizeNode = slate.normalizeNode

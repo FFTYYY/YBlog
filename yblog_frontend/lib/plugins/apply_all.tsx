@@ -5,7 +5,7 @@
 
 import { Editor } from "slate"
 
-import { constraint_struct , constraint_relation , constraint_paste } from "./constraints"
+import { constraint_struct , constraint_relation , constraint_paste , constraint_group_start_with_blank } from "./constraints"
 import { set_inline , set_support } from "./styles"
 import { YEditor } from "../editor"
 
@@ -17,6 +17,7 @@ var plugins: ((yeditor: YEditor , slate: Editor)=>Editor)[] = [
     constraint_paste , 
     set_inline , 
     set_support , 
+    constraint_group_start_with_blank , 
 ]
 
 function withAllYEditorPlugins(yeditor: YEditor , slate: Editor): Editor{
