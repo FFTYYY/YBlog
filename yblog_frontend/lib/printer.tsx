@@ -128,7 +128,8 @@ class YPrinter extends React.Component<{
     scroll_to(path: number[]){
 
         let ref = this.get_ref(path)
-        if(ref == undefined || ref.current){
+        console.log(path , ref)
+        if(ref == undefined || ref.current == undefined){
             return 
         }
         ref.current.scrollIntoView({
