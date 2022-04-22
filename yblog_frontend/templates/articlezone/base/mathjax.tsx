@@ -5,10 +5,10 @@ import { EditorCore , DoSomething } from "../../../lib"
 
 export { MathJaxContext , MathJaxInline , MathJaxBlock , }
 
-let MATHJAX_INLINE_START = "_MATHJAX_INLINE_START"
-let MATHJAX_INLINE_END = "_MATHJAX_INLINE_END"
-let MATHJAX_BLOCK_START = "_MATHJAX_BLOCK_START"
-let MATHJAX_BLOCK_END = "_MATHJAX_BLOCK_END"
+let MATHJAX_INLINE_START = "$"
+let MATHJAX_INLINE_END = "$"
+let MATHJAX_BLOCK_START = "$$"
+let MATHJAX_BLOCK_END = "$$"
 
 var flush_math = new DoSomething(()=>{
     let MathJax = (window as any).MathJax
@@ -20,11 +20,12 @@ var flush_math = new DoSomething(()=>{
 
 function flush_mathjax(){
     flush_math.go()
-    // let MathJax = (window as any).MathJax
-    // if(MathJax != undefined && MathJax.typesetPromise != undefined){
-    //     MathJax.typesetPromise()
-    // }
 }
+
+/** 刷新页面 */
+setInterval(flush_mathjax , 3000)
+
+
 function MathJaxContext(props: {children: any}){
     React.useEffect(() => {
         let script = $(`
@@ -58,9 +59,6 @@ function MathJaxContext(props: {children: any}){
 
         $("head").append(script)
         
-        /** 刷新页面 */
-        // setInterval(flush_mathjax , 500)
-
         return ()=>{
             script.remove()
         }

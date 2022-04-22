@@ -241,11 +241,14 @@ class YPrinter extends React.Component<{
             "root": me.state.root , 
             "core": me.core , 
             "renderers": me.renderers , 
-            "printer_component": me , 
+            "contexts": me.state.contexts , 
+            "printer": me , 
         }
 
         return <GlobalInfoProvider value={context}>
-            <R element={me.state.root} contexts={this.state.contexts} now_path={[]}></R>
+            <div className="mathjax_process">
+                <R element={me.state.root} contexts={this.state.contexts} now_path={[]}></R>
+            </div>
         </GlobalInfoProvider>
     }
 }

@@ -19,6 +19,8 @@ import {
 	get_DefaultInlinePrinter , 
 	
 	OrderEffector , 
+	BasicEffector , 
+	StyleCollector , 
 	
 	PrinterDivider , 
 	PrinterWeakenText , 
@@ -65,6 +67,7 @@ import { MathJaxInline , MathJaxBlock } from "../mathjax"
 import { url_from_root , urls , Interaction, BackendData} from "../interaction"
 import { TitleWord } from "../construction/titleword"
 import { RightBox } from "../../article_viewer/cards"
+import { Renderer } from "@ftyyy/ytext/dist/lib"
 
 export {
 	brightwords_printer , 
@@ -113,6 +116,19 @@ function make_oerder_str(order: number , ordering: string){
 	return ""
 }
 
+class ReferenceEffector<NT extends StyledNode> extends BasicEffector<NT>{
+	get_name: (element: NT, env: any, context: any)=>string
+	constructor(get_name: (element: NT, env: any, context: any)=>string){
+		super("reference-name" , "reference-name" , "")
+		this.get_name = get_name
+	}
+	enter_effect(element: NT, env: any, context: any): [any, any] {
+		env = this.set_context(context , this.get_name(element , env , context))
+		return [env , context]
+	}
+}
+
+
 /** 『次节』表示小节内的一个小小节。 */
 var subsection_printer = (()=>{
 	let printer = get_DefaultBlockPrinter({
@@ -123,6 +139,9 @@ var subsection_printer = (()=>{
 			{props.children}
 		</PrinterPartBox>
 		} , 
+		extra_effectors: [
+			(e)=>new ReferenceEffector((element)=>{return `次节：${get_param_val(element , "title")}`})
+		]
 	})
 	return printer
 })()
@@ -136,7 +155,17 @@ var brightwords_printer = (()=>{
 		)
 
 	let printer = get_DefaultBlockPrinter({
-		extra_effectors: [orderer] , 
+		extra_effectors: [
+			orderer , 
+			(e)=>new ReferenceEffector<GroupNode>((ele,env,ctx)=>{
+				let orders = orderer(ele).get_context(ctx)
+				let order = orders[orders.length-1]
+	
+				let title = get_param_val(ele,"title")  // 标题
+				let order_str = make_oerder_str(order , get_param_val(ele,"ordering") as string)
+				return `${title} ${order_str}`
+			})
+		] , 
 		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
 			let orders = orderer(props.element).get_context(props.context)
 			let order = orders[orders.length-1]
@@ -153,7 +182,7 @@ var brightwords_printer = (()=>{
 				inject_content = inject_content + ` （${prefix}）`
 			}
 			
-			return <PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
+			return <PrinterStructureBoxText inline>{inject_content}<MathJaxInline>\text{"{"}（{prefix}）{"}"}</MathJaxInline></PrinterStructureBoxText>
 		} , 
 		outer: (props) => {
 			return <PrinterPartBox subtitle_like>{props.children}</PrinterPartBox>
@@ -169,8 +198,25 @@ var followwords_printer = (()=>{
 		`order/${get_param_val(e,"label")}`
 	)
 
+	let make_title_content = (element: GroupNode , context: PrinterContext) => {
+		let title = get_param_val(element , "title") // 标题
+		let order = orderer(element).get_context(context) // 编号
+		let order_str = make_oerder_str(order , get_param_val(element,"ordering") as string) // 编号字符串儿
+
+		let title_content = `${title}`
+		if(order_str){
+			title_content = title_content + ` ${order_str}` // 注入前缀
+		}
+		return title_content
+	}
+
 	return get_DefaultBlockPrinter({
-		extra_effectors: [orderer] , 
+		extra_effectors: [
+			orderer , 
+			e=>new ReferenceEffector<GroupNode>((e,env,ctx)=>{
+				return make_title_content(e,ctx)
+			})
+		] , 
 
 		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
 			let prefix = get_param_val(props.element , "prefix") // 前缀
@@ -188,15 +234,8 @@ var followwords_printer = (()=>{
 		} , 
 
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
-			let title = get_param_val(props.element , "title") // 标题
 			let close = get_param_val(props.element , "close") // 结尾
-			let order = orderer(props.element).get_context(props.context) // 编号
-			let order_str = make_oerder_str(order , get_param_val(props.element,"ordering") as string) // 编号字符串儿
-
-			let title_content = `${title}`
-			if(order_str){
-				title_content = title_content + ` ${order_str}` // 注入前缀
-			}
+			let title_content = make_title_content(props.element , props.context)
 
 			// followwords 不论如何都会有额外的缩进。
 			return <AutoStack force_direction="column">
@@ -217,7 +256,18 @@ var subwords_printer = (()=>{
 	)
 	return get_DefaultBlockPrinter<GroupNode>({
 		small_margin_enter: true , //前面不要空一坨
-		extra_effectors: [orderer] , 
+		extra_effectors: [
+			orderer , 
+			e=>new ReferenceEffector<GroupNode>((ele,env,ctx)=>{
+				let title = get_param_val(ele , "title") // 标题
+				let order = orderer(ele).get_context(ctx)
+				let order_str = make_oerder_str(order , get_param_val(ele , "ordering") as string)
+				if(title){ // 如果有title，就用title
+					return `${title} ${order_str}`
+				}
+				return `${order_str}`
+			})
+		] , 
 		inject_pre: (props: {element: GroupNode , context: PrinterContext}) => {
 			let prefix = get_param_val(props.element , "prefix") // 前缀
 			
@@ -469,22 +519,34 @@ var link_printer = (()=>{
 			if(type == "index"){// 如果是跳转到本文内。
 				let taridx = Number(target)
 			
-				return <GlobalInfo.Consumer>{value => {
-					let root = value.root
+				return <GlobalInfo.Consumer>{globalinfo => {
+					let root = globalinfo.root
+					let printer = globalinfo.printer
+					let ref_eff = new ReferenceEffector(()=>"") // 只是为了读取引用名称。
+
 					let tar_path = idx2path( root , taridx )
 					let tar_node = idx2node( root , taridx )
 
 					let children = props.children
-					if(autotext){ // 自动决定参数
-						if(tar_node && is_styled(tar_node) && get_param_val(tar_node , "label") != undefined){
+					if(autotext && tar_node && is_styled(tar_node)){ // 自动决定文字
+						
+						let ref_name = ref_eff.get_context( globalinfo.contexts[printer.get_path_id(tar_path)] )
+						if(ref_name){ // 如果有引用名称，优先使用引用名称
+							children = ref_name
+						}
+						else if(get_param_val(tar_node , "label") != undefined){ // 否则，根据label生成名称
 							let label = get_param_val(tar_node , "label")
 							children = `此 ${label}`
 						}
 					}
+					let tarnode_string = ""
+					if(tar_node){
+						tarnode_string = cut_too_long( Node.string(tar_node) )
+					}
 
-					return <AutoTooltip title={cut_too_long(Node.string(tar_node))}><Link 
+					return <AutoTooltip title={tarnode_string}><Link 
 						component = "button" 
-						onClick = {e=>{value.printer_component.scroll_to(tar_path)}}
+						onClick = {e=>{printer.scroll_to(tar_path)}}
 					>
 						<Typography>{children}</Typography>
 					</Link></AutoTooltip>
@@ -505,24 +567,39 @@ var link_printer = (()=>{
 				useEffect(()=>{
 					Interaction.get.content(tar_page).then(data=>{set_root(data)})
 				} , []) // 传入空依赖确保这个函数只被调用一次。
-
-				if(root == undefined){
+				
+				if(root == undefined){ // 还没获得内容
 					return <></>
 				}
 
-				let children = props.children
-				let tar_node = idx2node( root , tar_idx )
-				if(autotext){ // 自动决定参数
-					if(tar_node && is_styled(tar_node) && get_param_val(tar_node , "label") != undefined){
-						let label = get_param_val(tar_node , "label")
-						children = `此 ${label}`
-					}
-				}
+				return <GlobalInfo.Consumer>{globalinfo => {
+					let printer = globalinfo.printer
+					let fakeprinter = new YPrinter( {renderers: printer.renderers , core: printer.core} )
+					let ref_eff = new ReferenceEffector(()=>"") // 只是为了读取引用名称。
+					
+					let children = props.children
+					let tar_node = idx2node( root , tar_idx )
+					let tar_path = idx2path( root , tar_idx )
+					if(autotext && tar_node && is_styled(tar_node)){ // 自动决定参数
+						let ref_name = ref_eff.get_context( globalinfo.contexts[printer.get_path_id(tar_path)] )
 
-				// TODO 加上编号。
-				return <AutoTooltip title={cut_too_long(Node.string(tar_node))}>
-					<Link href={urls.view.content(tar_page , {linkto: tar_idx})}>{children}</Link>
-				</AutoTooltip>
+						if(ref_name){ // 如果有引用名称，优先使用引用名称
+							children = `此页的${ref_name}`
+						}
+						else if(get_param_val(tar_node , "label") != undefined){ // 否则，根据label生成名称
+							let label = get_param_val(tar_node , "label")
+							children = `此 ${label}`
+						}
+					}
+					let tarnode_string = ""
+					if(tar_node){
+						tarnode_string = cut_too_long( Node.string(tar_node) )
+					}
+
+					return <AutoTooltip title={tarnode_string}>
+						<Link href={urls.view.content(tar_page , {linkto: tar_idx})}>{children}</Link>
+					</AutoTooltip>
+				}}</GlobalInfo.Consumer>
 			}
 
 
