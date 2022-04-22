@@ -113,6 +113,9 @@ function make_oerder_str(order: number , ordering: string){
 	if(ordering == "arab-bracket"){
 		return `[${order}]`
 	}
+	if(ordering == "arab-round-bracket"){
+		return `${order})`
+	}
 	return ""
 }
 
@@ -140,7 +143,7 @@ var subsection_printer = (()=>{
 		</PrinterPartBox>
 		} , 
 		extra_effectors: [
-			(e)=>new ReferenceEffector((element)=>{return `次节：${get_param_val(element , "title")}`})
+			(e)=>new ReferenceEffector((element)=>{return `${get_param_val(element , "title")}`})
 		]
 	})
 	return printer
@@ -182,7 +185,7 @@ var brightwords_printer = (()=>{
 				inject_content = inject_content + ` （${prefix}）`
 			}
 			
-			return <PrinterStructureBoxText inline>{inject_content}<MathJaxInline>\text{"{"}（{prefix}）{"}"}</MathJaxInline></PrinterStructureBoxText>
+			return <PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
 		} , 
 		outer: (props) => {
 			return <PrinterPartBox subtitle_like>{props.children}</PrinterPartBox>
@@ -319,9 +322,18 @@ var mount_printer = (()=>{
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
 			let title = get_param_val(props.element , "title") // 标题
 			let close = get_param_val(props.element , "close") // 结尾
+			let center = get_param_val(props.element , "center") as boolean // 结尾
+
+			let text_jsx = <PrinterDisplayText align="center">{props.children}</PrinterDisplayText>
+			if(!center){
+				text_jsx = <PrinterNewLevelBox sx={{position: "relative"}}>
+					<PrinterDisplayText align="left">{props.children}</PrinterDisplayText>
+				</PrinterNewLevelBox>
+			}
+
 			return <AutoStack force_direction="column">
 				{title ? <PrinterStructureBoxText>{title}</PrinterStructureBoxText> : <></>}
-				<PrinterDisplayText align="center">{props.children}</PrinterDisplayText>
+				{text_jsx}
 				{close ? <PrinterStructureBoxText align="right">{close}</PrinterStructureBoxText> : <></>}
 			</AutoStack>
 		} , 

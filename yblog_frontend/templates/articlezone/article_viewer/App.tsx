@@ -44,6 +44,7 @@ import { Interaction , BackendData } from "../base/interaction"
 import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../base/mathjax"
 import { withAllPrinters } from "../base/styles"
 import { linkto } from "../base/linkto"
+import { flush_mathjax } from "../base/mathjax"
 
 // import "react-perfect-scrollbar/dist/css/styles.css"
 // import PerfectScrollbar from "react-perfect-scrollbar"
@@ -87,7 +88,9 @@ class App extends  React.Component<{} , {
 		//初始化跳转
 		if(BackendData.linkto){
 			linkto(printer , Number(BackendData.linkto))
-		}		
+		}
+
+		setTimeout(()=>flush_mathjax() , 500)
 	}
 
 	render(){

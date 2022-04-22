@@ -3,7 +3,7 @@ import $ from "jquery"
 import { EditorCore , DoSomething } from "../../../lib"
 // import "mathjax/es5/tex-svg"
 
-export { MathJaxContext , MathJaxInline , MathJaxBlock , }
+export { MathJaxContext , MathJaxInline , MathJaxBlock , flush_mathjax ,  }
 
 let MATHJAX_INLINE_START = "$"
 let MATHJAX_INLINE_END = "$"
@@ -21,10 +21,6 @@ var flush_math = new DoSomething(()=>{
 function flush_mathjax(){
     flush_math.go()
 }
-
-/** 刷新页面 */
-setInterval(flush_mathjax , 3000)
-
 
 function MathJaxContext(props: {children: any}){
     React.useEffect(() => {

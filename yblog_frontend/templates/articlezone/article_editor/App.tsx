@@ -57,7 +57,7 @@ import { MathJaxContext } from "../base/mathjax"
 import { FileManageButton } from "./buttons/manage_files"
 import { HandleMathBuutton } from "./buttons/handle_math"
 import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./buttons/edit_others"
-
+import { flush_mathjax } from "../base/mathjax"
 
 interface App_Props{
 
@@ -214,6 +214,7 @@ class App extends  React.Component<App_Props , {
 			setTimeout(()=>{printer.scroll_to(editor.get_slate().selection.focus.path)} , 50) // 等待printer建立ref
 																							  // react是不是傻逼啊
 		}
+		setTimeout( ()=>{flush_mathjax()} , 500 )
 	}
 
 	extra_buttons(props: {}){
