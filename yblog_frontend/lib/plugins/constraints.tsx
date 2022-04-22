@@ -19,8 +19,9 @@ import type {StructNode , GroupNode , InlineNode} from "../core/elements"
 import { YEditor } from "../editor"
 import { is_same_node } from "../implementation/utils"
 import { JsxFragment } from "typedoc/dist/lib/utils/jsx.elements"
+import { editor } from "@ftyyy/ytext/dist/lib"
 
-export { constraint_struct , constraint_relation , set_normalize_status , get_normalize_status , constraint_paste }
+export { constraint_struct , constraint_relation , set_normalize_status , get_normalize_status , constraint_paste , constraint_group_start_with_blank }
 
 /** 某些检查只在特定状态下生效。 */
 var status = {
@@ -39,6 +40,34 @@ function set_normalize_status(val){
 function get_normalize_status(key){
     return status[key]
 }
+
+/** 这个插件强迫GroupNode以空白开头，这是为了让InjectEffector正常工作。 */
+function constraint_group_start_with_blank(yeditor: YEditor, slate: Editor): Editor{
+    const normalizeNode = slate.normalizeNode
+    slate.normalizeNode = (entry: [Node, number[]]) => {
+        let [_node , path] = entry
+
+        if(get_normalize_status("initializing")){
+            normalizeNode(entry)
+            return 
+        }
+
+        if(is_styled(_node) && _node.type == "group"){
+            let node = _node as GroupNode
+            if(node.children.length == 0){
+                yeditor.add_nodes( paragraph_prototype() , [...path , 0] )
+                return 
+            }
+
+            // TODO
+        }
+
+        normalizeNode(entry)
+    }
+    return slate
+}
+
+
 
 /** 这个插件要求所有节点的`idx`互不相同。
  * 为了效率，只在复制粘贴时开启检查（因为只有粘贴可能导致此问题）。
