@@ -292,6 +292,9 @@ function new_struct_child(){
 
 /** 这个函数询问一个函数的参数的某一项。 */
 function get_param_val(element: StyledNode , key: string){
+    if(element == undefined || element.parameters == undefined){
+        return undefined
+    }
     if(element.parameters[key])
         return element.parameters[key].val
     return undefined
