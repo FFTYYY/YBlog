@@ -587,13 +587,14 @@ var link_printer = (()=>{
 				return <GlobalInfo.Consumer>{globalinfo => {
 					let printer = globalinfo.printer
 					let fakeprinter = new YPrinter( {renderers: printer.renderers , core: printer.core} )
+					let [_ , fake_ctx , __] = fakeprinter.update(root as GroupNode , {} , true)
 					let ref_eff = new ReferenceEffector(()=>"") // 只是为了读取引用名称。
 					
 					let children = props.children
 					let tar_node = idx2node( root , tar_idx )
 					let tar_path = idx2path( root , tar_idx )
 					if(autotext && tar_node && is_styled(tar_node)){ // 自动决定参数
-						let ref_name = ref_eff.get_context( globalinfo.contexts[fakeprinter.get_path_id(tar_path)] )
+						let ref_name = ref_eff.get_context( fake_ctx[fakeprinter.get_path_id(tar_path)] )
 
 						if(ref_name){ // 如果有引用名称，优先使用引用名称
 							children = `此页的${ref_name}`

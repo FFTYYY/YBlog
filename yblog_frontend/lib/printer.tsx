@@ -81,17 +81,21 @@ class YPrinter extends React.Component<{
     /** 更新输出器的节点树信息。 
      * 注意输出器并不会从全局状态获取树信息，而是在特定操作下才更新。
      * 这样设计是因为实时刷新太慢了（尤其是数学公式很多的情况下，mathjax要人命...）。
+     * 
+     * @param fake 如果为`true`，则不更新状态，而是直接返回更新之后的值。
     */
-    update(root: GroupNode , init_env = {}){
+    update(root: GroupNode , init_env = {} , fake = false){
         this.sub_refs = {}
         let [end_env , contexts] = this.build_envs(root , init_env , {} , [])
+        if(fake){
+            return [root , contexts , end_env]
+        }
         this.setState({
             root: root , 
             contexts: contexts , 
         })
         return end_env
     }
-
 
     /** 根据路径生成节点的唯一的表示。
      */
