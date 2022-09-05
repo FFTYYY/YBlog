@@ -52,7 +52,7 @@ function get_DefaultParagraphPrinter(){
                 (theme)=>theme.printer.margins.special
             }
 
-            return <PrinterParagraphBox sx={margin_flag ? margin_sx : {}}>
+            return <PrinterParagraphBox sx={margin_flag ? margin_sx : {}} whiteSpace="pre-wrap">
                 {Object.keys(extra.pre).map((key)=><React.Fragment key={key}>{extra.pre[key]}</React.Fragment>)}
                 {props.children}
                 {Object.keys(extra.suf).map((key)=><React.Fragment key={key}>{extra.suf[key]}</React.Fragment>)}

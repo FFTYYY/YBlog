@@ -21,7 +21,7 @@ import {
 } from "./elements"
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./elements"
 
-export {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle}
+export {EditorCore , InlineStyle, GroupStyle , StructStyle , SupportStyle , AbstractStyle}
 export type { Style }
 
 type RootNotification_Function = (new_root: GroupNode)=>void
