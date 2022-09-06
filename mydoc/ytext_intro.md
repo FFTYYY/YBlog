@@ -63,7 +63,7 @@ interface ParagraphNode {
 2. 是否强制这个节点为空（Void）节点；
 3. 是否强制这个节点为块级（Block）节点：
 ```
-Interface MetaParameter{
+Interface MetaParameters{
 	forceInline?: boolean,
 	forceBlock?: boolean,
 	forceVoid?: boolean,
@@ -82,6 +82,9 @@ type ParameterValue =
 	{type: "number" , val: number} | 
 	{type: "boolean" , val: boolean}
 type FixedParameterValue = ParameterValue | {"type": "function" , val: string}
+
+interface ParameterList{[key: string]: ParameterValue}
+interface FixedParameterList{[key: string]: FixedParameterValue}
 ```
 对于类型是函数的参数，其值应该是一个类似于这样的字符串：
 ```
@@ -102,9 +105,8 @@ Interface InlineNode{
 	type: "inline"
 	idx: number 
 
-	firstConcept: string
-	secondConcept: string
-	parameters: {}
+	concept: string
+	parameters: ParameterList
 
 	children: [ Text ]
 	abstrct: AbstractNode []
@@ -119,9 +121,8 @@ interface GroupNode{
 	type: "group"
 	idx: number 
 
-	firstConcept: string
-	secondConcept: string
-	parameters: {}
+	concept: string
+	parameters: ParameterList
 
 	children: NonLeafNode []
 	abstract: AbstractNode []
@@ -142,9 +143,8 @@ interface StructNode{
 	type: "structure" 
 	idx: number 
 
-	firstConcept: string
-	secondConcept: string
-	parameters: {}
+	concept: string
+	parameters: ParameterList
 	
 	children: NonLeafNode []
 	abstract: AbstractNode []
@@ -164,9 +164,8 @@ interface SupportNode{
 	type: "support" 
 	idx: number 
 
-	firstConcept: string
-	secondConcept: string
-	parameters: {}
+	concept: string
+	parameters: ParameterList
 	
 	children: []
 	abstract: AbstractNode []
@@ -181,9 +180,8 @@ interface AbstractNode{
 	type: "abstract"
 	idx: number 
 	
-	firstConcept: string
-	secondConcept: string
-	parameters: {}
+	concept: string
+	parameters: ParameterList
 	
 	children: NonLeafNode []
 	abstract: AbstractNode []
@@ -223,8 +221,17 @@ type PrinterRenderFunction = function renderer({
 	children: React.ReactElement
 })
 ```
+因此，一个完整的渲染器应包括以上三个函数。
+```
+interface PrinterRenderer{
+	enter: PrinterEnterFunction
+	exit: PrinterExitFunction
+	renderer: PrinterRenderFunction
+}
+```
 
 注意，虽然以上说明是对概念节点和抽象节点而言，但是对于段落节点，也提供一套完整的渲染器，而对于文本节点，要提供一个渲染函数（renderer）。
+
 
 ## （一级）概念实现
 
@@ -233,7 +240,25 @@ type PrinterRenderFunction = function renderer({
 interface Concept{
 	type: "group" | "inline" | "structure" | "support" | "abstract"
 	name: string
-	metaParameter: MetaParameter
-	parameterPrototype: Para
+	metaParameters: MetaParameters
+	parameterPrototype: ParameterList
 }
 ```
+
+至于二级概念，实际上是对一级概念的重写，只需要指定一级概念的名称以及复写的参数列表就可以。
+```
+interface SecondConcept{
+	firstConcept: string
+	name: string
+	defaultOverride: ParameterList
+	fixedOverride: FixedParameterList
+}
+```
+注意，在节点指定concept时，只需要指定二级概念。
+
+# 关于编辑
+
+编辑器和印刷器的实现是分离的，理论上用户可以使用YText提供的印刷器，自己实现编辑器，也可以反之使用YText提供的编辑器，自己实现印刷器。
+
+目前的编辑器方案高度依赖slate，会在另一个文档里详述。我想实际上一个纯文本的编辑器也不是不可能。
+
