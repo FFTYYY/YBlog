@@ -17,36 +17,38 @@ import {
 } from "@mui/icons-material"
 
 import {
-	YEditor , 
+	EditorComponent , 
+	ConceptNode , 
+	Node , 
+	AbstractNode , 
+	GroupNode , 
 	EditorCore , 
-	DefaultPrinter , 
-	DefaultEditor , 
 	AutoStack , 
 	AutoIconButton , 
-	paragraph_prototype , 
-	StyleCollector , 
-	EditorRenderer_Func , 
-	EditorRenderer_Props , 
-	StyleType , 
-	Proxy , 
-	default_printer_renderers , 
-	default_editor_renderers , 
 	PrinterRenderer , 
-	group_prototype, 
-	is_styled,
-	has_children, 
 	set_normalize_status , 
+	Printer , 
+	SecondClassConcept , 
 
-	GlobalInfoProvider , 
+	DefaultEditorComponent , 
+	DefaultPrinterComponent , 
+
+	GlobalInfoProvider, 
+	SecondClassConceptDict, 
 } from "../../../lib"
 
-import { ReactEditor } from "slate-react"
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
-import { Node , Transforms , Element } from "slate"
-import { createEditor , BaseEditor , Path , BaseElement } from "slate"
-import { Slate, Editable, withReact} from "slate-react"
+import * as Slate from "slate"
+import * as SlateReact from "slate-react"
 
-import { withAllStyles , withAllPrinters , withAllEditors , make_proxy , withNecessaryProxies , } from "../base/styles"
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
+
+import { 
+	renderers , 
+	default_renderers , 
+	editors , 
+	default_editors , 
+	first_concepts , 
+} from "../base/styles"
 import { BackendData, Interaction } from "../base/interaction"
 import { linkto } from "../base/linkto"
 import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
@@ -59,109 +61,76 @@ import { HandleMathBuutton } from "./buttons/handle_math"
 import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./buttons/edit_others"
 import { flush_mathjax } from "../base/mathjax"
 
-interface App_Props{
+// TODO 正确地读入树和概念数据。
+
+interface AppProps{
 
 }
 
-interface App_State{
+interface AppState{
 	flags?: number
-	editor?: YEditor
+
+	printer: Printer 
+	editorcore: EditorCore
+	tree: AbstractNode 
 }
 
-class App extends  React.Component<App_Props , {
-	editor_proxies: {[key in StyleType]: {[name: string]: Proxy}}
-}>{
-	core: EditorCore
+function get_second_concepts(){
+	return {}
+}
 
-	editor_renderers: StyleCollector<EditorRenderer_Func>
-	printer_renderers: StyleCollector<PrinterRenderer>
+class App extends  React.Component<AppProps, AppState>{
 
-	printer_ref: React.RefObject<DefaultPrinter>
-	editor_ref: React.RefObject<DefaultEditor>
 	savebutton_ref: React.RefObject<SaveButton>
 
-	constructor(props: App_Props){
+	constructor(props: AppProps){
 		super(props)
 
-		this.core = withAllStyles( new EditorCore([]) )
-		this.editor_renderers = withAllEditors( new StyleCollector<EditorRenderer_Func>(this.core , default_editor_renderers) )
-		this.printer_renderers = withAllPrinters( new StyleCollector<PrinterRenderer>(this.core , default_printer_renderers) )
-
-		this.state = {			
-			editor_proxies: withNecessaryProxies({
-				inline: {},
-				group: {}, 
-				struct: {},
-				support: {} ,  
-				abstract: {} , 
-			}) , 
+		this.state = {		
+			printer: undefined , 
+			editorcore: undefined , 
+			tree: {
+				type: "abstract" ,
+				concept: "root" , 
+				idx: 2333 , 
+				abstract: [] , 
+				parameters: {} , 
+				children: [] , 
+			} , 
 		}
-
-		this.editor_ref  = React.createRef()
-		this.printer_ref = React.createRef()
 		this.savebutton_ref = React.createRef()
-	}
-
-	set_proxy_params(editor: YEditor , root: Node){
-		function _set_proxy_params(node: Node){
-			if(is_styled(node)){
-				if(node.proxy_info && node.proxy_info.proxy_name){
-					let proxy = editor.get_proxy(node.type , node.proxy_info.proxy_name)
-					let proxy_params = proxy.get_proxy_parameters(node.parameters)
-					node.proxy_info.proxy_params = proxy_params
-				}
-			}
-			if(has_children(node)){
-				for(let c of node.children){
-					_set_proxy_params(c)
-				}
-			}
-		}
-		_set_proxy_params(root)
-		return root
 	}
 
 	async componentDidMount(){
 
 		/** 初始化所有概念信息。 */
-		let proxies = withNecessaryProxies({
-			inline: {},
-			group: {}, 
-			struct: {},
-			support: {} ,  
-			abstract: {} , 
-		})
-		let node_concepts = await Interaction.get.concept(BackendData.node_id) // 从后端获得所有概念。
-		for(let [name , meta_name , fixed_params , default_params ] of node_concepts){
+		// let node_concepts = await Interaction.get.concept(BackendData.node_id) // 从后端获得所有概念。
+		let sec_concepts = get_second_concepts() as SecondClassConcept []
 
-			let proxy = make_proxy(meta_name , name , fixed_params , default_params)
-			proxies[proxy.get_styletype()][name] = proxy
-		}
-		this.setState({ editor_proxies: proxies })
+		let printer = new Printer(
+			first_concepts , 
+			sec_concepts , 
+			renderers , 
+			default_renderers , 
+		)
+		
+		let editorcore = new EditorCore({
+			renderers: editors , 
+			default_renderers: default_editors, 
+			printer: printer , 
+		})
+		
 
 		/** 初始化编辑器初始值。 */
 		var root = await Interaction.get.content(BackendData.node_id)
-		root = root || group_prototype("root" , {
-			title: {val: "" , type: "string"}
+		root = root || editorcore.create_abstract("root")
+		// set_normalize_status({initializing: true})
+
+		this.setState({
+			printer: printer , 
+			editorcore: editorcore , 
+			tree: root , 
 		})
-		set_normalize_status({initializing: true})
-
-		while(!this.get_editor()); // 确保editor已经存在...
-		let editor = this.get_editor()
-
-		// TODO 不应该在读入时初始化proxy_params，而应该设置一个constraint来保证proxy_params更新。
-		// root = this.set_proxy_params(editor , root) // 初始化代理参数。
-
-		editor.replace_nodes(editor.get_root() , root.children) // 将全部节点替换为获得的节点
-		editor.set_node(editor.get_root() , {parameters: root.parameters , hiddens: root.hiddens})
-		this.editor_ref.current.forceUpdate()
-
-		set_normalize_status({initializing: false})
-
-		// 初始化渲染器。
-		while(!this.get_printer());
-		let printer = this.get_printer()
-		printer.update(root)
 
 		//初始化跳转
 		if(BackendData.linkto && BackendData.linkto != "None"){
@@ -169,18 +138,6 @@ class App extends  React.Component<App_Props , {
 		}
 	}
 
-	get_editor(){
-		if(this.editor_ref && this.editor_ref.current){
-			return this.editor_ref.current.get_editor()
-		}
-		return undefined
-	}
-	get_printer(){
-		if(this.printer_ref && this.printer_ref.current){
-			return this.printer_ref.current.get_printer()
-		}
-		return undefined
-	}
 	get_save_button(){
 		if(this.savebutton_ref && this.savebutton_ref.current){
 			return this.savebutton_ref.current
@@ -189,32 +146,13 @@ class App extends  React.Component<App_Props , {
 	}
 
 	async save_content(){
-		let editor = this.get_editor()
-		if(editor){
-			var data = {"content": editor.get_root()}
-			return await Interaction.post.content(data , BackendData.node_id)
-		}
-		return false
+		return await Interaction.post.content(this.state.tree , BackendData.node_id)
 	}
+
 	async post_file(files: any){
 		var form_data = new FormData()
 		form_data.append("file" , files[0])
 		return await Interaction.post.file(form_data , BackendData.node_id)
-	}
-
-	update_printer(){ // 将printer显示的信息替换为最新的正在编辑的版本。
-		let printer = this.get_printer()
-		let editor = this.get_editor()
-		if(!(printer && editor)){
-			return
-		}
-		printer.update(editor.get_root())
-
-		if(editor.get_slate().selection){
-			setTimeout(()=>{printer.scroll_to(editor.get_slate().selection.focus.path)} , 50) // 等待printer建立ref
-																							  // react是不是傻逼啊
-		}
-		setTimeout( ()=>{flush_mathjax()} , 500 )
 	}
 
 	extra_buttons(props: {}){
@@ -240,9 +178,20 @@ class App extends  React.Component<App_Props , {
 		</React.Fragment>
 	}
 
+	update_tree(new_tree: AbstractNode){
+		this.setState({
+			tree: new_tree
+		})
+	}
+
 	mainpart(props: {sx: any}){
 		let me = this
 		let ExtraButtons = this.extra_buttons.bind(this)
+
+		if(!(this.state.editorcore && this.state.printer)){
+			return <></>
+		}
+		let {editorcore, printer, tree} = this.state
 
 		return <Box sx={props.sx}>
 			<Box sx = {{
@@ -252,29 +201,21 @@ class App extends  React.Component<App_Props , {
 				top: "0" , 
 				height: "100%" , 
 			}}>
-				<DefaultEditor 
-					ref 		= {me.editor_ref}
-					core 		= {me.core}
-					renderers 	= {me.editor_renderers}
-					proxies 	= {me.state.editor_proxies}
-					
-					theme = {my_theme}
-
-					// onFocusChange = {()=>{
-					// }}
-					onUpdate = {()=>{
-						// me.update_printer()
-					}}
+				<DefaultEditorComponent
+					editorcore = {this.state.editorcore}
+					init_rootchildren = {tree.children}
 					onSave = {()=>{
-						me.update_printer()
 						let save_button = me.get_save_button()
 						if(save_button){
 							save_button.click()
 						}
 					}}
-					extra_buttons = {<ExtraButtons />}
-
+					theme = {my_theme}
 					plugin = { withAllPlugins }
+					sidebar_extra = {()=>{return [{
+						button: <ExtraButtons /> , 
+						run: ()=>{console.log("啊？")} , 
+					}]}}
 				/>
 			</Box>
 
@@ -286,12 +227,12 @@ class App extends  React.Component<App_Props , {
 				height: "100%" , 
 			}}>
 				<GlobalInfoProvider value={{BackendData: BackendData.node_id}}>
-					<DefaultPrinter
-						ref = {this.printer_ref}
-						core = {this.core}
-						renderers = {this.printer_renderers}
+					<DefaultPrinterComponent 
+						printer = {printer} 
 						theme = {my_theme}
-					/>
+						onUpdateCache = {(cache)=>{console.log("cache!")}}
+						root = {this.state.tree}
+					></DefaultPrinterComponent>
 				</GlobalInfoProvider>
 			</Box>
 		</Box>
@@ -319,7 +260,7 @@ class App extends  React.Component<App_Props , {
 
 				/>
 				<FileManageButton />
-				<HandleMathBuutton get_editor={()=>me.get_editor()} />
+				{/* <HandleMathBuutton get_editor={()=>me.get_editor()} /> */}
 				<BackendEdit /> 
 				<NodeStructEdit /> 
 				<NodeStructEditShallow /> 

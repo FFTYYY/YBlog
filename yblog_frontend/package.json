@@ -1,40 +1,49 @@
 {
-  "name": "yblog_frontend",
-  "version": "0.0.0",
-  "scripts": {
-    "dev": "vite",
-    "make_concept": "python .\\scripts\\make_concepts.py" , 
-    "clean_1": "rmdir ..\\yblog\\articlezone\\templates\\articlezone /s /q && mkdir ..\\yblog\\articlezone\\templates\\articlezone",
-    "clean_2": "rmdir ..\\yblog\\articlezone\\static /s /q && mkdir ..\\yblog\\articlezone\\static",
-    "clean": "npm run clean_1 && npm run clean_2",
-    "build": "npm run clean && npm run make_concept && tsc && vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@ftyyy/ytext": "^0.0.3",
-    "@mui/lab": "^5.0.0-alpha.66",
-    "@mui/material": "^5.3.1",
-    "axios": "^0.25.0",
-    "iframe-resizer": "^4.3.2",
-    "iframe-resizer-react": "^1.1.0",
-    "jquery": "^3.6.0",
-    "js-cookie": "^3.0.1",
-    "mathjax": "^3.2.0",
-    "perfect-scrollbar": "^1.5.5",
-    "react": "^17.0.2",
-    "react-beautiful-dnd": "^13.1.0",
-    "react-dnd": "^14.0.5",
-    "react-dnd-html5-backend": "^14.1.0",
-    "react-dom": "^17.0.2",
-    "react-perfect-scrollbar": "^1.5.8",
-    "react-spring": "^9.4.2",
-    "slate-history": "^0.66.0"
-  },
-  "devDependencies": {
-    "@types/react": "^17.0.33",
-    "@types/react-dom": "^17.0.10",
-    "@vitejs/plugin-react": "^1.0.7",
-    "typescript": "^4.4.4",
-    "vite": "^2.7.2"
-  }
+	"name": "@ftyyy/ytext",
+	"version": "0.0.5",
+	"files": [
+		"dist"
+	],
+	"main": "./dist/ytext.umd.js",
+	"types": "./dist/lib/index.d.js",
+	"module": "./dist/ytext.es.js",
+	"exports": {
+		".": {
+			"import": "./dist/ytext.es.js",
+			"require": "./dist/ytext.umd.js"
+		}
+	},
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@emotion/react": "^11.7.1",
+		"@emotion/styled": "^11.6.0",
+		"@material-ui/styles": "^4.11.4",
+		"@mui/icons-material": "^5.2.5",
+		"@mui/lab": "^5.0.0-alpha.69",
+		"@mui/material": "^5.2.7",
+		"axios": "^1.1.3",
+		"immer": "^9.0.15",
+		"jquery": "^3.6.1",
+		"katex": "^0.16.3",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"slate": "^0.72.3",
+		"slate-history": "^0.66.0",
+		"slate-react": "^0.72.1",
+		"typedoc": "^0.22.18",
+		"typedoc-plugin-missing-exports": "^0.22.6"
+	},
+	"devDependencies": {
+		"@types/node": "^17.0.8",
+		"@types/react": "^17.0.33",
+		"@types/react-dom": "^17.0.10",
+		"@vitejs/plugin-react": "^1.0.7",
+		"typescript": "^4.4.4",
+		"vite": "^2.7.2",
+		"vite-plugin-dts": "^0.9.9"
+	}
 }

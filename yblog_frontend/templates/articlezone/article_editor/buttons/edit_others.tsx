@@ -1,18 +1,27 @@
 /** 这个组件将$$等数学符号转换为节点。 */
 import { 
-	Snackbar , SnackbarOrigin , Button , IconButton , Drawer , Paper, Typography, Divider, Box, TextField , Popover , InputAdornment , Link
+	Snackbar , 
+    SnackbarOrigin , 
+    Button , 
+    IconButton , 
+    Drawer , 
+    Paper, 
+    Typography, 
+    Divider, 
+    Box, 
+    TextField , 
+    Popover , 
+    InputAdornment , 
+    Link
 } from "@mui/material"
 import { Node } from "slate"
 import { FlexibleItem } from "../../base/construction/framework"
 import {Interaction , urls , url_from_root , BackendData } from "../../base/interaction"
 import {
-	YEditor , 
+	EditorComponent , 
 	AutoTooltip , 
 	AutoIconButton , 
-    has_children , 
-    group_prototype, 
     AutoStack,
-    paragraph_prototype, 
 } 
 from "../../../../lib"
 import {
@@ -23,7 +32,6 @@ import {
 } 
 from "@mui/icons-material"
 
-import { mathblock_style , mathinline_style } from "../../base/styles/styles"
 import React from "react"
 
 export { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView }

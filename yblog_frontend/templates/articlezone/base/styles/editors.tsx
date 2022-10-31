@@ -1,91 +1,91 @@
+
 import { Typography  , TextField } from "@mui/material"
 import React from "react"
-import { Node } from "slate"
 
 import {
-    get_DefaultGroupEditor_with_AppBar , 
-    get_DefaultGroupEditor_with_RightBar , 
-    get_DefaultInlineEditor , 
-    DefaultNewParagraphEditor , 
-    get_DefaultSplitterEditor , 
-    get_DefaultDisplayerEditor , 
-    DefaultParagraphEditor , 
-    get_DefaultStructEditor_with_RightBar , 
-    get_DefaultSupportEditor_with_RightBar , 
-    YEditor , 
+    get_deafult_group_editor_with_appbar , 
+    get_default_group_editor_with_rightbar , 
+    get_default_inline_editor , 
+    get_default_abstract_editor , 
+    get_default_editors , 
+    get_default_struct_editor_with_rightbar , 
+    get_default_spliter_editor , 
+    get_default_display_editor , 
 
-    EditorUnselecableBox , 
-    get_param_val , 
+    EditorComponent , 
+    GlobalInfo , 
+    ConceptNode , 
+
+    MouselessParameterEditor , 
+    ButtonDescription , 
 } from "../../../../lib"
-import { BackendData, Interaction , url_from_root } from "../interaction"
 
+import {
+    Interaction , BackendData , get_backend_data , url_from_root , urls , 
+} from "../interaction"
 
 export { 
-    brightwords_editor , 
-    followwords_editor , 
-    mount_editor , 
-    display_editor , 
-    newpara_editor , 
-    sectioner_editor , 
-    ender_editor , 
-    strong_editor , 
-    paragraph_editor , 
-    image_editor , 
-    alignedwords_editor , 
-    delete_editor , 
-    link_editor , 
-    subwords_editor , 
-    mathblock_editor , 
-    mathinline_editor , 
-    formatted_editor , 
-    subsection_editor , 
-    showchildren_editor , 
-    insertchildren_editor , 
+    editors , 
+    default_editors , 
 } 
 
-var paragraph_editor = DefaultParagraphEditor
 
-var brightwords_editor  = get_DefaultGroupEditor_with_AppBar({})
-var subsection_editor   = get_DefaultGroupEditor_with_AppBar({get_label: (n)=>`次节：${get_param_val(n,"title")}`})
-var normalwords_editor  = get_DefaultGroupEditor_with_RightBar({})
-var formatted_editor    = get_DefaultGroupEditor_with_RightBar({})
-var followwords_editor  = get_DefaultGroupEditor_with_RightBar({})
-var mount_editor        = get_DefaultGroupEditor_with_RightBar({})
-var display_editor      = get_DefaultGroupEditor_with_RightBar({})
-var mathblock_editor    = get_DefaultGroupEditor_with_RightBar({
-    rightbar_extra: (props) => {/** 在右侧提供一个用于快速输入退出符号的文本框。 */
-        let universal_props = {variant: "standard" as "standard" , sx: {width: "2rem" , marginBottom: "0.5rem" , hright: "1rem"}}
-        let label = <Typography sx={{fontSize: "0.7rem"}}>extra</Typography>
-        let suffix_default = get_param_val(props.element , "suffix") // 注意，这里假设close必不用代理。
-        return <React.Fragment>
-            <TextField {...universal_props} label={label} defaultValue={suffix_default} onChange = {(e)=>{
-                let val = e.target.value
-                let node = props.element
-                props.editor.auto_set_parameter( node , {suffix: {type: "string" , val: val}})
-            }}/>
-        </ React.Fragment>
+let brightwords_editor  = get_deafult_group_editor_with_appbar({
+    get_label: (n,p) => p.category
+})
+var subsection_editor   = get_deafult_group_editor_with_appbar({
+    get_label: (n,p)=>`次节：${p.title}`
+})
+var formatted_editor    = get_default_group_editor_with_rightbar({})
+var followwords_editor  = get_default_group_editor_with_rightbar({})
+var mount_editor        = get_default_group_editor_with_rightbar({})
+var display_editor      = get_default_group_editor_with_rightbar({})
+let subwords_editor     = get_default_group_editor_with_rightbar({})
+let sectioner_editor    = get_default_spliter_editor({get_title: (n,p)=>p.title})
+let ender_editor        = get_default_spliter_editor({get_title: (n,p)=>"章节"})
+var strong_editor       = get_default_inline_editor({})
+var delete_editor       = get_default_inline_editor({surrounder: (props)=><del>{props.children}</del>  })
+var link_editor         = get_default_inline_editor({surrounder: (props)=><u>{props.children}</u>      })
+var mathinline_editor   = get_default_inline_editor({surrounder: (props)=><>{props.children}</>        })
+var alignedwords_editor = get_default_struct_editor_with_rightbar({
+    get_label: ()=>"行" , 
+    get_numchildren: (n, p) => {
+        let widths_str = p.widths as string
+        let widths = widths_str.split(",").reduce((s,x)=>[...s,parseInt(x)] , [] as number[])
+        return widths.length
+    },
+    get_widths: (n, p)=>{
+        let widths_str = p.widths as string
+        let widths = widths_str.split(",").reduce((s,x)=>[...s,parseInt(x)] , [] as number[])
+        return widths
     }
 })
-let subwords_editor     = get_DefaultGroupEditor_with_RightBar({})
 
-var newpara_editor      = DefaultNewParagraphEditor
-var sectioner_editor    = get_DefaultSplitterEditor({get_title: (n) => get_param_val(n,"title") as string})
-var ender_editor        = get_DefaultSplitterEditor({get_title: () => "章节"})
+var mathblock_editor    = get_default_group_editor_with_rightbar({
+    rightbar_extra(n) {/** 在右侧提供一个用于快速输入退出符号的文本框。 */
 
+        return [{
+            component: MouselessParameterEditor , 
+            other_props: {
+                idx: 0 , 
+                parameter_name: "suffix" , 
+                label: "extra" , 
+            } , 
+            skip_mouseless: true , 
+        }] as any 
+    },
+})
 
-var strong_editor       = get_DefaultInlineEditor({})
-var delete_editor       = get_DefaultInlineEditor({surrounder: (props)=><del>{props.children}</del>  })
-var link_editor         = get_DefaultInlineEditor({surrounder: (props)=><u>{props.children}</u>      })
-var mathinline_editor   = get_DefaultInlineEditor({surrounder: (props)=><>{props.children}</>        })
-
-
-var image_editor = get_DefaultDisplayerEditor({
+var image_editor = get_default_display_editor({
     get_label: ()=>"图片" , 
-    is_empty: (n)=>!!get_param_val(n , "target") , 
+    is_empty: (n,p)=>!!(p.target) , 
     render_element: (props) => {
         let [ url , set_url ] = React.useState("")
-        let target = get_param_val(props.element , "target") as string
-        let type = get_param_val(props.element , "type")
+        let node    = props.node
+        let target  = node.parameters.target.val as string
+        let type    = node.parameters.type.val as string
+        let height  = node.parameters.height.val as number
+        let width   = node.parameters.width.val as number
 
         React.useEffect(()=>{(async ()=>{
             if(type == "internal"){
@@ -103,29 +103,53 @@ var image_editor = get_DefaultDisplayerEditor({
             }
         })()})
 
-        let p_width = get_param_val(props.element , "width")
-        let p_height = get_param_val(props.element , "height")
-
         return <img src={url || undefined } style={{
-            width: p_width > 0 ? `${p_width}rem` : "100%", 
-            height: p_height > 0 ? `${p_height}rem` : "100%" , 
+            width : width  > 0 ? `${width}rem`  : "100%", 
+            height: height > 0 ? `${height}rem` : "100%" , 
         }}/>
     } , 
 })
 
-var alignedwords_editor = get_DefaultStructEditor_with_RightBar({
-    get_label: (n)=>get_param_val(n,"label") as string, 
-    get_widths: (num,node)=>{
-        return (get_param_val(node , "widths") as string).split(",").map(x=>x=="" ? 1 : parseInt(x))
-    }
+var showchildren_editor = get_default_display_editor({
+    get_label: (n,p)=>"展示子节点", 
 })
 
 
-var showchildren_editor = get_DefaultSupportEditor_with_RightBar({
-    get_label: (n)=>get_param_val(n,"label") as string, 
+var insertchildren_editor = get_default_display_editor({
+    get_label: (n,p)=>"插入子节点",
 })
 
+let editors = {
+    "group": {
+        "昭言": brightwords_editor , 
+        "随言": followwords_editor , 
+        "属言": subwords_editor , 
+        "数学": mathblock_editor , 
+        "裱示": mount_editor , 
+        "彰示": display_editor ,
+        "格示": formatted_editor , 
+        "次节": subsection_editor  , 
+    } , 
+    "inline": {
+        "强": strong_editor , 
+        "刊": delete_editor , 
+        "缀": link_editor , 
+        "数学": mathinline_editor , 
+    } , 
+    "structure": {
+        "齐言": alignedwords_editor , 
+    } , 
+    "support": {
+        "图": image_editor , 
+        "小节线": sectioner_editor , 
+        "章节线": ender_editor , 
+        "展示子节点": showchildren_editor , 
+        "插入子节点": insertchildren_editor , 
+    } , 
+    "abstract": {
+        "穆言": get_default_abstract_editor({get_label: (n)=>"comment"})
+    } ,
+}
 
-var insertchildren_editor = get_DefaultSupportEditor_with_RightBar({
-    get_label: (n)=>get_param_val(n,"label") as string, 
-})
+
+let default_editors = get_default_editors()

@@ -1,13 +1,14 @@
 /** 这个模块执行初始化跳转的行为。 */
 
 import {
-    YPrinter
+    Printer
 } from "../../../lib"
 import $ from "jquery"
 
 export { linkto }
 
-function linkto(printer: YPrinter , target_idx: number ){
+// TODO 这玩意儿没有生效哦
+function linkto(printer: Printer , target_idx: number ){
     $(document).ready(()=>{
         let element = $(`#yconcept-${target_idx}`)
         if((!element) || element.length <= 0){

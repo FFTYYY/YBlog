@@ -24,7 +24,7 @@ import {
 } 
 from "@mui/icons-material"
 
-import { mathblock_style , mathinline_style } from "../../base/styles/styles"
+import { mathblock_style , mathinline_style } from "../../base/styles/first_concepts"
 import React from "react"
 
 export { HandleMathBuutton }

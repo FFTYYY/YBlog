@@ -204,7 +204,7 @@ class FileManager extends React.Component<{} , {
 
 	render(){
 		let me = this
-		return <Box sx={(theme)=>({...theme.printer.typography.body})}><AutoStack force_direction="column">{
+		return <Box sx={(theme)=>({...theme.fonts.body})}><AutoStack force_direction="column">{
 			me.state.resources.map((val , idx)=>{
 				let [id, name , url] = val
 				return <React.Fragment key={idx}>
