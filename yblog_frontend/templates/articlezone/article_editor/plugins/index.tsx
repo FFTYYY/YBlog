@@ -1,13 +1,7 @@
 import { Editor , Node  } from "slate"
 import { ReactEditor } from "slate-react"
 import { 
-    GroupNode , 
-    get_node_type , 
-    SupportNode , 
-    is_certain_style, 
-    paragraph_prototype , 
-    YEditor , 
-    is_styled , 
+    EditorComponent , 
 } from "../../../../lib"
 
 import * as C from "./constraints"
@@ -19,7 +13,7 @@ let plugins = [
     C.set_style_ensure_parameters , 
 ]
 
-function withAllPlugins(editor: YEditor, slate: ReactEditor): ReactEditor{
+function withAllPlugins(editor: EditorComponent, slate: ReactEditor): ReactEditor{
     for(let plugin of plugins){
         slate = plugin(editor , slate)
     }
