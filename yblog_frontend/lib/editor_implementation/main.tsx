@@ -125,6 +125,8 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
         let me = this
 
         while(!this.get_editor()); // 确保editor存在
+
+        this.forceUpdate()
     }
 
     render() {
@@ -179,10 +181,12 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                     position: "absolute", 
                     height: "100%", 
                     left: paper_width, 
-                    width: toolbar_width
+                    width: toolbar_width , 
                 }}>{(()=>{
                     let editor = me.get_editor()
                     let root = me.get_root()
+                    console.log(editor)
+                    console.log(root)
                     if(!(editor && root)){
                         return <></>
                     }

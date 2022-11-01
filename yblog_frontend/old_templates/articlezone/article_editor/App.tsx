@@ -123,7 +123,7 @@ class App extends  React.Component<AppProps, AppState>{
 		/** 初始化编辑器初始值。 */
 		var root = await Interaction.get.content(BackendData.node_id)
 		if(root){
-			root = root
+			root = convert_old_tree(root)
 		}
 		else{
 			editorcore.create_abstract("root")
@@ -150,7 +150,7 @@ class App extends  React.Component<AppProps, AppState>{
 	}
 
 	async save_content(){
-		return await Interaction.post.content({content: this.state.tree} , BackendData.node_id)
+		return await Interaction.post.content(this.state.tree , BackendData.node_id)
 	}
 
 	async post_file(files: any){
@@ -206,7 +206,7 @@ class App extends  React.Component<AppProps, AppState>{
 				height: "100%" , 
 			}}>
 				<DefaultEditorComponent
-					editorcore = {editorcore}
+					editorcore = {this.state.editorcore}
 					init_rootchildren = {tree.children}
 					onSave = {()=>{
 						let save_button = me.get_save_button()
@@ -256,10 +256,7 @@ class App extends  React.Component<AppProps, AppState>{
 		}}><div>
 
 			<FlexibleDrawer sx={{
-				position: "absolute" , 
-				left: "0" , 
-				right: "2%" ,
-				marginRight: "1%" , 
+				marginRight: "1%"
 			}}>
 				<SaveButton 
 					ref = {me.savebutton_ref}
@@ -275,10 +272,10 @@ class App extends  React.Component<AppProps, AppState>{
 			</FlexibleDrawer>
 
 			<MainPart sx={{
-				position: "absolute" , 
-				left: "3%" , 
-				width: "96%" , 
+				position: "relative" , 
+				width: "100%" , 
 				height: "100%" , 
+				flex: 1 , 
 			}}/>
 			
 		</div></Box></ThemeProvider>

@@ -39,6 +39,8 @@ var BackendData = {
     shallow: String(get_backend_data("shallow")).toLocaleLowerCase() == "true"  , 
 }
 
+
+
 /** `root`是当前的根目录。 */
 var root = DEBUGGING ? "http://127.0.0.1:8000/" : "/"
 
@@ -54,6 +56,8 @@ function url_from_root(url: string){
 axios.defaults.baseURL = root
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.headers.post["X-CSRFToken"] = BackendData.csrf
+
+
 
 /** 这个函数从后端读取一个节点相关的信息。
  * @param urlmaker 从节点编号生成 url 的函数。
