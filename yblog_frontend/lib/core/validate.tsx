@@ -191,8 +191,8 @@ function validate(tree: any, path: number[] = []): [boolean , string]{
             }
 
             // 检查relation
-            if(node["relation"] != "chaining" && node["relation"] != "separate"){
-                return [false , make_msg(path,`node "relation" should be either "chaining" or "separate", but turns out to be ${node["relation"]}.`)]
+            if(node["relation"] != "chaining" && node["relation"] != "separating"){
+                return [false , make_msg(path,`node "relation" should be either "chaining" or "separating", but turns out to be ${node["relation"]}.`)]
             }
 
                 // 检查children是否都是组节点。

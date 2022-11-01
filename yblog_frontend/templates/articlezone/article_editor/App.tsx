@@ -59,7 +59,6 @@ import { FileManageButton } from "./buttons/manage_files"
 import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./buttons/edit_others"
 
 import { second_concepts } from "./temp/second_concept"
-import { convert_old_tree } from "./temp/tree"
 
 // TODO 正确地读入树和概念数据。
 
@@ -121,13 +120,7 @@ class App extends  React.Component<AppProps, AppState>{
 		})
 		
 		/** 初始化编辑器初始值。 */
-		var root = await Interaction.get.content(BackendData.node_id)
-		if(root){
-			root = root
-		}
-		else{
-			editorcore.create_abstract("root")
-		}
+		var root = await Interaction.get.content(BackendData.node_id) || editorcore.create_abstract("root")
 		// set_normalize_status({initializing: true})
 
 		this.setState({

@@ -16,21 +16,51 @@ import {
 } from "../lib"
 
 
-export {convert_old_tree}
+export {
+    convert_old_tree , 
+    create_group , 
+    create_inline , 
+    create_paragraph , 
+    create_text , 
+    create_support , 
+    create_struct , 
+}
 
 function parse_parameters(parameters: any): ProcessedParameterList{
     for(let x in parameters){
-        if ( (parameters[x]) instanceof String){
+        if ( typeof (parameters[x]) == "string"){
             parameters[x] = {
                 type: "string" , 
                 val: parameters[x] , 
             }
         }
-        else if ( (parameters[x]) instanceof Number){
+        else if ( typeof (parameters[x]) == "number"){
             parameters[x] = {
                 type: "number" , 
                 val: parameters[x] , 
             }
+        }
+        else if ( typeof (parameters[x]) == "boolean"){
+            parameters[x] = {
+                type: "boolean" , 
+                val: parameters[x] , 
+            }
+        }
+
+        if(parameters[x].type == undefined){
+            if ( typeof (parameters[x].val) == "string"){
+                parameters[x].type = "string"
+            }
+            else if ( typeof (parameters[x].val) == "number"){
+                parameters[x].type = "number"
+            }
+            else if ( typeof (parameters[x].val) == "boolean"){
+                parameters[x].type = "boolean"
+            }
+            else{
+                console.log("????? ", parameters[x])
+            }
+            
         }
 
         if(parameters[x]["type"] == "choice"){
