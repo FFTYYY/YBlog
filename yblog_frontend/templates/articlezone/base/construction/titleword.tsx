@@ -1,6 +1,5 @@
 import React from "react"
 import { Interaction } from "../interaction"
-import { get_param_val } from "../../../../lib" 
 
 export { TitleWord }
 
@@ -23,7 +22,7 @@ class TitleWord extends React.PureComponent<{
     async componentDidMount() {
         if(id2title[this.props.node_id] == undefined){
             let root = await Interaction.get.content(this.props.node_id)
-            let title = get_param_val(root , "title")
+            let title = root.parameters.title.val
             id2title[this.props.node_id] = title
         }
         this.setState({title: id2title[this.props.node_id] as string}) 

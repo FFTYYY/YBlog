@@ -12,7 +12,7 @@ import {
 import { 
     sectioner_style , 
     ender_style  
-} from "../../base/styles/first_concepts"
+} from "../../base/concept/first_concepts"
 
 export { set_force_sectioner , set_style_ensure_parameters }
 

@@ -12,11 +12,9 @@ def get_node_concepts(request , node_id):
 		return Http404()
 
 	return JsonResponse({
-		"concepts": [
-			[c.name , c.meta , JSONDecode(c.fixed_params) , JSONDecode(c.default_params) ]
-			for c in node.get_all_concepts()
-		]
+		"concepts": node.get_all_concepts()
 	})
+
 
 @debug_convenient
 def get_node_comments(request , node_id):

@@ -48,7 +48,7 @@ import {
 	editors , 
 	default_editors , 
 	first_concepts , 
-} from "../base/styles"
+} from "../base/concept"
 import { BackendData, Interaction } from "../base/interaction"
 import { linkto } from "../base/linkto"
 import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
@@ -57,10 +57,7 @@ import { SaveButton } from "../base/construction/buttons"
 import { withAllPlugins } from "./plugins"
 import { FileManageButton } from "./buttons/manage_files"
 import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./buttons/edit_others"
-
-import { second_concepts } from "./temp/second_concept"
-
-// TODO 正确地读入树和概念数据。
+import {parse_second_concepts} from "../base/utils"
 
 interface AppProps{
 
@@ -72,10 +69,6 @@ interface AppState{
 	printer: Printer 
 	editorcore: EditorCore
 	tree: AbstractNode 
-}
-
-function get_second_concepts(){
-	return second_concepts
 }
 
 class App extends  React.Component<AppProps, AppState>{
@@ -103,8 +96,14 @@ class App extends  React.Component<AppProps, AppState>{
 	async componentDidMount(){
 
 		/** 初始化所有概念信息。 */
-		// let node_concepts = await Interaction.get.concept(BackendData.node_id) // 从后端获得所有概念。
-		let sec_concepts = get_second_concepts() as SecondClassConcept []
+		// let node_concepts =  
+		let sec_concepts_data = await Interaction.get.concept(BackendData.node_id) as string[] // 从后端获得所有概念。
+		let sec_concepts = parse_second_concepts(sec_concepts_data.reduce((obj,x)=>{
+			if(!x){
+				return obj
+			}
+			return {...obj, ...JSON.parse(x)}
+		}, {}))
 
 		let printer = new Printer(
 			first_concepts , 
@@ -121,7 +120,6 @@ class App extends  React.Component<AppProps, AppState>{
 		
 		/** 初始化编辑器初始值。 */
 		var root = await Interaction.get.content(BackendData.node_id) || editorcore.create_abstract("root")
-		// set_normalize_status({initializing: true})
 
 		this.setState({
 			printer: printer , 

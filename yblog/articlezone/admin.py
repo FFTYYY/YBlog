@@ -1,14 +1,14 @@
 from django.contrib import admin
-from .models import Node , Concept , Comment , Resource
+from .models import Node , Comment , Resource
 from django import forms
 from django_json_widget.widgets import JSONEditorWidget
 from functools import partial
 from .constants import CONCEPT_METAS
 from YTools.universe.beautiful_str import beautiful_str
+
 class NodeAdmin(admin.ModelAdmin):
     add_form_template 	 = "customize_admin/node_add.html"
 
-    filter_horizontal = ["concepts"]
     list_display = ["get_title" , "id" , "can_public_view" ]
     raw_id_fields = ["father"]
 
@@ -58,72 +58,12 @@ class NodeAdmin(admin.ModelAdmin):
             }]
         ]
 
-class MyJSONEditorWidget(JSONEditorWidget):
-    def __init__(self , *args , **kwargs):
-        kwargs.update({
-            "height": "auto" , 
-        })
-        super().__init__(*args , **kwargs)
-
-class ConceptAdminForm(forms.ModelForm):
-  class Meta:
-    model = Concept
-    fields = "__all__"
-    widgets = {
-        "fixed_params": MyJSONEditorWidget , 
-        "default_params": MyJSONEditorWidget , 
-    }
-
-  def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-
-class ConceptAdmin(admin.ModelAdmin):
-    form = ConceptAdminForm
-    def get_fieldsets(self, request, object):
-
-        meta_name = ""
-        default_info = ""
-        while True:
-            if object is None or object.id is None:
-                break
-            meta_name = object.meta
-
-            meta_info = CONCEPT_METAS.get(meta_name)
-            if meta_info is None:
-                break
-            params , labels = meta_info["parameters"] , meta_info["labels"] 
-
-            get_val  = lambda name: "" if params.get(name) is None else params[name].get("val")
-            get_type = lambda name: "" if params.get(name) is None else params[name].get("type")
-
-            default_info = beautiful_str(["参数名" , "默认值" , "类型" , "介绍"] , [
-                [pname , get_val(pname) , get_type(pname) , labels.get(pname)]
-                for pname in params
-            ])
-
-            break
-
-
-        return [
-            ["Base" , {
-                "fields": ["name" , "meta"] , 
-            }] , 
-            ["Parameters" , {
-                "fields": ["fixed_params" , "default_params"] , 
-                "description": "<pre style=\"font-family:monospace\">" + """
-                    概念 {meta_name} 的参数列表：
-                    {default_info}
-                """.format(meta_name = meta_name , default_info = default_info).strip() + "</pre>"
-            }]
-        ]
-
 
 class CommentAdmin(admin.ModelAdmin):
     pass
 class ResourceAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Node        , NodeAdmin      )
-admin.site.register(Concept     , ConceptAdmin)
-admin.site.register(Comment     , CommentAdmin)
-admin.site.register(Resource    , ResourceAdmin)
+admin.site.register(Node        , NodeAdmin     )
+admin.site.register(Comment     , CommentAdmin  ) 
+admin.site.register(Resource    , ResourceAdmin )

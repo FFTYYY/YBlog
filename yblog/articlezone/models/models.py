@@ -5,23 +5,14 @@ import django.utils.timezone as timezone
 from .constraints import perform_checks
 import json
 from django.contrib import admin
-class Concept(models.Model):
-
-	name = models.CharField(max_length = SHORT_STR_LENGTH)
-	meta = models.CharField(max_length = SHORT_STR_LENGTH , choices = [ [x,x] for x in CONCEPT_METAS ])
-	fixed_params   = models.TextField(default = "{}" , null = True , blank = True)
-	default_params = models.TextField(default = "{}" , null = True , blank = True)
-
-	def __str__(self):
-		return self.name
 
 class Node(models.Model):
 	father = models.ForeignKey("self", on_delete = models.SET_NULL , null = True , blank = True , related_name = "son")
 	index_in_father = models.IntegerField(default = 0)
 
-	concepts = models.ManyToManyField(Concept , related_name = "place" , blank = True , )
-
-	content = models.TextField(default = "", blank = True)
+	content  = models.TextField(default = "", blank = True)
+	cache    = models.TextField(default = "", blank = True)
+	concepts = models.TextField(default = "", blank = True)
 
 	create_time = models.DateTimeField(default = timezone.now)
 	update_time = models.DateTimeField(default = timezone.now)
@@ -69,10 +60,10 @@ class Node(models.Model):
 
 	def get_all_concepts(self):
 		'''收集自己到根的所有组件。'''
-		ret = set(self.concepts.all())
+		ret = [self.concepts]
 		if self.father is not None:
-			ret = ret | self.father.get_all_concepts()
-		return ret
+			ret = ret + self.father.get_all_concepts()
+		return list( filter(lambda x: len(x) > 0 , ret) )
 
 	def save(self , *args , **kwargs):
 
@@ -82,14 +73,7 @@ class Node(models.Model):
 			return 
 
 		self.update_time = timezone.now()
-		
-		if self.father is not None and self.id is not None:
-			mine = set(self.concepts.all())
-			fath = self.father.get_all_concepts()
-			if len(fath - mine) > 0:
-				for x in fath - mine:
-					self.concepts.add(x)
-
+	
 		return super().save(*args , **kwargs)
 
 
