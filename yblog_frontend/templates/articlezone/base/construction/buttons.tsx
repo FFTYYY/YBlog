@@ -12,7 +12,7 @@ import {
     AutoStack , 
     AutoTooltip , 
 } 
-from "../../../../lib"
+from "@ftyyy/ytext"
 
 import { PostSnackbar } from "./snackbar"
 

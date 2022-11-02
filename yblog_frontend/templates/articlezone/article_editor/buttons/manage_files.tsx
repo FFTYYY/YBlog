@@ -18,7 +18,7 @@ import {
 	AutoTooltip , 
 	AutoIconButton , 
 } 
-from "../../../../lib"
+from "@ftyyy/ytext"
 import { BackendData, Interaction } from "../../base/interaction"
 import { FlexibleItem } from "../../base/construction/framework"
 import { PostSnackbar } from "../../base/construction/snackbar"

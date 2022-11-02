@@ -18,7 +18,7 @@ import {
 
     MouselessParameterEditor , 
     ButtonDescription , 
-} from "../../../../lib"
+} from "@ftyyy/ytext"
 
 import {
     Interaction , BackendData , get_backend_data , url_from_root , urls , 

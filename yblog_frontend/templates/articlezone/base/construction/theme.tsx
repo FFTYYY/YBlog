@@ -1,6 +1,6 @@
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 import type { PaletteColor} from "@mui/material/styles"
-import type { ThemeOptions } from "../../../../lib" 
+import type { ThemeOptions } from "@ftyyy/ytext"
 export { my_theme }
 
 const my_theme: ThemeOptions = {

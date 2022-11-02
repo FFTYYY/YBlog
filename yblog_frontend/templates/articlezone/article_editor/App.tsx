@@ -35,7 +35,7 @@ import {
 
 	GlobalInfoProvider, 
 	SecondClassConceptDict, 
-} from "../../../lib"
+} from "@ftyyy/ytext"
 
 import * as Slate from "slate"
 import * as SlateReact from "slate-react"

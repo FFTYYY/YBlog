@@ -4,7 +4,7 @@ import {
     AutoStack , 
     AutoTooltip , 
 } 
-from "../../../../lib"
+from "@ftyyy/ytext"
 
 import {
     Box , 
