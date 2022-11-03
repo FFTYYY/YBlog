@@ -58,7 +58,7 @@ import { withAllPlugins } from "./plugins"
 import { FileManageButton } from "./buttons/manage_files"
 import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./buttons/edit_others"
 import {parse_second_concepts} from "../base/utils"
-// import { MathJaxContext } from "../base/construction"
+import { MathJaxContext } from "../base/construction"
 
 interface AppProps{
 
@@ -70,6 +70,16 @@ interface AppState{
 	printer: Printer 
 	editorcore: EditorCore
 	tree: AbstractNode 
+	init_tree: AbstractNode  // 仅仅用来初始化
+}
+
+let default_tree = {
+	type: "abstract" as "abstract" ,
+	concept: "root" , 
+	idx: 2333 , 
+	abstract: [] , 
+	parameters: {} , 
+	children: [] , 
 }
 
 class App extends  React.Component<AppProps, AppState>{
@@ -82,14 +92,8 @@ class App extends  React.Component<AppProps, AppState>{
 		this.state = {		
 			printer: undefined , 
 			editorcore: undefined , 
-			tree: {
-				type: "abstract" ,
-				concept: "root" , 
-				idx: 2333 , 
-				abstract: [] , 
-				parameters: {} , 
-				children: [] , 
-			} , 
+			tree: {...default_tree} , 
+			init_tree: {...default_tree} , 
 		}
 		this.savebutton_ref = React.createRef()
 	}
@@ -99,12 +103,7 @@ class App extends  React.Component<AppProps, AppState>{
 		/** 初始化所有概念信息。 */
 		// let node_concepts =  
 		let sec_concepts_data = await Interaction.get.concept(BackendData.node_id) as string[] // 从后端获得所有概念。
-		let sec_concepts = parse_second_concepts(sec_concepts_data.reduce((obj,x)=>{
-			if(!x){
-				return obj
-			}
-			return {...obj, ...JSON.parse(x)}
-		}, {}))
+		let sec_concepts = parse_second_concepts(sec_concepts_data)
 
 		let printer = new Printer(
 			first_concepts , 
@@ -125,8 +124,11 @@ class App extends  React.Component<AppProps, AppState>{
 		this.setState({
 			printer: printer , 
 			editorcore: editorcore , 
-			tree: root , 
+			tree: {...root} , 
+			init_tree: {...root} , 
 		})
+
+		console.log("initializing")
 
 		//初始化跳转
 		if(BackendData.linkto && BackendData.linkto != "None"){
@@ -199,7 +201,7 @@ class App extends  React.Component<AppProps, AppState>{
 			}}>
 				<DefaultEditorComponent
 					editorcore = {editorcore}
-					init_rootchildren = {tree.children}
+					init_rootchildren = {this.state.tree.children}
 					onSave = {()=>{
 						let save_button = me.get_save_button()
 						if(save_button){
@@ -212,16 +214,22 @@ class App extends  React.Component<AppProps, AppState>{
 						button: <ExtraButtons /> , 
 						run: ()=>{console.log("啊？")} , 
 					}]}}
+					onUpdate = {(new_children)=>{
+						// this.update_tree({...this.state.tree, children: new_children})
+					}}
 				/>
 			</Box>
 
-			<Box sx = {{
-				position: "absolute" , 
-				width: "49%" ,
-				left: "51%" , 
-				top: "0" , 
-				height: "100%" , 
-			}}>
+			<MathJaxContext><Box 
+				sx = {{
+					position: "absolute" , 
+					width: "49%" ,
+					left: "51%" , 
+					top: "0" , 
+					height: "100%" , 
+				}} 
+				className = "mathjax_process" // 启动mathjax处理
+			>
 				<GlobalInfoProvider value={{BackendData: BackendData.node_id}}>
 					<DefaultPrinterComponent 
 						printer = {printer} 
@@ -230,7 +238,7 @@ class App extends  React.Component<AppProps, AppState>{
 						root = {this.state.tree}
 					></DefaultPrinterComponent>
 				</GlobalInfoProvider>
-			</Box>
+			</Box></MathJaxContext>
 		</Box>
 	}
 
@@ -281,68 +289,3 @@ class App extends  React.Component<AppProps, AppState>{
 export default App
 
 
-/**	以下是一个调试用的mainpart。
- * 
- * return <Box sx={props.sx}>
-			<Box sx = {{
-				position: "absolute" , 
-				width: "49%" ,
-				left: "0%" , 
-				top: "0" , 
-				height: "100%" , 
-			}}>
-				<DefaultEditor 
-					ref 		= {me.editor_ref}
-					core 		= {me.core}
-					renderers 	= {me.editor_renderers}
-					proxies 	= {me.state.editor_proxies}
-					
-					theme = {my_theme}
-
-					onFocusChange = {()=>{
-						// if(slate.selection && me.printer_ref  && me.printer_ref.current){
-						// 	me.printer_ref.current.scroll_to(slate.selection.focus.path)
-						// }
-					}}
-					onUpdate = {(v)=>{
-						// console.log(me.core.root)
-						if(me.printer_ref && me.printer_ref.current){
-							me.printer_ref.current.forceUpdate()
-						}
-					}}
-					extra_buttons = {<ExtraButtons />}
-
-					plugin = { withAllPlugins }
-				/>
-			</Box>
-
-			<Box sx = {{
-				position: "absolute" , 
-				width: "49%" ,
-				left: "51%" , 
-				top: "0" , 
-				height: "100%" , 
-			}}>
-				{(()=>{
-					function V({js}){
-						if(js == undefined)
-							return <></>
-						if(typeof(js) == "string" || typeof(js) == "number" || typeof(js) == "boolean")
-							return <div>{js}</div>
-						return <>{Object.keys(js).map((k,idx)=><div key={idx}>
-							[{k}] :
-							<div  style={{marginLeft: "20px"}}><V js={js[k]}/></div>
-						</div>)}</>
-					}
-					class R extends React.Component{
-						constructor(props){
-							super(props)
-						}
-						// render(){return <div>{JSON.stringify( (me.get_editor()||{get_root:()=>{}}).get_root() )}</div>}
-						render(){return <V js={(me.get_editor()||{get_root:()=>{}}).get_root()} />}
-					}
-					return <R ref ={me.printer_ref}></R>
-				})()}
-			</Box>
-		</Box>
- */

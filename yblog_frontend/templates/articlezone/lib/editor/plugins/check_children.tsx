@@ -98,7 +98,7 @@ function constraint_inline_children(editor: EditorComponent , slate: SlateReact.
             }
                         
             // 子节点不能不是行内或者文本
-            if(! (slate_is_concept(node.children[0], "inline") || slate_is_text(node.children[0]))){ 
+            if(! (slate_is_concept(node.children[0], "inline") || slate_is_text(node.children[0]) || slate_is_concept(node.children[0], "support"))){ 
                 editor.delete_node_by_path([...path, 0])
                 return 
             }
@@ -158,8 +158,8 @@ function constraint_paragraph_children(editor: EditorComponent , slate: SlateRea
             }
             
 
-            // 子节点不能不是行内或者文本
-            if(! (slate_is_concept(node.children[0], "inline") || slate_is_text(node.children[0]))){ 
+            // 子节点不能不是行内或者文本或者支持
+            if(! (slate_is_concept(node.children[0], "inline") || slate_is_text(node.children[0]) || slate_is_concept(node.children[0], "support"))){ 
                 editor.move_node_by_path([...path,0] , path) // 拿到自己后面去。
                 // editor.delete_node_by_path([...path, 0])
                 return 

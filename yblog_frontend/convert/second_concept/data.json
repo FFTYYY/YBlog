@@ -1,0 +1,490 @@
+{
+    "命题": {
+        "first": "昭言" , 
+        "type" : "group" , 
+        "fixed": {
+            "label": {
+                "val": "p=>p.category.val",
+                "type": "function"
+            } ,
+            "title": {
+                "val": "p=>p.category.val",
+                "type": "function"
+            },
+            "prefix": {
+                "val": "p=>p.alias.val",
+                "type": "function"
+            },
+            "ordering": {
+                "val": "head",
+                "type": "string"
+            }
+        } , 
+        "default": {
+            "alias": {
+                "val": "",
+                "type": "string"
+            },
+            "category": {
+                "val": "命题",
+                "type": "string",
+                "choices": [
+                    "定理" ,
+                    "引理" ,
+                    "推论" ,
+                    "断言" , 
+                    "命题"
+                ]
+            }
+        }
+    } , 
+    "次节": {
+        "first": "昭言" , 
+        "type" : "group" , 
+        "fixed": {} , 
+        "default": {
+            "title": {
+                "val": "",
+                "type": "string"
+            }
+        }
+    } , 
+    "项目": {
+        "first": "昭言" , 
+        "type" : "group" , 
+        "fixed": {
+            "label": {
+                "val": "p=>p.name.val",
+                "type": "function"
+            } ,
+            "title": {
+                "val": "p=>p.name.val",
+                "type": "function"
+            },
+            "prefix": {
+                "val": "p=>p.alias.val",
+                "type": "function"
+            },
+            "ordering": {
+                "val": "head",
+                "type": "string"
+            }
+        } , 
+        "default": {
+            "alias": {
+                "val": "",
+                "type": "string"
+            },
+            "name": {
+                "val": "",
+                "type": "string"
+            }
+        }
+    } , 
+    "证明": {
+        "first" : "随言" , 
+        "type" : "group" , 
+        "fixed": {
+            "label": {
+                "val": "证明",
+                "type": "string"
+            },
+            "title": {
+                "val": "证明",
+                "type": "string"
+            },
+            "close": {
+                "val": "■",
+                "type": "string"
+            },
+            "ordering": {
+                "val": "none",
+                "type": "string"
+            }
+          } , 
+        "default" : {}
+    }  , 
+    "列表": {
+        "first" : "属言" , 
+        "type" : "group" , 
+        "fixed": {
+            "prefix": {
+                "val": "p=> (p.alias.val ? `(${p.alias.val})`: '') + (p.leading.val ? `${p.leading.val} `: '')   ",
+                "type": "function"
+            },
+            "label": {
+                "val": "列表",
+                "type": "string"
+            },
+            "clustering": {
+                "val": true,
+                "type": "boolean"
+            },
+            "ordering": {
+                "val": "list-chaining",
+                "type": "string"
+            }
+        } , 
+        "default" : {
+            "alias": {
+                "val": "",
+                "type": "string"
+            } , 
+            "leading": {
+                "val": "" , 
+                "type": "string"
+            }
+        }
+    }  , 
+    "讨论": {
+        "first" : "属言" , 
+        "type" : "group" , 
+        "fixed": {
+            "label": {
+                "val": "讨论",
+                "type": "string"
+            },
+            "clustering": {
+                "val": false,
+                "type": "boolean"
+            },
+            "ordering": {
+                "val": "discuss",
+                "type": "string"
+            }
+        } , 
+        "default" : {}
+    }  , 
+    "阐述": {
+        "first" : "随言" , 
+        "type" : "group" , 
+        "fixed": {
+            "ordering": {
+              "val": "none",
+              "type": "string"
+            },
+            "label": {
+              "val": "阐述",
+              "type": "string"
+            }
+          } , 
+        "default" : {}
+    }  , 
+    "引用": {
+        "first" : "裱示" , 
+        "type" : "group" , 
+        "fixed": {
+            "ordering": {
+                "val": "none",
+                "type": "string"
+            },
+            "label": {
+                "val": "引用",
+                "type": "string"
+            } ,
+            "title": {
+                "val": "p=>p.enter.val" ,
+                "type": "function"
+            } ,
+            "close": {
+                "val": "p=>p.exit.val" ,
+                "type": "function"
+            }
+        } , 
+        "default" : {
+            "long": {
+                "val": false , 
+                "type": "boolean"
+            } ,
+            "enter": {
+                "val": "" ,
+                "type": "string" 
+            } , 
+            "exit": {
+                "val": "" , 
+                "type": "string"
+            }
+        }
+    }  , 
+    "节引": {
+        "first" : "彰示" , 
+        "type" : "group" , 
+        "fixed": {
+            "label": {
+              "val": "节引",
+              "type": "string"
+            }
+          } , 
+        "default" : {}
+    }  , 
+    "代码": {
+        "first" : "格式" , 
+        "type" : "group" , 
+        "fixed": {
+            "label": {
+              "val": "代码",
+              "type": "string"
+            }
+          } , 
+        "default" : {
+            "format": {
+                "val": "" ,
+                "type": "string"
+            }
+        }
+    }  , 
+    "强调": {
+        "first" : "强" , 
+        "type" : "inline" , 
+        "fixed": {
+            "label": {
+              "val": "强调",
+              "type": "string"
+            }
+          } , 
+        "default" : {}
+    }  , 
+    "删除线": {
+        "first" : "刊" , 
+        "type" : "inline" , 
+        "fixed": {
+            "label": {
+              "val": "删除线",
+              "type": "string"
+            }
+          } , 
+        "default" : {}
+    }  , 
+    "链接": {
+        "first" : "缀" , 
+        "type" : "inline" , 
+        "fixed": {
+            "label": {
+              "val": "链接",
+              "type": "string"
+            }
+          } , 
+        "default" : {
+            "type": {
+                "val": "internal" , 
+                "type": "string" , 
+                "choices": ["index", "outer-index", "http"]
+            } , 
+            "target": {
+                "val": "" , 
+                "type": "string"
+            } , 
+            "autotext": {
+                "val": false ,
+                "type": "boolean"
+            }
+        }
+    }  , 
+    "图片": {
+        "first" : "图" , 
+        "type" : "support" , 
+        "fixed": {
+            "label": {
+                "val": "图片",
+                "type": "string"
+            }
+        } , 
+        "default" : {
+            "target": {
+                "val": "",
+                "type": "string"
+            } , 
+            "width": {
+                "val": 10,
+                "type": "number"
+            } , 
+            "height": {
+                "val": -1,
+                "type": "number"
+            } , 
+            "type": {
+                "val": "internal" , 
+                "type": "string" , 
+                "choices": ["internal", "url"]
+            }
+        }
+    }  , 
+    "数学-块": {
+        "first" : "数学" , 
+        "type" : "group" , 
+        "fixed": {} , 
+        "default" : {
+            "environ": {
+                "val": "align" , 
+                "type": "string"
+            } ,
+            "suffix": {
+                "val": "" , 
+                "type": "string"
+            }
+        }
+    }  , 
+    "数学-行内": {
+        "first" : "数学" , 
+        "type" : "inline" , 
+        "fixed": {} , 
+        "default" : {}
+    } , 
+    "小节线": {
+        "first": "小节线" , 
+        "type" : "support" , 
+        "fixed": {} , 
+        "default" : {
+            "title": {
+                "val": "" , 
+                "type": "string" 
+            } , 
+            "alone": {
+                "val": false , 
+                "type": "boolean"
+            }
+        }
+    } , 
+    
+    "章节线": {
+        "first": "章节线" , 
+        "type" : "support" , 
+        "fixed": {} , 
+        "default" : {}
+    } , 
+    "展示子节点": {
+        "first": "展示子节点" , 
+        "type" : "support" , 
+        "fixed": {} , 
+        "default" : {
+            "max_height":{ 
+                "val": -1 , 
+                "type": "number"
+            } , 
+            "min_height":{ 
+                "val": -1 , 
+                "type": "number"
+            } , 
+            "scroll":{ 
+                "val": true , 
+                "type": "boolean"
+            } 
+    
+        }
+    } , 
+    "插入子节点": {
+        "first": "插入子节点" , 
+        "type" : "support" , 
+        "fixed": {} , 
+        "default" : {
+            "no_ender":{ 
+                "val": true , 
+                "type": "boolean"
+            } 
+        }
+    } , 
+    "行": {
+        "first": "齐言" , 
+        "type" : "structure" ,
+        "fixed": {} , 
+        "default" : {
+            "label": {
+                "val" : "行" , 
+                "type": "string"
+            } , 
+            "widths": {
+                "val": "1" , 
+                "type": "string"
+            }
+        }
+    } ,
+    "旁注": {
+        "first": "穆言" , 
+        "type" : "abstract" ,
+        "fixed": {} , 
+        "default" : {}
+    } ,
+    "经": {
+        "first": "裱示" , 
+        "type" : "group" , 
+        "fixed": {
+            "ordering": {
+                "val": "none",
+                "type": "string"
+            },
+            "label": {
+                "val": "经",
+                "type": "string"
+            },
+            "title": {
+                "val": "经" ,
+                "type": "string"
+            },
+            "center": {
+                "val": false ,
+                "type": "string"
+            }
+        } , 
+        "default": {}
+    } , 
+    "传": {
+        "first": "属言" , 
+        "type" : "group" , 
+        "fixed": {
+            "prefix": {
+                "val": "",
+                "type": "string"
+            },
+            "suffix": {
+                "val": "",
+                "type": "string"
+            },
+            "ordering": {
+                "val": "none",
+                "type": "string"
+            },
+            "label": {
+                "val": "注",
+                "type": "string"
+            },
+            "title": {
+                "val": "注" ,
+                "type": "string"
+            }
+        } , 
+        "default": {}
+    } , 
+    "论文评论": {
+        "first": "属言" , 
+        "type" : "group" , 
+        "fixed": {
+            "prefix": {
+                "val": "p=>`${p['paper-title'].val}（${p.time.val}）`",
+                "type": "function"
+            },
+            "ordering": {
+                "val": "list-separating",
+                "type": "string"
+            },
+            "label": {
+                "val": "论文评论",
+                "type": "string"
+            },
+            "clustering": {
+                "val": false,
+                "type": "boolean"
+            }
+        } , 
+        "default": {
+            "paper-title": {
+                "val": "",
+                "type": "string"
+            },
+            "time": {
+                "val": "",
+                "type": "string"
+            }
+        }
+    } 
+
+}

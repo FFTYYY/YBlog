@@ -1,5 +1,6 @@
 import React, { useEffect } from "react"
 import ReactDom from "react-dom"
+import * as Slate from "slate"
 
 import {
 	Box , Link , Typography , Divider , Grid
@@ -65,6 +66,11 @@ import {
     num2rem , 
     remtimes , 
 } from "../utils"
+
+import {
+	MathJaxInline , 
+	MathJaxBlock , 
+} from "../../base/construction"
 
 export {
 	renderers , 
@@ -384,7 +390,9 @@ var mathinline_printer = (()=>{
 			 * 这里的问题在于，如果直接写成${props.children}$，则printer里为了定位元素所添加的空白<span>会阻碍mathjax的处理。
 			 TODO 处理数学
 			 */
-			return <Box component="span" sx={{paddingX: "0.1rem"}}>${props.children}$</Box>
+			return <Box component="span" sx={{paddingX: "0.1rem"}}>
+				<MathJaxInline>{Slate.Node.string(props.node)}</MathJaxInline>
+			</Box>
 		}
 	})
 })()
@@ -393,9 +401,19 @@ var mathinline_printer = (()=>{
 var mathblock_printer = (()=>{
 	return get_default_group_renderer({
 		inner: (props: PrinterRenderFunctionProps<GroupNode>) => {
-			let {node , parameters , context , children} = props
+			let value 	= Slate.Node.string(props.node)
+			let suffix 	= props.parameters.suffix
+			let close 	= props.parameters.close
+			let environ = props.parameters.environ
+			let environ_enter = environ ? `\\begin{${environ}}` : ""
+			let environ_exit  = environ ? `\\end{${environ}}`   : ""
+
+			value = `${environ_enter}${value}\\text{${suffix}}${environ_exit}`
+			
 			return <React.Fragment>
-				$${children}$$
+				{props.context.anchor}
+				<MathJaxBlock>{value}</MathJaxBlock>
+				{close}
 			</React.Fragment>
 		} , 
 	})

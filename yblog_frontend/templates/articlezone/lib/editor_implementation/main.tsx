@@ -185,7 +185,6 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                 }}>{(()=>{
                     let editor = me.get_editor()
                     let root = me.get_root()
-                    console.log(editor , root)
                     if(!(editor && root)){
                         return <></>
                     }
