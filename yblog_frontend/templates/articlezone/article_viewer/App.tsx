@@ -32,6 +32,9 @@ import { linkto } from "../base/linkto"
 import { parse_second_concepts } from "../base/utils"
 import { first_concepts } from "../base/concept"
 
+// TODO 处理滚动
+// TODO 处理根节点的参数。
+
 // import "react-perfect-scrollbar/dist/css/styles.css"
 // import PerfectScrollbar from "react-perfect-scrollbar"
 let default_tree = {
