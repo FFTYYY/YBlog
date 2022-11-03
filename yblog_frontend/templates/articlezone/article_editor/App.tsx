@@ -79,12 +79,16 @@ let default_tree = {
 	idx: 2333 , 
 	abstract: [] , 
 	parameters: {} , 
-	children: [] , 
+	children: [{children: [{text: "asas"}]}] , 
 }
 
+
+// TODO 整理按钮栏
 class App extends  React.Component<AppProps, AppState>{
 
+	editor_ref: React.RefObject<DefaultEditorComponent>
 	savebutton_ref: React.RefObject<SaveButton>
+	inittree: AbstractNode
 
 	constructor(props: AppProps){
 		super(props)
@@ -96,6 +100,7 @@ class App extends  React.Component<AppProps, AppState>{
 			init_tree: {...default_tree} , 
 		}
 		this.savebutton_ref = React.createRef()
+		this.editor_ref = React.createRef()
 	}
 
 	async componentDidMount(){
@@ -125,10 +130,8 @@ class App extends  React.Component<AppProps, AppState>{
 			printer: printer , 
 			editorcore: editorcore , 
 			tree: {...root} , 
-			init_tree: {...root} , 
 		})
 
-		console.log("initializing")
 
 		//初始化跳转
 		if(BackendData.linkto && BackendData.linkto != "None"){
@@ -176,10 +179,22 @@ class App extends  React.Component<AppProps, AppState>{
 		</React.Fragment>
 	}
 
-	update_tree(new_tree: AbstractNode){
-		this.setState({
-			tree: new_tree
-		})
+	get_editor(){
+		if(this.editor_ref && this.editor_ref.current){
+			return this.editor_ref.current
+		}
+		return undefined
+	}
+
+	update_tree(){
+		let editor = this.get_editor()
+		if(!editor){
+			return 
+		}
+		let edieditor = editor.get_editor()
+		if(edieditor){
+			this.setState({tree: edieditor.get_root()})
+		}
 	}
 
 	mainpart(props: {sx: any}){
@@ -190,7 +205,8 @@ class App extends  React.Component<AppProps, AppState>{
 			return <></>
 		}
 		let {editorcore, printer, tree} = this.state
-
+ 
+		// TODO 因为更新state有延迟，所以不能更新state后立刻保存。		
 		return <Box sx={props.sx}>
 			<Box sx = {{
 				position: "absolute" , 
@@ -200,9 +216,11 @@ class App extends  React.Component<AppProps, AppState>{
 				height: "100%" , 
 			}}>
 				<DefaultEditorComponent
+					ref = {me.editor_ref}
 					editorcore = {editorcore}
 					init_rootchildren = {this.state.tree.children}
 					onSave = {()=>{
+						this.update_tree()
 						let save_button = me.get_save_button()
 						if(save_button){
 							save_button.click()
@@ -214,9 +232,6 @@ class App extends  React.Component<AppProps, AppState>{
 						button: <ExtraButtons /> , 
 						run: ()=>{console.log("啊？")} , 
 					}]}}
-					onUpdate = {(new_children)=>{
-						// this.update_tree({...this.state.tree, children: new_children})
-					}}
 				/>
 			</Box>
 
