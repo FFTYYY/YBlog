@@ -61,8 +61,6 @@ import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "
 import { parse_second_concepts } from "../base/utils"
 import { MathJaxContext } from "../base/construction"
 import CssBaseline from '@mui/material/CssBaseline';
-import { ScrollContainer } from 'react-nice-scroll';
-import 'react-nice-scroll/dist/styles.css';
 
 let default_tree = {
 	type: "abstract" as "abstract" ,
@@ -73,9 +71,77 @@ let default_tree = {
 	children: [{children: [{text: "fuck"}]}] , 
 }
 
+class App extends React.Component{
+	constructor(props: {}){
+		super(props)
+	}
+
+	render(): React.ReactNode {
+		return <ThemeProvider theme = {createTheme(my_theme)}>
+			<Paper sx={{
+				position: "absolute" , 
+				left: "1%" , 
+				top: "1%" , 
+				width: "20%" , 
+				height: "20%" , 
+			}}>
+				<Typography>Paper</Typography>
+				<Paper elevation={2} sx={{
+					position: "absolute" , 
+					left: "1%" , 
+					top: "11%" , 
+					width: "20%" , 
+					height: "20%" , 
+				}}>
+					<Typography>SubPaper</Typography>
+				</Paper>
+				<Box sx={{
+					position: "absolute" , 
+					left: "21%" , 
+					top: "31%" , 
+					width: "20%" , 
+					height: "20%" , 
+					border: "1px solid" , 
+				}}>
+					<Typography>SubBox</Typography>
+				</Box>
+				<Card sx={{
+					position: "absolute" , 
+					left: "41%" , 
+					top: "51%" , 
+					width: "20%" , 
+					height: "20%" , 
+				}}>
+					<Typography>SubCard</Typography>
+				</Card>
+
+			</Paper>
+			<Box sx={{
+				position: "absolute" , 
+				left: "21%" , 
+				top: "21%" , 
+				width: "20%" , 
+				height: "20%" , 
+				border: "1px solid" , 
+			}}>
+				<Typography>Box</Typography>
+			</Box>
+			<Card sx={{
+				position: "absolute" , 
+				left: "41%" , 
+				top: "41%" , 
+				width: "20%" , 
+				height: "20%" , 
+			}}>
+				<Typography>Card</Typography>
+			</Card>
+		</ThemeProvider>
+	}
+}
+
 // TODO 整理按钮栏
 // TODO 在保存后还原焦点
-class App extends  React.Component<{}, {
+class _App extends  React.Component<{}, {
 	flags?: number
 
 	printer: Printer 
@@ -157,6 +223,11 @@ class App extends  React.Component<{}, {
 	}
 
 	/** 这个函数向后端提交一个文件。 */
+	async post_file(files: HTMLInputElement["files"]){
+		var form_data = new FormData()
+		form_data.append("file" , files[0])
+		return await Interaction.post.file(form_data , BackendData.node_id)
+	}
 
 
 	update_tree(){
@@ -179,13 +250,13 @@ class App extends  React.Component<{}, {
 		let {editorcore, printer, tree} = this.state
  
 		return <Box sx={props.sx}>
-			<Box sx = {{
+			<Paper sx = {{
 				position: "absolute" , 
 				width: "49%" ,
 				left: "0%" , 
 				top: "0" , 
 				height: "100%" , 
-			}}><ScrollContainer>
+			}}>
 				<DefaultEditorComponent
 					ref = {me.editor_ref}
 					editorcore = {editorcore}
@@ -198,9 +269,9 @@ class App extends  React.Component<{}, {
 					theme = {my_theme}
 					plugin = { withAllPlugins }
 				/>
-			</ScrollContainer></Box>
+			</Paper>
 
-			<MathJaxContext><Box 
+			<MathJaxContext><Paper 
 				sx = {{
 					position: "absolute" , 
 					width: "49%" ,
@@ -218,7 +289,7 @@ class App extends  React.Component<{}, {
 						root = {tree}
 					></DefaultPrinterComponent>
 				</GlobalInfoProvider>
-			</Box></MathJaxContext>
+			</Paper></MathJaxContext>
 		</Box>
 	}
 
@@ -226,14 +297,14 @@ class App extends  React.Component<{}, {
 		let me = this
 		let MainPart = this.mainpart.bind(this)
 
-		return <ThemeProvider theme={createTheme(my_theme)}><CssBaseline /><Box sx={{
+		return <ThemeProvider theme={createTheme(my_theme)}><Box sx={{
 			position: "absolute" , 
 			top: "2%" ,
 			left: "1%" , 
 			height: "96%" , 
 			width: "98%" , 
 		}}>
-			<Card sx={{
+			<Paper sx={{
 				position: "absolute" , 
 				left: "0" , 
 				width: "2%" ,
@@ -243,12 +314,12 @@ class App extends  React.Component<{}, {
 					save_func = {me.save_content.bind(me)}
 				/>
 				<FileManageButton />
-				<UploadFileButton />
+				<UploadFileButton/>
 				<BackendEdit /> 
 				<NodeStructEdit /> 
 				<NodeStructEditShallow /> 
 				<NodeView />
-			</Card>
+			</Paper>
 
 			<MainPart sx={{
 				position: "absolute" , 

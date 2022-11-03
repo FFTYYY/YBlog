@@ -7,11 +7,22 @@ const my_theme: ThemeOptions = {
         divider: "#eeeeee" , 
         mode: "dark",
         primary: {
-            main: '#aea6f5',
+            main: '#aeaef5',
         },
         secondary: {
             main: '#cb3f75',
         },
+        background: {
+            default: 'rgba(35,35,48,0.98)',
+            paper: '#393942',
+        },
+        text: {
+            primary: '#ffffff',
+            secondary: 'rgba(255,255,255,0.71)',
+            disabled: 'rgba(255,255,255,0.5)',
+        },
+      
+      
     },    
     margins: {
         paragraph: "0.4rem" ,  

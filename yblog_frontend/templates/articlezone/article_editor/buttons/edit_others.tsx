@@ -37,8 +37,10 @@ export { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView }
 function ButtonLikeLink(props: {title: string , href: string , Icon: any}){
     let Icon = props.Icon
     return  <Box sx={{
-        marginLeft: "0.2rem" , 
+        marginLeft: "0.35rem" , 
+        marginRight: "0.25rem" , 
         marginTop: "0.35rem" , 
+        
     }}>
         <AutoTooltip title={props.title}>
             <Link underline="hover" href={props.href}>

@@ -24,32 +24,30 @@ import { PostSnackbar } from "../../base/construction/snackbar"
 
 export {FileManageButton, UploadFileButton}
 
-function UploadFileButton(props: {
-	onPostfile: (files: HTMLInputElement["files"])=>void
-}){
-	return <AutoTooltip title="上传文件">
-		<Box sx={{marginX: "auto"}}><label>
-			<input 
-				type = "file"  
-				style = {{display: "none"}}
-				onChange = {(e)=>{
-					if(e.target.files.length > 0){
-						props.onPostfile(e.target.files)
-					}
-				}}
-			/>
-			
-			<AutoIconButton 
-				title = "上传"
-				icon = {DriveFolderUploadIcon}
-				component = "span"
-				size = "small"
-				icon_props = {{
-					"color": "primary" , 
-				}}
-			/>
-		</label></Box>
-	</AutoTooltip>
+function UploadFileButton(){
+	return <Box sx={{marginX: "auto"}}><label>
+		<input 
+			type = "file"  
+			style = {{display: "none"}}
+			onChange = {(e)=>{
+				if(e.target.files.length > 0){
+					var form_data = new FormData()
+					form_data.append("file" , e.target.files[0])
+					Interaction.post.file(form_data , BackendData.node_id)
+				}
+			}}
+		/>
+		
+		<AutoIconButton 
+			title = "上传"
+			icon = {DriveFolderUploadIcon}
+			component = "span"
+			size = "small"
+			icon_props = {{
+				"color": "primary" , 
+			}}
+		/>
+	</label></Box>
 }
 
 /**
