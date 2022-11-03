@@ -72,7 +72,7 @@ function AutoIconButton(props:{
     let Icon = props.icon
     let component = props.component || "button"
     let icon_props = props.icon_props || {}
-
+    
     return <AutoTooltip title={props.title}>
         <IconButton onClick={props.onClick} size={props.size} component={component} {...icon_props}>
             <Icon/>

@@ -68,6 +68,7 @@ import {
 import { 
     EditorBackgroundPaper , 
     EditorComponentEditingBox  ,
+    ScrollBarBox , 
 } from "./uibase"
 
 import {
@@ -77,7 +78,9 @@ import {
 import {
     get_mouseless_space as buttons_get_mouseless_space
 } from "./buttons"
+
 export { DefaultEditorComponent }
+
 
 type DefaultEditorComponentprops = EditorComponentProps & {
     theme?: ThemeOptions
@@ -131,7 +134,8 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
 
     render() {
     
-        let paper_width   = {xs: "85%" , md: "90%" , xl: "95%"} // 纸张的宽度，
+        let paper_widths  = {xs: "83%" , md: "88%" , xl: "93%"} // 纸张的宽度，
+        let paper_right   = {xs: "85%" , md: "90%" , xl: "95%"} // 纸张的宽度，
         let toolbar_width = {xs: "15%" , md: "10%" , xl: "5%"} // 工具栏的宽度。
 
         let theme = merge_object(default_editor_theme , this.props.theme)
@@ -151,36 +155,41 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                     }
                 ]}
             >
-                <Box sx = {{ 
+                <ScrollBarBox sx = {{ 
                     position: "absolute" , 
-                    height: "100%", 
-                    width: paper_width, 
-                    overflow: "auto", 
-                }}><EditorComponentEditingBox>
-                    <KeyDownUpFunctionProxy.Consumer>{([onkeydown , onkeyup])=>{
-                        return <EditorComponent
-                            ref 		        = {me.editor_ref} 
+                    top: "1%" , 
+                    height: "98%", 
+                    paddingRight: "1%" , 
+                    width: paper_widths, 
+                    overflow: "auto" , 
+                }} data-scrollbar >
+                    <EditorComponentEditingBox>
+                        <KeyDownUpFunctionProxy.Consumer>{([onkeydown , onkeyup])=>{
+                            return <Box><EditorComponent
+                                ref 		        = {me.editor_ref} 
 
-                            editorcore          = {me.props.editorcore}
-                            plugin              = {me.props.plugin}
-                            init_rootchildren   = {me.props.init_rootchildren}
-                            init_rootproperty   = {me.props.init_rootproperty}
+                                editorcore          = {me.props.editorcore}
+                                plugin              = {me.props.plugin}
+                                init_rootchildren   = {me.props.init_rootchildren}
+                                init_rootproperty   = {me.props.init_rootproperty}
 
-                            onUpdate            = {me.props.onUpdate}
-                            onKeyPress          = {me.props.onKeyPress}
-                            onFocusChange       = {me.props.onFocusChange}
-                            
-                            onKeyDown           = {onkeydown}
-                            onKeyUp             = {onkeyup}
-                        />
-                    }}
-                    </KeyDownUpFunctionProxy.Consumer>
-                </EditorComponentEditingBox></Box>
+                                onUpdate            = {me.props.onUpdate}
+                                onKeyPress          = {me.props.onKeyPress}
+                                onFocusChange       = {me.props.onFocusChange}
+                                
+                                onKeyDown           = {onkeydown}
+                                onKeyUp             = {onkeyup}
+                            /></Box>
+                        }}
+                        </KeyDownUpFunctionProxy.Consumer>
+                    </EditorComponentEditingBox>
+                </ScrollBarBox>
 
                 <Box sx = {{
                     position: "absolute", 
-                    height: "100%", 
-                    left: paper_width, 
+                    top: "1%" , 
+                    height: "99%", 
+                    left: paper_right, 
                     width: toolbar_width
                 }}>{(()=>{
                     let editor = me.get_editor()

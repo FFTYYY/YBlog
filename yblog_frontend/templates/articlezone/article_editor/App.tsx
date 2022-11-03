@@ -37,6 +37,7 @@ import {
 
 	GlobalInfoProvider, 
 	SecondClassConceptDict, 
+	ScrollBarBox , 
 } from "../lib"
 
 import * as Slate from "slate"
@@ -61,8 +62,6 @@ import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "
 import { parse_second_concepts } from "../base/utils"
 import { MathJaxContext } from "../base/construction"
 import CssBaseline from '@mui/material/CssBaseline';
-import { ScrollContainer } from 'react-nice-scroll';
-import 'react-nice-scroll/dist/styles.css';
 
 let default_tree = {
 	type: "abstract" as "abstract" ,
@@ -185,7 +184,7 @@ class App extends  React.Component<{}, {
 				left: "0%" , 
 				top: "0" , 
 				height: "100%" , 
-			}}><ScrollContainer>
+			}}>
 				<DefaultEditorComponent
 					ref = {me.editor_ref}
 					editorcore = {editorcore}
@@ -198,9 +197,9 @@ class App extends  React.Component<{}, {
 					theme = {my_theme}
 					plugin = { withAllPlugins }
 				/>
-			</ScrollContainer></Box>
+			</Box>
 
-			<MathJaxContext><Box 
+			<MathJaxContext><ScrollBarBox 
 				sx = {{
 					position: "absolute" , 
 					width: "49%" ,
@@ -218,7 +217,7 @@ class App extends  React.Component<{}, {
 						root = {tree}
 					></DefaultPrinterComponent>
 				</GlobalInfoProvider>
-			</Box></MathJaxContext>
+			</ScrollBarBox></MathJaxContext>
 		</Box>
 	}
 

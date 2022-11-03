@@ -88,31 +88,43 @@ const EditorComponentEditingBox = (props: BoxProps & {autogrow?: boolean}) =><Bo
     ]}
 />
 
+let EditorComponentPaperNestLevel = React.createContext<number>(1)
+
 /** 这个组件定义一个用来渲染特殊节点的纸张。 
  * @param props.is_inline 这个组件是否是行内组件。
 */
-const EditorComponentPaper = (props: PaperProps & {is_inline?: boolean}) =><Paper 
-    elevation = {0}
-    variant = "outlined" 
-    square 
-    {...{...props , is_inline: undefined}} // 去掉自己定义的属性。
-    sx = {[
-        {
-            ...(props.is_inline
-                ? { // 行内
-                    display : "inline-block" ,
-                    minHeight  :  (theme) => theme.editor.fonts.body.lineHeight , 
-                    color   : (theme) => theme.palette.secondary.dark , 
-                    marginX : (theme) => theme.editor.margins.small , 
-                } : { // 块级
-                    marginTop  :  (theme) => theme.editor.margins.paragraph ,      
-                    color   : (theme) => theme.palette.primary.main ,        
-                }
-            ) , 
-        } , 
-        ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
-    ]}
-/>
+const EditorComponentPaper = (props: PaperProps & {is_inline?: boolean}) =>{
+    let net_level = React.useContext(EditorComponentPaperNestLevel) // 已经嵌套了多少层了
+    let {children , is_inline, ...other_props} = props
+
+    return <Paper 
+        elevation = {net_level * 2}
+        square 
+        {...other_props} // 去掉自己定义的属性。
+        sx = {[
+            {
+                paddingY : "0.5rem" , 
+                paddingX : "0.25rem" , 
+            } , 
+            {
+                ...(is_inline
+                    ? { // 行内
+                        display : "inline-block" ,
+                        minHeight  :  (theme) => theme.editor.fonts.body.lineHeight , 
+                        color   : (theme) => theme.palette.text.secondary , 
+                        marginX : (theme) => theme.editor.margins.small , 
+                    } : { // 块级
+                        marginTop  :  (theme) => theme.editor.margins.paragraph ,      
+                        color   : (theme) => theme.palette.text.secondary ,        
+                    }
+                ) , 
+            } , 
+            ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
+        ]}
+    ><EditorComponentPaperNestLevel.Provider value = {net_level + 1}>
+        {children}
+    </EditorComponentPaperNestLevel.Provider></Paper>
+}
 
 /** 对于一个不用纸张作为最外层元素的节点，这个组件用来提供其边框。 */
 const EditorComponentBox = (props: BoxProps) =><Box 

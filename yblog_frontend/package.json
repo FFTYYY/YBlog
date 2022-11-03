@@ -36,6 +36,7 @@
 		"slate": "^0.72.8",
 		"slate-history": "^0.66.0",
 		"slate-react": "^0.72.1",
+		"smooth-scrollbar": "^8.8.1",
 		"typedoc": "^0.22.18",
 		"typedoc-plugin-missing-exports": "^0.22.6"
 	},

@@ -85,9 +85,12 @@ import {
 export { get_deafult_group_editor_with_appbar , get_default_group_editor_with_rightbar}
 
 /** 为 Group 类型的节点定制的 Paper ，在节点前后相连时会取消前后距离。 */
-let GroupPaper = (props: PaperProps & {node: GroupNode}) => <ComponentPaper {...props} 
-    sx = { props.node.relation == "chaining" ? { marginTop: "0" } : {} }
-/>
+let GroupPaper = (props: PaperProps & {node: GroupNode}) => {
+    let {node, ...other_props} = props
+    return <ComponentPaper {...other_props} 
+        sx = { node.relation == "chaining" ? { marginTop: "0" } : {} }
+    />
+}
 
 /** 这个函数返回一个默认的带应用栏的 group 组件。用于比较大的 group 组件。
  * @param params.get_label 从参数列表获得 title 的方法。

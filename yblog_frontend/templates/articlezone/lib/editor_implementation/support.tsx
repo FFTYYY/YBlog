@@ -56,6 +56,7 @@ import {
     EditorComponentPaper as ComponentPaper , 
     EditorUnselecableBox as UnselecableBox , 
     EditorComponentBox as ComponentBox , 
+    EditorStructureTypography as StructureTypography , 
 } from "./uibase"
 
 import {
@@ -72,6 +73,8 @@ export {
     get_default_display_editor , 
 }
 
+// TODO 应该根据组件的长度自动调整direction
+
 /** 这个函数返回一个默认的分界符组件。 */
 function get_default_spliter_editor({
     get_title = (n,p)=>p.title
@@ -86,9 +89,11 @@ function get_default_spliter_editor({
 
         return <UnselecableBox><ComponentBox>
             <Divider>
-                <Paper variant="outlined">
+                <Paper variant="outlined" sx = {{
+                    paddingX: "0.5rem"
+                }}>
                     <AutoStack force_direction="row">
-                        <Typography>{title}</Typography>
+                        <StructureTypography>{title}</StructureTypography>
                         <AutoStackedPopperButtonGroupMouseless 
                             node = {node}
                             close_on_otherclick 
@@ -140,7 +145,7 @@ function get_default_display_editor({
         return <ComponentPaper is_inline>{props.children}<UnselecableBox>
             <AutoStack force_direction="row">
                 {empty ? <R node={node} /> : "EMPTY" }
-                { label }
+                <StructureTypography>{ label }</StructureTypography>
                 {props.children}
                 <AutoStackedPopperButtonGroupMouseless 
                     node = {node}
