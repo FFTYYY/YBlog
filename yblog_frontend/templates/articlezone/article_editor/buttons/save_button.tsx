@@ -6,7 +6,6 @@ import {
 } 
 from "@mui/icons-material"
 
-import { FlexibleItem } from "./framework"
 import React from "react"
 import {
     AutoStack , 
@@ -14,7 +13,7 @@ import {
 } 
 from "../../lib"
 
-import { PostSnackbar } from "./snackbar"
+import { PostSnackbar } from "../../base"
 
 export { SaveButton }
 
@@ -46,18 +45,11 @@ class SaveButton extends React.Component<{
         let me = this
 
         return <React.Fragment>
-            <FlexibleItem
-                close_item = {
-                    <AutoTooltip title="保存"><IconButton size="small">
-                        <SaveIcon fontSize="small" color="primary"/>
-                    </IconButton></AutoTooltip>
-                }
-                open_item = {<Button startIcon={<SaveIcon/>} color="primary">保存</Button>}
-                onClick = {()=>{
-                    me.click()
-                }}
-                no_button
-            />
+            <AutoTooltip title="保存"><IconButton size="small" onClick = {()=>{
+                me.click()
+            }}>
+                    <SaveIcon fontSize="small" color="primary"/>
+            </IconButton></AutoTooltip>
             <PostSnackbar 
                 info_sucess = "保存成功"
                 info_fail = "保存失败"

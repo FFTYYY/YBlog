@@ -1,4 +1,3 @@
-/** 这个组件将$$等数学符号转换为节点。 */
 import { 
 	Snackbar , 
     SnackbarOrigin , 
@@ -15,7 +14,6 @@ import {
     Link
 } from "@mui/material"
 import { Node } from "slate"
-import { FlexibleItem } from "../../base/construction/framework"
 import {Interaction , urls , url_from_root , BackendData } from "../../base/interaction"
 import {
 	EditorComponent , 
@@ -38,40 +36,16 @@ export { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView }
 
 function ButtonLikeLink(props: {title: string , href: string , Icon: any}){
     let Icon = props.Icon
-    return <React.Fragment>
-        <FlexibleItem
-            close_item = {
-                <Box sx={{
-                    marginLeft: "0.2rem" , 
-                    marginTop: "0.35rem" , 
-                }}>
-                    <AutoTooltip title={props.title}>
-                        <Link underline="hover" href={props.href}>
-                            <Icon fontSize="small" color="primary"/>
-                        </Link>
-                    </AutoTooltip>
-                </Box>
-            }
-            open_item = {
-                <Box sx={{
-                    marginLeft: "0.2rem" , 
-                    marginTop: "0.2rem" , 
-                    marginBottom: "0.3rem" , 
-                }}>
-                    <Link underline="hover" href={props.href}>
-                        <AutoStack>
-                            <Icon fontSize="small" color="primary"/>
-                            <Typography sx={(theme)=>({
-                                ...theme.typography.button , 
-                                marginLeft: "0.5rem"
-                            })}>{props.title}</Typography> 
-                        </AutoStack>
-                    </Link>
-                </Box>
-            }
-            no_button
-        />
-    </React.Fragment>
+    return  <Box sx={{
+        marginLeft: "0.2rem" , 
+        marginTop: "0.35rem" , 
+    }}>
+        <AutoTooltip title={props.title}>
+            <Link underline="hover" href={props.href}>
+                <Icon fontSize="small" color="primary"/>
+            </Link>
+        </AutoTooltip>
+    </Box>
 }
 
 function BackendEdit(props: {}){

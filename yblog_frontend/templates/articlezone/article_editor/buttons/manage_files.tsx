@@ -20,10 +20,37 @@ import {
 } 
 from "../../lib"
 import { BackendData, Interaction } from "../../base/interaction"
-import { FlexibleItem } from "../../base/construction/framework"
 import { PostSnackbar } from "../../base/construction/snackbar"
 
-export {FileManageButton}
+export {FileManageButton, UploadFileButton}
+
+function UploadFileButton(props: {
+	onPostfile: (files: HTMLInputElement["files"])=>void
+}){
+	return <AutoTooltip title="上传文件">
+		<Box sx={{marginX: "auto"}}><label>
+			<input 
+				type = "file"  
+				style = {{display: "none"}}
+				onChange = {(e)=>{
+					if(e.target.files.length > 0){
+						props.onPostfile(e.target.files)
+					}
+				}}
+			/>
+			
+			<AutoIconButton 
+				title = "上传"
+				icon = {DriveFolderUploadIcon}
+				component = "span"
+				size = "small"
+				icon_props = {{
+					"color": "primary" , 
+				}}
+			/>
+		</label></Box>
+	</AutoTooltip>
+}
 
 /**
  * 这个组件提供一个删除文件的按钮，在删除时会有一个弹出框进行二次询问。
@@ -221,18 +248,11 @@ function FileManageButton(props: {}){
 	let [drawer_open , set_drawer_open] = React.useState(false)
 
 	return <React.Fragment>
-		<FlexibleItem
-			close_item = {
-				<AutoTooltip title="查看/管理文件"><IconButton size="small">
-					<FileCopyIcon fontSize="small" color="primary"/>
-				</IconButton></AutoTooltip>
-			}
-			open_item = {<Button startIcon={<FileCopyIcon/>} color="primary">查看/管理文件</Button>}
-			onClick = {()=>{
+		<AutoTooltip title="查看/管理文件"><IconButton size="small" onClick = {()=>{
 				set_drawer_open(true)
-			}}
-			no_button
-		/>
+			}}>
+			<FileCopyIcon fontSize="small" color="primary" />
+		</IconButton></AutoTooltip>
 		<Drawer
 			anchor = "left"
 			open = {drawer_open}

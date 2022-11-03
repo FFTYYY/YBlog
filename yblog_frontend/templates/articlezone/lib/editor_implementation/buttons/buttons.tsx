@@ -67,12 +67,14 @@ function AutoIconButton(props:{
     title?: string
     icon?: any
     component?: "button" | "span"
+    icon_props?: IconButtonProps
 }){
     let Icon = props.icon
     let component = props.component || "button"
+    let icon_props = props.icon_props || {}
 
     return <AutoTooltip title={props.title}>
-        <IconButton onClick={props.onClick} size={props.size} component={component}>
+        <IconButton onClick={props.onClick} size={props.size} component={component} {...icon_props}>
             <Icon/>
         </IconButton>
     </AutoTooltip>

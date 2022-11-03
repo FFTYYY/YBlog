@@ -51,13 +51,12 @@ import {
 } from "../base/concept"
 import { BackendData, Interaction } from "../base/interaction"
 import { linkto } from "../base/linkto"
-import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
-import { my_theme } from "../base/construction/theme"
-import { SaveButton } from "../base/construction/buttons"
+import { my_theme } from "./uibase"
+import { SaveButton} from "./buttons"
 import { withAllPlugins } from "./plugins"
-import { FileManageButton } from "./buttons/manage_files"
+import { FileManageButton , UploadFileButton } from "./buttons/manage_files"
 import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./buttons/edit_others"
-import {parse_second_concepts} from "../base/utils"
+import { parse_second_concepts } from "../base/utils"
 import { MathJaxContext } from "../base/construction"
 
 interface AppProps{
@@ -159,7 +158,7 @@ class App extends  React.Component<AppProps, AppState>{
 	}
 
 	/** 这个函数向后端提交一个文件。 */
-	async post_file(files: any){
+	async post_file(files: HTMLInputElement["files"]){
 		var form_data = new FormData()
 		form_data.append("file" , files[0])
 		return await Interaction.post.file(form_data , BackendData.node_id)
@@ -167,25 +166,6 @@ class App extends  React.Component<AppProps, AppState>{
 
 	extra_buttons(props: {}){
 		let me = this
-		return <React.Fragment>
-			<Box sx={{marginX: "auto"}}><label>
-				<input 
-					type = "file"  
-					style = {{display: "none"}}
-					onChange = {(e)=>{
-						if(e.target.files.length > 0){
-							me.post_file(e.target.files)
-						}
-					}}
-				/>
-				
-				<AutoIconButton 
-					title = "上传"
-					icon = {DriveFolderUploadIcon}
-					component = "span"
-				/>
-			</label></Box>
-		</React.Fragment>
 	}
 
 
@@ -210,7 +190,7 @@ class App extends  React.Component<AppProps, AppState>{
 		let {editorcore, printer, tree} = this.state
  
 		return <Box sx={props.sx}>
-			<Box sx = {{
+			<Paper sx = {{
 				position: "absolute" , 
 				width: "49%" ,
 				left: "0%" , 
@@ -228,14 +208,10 @@ class App extends  React.Component<AppProps, AppState>{
 					}}
 					theme = {my_theme}
 					plugin = { withAllPlugins }
-					sidebar_extra = {()=>{return [{
-						button: <ExtraButtons /> , 
-						run: ()=>{console.log("啊？")} , 
-					}]}}
 				/>
-			</Box>
+			</Paper>
 
-			<MathJaxContext><Box 
+			<MathJaxContext><Paper 
 				sx = {{
 					position: "absolute" , 
 					width: "49%" ,
@@ -253,7 +229,7 @@ class App extends  React.Component<AppProps, AppState>{
 						root = {this.state.tree}
 					></DefaultPrinterComponent>
 				</GlobalInfoProvider>
-			</Box></MathJaxContext>
+			</Paper></MathJaxContext>
 		</Box>
 	}
 
@@ -267,26 +243,27 @@ class App extends  React.Component<AppProps, AppState>{
 			left: "1%" , 
 			height: "96%" , 
 			width: "98%" , 
-			display: "flex" , 
 		}}><div>
 
-			<FlexibleDrawer sx={{
+			<Paper sx={{
 				position: "absolute" , 
 				left: "0" , 
-				right: "2%" ,
-				marginRight: "1%" , 
+				width: "2%" ,
 			}}>
 				<SaveButton 
 					ref = {me.savebutton_ref}
 					save_func = {me.save_content.bind(me)}
 				/>
 				<FileManageButton />
+				<UploadFileButton  onPostfile={(file)=>{
+					me.post_file(file)
+				}}/>
 				{/* <HandleMathBuutton get_editor={()=>me.get_editor()} /> */}
 				<BackendEdit /> 
 				<NodeStructEdit /> 
 				<NodeStructEditShallow /> 
 				<NodeView />
-			</FlexibleDrawer>
+			</Paper>
 
 			<MainPart sx={{
 				position: "absolute" , 
