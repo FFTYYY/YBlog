@@ -70,7 +70,6 @@ interface AppState{
 	printer: Printer 
 	editorcore: EditorCore
 	tree: AbstractNode 
-	init_tree: AbstractNode  // 仅仅用来初始化
 }
 
 let default_tree = {
@@ -79,16 +78,16 @@ let default_tree = {
 	idx: 2333 , 
 	abstract: [] , 
 	parameters: {} , 
-	children: [{children: [{text: "asas"}]}] , 
+	children: [{children: [{text: "fuck"}]}] , 
 }
 
 
 // TODO 整理按钮栏
+// TODO 在保存后还原焦点
 class App extends  React.Component<AppProps, AppState>{
 
 	editor_ref: React.RefObject<DefaultEditorComponent>
 	savebutton_ref: React.RefObject<SaveButton>
-	inittree: AbstractNode
 
 	constructor(props: AppProps){
 		super(props)
@@ -97,7 +96,6 @@ class App extends  React.Component<AppProps, AppState>{
 			printer: undefined , 
 			editorcore: undefined , 
 			tree: {...default_tree} , 
-			init_tree: {...default_tree} , 
 		}
 		this.savebutton_ref = React.createRef()
 		this.editor_ref = React.createRef()
@@ -105,11 +103,11 @@ class App extends  React.Component<AppProps, AppState>{
 
 	async componentDidMount(){
 
-		/** 初始化所有概念信息。 */
-		// let node_concepts =  
-		let sec_concepts_data = await Interaction.get.concept(BackendData.node_id) as string[] // 从后端获得所有概念。
+		// 从后端获得所有概念。
+		let sec_concepts_data = await Interaction.get.concept(BackendData.node_id) as string[]
 		let sec_concepts = parse_second_concepts(sec_concepts_data)
 
+		// 建立印刷器核心
 		let printer = new Printer(
 			first_concepts , 
 			sec_concepts , 
@@ -117,13 +115,14 @@ class App extends  React.Component<AppProps, AppState>{
 			default_renderers , 
 		)
 		
+		// 建立编辑器核心
 		let editorcore = new EditorCore({
 			renderers: editors , 
 			default_renderers: default_editors, 
 			printer: printer , 
 		})
 		
-		/** 初始化编辑器初始值。 */
+		// 初始化编辑器初始值。
 		var root = await Interaction.get.content(BackendData.node_id) || editorcore.create_abstract("root")
 
 		this.setState({
@@ -133,23 +132,33 @@ class App extends  React.Component<AppProps, AppState>{
 		})
 
 
-		//初始化跳转
+		// 初始化跳转
+		// TODO 这个没有生效。
 		if(BackendData.linkto && BackendData.linkto != "None"){
 			linkto(printer , Number(BackendData.linkto))
 		}
+
 	}
 
-	get_save_button(){
-		if(this.savebutton_ref && this.savebutton_ref.current){
-			return this.savebutton_ref.current
+	/** 获得编辑器对象。 */
+	get_editor(){
+		if(this.editor_ref && this.editor_ref.current){
+			return this.editor_ref.current
 		}
 		return undefined
 	}
 
-	async save_content(){
+	/** 这个函数将编辑器的树保存到后端。 
+	 * @param tree 要保存的树。之所以有这个参数是因为state的更新有延迟，这个参数可以允许调用者直接传入最新的版本。
+	*/
+	async save_content(tree: AbstractNode | undefined = undefined){
+		if(tree == undefined){
+			tree = this.state.tree
+		}
 		return await Interaction.post.content({content: this.state.tree} , BackendData.node_id)
 	}
 
+	/** 这个函数向后端提交一个文件。 */
 	async post_file(files: any){
 		var form_data = new FormData()
 		form_data.append("file" , files[0])
@@ -179,22 +188,16 @@ class App extends  React.Component<AppProps, AppState>{
 		</React.Fragment>
 	}
 
-	get_editor(){
-		if(this.editor_ref && this.editor_ref.current){
-			return this.editor_ref.current
-		}
-		return undefined
-	}
 
 	update_tree(){
 		let editor = this.get_editor()
-		if(!editor){
+		if(!(editor && editor.get_editor())){
 			return 
 		}
 		let edieditor = editor.get_editor()
-		if(edieditor){
-			this.setState({tree: edieditor.get_root()})
-		}
+		let root = edieditor.get_root()
+		this.setState({tree: root})
+		return root
 	}
 
 	mainpart(props: {sx: any}){
@@ -206,7 +209,6 @@ class App extends  React.Component<AppProps, AppState>{
 		}
 		let {editorcore, printer, tree} = this.state
  
-		// TODO 因为更新state有延迟，所以不能更新state后立刻保存。		
 		return <Box sx={props.sx}>
 			<Box sx = {{
 				position: "absolute" , 
@@ -220,11 +222,9 @@ class App extends  React.Component<AppProps, AppState>{
 					editorcore = {editorcore}
 					init_rootchildren = {this.state.tree.children}
 					onSave = {()=>{
-						this.update_tree()
-						let save_button = me.get_save_button()
-						if(save_button){
-							save_button.click()
-						}
+						let root = me.update_tree()
+						setTimeout(()=>me.save_content(root), 200) // 等待state更新
+						// TODO 直接调用函数没有ui提示
 					}}
 					theme = {my_theme}
 					plugin = { withAllPlugins }
@@ -279,7 +279,6 @@ class App extends  React.Component<AppProps, AppState>{
 				<SaveButton 
 					ref = {me.savebutton_ref}
 					save_func = {me.save_content.bind(me)}
-
 				/>
 				<FileManageButton />
 				{/* <HandleMathBuutton get_editor={()=>me.get_editor()} /> */}

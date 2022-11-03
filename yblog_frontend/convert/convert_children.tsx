@@ -60,9 +60,11 @@ function convert_children(node: Node){
             node.children.push(create_paragraph([create_text("")]))
         }
 
-        // 第一个子节点必须是段落。
-        if(!is_paragraphnode(node.children[0])){
-            node.children = [...node.children, create_paragraph([create_text("")])]
+        // 第一个子节点必须是段落。但是根可以豁免。
+        if(node.concept != "root"){
+            if(!is_paragraphnode(node.children[0])){
+                node.children = [create_paragraph([create_text("")]) , ...node.children]
+            }
         }
     }
     else if(is_inlinenode(node)){
