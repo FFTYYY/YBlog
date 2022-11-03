@@ -12,7 +12,7 @@ import {
     AutoStack , 
     AutoTooltip , 
 } 
-from "@ftyyy/ytext"
+from "../../lib"
 
 export { PostSnackbar }
 

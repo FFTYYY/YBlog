@@ -2,7 +2,7 @@ import { Editor , Node  } from "slate"
 import { ReactEditor } from "slate-react"
 import { 
     EditorComponent , 
-} from "@ftyyy/ytext"
+} from "../../lib"
 
 import * as C from "./constraints"
 

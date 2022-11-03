@@ -2,7 +2,7 @@
 
 import {
     Printer
-} from "@ftyyy/ytext"
+} from "../lib"
 import $ from "jquery"
 
 export { linkto }

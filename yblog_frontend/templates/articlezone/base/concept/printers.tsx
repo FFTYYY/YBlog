@@ -42,7 +42,7 @@ import {
 	get_default_structure_renderer , 
 
 	ReferenceContexter , 
-} from "@ftyyy/ytext"
+} from "../../lib"
 import {
 	PrinterRenderer , 
 	GroupNode , 
@@ -53,7 +53,7 @@ import {
 	Context  , 
     PrinterRenderFunctionProps, 
     PrinterRenderFunction , 
-} from "@ftyyy/ytext"
+} from "../../lib"
 
 import {
 	url_from_root , Interaction , urls , 

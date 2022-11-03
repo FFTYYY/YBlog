@@ -35,7 +35,7 @@ import {
 
 	GlobalInfoProvider, 
 	SecondClassConceptDict, 
-} from "@ftyyy/ytext"
+} from "../lib"
 
 import * as Slate from "slate"
 import * as SlateReact from "slate-react"
@@ -58,6 +58,7 @@ import { withAllPlugins } from "./plugins"
 import { FileManageButton } from "./buttons/manage_files"
 import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./buttons/edit_others"
 import {parse_second_concepts} from "../base/utils"
+// import { MathJaxContext } from "../base/construction"
 
 interface AppProps{
 

@@ -5,7 +5,7 @@ import {
 	SecondClassConcept ,  
     ParameterValue ,
     ParameterList , 
-} from "@ftyyy/ytext"
+} from "../../lib"
 
 export {
     first_concepts , 

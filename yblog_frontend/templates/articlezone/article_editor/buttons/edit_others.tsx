@@ -23,7 +23,7 @@ import {
 	AutoIconButton , 
     AutoStack,
 } 
-from "@ftyyy/ytext"
+from "../../lib"
 import {
     FollowTheSigns as FollowTheSignsIcon , 
     AirlineSeatFlatAngled as AirlineSeatFlatAngledIcon  , 

@@ -1,6 +1,6 @@
 import {
     SecondClassConcept , 
-} from "@ftyyy/ytext"
+} from "../lib"
 
 export { 
     num2chinese  , 
