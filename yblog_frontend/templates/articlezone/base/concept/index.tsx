@@ -11,5 +11,3 @@ export {
     default_renderers , 
     renderers , 
 } from "./printers"
-
-// TODO editor plugin：检查参数项目

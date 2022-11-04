@@ -181,12 +181,9 @@ class App extends  React.Component<{}, {
 		let me = this
 		let {editorcore, printer, tree} = this.state
 
-		if(!(editorcore && printer)){
+		if((!editorcore) || (!printer) || (tree.concept == "default")){
 			return <></>
-		}
-		if(tree.concept == "default"){
-			return <></>
-		}
+		} // 务必等一切都初始化好再开始渲染。
 
 		let [tree_property, tree_children] = (()=>{
 			let {children , ...tree_property} = tree
@@ -211,9 +208,7 @@ class App extends  React.Component<{}, {
 					left: "0" , 
 					width: "2%" ,
 				}}>
-					<SaveButton 
-						save_func = {me.save_content.bind(me)}
-					/>
+					<SaveButton save_func = {me.save_content.bind(me)}/>
 					<FileManageButton />
 					<UploadFileButton />
 					<BackendEdit /> 

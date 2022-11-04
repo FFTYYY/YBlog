@@ -1,6 +1,5 @@
 /** 这个模块为每个二级概念转换其参数。 */
 
-// TODO
 import {
     GroupNode , 
     StructNode , 

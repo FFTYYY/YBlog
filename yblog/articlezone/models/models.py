@@ -2,7 +2,6 @@ from re import L
 from django.db import models
 from ..constants import SHORT_STR_LENGTH , CONCEPT_METAS
 import django.utils.timezone as timezone
-from .constraints import perform_checks
 import json
 from django.contrib import admin
 
@@ -66,11 +65,6 @@ class Node(models.Model):
 		return list( filter(lambda x: len(x) > 0 , ret) )
 
 	def save(self , *args , **kwargs):
-
-		# 不准保存 
-		# TODO 加点提示信息啥的
-		if not perform_checks(self):
-			return 
 
 		self.update_time = timezone.now()
 	
