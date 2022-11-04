@@ -41,7 +41,7 @@ import {
     EditorComponent , 
     slate_concept_node2path , 
 } from "../../editor"
-import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "../uibase"
+import { AutoTooltip , Direction , AutoStack , AutoStackedPopper , AutoStackedPopperProps } from "../uibase"
 import { DefaultParameterWithEditorWithDrawer } from "./parameter_container" 
 
 import {
@@ -307,7 +307,7 @@ interface AutoStackedPopperWithButtonProps {
     outer_props?: any 
     
     /** 传递给弹出框的`props` */
-    poper_props?: any
+    poper_props?: Omit<Omit<Omit<AutoStackedPopperProps , "ref"> , "anchorEl"> , "open">
 
     /** 鼠标移上去显示的字样。 */
     label?: string 
@@ -328,6 +328,8 @@ interface AutoStackedPopperWithButtonProps {
 class AutoStackedPopperWithButton extends React.PureComponent<AutoStackedPopperWithButtonProps, {
     menu_open: boolean
 }>{
+
+    static contextType = GlobalInfo
 
     menu_anchor_ref: React.RefObject<HTMLAnchorElement>
 
@@ -379,6 +381,9 @@ class AutoStackedPopperWithButton extends React.PureComponent<AutoStackedPopperW
         let props = this.props
         let children = props.children || <></>
         let B = props.outer_button
+
+        let globalinfo = this.context
+        let editor = globalinfo.editor as EditorComponent
 
         let poper = <React.Fragment>
             <AutoTooltip title={props.label}><B 

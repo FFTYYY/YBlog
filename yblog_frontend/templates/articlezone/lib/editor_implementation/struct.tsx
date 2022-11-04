@@ -158,9 +158,7 @@ function get_default_struct_editor_with_rightbar({
                 
                 <Grid container columns={widthsum} sx={{width: "100%"}}>
                     {widths.map((width,idx)=>{
-                        return <Grid key={idx} item xs={width} sx={{
-                            borderRight: idx == mychildren.length-1 ? "none" : "1px solid"
-                        }}>
+                        return <Grid key={idx} item xs={width}>
                             <ComponentEditorBox autogrow >
                                 <SUR node={node}>
                                     {props.children[idx]}
@@ -177,7 +175,7 @@ function get_default_struct_editor_with_rightbar({
                             node = {node}
                             buttons = {rightbar_extra(node, parameters)}
                         />
-                        <StructureTypography variant = "overline">{mylabel}</StructureTypography>
+                        <StructureTypography sx={{marginX: "auto"}}>{mylabel}</StructureTypography>
                         <AutoStackedPopperButtonGroupMouseless 
                             node = {node}
                             close_on_otherclick 

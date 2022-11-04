@@ -391,6 +391,8 @@ class EditorComponent extends React.Component<EditorComponentProps , {
             root_property: props.init_rootproperty || default_root_but_children , 
         }
 
+        console.log("component intialzing")
+
         this.update_debounce = new DoSomething((val)=>{this.update_value(val)} , 500)
     }
 

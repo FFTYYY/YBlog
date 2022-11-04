@@ -78,7 +78,7 @@ var mathblock_editor    = get_default_group_editor_with_rightbar({
 
 var image_editor = get_default_display_editor({
     get_label: ()=>"图片" , 
-    is_empty: (n,p)=>!!(p.target) , 
+    is_empty: (n,p)=>!(p.target) , 
     render_element: (props) => {
         let [ url , set_url ] = React.useState("")
         let node    = props.node

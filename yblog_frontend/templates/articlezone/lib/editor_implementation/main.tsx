@@ -39,7 +39,8 @@ import {
     Node , 
     AllConceptTypes , 
     AllNodeTypes, 
-    AbstractNode, 
+    AbstractNode,
+    GlobalInfoProvider, 
 } from "../core"
 
 import { 
@@ -134,15 +135,15 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
 
     render() {
     
-        let paper_widths  = {xs: "83%" , md: "88%" , xl: "93%"} // 纸张的宽度，
-        let paper_right   = {xs: "85%" , md: "90%" , xl: "95%"} // 纸张的宽度，
-        let toolbar_width = {xs: "15%" , md: "10%" , xl: "5%"} // 工具栏的宽度。
+        let paper_widths  = {xs: "87%" , md: "90%" , xl: "93%"} // 纸张的宽度，
+        let paper_right   = {xs: "89%" , md: "92%" , xl: "95%"} // 纸张的宽度，
+        let toolbar_width = {xs: "10%" , md: "7%" , xl: "5%"} // 工具栏的宽度。
 
         let theme = merge_object(default_editor_theme , this.props.theme)
 
         let me = this
 
-        return <ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
+        return <GlobalInfoProvider value={{theme: theme}}><ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
             <KeyEventManager
                 spaces = {[
                     sidebar_get_mouseless_space(me.get_editor()) , 
@@ -162,7 +163,7 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                     paddingRight: "1%" , 
                     width: paper_widths, 
                     overflow: "auto" , 
-                }} data-scrollbar >
+                }}>
                     <EditorComponentEditingBox>
                         <KeyDownUpFunctionProxy.Consumer>{([onkeydown , onkeyup])=>{
                             return <Box><EditorComponent
@@ -209,6 +210,6 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                     </AutoStack>
                 })()}</Box>
             </KeyEventManager>
-        </EditorBackgroundPaper></ThemeProvider>
+        </EditorBackgroundPaper></ThemeProvider></GlobalInfoProvider>
     }
 }

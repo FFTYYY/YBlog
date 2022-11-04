@@ -73,8 +73,6 @@ export {
     get_default_display_editor , 
 }
 
-// TODO 应该根据组件的长度自动调整direction
-
 /** 这个函数返回一个默认的分界符组件。 */
 function get_default_spliter_editor({
     get_title = (n,p)=>p.title
@@ -127,7 +125,7 @@ function get_default_spliter_editor({
  */
 function get_default_display_editor({
     get_label       = (n,p)=>p.label, 
-    is_empty        = (n,p)=>!!(p.url) , 
+    is_empty        = (n,p)=>!(p.url) , 
     render_element  = (props)=><img src={props.node.parameters.url.val as string}/>, 
 } : {
     get_label       ?: EditorNodeInfoFunction<SupportNode , string> , 
@@ -143,28 +141,33 @@ function get_default_display_editor({
         let R = render_element
 
         return <ComponentPaper is_inline>{props.children}<UnselecableBox>
-            <AutoStack force_direction="row">
-                {empty ? <R node={node} /> : "EMPTY" }
-                <StructureTypography>{ label }</StructureTypography>
-                {props.children}
-                <AutoStackedPopperButtonGroupMouseless 
-                    node = {node}
-                    close_on_otherclick 
-                    outer_button = {IconButton}
-                    outer_props = {{
-                        size: "small" , 
-                        children: <KeyboardArrowDownIcon fontSize="small"/> , 
-                    }}
-                    label = "展开"
-                    buttons = {[
-                        DefaultParameterEditButton , 
-                        DefaultNewAbstractButton , 
-                        DefaultEditAbstractButton , 
-                        DefaultCloseButton , 
-                        NewParagraphButtonUp , 
-                        NewParagraphButtonDown , 
-                    ]}
-                /> 
+            <AutoStack force_direction = "row">
+                <Box sx={{
+                    marginX: "0.25rem"
+                }}>
+                    {empty ? <StructureTypography>EMPTY</StructureTypography> : <R node={node} /> }
+                </Box>
+                <AutoStack force_direction = {empty ? "row" : "column"}>
+                    <StructureTypography sx={{marginY: "0.2rem", marginX: "auto"}}>{label}</StructureTypography>
+                    <AutoStackedPopperButtonGroupMouseless 
+                        node = {node}
+                        close_on_otherclick 
+                        outer_button = {IconButton}
+                        outer_props = {{
+                            size: "small" , 
+                            children: <KeyboardArrowDownIcon fontSize="small"/> , 
+                        }}
+                        label = "展开"
+                        buttons = {[
+                            DefaultParameterEditButton , 
+                            DefaultNewAbstractButton , 
+                            DefaultEditAbstractButton , 
+                            DefaultCloseButton , 
+                            NewParagraphButtonUp , 
+                            NewParagraphButtonDown , 
+                        ]}
+                    /> 
+                </AutoStack>
             </AutoStack>
         </UnselecableBox></ComponentPaper>
     }

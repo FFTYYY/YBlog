@@ -9,7 +9,7 @@ export {
 } from "../../implementation/uibase/autodirection"
 
 export type {
-    AutoStackedPopper_Props , 
+    AutoStackedPopperProps , 
     DirectionValues , 
 } from "../../implementation/uibase/autodirection"
 

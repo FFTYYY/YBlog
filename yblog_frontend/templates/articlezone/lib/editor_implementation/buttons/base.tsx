@@ -361,7 +361,7 @@ class AutoStackedPopperButtonGroupMouseless extends React.Component<AutoStackedP
         let idxs = this.get_idxs().slice(1) // 去掉第一个idx之后剩下的
 
         let poper = <Box sx={{
-            border: this.state.active ? "2px solid #112233" : "none"
+            border: this.state.active ? "2px solid" : "none"
         }}>
             <AutoStackedPopperWithButton
                 outer_button        = {this.props.outer_button}
@@ -457,7 +457,7 @@ function MouselessParameterEditor(props: {
     let param_init = node.parameters[parameter_name].val
 
     return <Box sx={{
-        border: active ? "2px solid #112233" : "none"
+        border: active ? "2px solid" : "none"
     }}><GlobalInfo.Consumer>{globalinfo => {
         let editor = globalinfo.editor as EditorComponent
         return <TextField 

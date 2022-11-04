@@ -65,7 +65,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 let default_tree = {
 	type: "abstract" as "abstract" ,
-	concept: "root" , 
+	concept: "default" , 
 	idx: 2333 , 
 	abstract: [] , 
 	parameters: {} , 
@@ -84,7 +84,6 @@ class App extends  React.Component<{}, {
 }>{
 
 	editor_ref: React.RefObject<DefaultEditorComponent>
-	savebutton_ref: React.RefObject<SaveButton>
 
 	constructor(props: {}){
 		super(props)
@@ -94,7 +93,6 @@ class App extends  React.Component<{}, {
 			editorcore: undefined , 
 			tree: {...default_tree} , 
 		}
-		this.savebutton_ref = React.createRef()
 		this.editor_ref = React.createRef()
 	}
 
@@ -118,16 +116,15 @@ class App extends  React.Component<{}, {
 			default_renderers: default_editors, 
 			printer: printer , 
 		})
-		
-		// 初始化编辑器初始值。
-		var root = await Interaction.get.content(BackendData.node_id) || editorcore.create_abstract("root")
+
+		let root = await Interaction.get.content(BackendData.node_id) || editorcore.create_abstract("root")
+
 
 		this.setState({
 			printer: printer , 
 			editorcore: editorcore , 
-			tree: {...root} , 
+			tree: root , 
 		})
-
 
 		// 初始化跳转
 		// TODO 这个没有生效。
@@ -140,7 +137,7 @@ class App extends  React.Component<{}, {
 	/** 获得编辑器对象。 */
 	get_editor(){
 		if(this.editor_ref && this.editor_ref.current){
-			return this.editor_ref.current
+			return this.editor_ref.current.get_editor()
 		}
 		return undefined
 	}
@@ -155,75 +152,25 @@ class App extends  React.Component<{}, {
 		return await Interaction.post.content({content: this.state.tree} , BackendData.node_id)
 	}
 
-	/** 这个函数向后端提交一个文件。 */
-
+	componentDidUpdate(){}	
 
 	update_tree(){
 		let editor = this.get_editor()
-		if(!(editor && editor.get_editor())){
-			return 
-		}
-		let edieditor = editor.get_editor()
-		let root = edieditor.get_root()
+		let root = editor.get_root()
 		this.setState({tree: root})
 		return root
 	}
 
-	mainpart(props: {sx: any}){
-		let me = this
-
-		if(!(this.state.editorcore && this.state.printer)){
-			return <></>
-		}
-		let {editorcore, printer, tree} = this.state
- 
-		return <Box sx={props.sx}>
-			<Box sx = {{
-				position: "absolute" , 
-				width: "49%" ,
-				left: "0%" , 
-				top: "0" , 
-				height: "100%" , 
-			}}>
-				<DefaultEditorComponent
-					ref = {me.editor_ref}
-					editorcore = {editorcore}
-					init_rootchildren = {tree.children}
-					onSave = {()=>{
-						let root = me.update_tree()
-						setTimeout(()=>me.save_content(root), 200) // 等待state更新
-						// TODO 直接调用函数没有ui提示
-					}}
-					theme = {my_theme}
-					plugin = { withAllPlugins }
-				/>
-			</Box>
-
-			<MathJaxContext><ScrollBarBox 
-				sx = {{
-					position: "absolute" , 
-					width: "49%" ,
-					left: "51%" , 
-					top: "0" , 
-					height: "100%" , 
-				}} 
-				className = "mathjax_process" // 启动mathjax处理
-			>
-				<GlobalInfoProvider value={{BackendData: BackendData.node_id}}>
-					<DefaultPrinterComponent 
-						printer = {printer} 
-						theme = {my_theme}
-						onUpdateCache = {(cache)=>{console.log("cache!")}}
-						root = {tree}
-					></DefaultPrinterComponent>
-				</GlobalInfoProvider>
-			</ScrollBarBox></MathJaxContext>
-		</Box>
-	}
-
 	render(){
 		let me = this
-		let MainPart = this.mainpart.bind(this)
+		let {editorcore, printer, tree} = this.state
+
+		if(!(editorcore && printer)){
+			return <></>
+		}
+		if(tree.concept == "default"){
+			return <></>
+		}
 
 		return <ThemeProvider theme={createTheme(my_theme)}><CssBaseline /><Box sx={{
 			position: "absolute" , 
@@ -238,7 +185,6 @@ class App extends  React.Component<{}, {
 				width: "2%" ,
 			}}>
 				<SaveButton 
-					ref = {me.savebutton_ref}
 					save_func = {me.save_content.bind(me)}
 				/>
 				<FileManageButton />
@@ -249,12 +195,53 @@ class App extends  React.Component<{}, {
 				<NodeView />
 			</Card>
 
-			<MainPart sx={{
+			<Box sx={{
 				position: "absolute" , 
 				left: "3%" , 
 				width: "96%" , 
 				height: "100%" , 
-			}}/>
+			}}>
+				<Box sx = {{
+					position: "absolute" , 
+					width: "49%" ,
+					left: "0%" , 
+					top: "0" , 
+					height: "100%" , 
+				}}>
+					<DefaultEditorComponent
+						ref = {me.editor_ref}
+						editorcore = {editorcore}
+						init_rootchildren = {tree.children} // 编辑器会记住第一次看到的树，所以务必在树初始化之后再渲染编辑器
+						onSave = {()=>{
+							let root = me.update_tree()
+							setTimeout(()=>me.save_content(root), 200) // 等待state更新
+							// TODO 直接调用函数没有ui提示
+						}}
+						theme = {my_theme}
+						plugin = { withAllPlugins }
+					/>
+				</Box>
+
+				<MathJaxContext><ScrollBarBox 
+					sx = {{
+						position: "absolute" , 
+						width: "49%" ,
+						left: "51%" , 
+						top: "0" , 
+						height: "100%" , 
+					}} 
+					className = "mathjax_process" // 启动mathjax处理
+				>
+					<GlobalInfoProvider value={{BackendData: BackendData.node_id}}>
+						<DefaultPrinterComponent 
+							printer = {printer} 
+							theme = {my_theme}
+							onUpdateCache = {(cache)=>{console.log("cache!")}}
+							root = {tree}
+						></DefaultPrinterComponent>
+					</GlobalInfoProvider>
+				</ScrollBarBox></MathJaxContext>
+			</Box>
 			
 		</Box></ThemeProvider>
 	}

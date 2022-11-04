@@ -9,6 +9,8 @@ import {
     MouselessActivateOperation , 
     MouselessUnActivateOperation , 
 } from "./manager"
+import { GlobalInfo } from "../../core"
+import Scrollbar from "smooth-scrollbar"
 
 export {
     MouselessElement , 
@@ -33,10 +35,19 @@ function MouselessElement(props: MouselessElementProps){
 
     let [act, set_act] = React.useState(false)
     let [regiester_func, unregister_func] = React.useContext(MouselessRegister)
+    let eleref = React.useRef<HTMLDivElement | undefined>(undefined)
+
+    let globalinfo = React.useContext(GlobalInfo)
 
     React.useEffect(()=>{
         regiester_func(space, position, 
             () => {
+                let scrollinfo = globalinfo["scrollinfo"] // 离本元素最近的滚动条。
+                if(eleref && eleref.current && scrollinfo && scrollinfo.scrollbar){
+                    let scrollbar = scrollinfo.scrollbar as Scrollbar
+                    scrollbar.scrollIntoView(eleref.current )
+                }
+
                 set_act(true)
                 if(extra_activate){
                     extra_activate()
@@ -54,9 +65,9 @@ function MouselessElement(props: MouselessElementProps){
         }
     }, [])
 
-    return <Box sx={{
-        border: act? "2px solid #112233" : "none"
+    return <div ref={eleref}><Box sx={{
+        border: act? "2px solid" : "none"
     }}>
         {children}
-    </Box>
+    </Box></div>
 }

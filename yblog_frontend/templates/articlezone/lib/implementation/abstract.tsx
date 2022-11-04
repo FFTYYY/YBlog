@@ -90,6 +90,8 @@ function DefaultAbstractAsRoot(props: PrinterRenderFunctionProps<AbstractNode> &
     return <GlobalInfo.Consumer>{(globalinfo)=>{
         let p = printer || globalinfo.printer as Printer
         let t = theme || globalinfo.theme as ThemeOptions
+
+        console.log(theme)
         
         return <DefaultPrinterComponent 
             root = {node}

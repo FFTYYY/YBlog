@@ -3,12 +3,17 @@
  * @module
  */
 
-import React from "react"
+import React, { ReactFragment } from "react"
+
+import {
+    ScrollBarBox , 
+} from "./scroll"
 
 import {
     Typography , 
     Box , 
     Paper , 
+    Card , 
     Container , 
 } from "@mui/material"
 import type {
@@ -93,12 +98,17 @@ let EditorComponentPaperNestLevel = React.createContext<number>(1)
 /** 这个组件定义一个用来渲染特殊节点的纸张。 
  * @param props.is_inline 这个组件是否是行内组件。
 */
-const EditorComponentPaper = (props: PaperProps & {is_inline?: boolean}) =>{
+const EditorComponentPaper = (props: PaperProps & {is_inline?: boolean, component?: "card" | "paper"}) =>{
     let net_level = React.useContext(EditorComponentPaperNestLevel) // 已经嵌套了多少层了
-    let {children , is_inline, ...other_props} = props
+    let {children , is_inline, component, ...other_props} = props
+    
+    let CONT = Paper
+    if(props.component == "card"){
+        CONT = Card
+    }
 
-    return <Paper 
-        elevation = {net_level * 2}
+    return <CONT 
+        elevation = {net_level}
         square 
         {...other_props} // 去掉自己定义的属性。
         sx = {[
@@ -111,19 +121,19 @@ const EditorComponentPaper = (props: PaperProps & {is_inline?: boolean}) =>{
                     ? { // 行内
                         display : "inline-block" ,
                         minHeight  :  (theme) => theme.editor.fonts.body.lineHeight , 
-                        color   : (theme) => theme.palette.text.secondary , 
+                        color   : (theme) => theme.palette.text.primary , 
                         marginX : (theme) => theme.editor.margins.small , 
                     } : { // 块级
                         marginTop  :  (theme) => theme.editor.margins.paragraph ,      
-                        color   : (theme) => theme.palette.text.secondary ,        
+                        color   : (theme) => theme.palette.text.primary ,        
                     }
                 ) , 
             } , 
             ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
         ]}
-    ><EditorComponentPaperNestLevel.Provider value = {net_level + 1}>
+    ><EditorComponentPaperNestLevel.Provider value = {net_level + 2}>
         {children}
-    </EditorComponentPaperNestLevel.Provider></Paper>
+    </EditorComponentPaperNestLevel.Provider></CONT>
 }
 
 /** 对于一个不用纸张作为最外层元素的节点，这个组件用来提供其边框。 */

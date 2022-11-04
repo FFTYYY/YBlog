@@ -397,7 +397,6 @@ var mathinline_printer = (()=>{
 	})
 })()
 
-// TODO 处理数学
 var mathblock_printer = (()=>{
 	return get_default_group_renderer({
 		inner: (props: PrinterRenderFunctionProps<GroupNode>) => {

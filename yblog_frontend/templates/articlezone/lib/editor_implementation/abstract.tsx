@@ -13,7 +13,8 @@ import {
     Menu , 
     MenuItem , 
     Drawer , 
-    IconButton , 
+    IconButton, 
+    ThemeOptions, 
 } from "@mui/material"
 import { 
     AddBox as AddBoxIcon , 
@@ -162,6 +163,7 @@ class DefaultAbstractEditor extends React.Component<DefaultAbstractEditorProps ,
 
         return <GlobalInfo.Consumer>{globalinfo=>{
             let father_editor = globalinfo.editor as EditorComponent
+            let theme = globalinfo.theme as ThemeOptions
             return <Drawer
                 anchor      = {"left"}
                 open        = {me.props.open}
@@ -210,6 +212,7 @@ class DefaultAbstractEditor extends React.Component<DefaultAbstractEditorProps ,
                         editorcore  = {father_editor.get_editorcore()}
                         init_rootchildren = {son_children}
                         init_rootproperty = {son_but_children}
+                        theme             = {theme}
 
                         sidebar_extra = {(editor)=>{ // 添加一个额外的退出按钮，方便在编辑抽象时退出。
                             return [{
