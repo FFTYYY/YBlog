@@ -43,6 +43,7 @@ let tree_op_mixin = {
 
         let path = slate_concept_node2path(editor.get_root() , node)
         if(path.length == 0){ // 对于根节点的属性设置，单独处理。
+            console.log(node)
             let val = new_val as Partial<AbstractNode>
             if(val.children != undefined){
                 editor.set_root_children(val.children)

@@ -55,10 +55,10 @@ import {
 import { BackendData, Interaction } from "../base/interaction"
 import { linkto } from "../base/linkto"
 import { my_theme } from "./uibase"
-import { SaveButton} from "./buttons"
+import { SaveButton} from "./outside_buttons"
 import { withAllPlugins } from "./plugins"
-import { FileManageButton , UploadFileButton } from "./buttons/manage_files"
-import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./buttons/edit_others"
+import { FileManageButton , UploadFileButton } from "./outside_buttons/manage_files"
+import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./outside_buttons/redirect"
 import { parse_second_concepts } from "../base/utils"
 import { MathJaxContext } from "../base/construction"
 import CssBaseline from '@mui/material/CssBaseline';
@@ -72,8 +72,6 @@ let default_tree = {
 	children: [{children: [{text: "fuck"}]}] , 
 }
 
-// TODO 整理按钮栏
-// TODO 在保存后还原焦点
 class App extends  React.Component<{}, {
 	flags?: number
 
@@ -102,7 +100,7 @@ class App extends  React.Component<{}, {
 		let sec_concepts_data = await Interaction.get.concept(BackendData.node_id) as string[]
 		let sec_concepts = parse_second_concepts(sec_concepts_data)
 
-		// 建立印刷器核心
+		// 建立印刷器核心。
 		let printer = new Printer(
 			first_concepts , 
 			sec_concepts , 
@@ -110,15 +108,21 @@ class App extends  React.Component<{}, {
 			default_renderers , 
 		)
 		
-		// 建立编辑器核心
+		// 建立编辑器核心。
 		let editorcore = new EditorCore({
 			renderers: editors , 
 			default_renderers: default_editors, 
 			printer: printer , 
 		})
 
-		let root = await Interaction.get.content(BackendData.node_id) || editorcore.create_abstract("root")
-
+		// 获得树。
+		let root = await Interaction.get.content(BackendData.node_id)
+		if(!root){
+			root = editorcore.create_abstract("root")
+			root.parameters = {
+				title: "<Unknown Title>"
+			}
+		}
 
 		this.setState({
 			printer: printer , 
@@ -152,10 +156,11 @@ class App extends  React.Component<{}, {
 		return await Interaction.post.content({content: this.state.tree} , BackendData.node_id)
 	}
 
-	componentDidUpdate(){}	
-
 	update_tree(){
 		let editor = this.get_editor()
+		if(!editor){
+			return 
+		}
 		let root = editor.get_root()
 		this.setState({tree: root})
 		return root
@@ -171,6 +176,11 @@ class App extends  React.Component<{}, {
 		if(tree.concept == "default"){
 			return <></>
 		}
+
+		let [tree_property, tree_children] = (()=>{
+			let {children , ...tree_property} = tree
+			return [tree_property , children]
+		})()
 
 		return <ThemeProvider theme={createTheme(my_theme)}><CssBaseline /><Box sx={{
 			position: "absolute" , 
@@ -211,7 +221,8 @@ class App extends  React.Component<{}, {
 					<DefaultEditorComponent
 						ref = {me.editor_ref}
 						editorcore = {editorcore}
-						init_rootchildren = {tree.children} // 编辑器会记住第一次看到的树，所以务必在树初始化之后再渲染编辑器
+						init_rootproperty = {tree_property}
+						init_rootchildren = {tree_children} // 编辑器会记住第一次看到的树，所以务必在树初始化之后再渲染编辑器
 						onSave = {()=>{
 							let root = me.update_tree()
 							setTimeout(()=>me.save_content(root), 200) // 等待state更新

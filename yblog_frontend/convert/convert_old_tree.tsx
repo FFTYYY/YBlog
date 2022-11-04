@@ -13,6 +13,7 @@ import {
     validate , 
     ProcessedParameterList , 
     NonLeafNode , 
+    AbstractNode , 
 } from "../templates/articlezone/lib"
 
 
@@ -214,10 +215,10 @@ function parse(oldnode){
     throw "what the fuck?"
 }
 
-function convert_old_tree(json): GroupNode{
+function convert_old_tree(json): AbstractNode{
     let old_tree = json
 
-    let ret = parse(old_tree) as GroupNode
+    let ret = parse(old_tree) as AbstractNode
 
     let [good , msg] = validate(ret)
 

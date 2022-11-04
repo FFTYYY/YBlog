@@ -42,7 +42,7 @@ import {
     slate_concept_node2path , 
 } from "../../editor"
 import { AutoTooltip , Direction , AutoStack , AutoStackedPopper , AutoStackedPopperProps } from "../uibase"
-import { DefaultParameterWithEditorWithDrawer } from "./parameter_container" 
+import { DefaultParameterWithEditorWithDrawer } from "./parameter_edit" 
 
 import {
     EditorButtonInformation , 
@@ -85,8 +85,6 @@ function MyImg(props: {img_url: string}){
 }
 
 
-// PureComponent  效率更高。
-// XXX ?
 /**
  * 这个组件向具体的编辑器和具体的节点提供 DefaultParameterContainer ，同时还提供一个按钮。
  * @param props.node 这个组件所服务的节点。

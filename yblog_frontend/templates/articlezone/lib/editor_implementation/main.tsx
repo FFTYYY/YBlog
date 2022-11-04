@@ -46,6 +46,7 @@ import {
 import { 
     DefaultParameterEditButton , 
     AutoStackedPopperWithButton , 
+    DefaultRootParameterEditButton , 
 } from "./buttons"
 import { 
     AutoStack , 
@@ -199,8 +200,7 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                         return <></>
                     }
                     return <AutoStack force_direction="column">
-                        <DefaultParameterEditButton node={me.editor_ref.current?.get_root()} />
-                        {/* <DefaultHiddenEditorButtons editor={editor} element={me.state.root} /> */}
+                        <DefaultRootParameterEditButton root={root} editor={editor}/>
                         {me.props.extra_buttons}
                         <Divider />
                         <DefaultSidebar 

@@ -50,6 +50,7 @@ import { EditorButtonInformation } from "./base"
 export { 
     DefaultParameterContainer , 
     DefaultParameterWithEditorWithDrawer , 
+    DefaultParameterWithEditor , 
 }
 
 /** 参数项更新组件的`props`。 */

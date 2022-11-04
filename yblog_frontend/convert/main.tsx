@@ -30,6 +30,8 @@ function convert_one_tree(_node){
     convert_children(tree)
 
     let [good, msg] = validate(tree)
+    tree.type = "abstract"
+    delete tree["relation"]
     if(!good){
         console.log("convert_one_tree: not good!")
         console.log("node is", tree)

@@ -54,10 +54,10 @@ import {
 import { BackendData, Interaction } from "../base/interaction"
 import { linkto } from "../base/linkto"
 import { my_theme } from "./uibase"
-import { SaveButton} from "./buttons"
+import { SaveButton} from "./outside_buttons"
 import { withAllPlugins } from "./plugins"
-import { FileManageButton , UploadFileButton } from "./buttons/manage_files"
-import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./buttons/edit_others"
+import { FileManageButton , UploadFileButton } from "./outside_buttons/manage_files"
+import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./outside_buttons/redirect"
 import { parse_second_concepts } from "../base/utils"
 import { MathJaxContext } from "../base/construction"
 import CssBaseline from '@mui/material/CssBaseline';
