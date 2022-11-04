@@ -13,8 +13,6 @@ import {
 } 
 from "../../lib"
 
-import { PostSnackbar } from "../../base"
-
 export { SaveButton }
 
 class SaveButton extends React.Component<{
@@ -32,31 +30,13 @@ class SaveButton extends React.Component<{
         }
     }
 
-    click(){
-        this.props.save_func().then(ret=>{
-            this.setState({
-                status: ret , 
-                snackbar_open: true , 
-            })
-        })
-    }
-
     render(){
         let me = this
 
         return <React.Fragment>
-            <AutoTooltip title="保存"><IconButton size="small" onClick = {()=>{
-                me.click()
-            }}>
+            <AutoTooltip title="保存"><IconButton size="small" onClick = {()=>this.props.save_func()}>
                     <SaveIcon fontSize="small" color="primary"/>
             </IconButton></AutoTooltip>
-            <PostSnackbar 
-                info_sucess = "保存成功"
-                info_fail = "保存失败"
-                open = {me.state.snackbar_open}
-                status = {me.state.status}
-                onClose = {()=>me.setState({snackbar_open:false})}     
-            />
         </React.Fragment>
     }
 }

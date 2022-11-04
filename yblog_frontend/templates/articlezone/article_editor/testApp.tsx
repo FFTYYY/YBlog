@@ -139,8 +139,6 @@ class App extends React.Component{
 	}
 }
 
-// TODO 整理按钮栏
-// TODO 在保存后还原焦点
 class _App extends  React.Component<{}, {
 	flags?: number
 

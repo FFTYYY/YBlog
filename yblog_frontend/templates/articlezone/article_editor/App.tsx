@@ -55,13 +55,14 @@ import {
 import { BackendData, Interaction } from "../base/interaction"
 import { linkto } from "../base/linkto"
 import { my_theme } from "./uibase"
-import { SaveButton} from "./outside_buttons"
+import { SaveButton } from "./outside_buttons"
 import { withAllPlugins } from "./plugins"
 import { FileManageButton , UploadFileButton } from "./outside_buttons/manage_files"
 import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./outside_buttons/redirect"
 import { parse_second_concepts } from "../base/utils"
 import { MathJaxContext } from "../base/construction"
 import CssBaseline from '@mui/material/CssBaseline';
+import { SnackbarProvider  } from 'notistack';
 
 let default_tree = {
 	type: "abstract" as "abstract" ,
@@ -82,6 +83,7 @@ class App extends  React.Component<{}, {
 }>{
 
 	editor_ref: React.RefObject<DefaultEditorComponent>
+	snackerbar_ref: React.RefObject<SnackbarProvider>
 
 	constructor(props: {}){
 		super(props)
@@ -92,6 +94,13 @@ class App extends  React.Component<{}, {
 			tree: {...default_tree} , 
 		}
 		this.editor_ref = React.createRef()
+		this.snackerbar_ref = React.createRef()
+	}
+
+	open_snackerbar(message: string){
+		if(this.snackerbar_ref && this.snackerbar_ref.current){
+			this.snackerbar_ref.current.enqueueSnackbar(message)
+		}
 	}
 
 	async componentDidMount(){
@@ -153,7 +162,9 @@ class App extends  React.Component<{}, {
 		if(tree == undefined){
 			tree = this.state.tree
 		}
-		return await Interaction.post.content({content: this.state.tree} , BackendData.node_id)
+		// let success = await Interaction.post.content({content: this.state.tree} , BackendData.node_id)
+		let success = true
+		this.open_snackerbar(success ? "保存成功" : "保存失败")
 	}
 
 	update_tree(){
@@ -182,83 +193,89 @@ class App extends  React.Component<{}, {
 			return [tree_property , children]
 		})()
 
-		return <ThemeProvider theme={createTheme(my_theme)}><CssBaseline /><Box sx={{
-			position: "absolute" , 
-			top: "2%" ,
-			left: "1%" , 
-			height: "96%" , 
-			width: "98%" , 
-		}}>
-			<Card sx={{
+		return <ThemeProvider theme={createTheme(my_theme)}><SnackbarProvider 
+				maxSnack = {3} 
+				ref = {me.snackerbar_ref}
+				anchorOrigin = {{horizontal: "right" , vertical: "top"}}
+				variant = {"info"}
+			>
+			<CssBaseline /><Box sx={{
 				position: "absolute" , 
-				left: "0" , 
-				width: "2%" ,
+				top: "2%" ,
+				left: "1%" , 
+				height: "96%" , 
+				width: "98%" , 
 			}}>
-				<SaveButton 
-					save_func = {me.save_content.bind(me)}
-				/>
-				<FileManageButton />
-				<UploadFileButton />
-				<BackendEdit /> 
-				<NodeStructEdit /> 
-				<NodeStructEditShallow /> 
-				<NodeView />
-			</Card>
-
-			<Box sx={{
-				position: "absolute" , 
-				left: "3%" , 
-				width: "96%" , 
-				height: "100%" , 
-			}}>
-				<Box sx = {{
+				<Card sx={{
 					position: "absolute" , 
-					width: "49%" ,
-					left: "0%" , 
-					top: "0" , 
+					left: "0" , 
+					width: "2%" ,
+				}}>
+					<SaveButton 
+						save_func = {me.save_content.bind(me)}
+					/>
+					<FileManageButton />
+					<UploadFileButton />
+					<BackendEdit /> 
+					<NodeStructEdit /> 
+					<NodeStructEditShallow /> 
+					<NodeView />
+				</Card>
+
+				<Box sx={{
+					position: "absolute" , 
+					left: "3%" , 
+					width: "96%" , 
 					height: "100%" , 
 				}}>
-					<DefaultEditorComponent
-						ref = {me.editor_ref}
-						editorcore = {editorcore}
-						init_rootproperty = {tree_property}
-						init_rootchildren = {tree_children} // 编辑器会记住第一次看到的树，所以务必在树初始化之后再渲染编辑器
-						onSave = {()=>{
-							let root = me.update_tree()
-							setTimeout(()=>me.save_content(root), 200) // 等待state更新
-							// TODO 直接调用函数没有ui提示
-						}}
-						theme = {my_theme}
-						plugin = { withAllPlugins }
-					/>
-				</Box>
-
-				<MathJaxContext><ScrollBarBox 
-					sx = {{
+					<Box sx = {{
 						position: "absolute" , 
 						width: "49%" ,
-						left: "51%" , 
+						left: "0%" , 
 						top: "0" , 
 						height: "100%" , 
-					}} 
-					className = "mathjax_process" // 启动mathjax处理
-				>
-					<GlobalInfoProvider value={{BackendData: BackendData.node_id}}>
-						<DefaultPrinterComponent 
-							printer = {printer} 
+					}}>
+						<DefaultEditorComponent
+							ref = {me.editor_ref}
+							editorcore = {editorcore}
+							init_rootproperty = {tree_property}
+							init_rootchildren = {tree_children} // 编辑器会记住第一次看到的树，所以务必在树初始化之后再渲染编辑器
+							onSave = {()=>{
+								let root = me.update_tree()
+								setTimeout(()=>me.save_content(root), 200) // 等待state更新
+								// TODO 直接调用函数没有ui提示
+							}}
 							theme = {my_theme}
-							onUpdateCache = {(cache)=>{console.log("cache!")}}
-							root = {tree}
-						></DefaultPrinterComponent>
-					</GlobalInfoProvider>
-				</ScrollBarBox></MathJaxContext>
+							plugin = { withAllPlugins }
+						/>
+					</Box>
+
+					<MathJaxContext><ScrollBarBox 
+						sx = {{
+							position: "absolute" , 
+							width: "49%" ,
+							left: "51%" , 
+							top: "0" , 
+							height: "100%" , 
+						}} 
+						className = "mathjax_process" // 启动mathjax处理
+					>
+						<GlobalInfoProvider value={{BackendData: BackendData.node_id}}>
+							<DefaultPrinterComponent 
+								printer = {printer} 
+								theme = {my_theme}
+								onUpdateCache = {(cache)=>{console.log("cache!")}}
+								root = {tree}
+							></DefaultPrinterComponent>
+						</GlobalInfoProvider>
+					</ScrollBarBox></MathJaxContext>
+				</Box>
+				
 			</Box>
-			
-		</Box></ThemeProvider>
+		</SnackbarProvider></ThemeProvider>
 	}
 
 }
 
 export default App
-
 

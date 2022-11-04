@@ -30,6 +30,7 @@
 		"immer": "^9.0.15",
 		"jquery": "^3.6.1",
 		"katex": "^0.16.3",
+		"notistack": "^2.0.8",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-nice-scroll": "^1.0.0",

@@ -180,7 +180,6 @@ class BasicInformation extends React.Component<{
         let me = this
         let title = this.props.root.parameters.title.val
 
-        // XXX use theme
         let ItemBox = (props: {title: string, content: string}) => { 
             return <Box
                 sx = {(theme)=>({marginBottom: "1rem"})}

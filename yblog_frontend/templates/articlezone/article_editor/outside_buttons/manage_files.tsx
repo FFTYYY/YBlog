@@ -20,7 +20,7 @@ import {
 } 
 from "../../lib"
 import { BackendData, Interaction } from "../../base/interaction"
-import { PostSnackbar } from "../../base/construction/snackbar"
+import { useSnackbar  } from "notistack"
 
 export {FileManageButton, UploadFileButton}
 
@@ -57,9 +57,8 @@ function UploadFileButton(){
  */
 function DeleteFileButton(props: {resource_id: number , onSuccess?: ()=>void}){
 	let [ pop_anchor , set_pop_anchor ] = React.useState<HTMLButtonElement | undefined>(undefined)
-	let [ snack_open , set_snack_open ] = React.useState<boolean>(false)
-	let [ status 	 , set_status ] 	= React.useState<boolean>(false)
 
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
 	return <React.Fragment>
 		<AutoIconButton 
@@ -81,8 +80,7 @@ function DeleteFileButton(props: {resource_id: number , onSuccess?: ()=>void}){
 			<Button
 				onClick = {async (e)=>{
 					let status = await Interaction.post.delete_resource(props.resource_id)
-					set_status(status)
-					set_snack_open(true)
+					enqueueSnackbar(status ? "删除成功" : "删除失败")
 					set_pop_anchor(undefined)
 
 					if(status && props.onSuccess){
@@ -91,23 +89,14 @@ function DeleteFileButton(props: {resource_id: number , onSuccess?: ()=>void}){
 				}}
 			>确定？</Button>
 		</Popover>
-		<PostSnackbar 
-			info_sucess = "删除成功"
-			info_fail = "删除失败"
-			open = {snack_open}
-			status = {status}
-			onClose = {()=>{set_snack_open(false)}}
-		/>
 	</React.Fragment>
 }
 
 function SubCard(props: {id: number , name: string , url: string , onSuccess?: ()=>void}){
 	let [resource_id,name,url] = [props.id , props.name , props.url]
 	let [newname , set_newname] = React.useState(name)
-	let [rename_open , set_rename_open] = React.useState(false)
-	let [upload_open , set_upload_open] = React.useState(false)
-	let [rename_status , set_rename_status] = React.useState(false)
-	let [upload_status , set_upload_status] = React.useState(false)
+
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
 	useEffect(()=>{ // 当`props`更新的时候，`state`也要跟着更新。
 		set_newname(name)
@@ -150,8 +139,7 @@ function SubCard(props: {id: number , name: string , url: string , onSuccess?: (
 				onClick = {async (e)=>{
 					let data = {name: newname}
 					let status = await Interaction.post.manage_recourse(false, data, resource_id)
-					set_rename_status(status)
-					set_rename_open(true)
+					enqueueSnackbar(status ? "修改文件名成功": "修改文件名失败")
 				}}
 			/>
 
@@ -160,20 +148,21 @@ function SubCard(props: {id: number , name: string , url: string , onSuccess?: (
 					type = "file"  
 					style = {{display: "none"}}
 					onChange = {async (e)=>{
+						let flag = false
 						if(e.target.files.length <= 0){
-							set_upload_status(false)
+							flag = false
 						}
 						else{
 							var form_data = new FormData()
 							form_data.append("file" , e.target.files[0])
 							let status = await Interaction.post.manage_recourse(true,form_data,resource_id)
-							set_upload_status(status)
+							flag = status
 
 							if(status){
 								onSuccess()
 							}
 						}
-						set_upload_open(true)
+						enqueueSnackbar(flag ? "上传文件成功": "上传文件失败")
 						
 					}}
 				/>
@@ -185,23 +174,7 @@ function SubCard(props: {id: number , name: string , url: string , onSuccess?: (
 			</label>
 			<DeleteFileButton resource_id={resource_id} onSuccess = {onSuccess}/>
 		</AutoStack></Box>
-
-		<PostSnackbar 
-			info_sucess = "修改文件名成功"
-			info_fail = "修改文件名失败"
-			open = {rename_open}
-			status = {rename_status}
-			onClose = {()=>{set_rename_open(false)}}
-		/>
 		
-		<PostSnackbar 
-			info_sucess = "上传文件成功"
-			info_fail = "上传文件失败"
-			open = {upload_open}
-			status = {upload_status}
-			onClose = {()=>{set_upload_open(false)}}
-		/>
-
 	</AutoStack></Paper>
 }
 
