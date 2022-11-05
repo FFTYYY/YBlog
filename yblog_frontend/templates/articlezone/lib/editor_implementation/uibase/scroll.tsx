@@ -1,6 +1,9 @@
 /** 这个模块提供一个组件，这个组件向下提供滚动条。
+ * 
  * @module
 */
+// TODO 这个组件定义在editor_implementation中，但是printer的滚动方法却依赖之
+
 import React from "react"
 import {
     Box , 
@@ -27,7 +30,7 @@ class ScrollBarBox extends React.Component<BoxProps>{
     componentDidMount(): void {
         while(!(this.divref && this.divref.current)); // 等待ref创建
         
-        let sb = Scrollbar.init(this.divref.current , {renderByPixels: true})
+        let sb = Scrollbar.init(this.divref.current)
         this.scrollinfo.scrollbar = sb
         this.scrollinfo.scrollbar; // XXX 就你妈神奇，如果不观测一次这个变量，后面this.scrollinfo.scrollbar就会一直是undefined。
         sb.addListener(()=>{

@@ -144,12 +144,23 @@ var image_printer = (()=>{
 				else{
 					set_url(target)
 				}
-			})()} , [parameters])
+			})()} , [type, target])
+
+			
+			if(width < 0 && height < 0){ // 不能同时<0
+				width = 1
+			}
+			if(url){
+				return <img src = {url || undefined} style = {{
+					width: width > 0   ? `${width}rem` : "100%", 
+					height: height > 0 ? `${height}rem` : "100%" , 
+				}}/>	
+			}
+			return <Box sx={{
+				widths: width > 0 ? `${width}rem` : `${height}rem`, 
+				height: height > 0 ? `${height}rem` : `${width}rem`, 
+			}}></Box>
 	
-			return <img src = {url || undefined} style = {{
-				width: width > 0 ? `${width}rem` : "100%", 
-				height: height > 0 ? `${height}rem` : "100%" , 
-			}}/>	
 	
 		} , 
 	})

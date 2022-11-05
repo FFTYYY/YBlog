@@ -320,24 +320,21 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         return this.get_ref(this.idx2path[idx])
     }
 
-    scroll_to_idx(idx: number){ // 似乎有些时候不会滚动到正确的位置...
-        let globalinfo = this.context
-        let component = this.get_ref_from_idx(idx)
-        if(!(component && globalinfo.scrollinfo && globalinfo.scrollinfo.scrollbar)){
-            return 
+    scroll_to_idx(idx: number){ 
+        if(this.idx2path[idx] == undefined){
+            return
         }
-        let scrollbar = globalinfo.scrollinfo.scrollbar as Scrollbar
-        scrollbar.scrollIntoView(component)
+        this.scroll_to(this.idx2path[idx])
     }
     
-    scroll_to(path: number[]){ // 似乎有些时候不会滚动到正确的位置...
+    scroll_to(path: number[]){ // XXX 似乎有些时候不会滚动到正确的位置...
         let globalinfo = this.context
         let component = this.get_ref(path)
         if(!(component && globalinfo.scrollinfo && globalinfo.scrollinfo.scrollbar)){
             return 
         }
         let scrollbar = globalinfo.scrollinfo.scrollbar as Scrollbar
-        scrollbar.scrollIntoView(component)
+        scrollbar.scrollIntoView(component , {offsetTop: 200}) // 他不能居中，有点傻逼啊...
     }
 
     /**这个函数在印刷之前生成环境和上下文。 */
