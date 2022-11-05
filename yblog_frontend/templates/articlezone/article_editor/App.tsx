@@ -145,6 +145,13 @@ class App extends  React.Component<{}, {
 		}
 		return undefined
 	}
+	/** 获得印刷器对象。 */
+	get_printer_comp(){
+		if(this.printer_ref && this.printer_ref.current){
+			return this.printer_ref.current.get_component()
+		}
+		return undefined
+	}
 
 	/** 这个函数将编辑器的树保存到后端。 
 	 * @param tree 要保存的树。之所以有这个参数是因为state的更新有延迟，这个参数可以允许调用者直接传入最新的版本。
@@ -159,6 +166,21 @@ class App extends  React.Component<{}, {
 		let success_1 = await Interaction.post.content({content: tree} , BackendData.node_id)
 		let success_2 = await Interaction.post.cache  ({cache : cache} , BackendData.node_id)
 		this.open_snackerbar((success_1 && success_2) ? "保存成功" : "保存失败")
+	}
+
+	/** 这个函数让printer自动滚动到正在编辑的地方。 */
+	scroll_to_selection(){
+		let editor = this.get_editor()
+		let printer_comp = this.get_printer_comp()
+		if(!(editor && printer_comp)){
+			return 
+		}
+		let selection = editor.get_slate().selection
+		if(!(selection && selection.focus && selection.focus.path)){
+			return 
+		}
+		let tar_path = selection.focus.path
+		printer_comp.scroll_to(tar_path)
 	}
 
 	update_tree(){
@@ -231,7 +253,10 @@ class App extends  React.Component<{}, {
 							init_rootchildren = {tree_children} // 编辑器会记住第一次看到的树，所以务必在树初始化之后再渲染编辑器
 							onSave = {()=>{
 								let root = me.update_tree()
-								setTimeout(()=>me.save_content(root), 200) // 等待state更新
+								setTimeout(()=>{
+									me.save_content(root)
+									me.scroll_to_selection()
+								}, 50) // 等待state更新
 							}}
 							theme = {my_theme}
 							plugin = { withAllPlugins }
@@ -267,9 +292,8 @@ class App extends  React.Component<{}, {
 									if(BackendData.linkto){ // 初始化滚动。
 										setTimeout(()=>{
 											let tar_idx = parseInt(BackendData.linkto)
-											printer_comp.scroll_to(tar_idx)
-											let tar = printer_comp.get_rendered_concept(tar_idx)
-											console.log(tar)
+											printer_comp.scroll_to_idx(tar_idx)
+											let tar = printer_comp.get_ref_from_idx(tar_idx)
 											if(tar){
 												tar.style.border = "2px solid"
 											}

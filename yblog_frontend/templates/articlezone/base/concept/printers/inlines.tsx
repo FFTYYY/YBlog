@@ -166,14 +166,14 @@ var link_printer = (()=>{
 					}
 					if(!(title_ref == undefined || contt_ref == undefined)){
 						return <AutoTooltip title = {contt_ref}><Link 
-							onClick = {()=>{printer_comp.scroll_to(tar_idx)}}
+							onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
 						>{title_ref}</Link></AutoTooltip>
 					}
 				}
 
 				// 不要自动确定文本。
 				return <Link 
-					onClick = {()=>{printer_comp.scroll_to(tar_idx)}}
+					onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
 				>{children}</Link> // 呃呃
 			}
 			else if(type == "outer-index"){

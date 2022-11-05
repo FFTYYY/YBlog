@@ -26,6 +26,7 @@ import {
 	is_paragraphnode , 
 	is_textnode, 
     ParameterList,
+    is_inlinenode , 
     is_concetnode, 
 } from "./intermidiate"
 import {
@@ -86,9 +87,12 @@ interface DefaultRendererhDict{
 }
 
 /** 这个函数判断一个节点是否应该被渲染成行内元素。 */
-function should_inline(printer: Printer, node: ConceptNode){
-    if(node.type == "inline"){
+function should_inline(printer: Printer, node: Node){
+    if(is_textnode(node) || is_inlinenode(node)){
         return true
+    }
+    if(is_paragraphnode(node)){
+        return false
     }
     let first_concept = printer.get_node_first_concept(node)
     if(!first_concept){
@@ -277,12 +281,15 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
 
     static contextType = GlobalInfo
 
-    component_refs: {[idx: number]: React.RefObject<HTMLDivElement>} // 如果写 HTMLDivElement | SpanElement则div会报错，事儿真多。
+    idx2path: {[idx: number]: number[]}
+    path_refs: {[path_str: string]: React.RefObject<HTMLDivElement>} // 如果写 HTMLDivElement | SpanElement则div会报错，事儿真多。
 
     constructor(props:PrinterComponentProps){
         super(props)
 
-        this.component_refs = {}
+        this.path_refs = {}
+        this.idx2path = {} // 将idx映射成path，每渲染一次就会更改一次。
+                            // XXX 其实正确的写法是在componentDidUpdate / componentDidMount里更改，但是我懒得写了，就这样反正也是对的。
     }
 
     get_printer(){
@@ -290,31 +297,47 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
     }
 
     /** 这个函数为渲染时提供用来绑定的ref对象。如果对象不存在会自动创建。 */
-    bind_ref(idx: number){
-        if(!this.component_refs[idx]){
-            this.component_refs[idx] = React.createRef()
+    bind_ref(path: number[]){
+        let path_str = JSON.stringify(path)
+        if(!this.path_refs[path_str]){
+            this.path_refs[path_str] = React.createRef()
         }
-        return this.component_refs[idx]
+        return this.path_refs[path_str]
     }
 
-    scroll_to(idx: number){ // 似乎有些时候不会滚动到正确的位置...
-        let globalinfo = this.context
-        if(!(this.component_refs[idx] && this.component_refs[idx].current)){
-            return 
-        }
-        if(!(globalinfo.scrollinfo && globalinfo.scrollinfo.scrollbar)){
-            return 
-        }
-        let comp = this.component_refs[idx].current
-        let scrollbar = globalinfo.scrollinfo.scrollbar as Scrollbar
-        scrollbar.scrollIntoView(comp)
-    }
-
-    get_rendered_concept(idx: number): HTMLDivElement | HTMLSpanElement | undefined{
-        if(this.component_refs[idx] && this.component_refs[idx].current){
-            return this.component_refs[idx].current
+    get_ref(path: number[]){
+        let path_str = JSON.stringify(path)
+        if(this.path_refs[path_str] && this.path_refs[path_str].current){
+            return this.path_refs[path_str].current
         }
         return undefined
+    }
+
+    get_ref_from_idx(idx: number){
+        if(this.idx2path[idx] == undefined){
+            return undefined
+        }
+        return this.get_ref(this.idx2path[idx])
+    }
+
+    scroll_to_idx(idx: number){ // 似乎有些时候不会滚动到正确的位置...
+        let globalinfo = this.context
+        let component = this.get_ref_from_idx(idx)
+        if(!(component && globalinfo.scrollinfo && globalinfo.scrollinfo.scrollbar)){
+            return 
+        }
+        let scrollbar = globalinfo.scrollinfo.scrollbar as Scrollbar
+        scrollbar.scrollIntoView(component)
+    }
+    
+    scroll_to(path: number[]){ // 似乎有些时候不会滚动到正确的位置...
+        let globalinfo = this.context
+        let component = this.get_ref(path)
+        if(!(component && globalinfo.scrollinfo && globalinfo.scrollinfo.scrollbar)){
+            return 
+        }
+        let scrollbar = globalinfo.scrollinfo.scrollbar as Scrollbar
+        scrollbar.scrollIntoView(component)
     }
 
     /**这个函数在印刷之前生成环境和上下文。 */
@@ -458,27 +481,22 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         }
 
         if(is_concetnode(node)){
-            let node_should_inline = should_inline(me.props.printer, node)
-            if(node_should_inline){
-                return <span ref = {me.bind_ref(node.idx)}><RR 
-                    context = {my_context}
-                    node = {node}
-                    parameters = {my_parameters}
-                >{children_component}</RR></span>
-            }
-            return <div ref = {me.bind_ref(node.idx)} ><RR 
+            this.idx2path[node.idx] = [...path]
+        }
+
+        let node_should_inline = should_inline(me.props.printer, node)
+        if(node_should_inline){
+            return <span ref={me.bind_ref(path)}><RR 
                 context = {my_context}
                 node = {node}
                 parameters = {my_parameters}
-            >{children_component}</RR></div>
+            >{children_component}</RR></span>
         }
-
-        // 渲染本节点。
-        return <RR 
+        return <div ref={me.bind_ref(path)} ><RR 
             context = {my_context}
             node = {node}
             parameters = {my_parameters}
-        >{children_component}</RR>
+        >{children_component}</RR></div>
     }
 
     render(){
@@ -486,6 +504,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         let R = me.subrender.bind(this)
 
         let [env , all_contexts , all_parameters, all_caches] = me.preprocess()
+
         if(this.props.onUpdateCache){ // XXX 嘶...好像不太该在这里调用外部函数....
             this.props.onUpdateCache(all_caches)
         }
