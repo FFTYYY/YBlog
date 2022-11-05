@@ -54,7 +54,7 @@ import {
 	first_concepts , 
 } from "../base/concept"
 import { BackendData, Interaction } from "../base/interaction"
-import { my_theme } from "./uibase"
+import { my_theme } from "../base"
 import { SaveButton } from "./outside_buttons"
 import { withAllPlugins } from "./plugins"
 import { FileManageButton , UploadFileButton } from "./outside_buttons/manage_files"
@@ -65,12 +65,10 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider  } from 'notistack';
 
 class App extends  React.Component<{}, {
-	flags?: number
-
 	printer: Printer  | undefined
 	editorcore: EditorCore | undefined
 	tree: AbstractNode  | undefined
-	cache: PrinterCache
+	cache: PrinterCache | undefined
 }>{
 
 	editor_ref: React.RefObject<DefaultEditorComponent>
@@ -131,10 +129,14 @@ class App extends  React.Component<{}, {
 			}
 		}
 
+		// 获得缓存内容（其实是不必要的...）
+		let cache = await Interaction.get.cache(BackendData.node_id)
+
 		this.setState({
 			printer: printer , 
 			editorcore: editorcore , 
 			tree: root , 
+			cache: cache , 
 		})
 	}
 
