@@ -270,6 +270,7 @@ class Printer{
 interface PrinterComponentProps {
     printer: Printer
     root: AbstractNode 
+    init_env?: Env
 
     onUpdateCache?: (cache: PrinterCache)=>void
 }
@@ -338,12 +339,11 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
     }
 
     /**这个函数在印刷之前生成环境和上下文。 */
-    preprocess(root?: AbstractNode): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}, PrinterCache]{
+    preprocess({root, init_env}:{root?: AbstractNode, init_env?: Env} = {}): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}, PrinterCache]{
         let me = this 
         let printer = me.props.printer
-        if(!root){
-            root = me.props.root
-        }
+        root = root || me.props.root
+        init_env = init_env || me.props.init_env || {}
 
         /** 这个函数递归地检查整个节点树，并让每个节点对环境做处理。最终的结果被记录在全局变量中。 
          * @param nowenv 当前的环境。
@@ -424,7 +424,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             return [nowenv , flag]
         }
 
-        let env = {}
+        let env = init_env // 如果指定了初始环境，就使用初始环境。
         let all_contexts = {}
         let all_caches = {}
         let all_parameters = {}

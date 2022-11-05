@@ -126,7 +126,7 @@ var link_printer = (()=>{
 
 	/** 这个函数重新渲染节点树以获得节点信息。 */
 	function get_reference_from_printer(printer_comp: PrinterComponent, root: AbstractNode, idx: number){
-		let [env , all_contexts , all_parameters, all_caches] = printer_comp.preprocess(root)
+		let [env , all_contexts , all_parameters, all_caches] = printer_comp.preprocess({root: root})
 		return get_reference_from_cache(all_caches, idx)
 	}
 
