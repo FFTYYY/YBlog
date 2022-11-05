@@ -35,6 +35,7 @@ import {
     GlobalInfo , 
     GlobalInfoProvider , 
 } from "./globalinfo"
+import { Scrollbar } from "smooth-scrollbar/scrollbar"
 
 export type {
     FirstClassConceptDict , 
@@ -82,6 +83,18 @@ interface DefaultRendererhDict{
     "abstract"  : PrinterRenderer , 
     "paragraph" : PrinterRenderer , 
     "text"      : PrinterRenderer , 
+}
+
+/** 这个函数判断一个节点是否应该被渲染成行内元素。 */
+function should_inline(printer: Printer, node: ConceptNode){
+    if(node.type == "inline"){
+        return true
+    }
+    let first_concept = printer.get_node_first_concept(node)
+    if(!first_concept){
+        return false
+    }
+    return first_concept.meta_parameters.force_inline
 }
 
 /**
@@ -262,8 +275,35 @@ interface PrinterComponentProps {
  */
 class PrinterComponent extends React.Component<PrinterComponentProps>{
 
+    static contextType = GlobalInfo
+
+    component_refs: {[idx: number]: React.RefObject<HTMLDivElement>} // 如果写 HTMLDivElement | SpanElement则div会报错，事儿真多。
+
     constructor(props:PrinterComponentProps){
         super(props)
+
+        this.component_refs = {}
+    }
+
+    /** 这个函数为渲染时提供用来绑定的ref对象。如果对象不存在会自动创建。 */
+    bind_ref(idx: number){
+        if(!this.component_refs[idx]){
+            this.component_refs[idx] = React.createRef()
+        }
+        return this.component_refs[idx]
+    }
+
+    scroll_to(idx: number){
+        let globalinfo = this.context
+        if(!(this.component_refs[idx] && this.component_refs[idx].current)){
+            return 
+        }
+        if(!(globalinfo.scrollinfo && globalinfo.scrollinfo.scrollbar)){
+            return 
+        }
+        let comp = this.component_refs[idx].current
+        let scrollbar = globalinfo.scrollinfo.scrollbar as Scrollbar
+        scrollbar.scrollIntoView(comp)
     }
 
     /**这个函数在印刷之前生成环境和上下文。 */
@@ -380,7 +420,6 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         let my_context = all_contexts[my_path] // 本节点的上下文信息。
         let my_parameters = all_parameters[my_path] // 获取参数列表。
 
-
         if(my_parameters == undefined){
             throw new UnexpectedParametersError(`all_parameters should contain ${my_path} but it doesn't.`)
         }
@@ -389,7 +428,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         }
 
         let renderer = me.props.printer.get_node_renderer(node) // 向印刷器请求渲染器。
-        let RR = renderer.renderer // 真正的渲染函数。
+        let RR =  renderer.renderer // 真正的渲染函数。
 
         // 先渲染子节点。
         let children_component = <></>
@@ -403,6 +442,22 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
                 all_contexts = {all_contexts}
                 all_parameters = {all_parameters}
             />)}</React.Fragment>
+        }
+
+        if(is_concetnode(node)){
+            let node_should_inline = should_inline(me.props.printer, node)
+            if(node_should_inline){
+                return <span ref = {me.bind_ref(node.idx)}><RR 
+                    context = {my_context}
+                    node = {node}
+                    parameters = {my_parameters}
+                >{children_component}</RR></span>
+            }
+            return <div ref = {me.bind_ref(node.idx)} ><RR 
+                context = {my_context}
+                node = {node}
+                parameters = {my_parameters}
+            >{children_component}</RR></div>
         }
 
         // 渲染本节点。
@@ -426,7 +481,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         let globalinfo = {
             "printer": me.props.printer , 
             "root": me.props.root , 
-            "printerComponent": me ,
+            "printer_component": me ,
             "env": env , // 这一项提供所有节点的环境。
             "all_contexts": all_contexts , // 这一项提供所有节点的上下文。
             "all_parameters": all_parameters ,  // 这一项提供所有节点的处理好的参数。

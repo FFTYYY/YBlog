@@ -157,7 +157,7 @@ var link_style      = new FirstClassConcept  ({type: "inline", name: "缀"   ,
             autotext: false , 
         }) , 
         type: {
-            val: "internal" , 
+            val: "index" , 
             type: "string" , 
             choices: ["index", "outer-index", "http"]
         }

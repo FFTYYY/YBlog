@@ -119,7 +119,7 @@ class App extends  React.Component<{}, {
 
 		// 获得树。
 		let root = await Interaction.get.content(BackendData.node_id)
-		if(!root){
+		if(!root){ // 如果没有内容
 			root = editorcore.create_abstract("root")
 			root.parameters = {
 				title: {
@@ -242,7 +242,7 @@ class App extends  React.Component<{}, {
 						/>
 					</Box>
 
-					<MathJaxContext><ScrollBarBox 
+					<ScrollBarBox 
 						sx = {{
 							position: "absolute" , 
 							width: "49%" ,
@@ -251,8 +251,11 @@ class App extends  React.Component<{}, {
 							height: "100%" , 
 						}} 
 						className = "mathjax_process" // 启动mathjax处理
-					>
-						<GlobalInfoProvider value={{BackendData: BackendData.node_id}}>
+					><MathJaxContext>
+						<GlobalInfoProvider value={{
+							BackendData: BackendData , 
+							cache: me.state.cache , 
+						}}>
 							<DefaultPrinterComponent 
 								printer = {printer} 
 								theme = {my_theme}
@@ -265,7 +268,7 @@ class App extends  React.Component<{}, {
 								root = {tree}
 							></DefaultPrinterComponent>
 						</GlobalInfoProvider>
-					</ScrollBarBox></MathJaxContext>
+					</MathJaxContext></ScrollBarBox>
 				</Box>
 				
 			</Box>

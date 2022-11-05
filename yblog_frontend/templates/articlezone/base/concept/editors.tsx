@@ -31,7 +31,7 @@ export {
 
 
 let brightwords_editor  = get_deafult_group_editor_with_appbar({
-    get_label: (n,p) => p.category
+    get_label: (n,p) => p.label
 })
 var subsection_editor   = get_deafult_group_editor_with_appbar({
     get_label: (n,p)=>`次节：${p.title}`

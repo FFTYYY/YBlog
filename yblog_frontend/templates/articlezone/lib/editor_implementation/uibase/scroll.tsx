@@ -14,26 +14,32 @@ import Scrollbar from "smooth-scrollbar"
 
 export { ScrollBarBox }
 
-function ScrollBarBox(props: BoxProps){
+class ScrollBarBox extends React.Component<BoxProps>{
+    divref: React.RefObject<HTMLDivElement>
+    scrollinfo: {scrollbar: Scrollbar | undefined}
 
-    // let [my_scrollbar , set_sb] = React.useState<undefined | Scrollbar>(undefined)
-    let scrollinfo = {scrollbar: undefined } // 我决定不把这个变量作为状态，因为useContext的更新有bug。
+    constructor(props: BoxProps){
+        super(props)
+        this.scrollinfo = {scrollbar: undefined}
+        this.divref = React.createRef()
+    }
 
-    let divref = React.useRef<HTMLDivElement>()
-    let {children, ...other_props} = props
-    
-    React.useEffect(()=>{
-        while(!(divref && divref.current)); // 等待ref创建
+    componentDidMount(): void {
+        while(!(this.divref && this.divref.current)); // 等待ref创建
         
-        let sb = Scrollbar.init(divref.current , {delegateTo: divref.current, renderByPixels: true})
-        scrollinfo.scrollbar = sb
+        let sb = Scrollbar.init(this.divref.current , {renderByPixels: true})
+        this.scrollinfo.scrollbar = sb
+        this.scrollinfo.scrollbar; // XXX 就你妈神奇，如果不观测一次这个变量，后面this.scrollinfo.scrollbar就会一直是undefined。
         sb.addListener(()=>{
-            divref.current.dispatchEvent(new Event("scroll")) // 手动触发原生事件
+            this.divref.current.dispatchEvent(new Event("scroll")) // 手动触发原生事件
         })
-    } , [])
+    }
 
-
-    return <GlobalInfoProvider value={{scrollinfo: scrollinfo}}>
-        <Box {...other_props} data-scrollbar ref={divref}>{children}</Box>
-    </GlobalInfoProvider>
+    render(){
+        let {children, ...other_props} = this.props
+        return <GlobalInfoProvider value={{scrollinfo: this.scrollinfo}}>
+            <Box {...other_props} data-scrollbar ref={this.divref}>{children}</Box>
+        </GlobalInfoProvider>
+    }
 }
+

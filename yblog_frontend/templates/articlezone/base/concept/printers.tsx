@@ -43,6 +43,7 @@ import {
 	get_default_structure_renderer , 
 
 	ReferenceContexter , 
+	PrinterComponent , 
 } from "../../lib"
 import {
 	PrinterRenderer , 
@@ -458,6 +459,8 @@ var image_printer = (()=>{
 
 
 var link_printer = (()=>{
+	let reference_contexter = new ReferenceContexter(()=>undefined)
+
 	return get_default_inline_renderer({
 		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
 			let {node,parameters,context,children} = props
@@ -466,7 +469,18 @@ var link_printer = (()=>{
 			let type = parameters.type
 			let autotext = parameters.autotext
 
-			// TODO
+			let globalinfo = React.useContext(GlobalInfo)
+
+			if(type == "index"){ // 本文内的节点。
+				let cache = globalinfo.cache
+				let printer_comp = globalinfo.printer_component as PrinterComponent
+				if(autotext && cache && cache[parseInt(target)] && cache[parseInt(target)][reference_contexter.key]){
+					let reference = cache[parseInt(target)][reference_contexter.key]
+					return <Link 
+						onClick = {()=>{printer_comp.scroll_to(parseInt(target))}}
+					>{reference}</Link>
+				}
+			}
 
 			return <Link href={target}>{children}</Link>
 		}
