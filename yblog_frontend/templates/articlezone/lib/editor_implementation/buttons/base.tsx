@@ -467,6 +467,10 @@ function MouselessParameterEditor(props: {
             defaultValue    = {param_init} 
             inputRef        = {input_ref}
 
+            onBlur = {()=>{
+                restore_selection()
+            }}
+
             onKeyDown         = {(e)=>{
                 if(e.key == "Enter"){
                     restore_selection()

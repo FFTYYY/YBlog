@@ -53,6 +53,9 @@ import {renderers as group_struct_renderers} from "./group_structs"
 import {renderers as inline_renderers} from "./inlines"
 import {renderers as support_renderers} from "./supports"
 
+// TODO abtract的printer
+// TODO 再加几个概念。
+
 export {
     default_renderers , 
     renderers , 
