@@ -1,6 +1,5 @@
 import React, { useEffect } from "react"
 import ReactDom from "react-dom"
-import * as Slate from "slate"
 
 import {
 	Box , Link , Typography , Divider , Grid
@@ -44,9 +43,8 @@ import {
 
 	ReferenceContexter , 
 	PrinterComponent , 
-} from "../../lib"
-import {
-	PrinterRenderer , 
+
+    PrinterRenderer , 
 	GroupNode , 
 	StructNode , 
 	SupportNode , 
@@ -55,54 +53,28 @@ import {
 	Context  , 
     PrinterRenderFunctionProps, 
     PrinterRenderFunction , 
-} from "../../lib"
+} from "../../../lib"
 
 import {
 	url_from_root , Interaction , urls , 
-} from "../interaction"
+} from "../../interaction"
 
 import {
-	num2chinese  , 
-    rem2num , 
-    num2rem , 
-    remtimes , 
-} from "../utils"
+	make_oerder_str , 
+	remtimes , 
+	node2string , 
+	cut_str , 
+} from "./utils"
 
 import {
 	MathJaxInline , 
 	MathJaxBlock , 
-} from "../../base/construction"
+} from "../../../base/construction"
 
 export {
 	renderers , 
-	default_renderers , 
 }
 
-
-
-/** 根据给定的编号和编号格式，生成编号字符串。 */
-function make_oerder_str(order: number , ordering: string){
-	if(ordering == "head"){
-		return num2chinese(order)
-	}
-	if(ordering == "discuss"){
-		if(order > 0 && order <= 20){
-			let m = ["①","②","③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱","⑲", "⑳"]
-			return m[order-1]
-		}
-		return `(${order})`
-	}
-	if(ordering == "title"){
-		return `【${num2chinese(order)}】`
-	}
-	if(ordering == "list-separating"){
-		return `[${order}]`
-	}
-	if(ordering == "list-chaining"){
-		return `${order})`
-	}
-	return ""
-}
 
 /** 『次节』表示小节内的一个小小节。 */
 var subsection_printer = (()=>{
@@ -138,7 +110,14 @@ var brightwords_printer = (()=>{
 		let orderer = orderer_gene(info) // 现场生成orderer。
 		let order = orderer.get_context(info.context) // 获得自身的编号。
 		let order_str = make_oerder_str(order , info.parameters.ordering) // 生成标题字符串
-		return `${info.parameters.title} ${order_str}`
+		let title_ref = `${info.parameters.title} ${order_str}`
+
+		let content_ref = cut_str( node2string(info.node) )
+
+		return {
+			title: title_ref , 
+			content: content_ref , 
+		}
 	} ))
 	let printer = get_default_group_renderer({
 		contexters: [
@@ -224,7 +203,13 @@ var subwords_printer = (()=>{
 		let orderer = orderer_gene(info) // 现场生成orderer。
 		let order = orderer.get_context(info.context) // 获得自身的编号。
 		let order_str = make_oerder_str(order , info.parameters.ordering) // 生成标题字符串
-		return `${order_str}`
+
+		let content_ref = cut_str( node2string(info.node) )
+
+		return {
+			title: order_str , 
+			content: content_ref , 
+		}
 	} ))
 
 	return get_default_group_renderer({
@@ -329,79 +314,11 @@ var display_printer = (()=>{
 })()
 
 
-/** 小节线。 */
-var sectioner_printer = (()=>{
-	let orderer_gene = (info:PreprocessInformation<SupportNode>)=>new OrderContexter<SupportNode>(info.parameters.label)
-	let reference_gene = ()=>(new ReferenceContexter<SupportNode>( (info) => {
-		let orderer = orderer_gene(info) // 现场生成orderer。
-		let order = orderer.get_context(info.context) // 获得自身的编号。
-		return `第${num2chinese(order)}节`
-	} ))
-
-	return auto_renderer<SupportNode>({
-		contexters: [orderer_gene, reference_gene] , 
-
-		render_function: (props: PrinterRenderFunctionProps<SupportNode>)=>{
-			let {node,parameters,context,children} = props
-			let order = orderer_gene({node,parameters,context,env: {}}).get_context(props.context)
-			let title = parameters.title
-			let alone = parameters.alone
-
-			// 如果是`alone`的就不显示序号惹。
-			let order_word = alone ? <></> : <PrinterStructureBoxText inline>第{num2chinese(order)}节</PrinterStructureBoxText>
-			let title_word = title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>
-			return <Divider>{order_word}{title_word}</Divider>
-
-		}
-	})
-})()
-
-/** 章节线。 */
-var ender_printer = (()=>{
-	return auto_renderer<SupportNode>({
-		render_function: (props: PrinterRenderFunctionProps<SupportNode>) => {
-			return <Divider />
-		}
-	})
-})()
-
-/** 强调。 */
-var strong_printer = (()=>{
-	return get_default_inline_renderer({
-		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
-			return <strong>{props.children}</strong>
-		}
-	})
-})()
-
-
-var delete_printer = (()=>{
-	return get_default_inline_renderer({
-		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
-			return <del>{props.children}</del>
-		}
-	})
-})()
-
-var mathinline_printer = (()=>{
-
-	return get_default_inline_renderer({
-		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
-			/** 这是一个比较蛋疼的写法，取消原来的children并直接将element序列化。
-			 * 这里的问题在于，如果直接写成${props.children}$，则printer里为了定位元素所添加的空白<span>会阻碍mathjax的处理。
-			 TODO 处理数学
-			 */
-			return <Box component="span" sx={{paddingX: "0.1rem"}}>
-				<MathJaxInline>{Slate.Node.string(props.node)}</MathJaxInline>
-			</Box>
-		}
-	})
-})()
 
 var mathblock_printer = (()=>{
 	return get_default_group_renderer({
 		inner: (props: PrinterRenderFunctionProps<GroupNode>) => {
-			let value 	= Slate.Node.string(props.node)
+			let value 	= node2string(props.node)
 			let suffix 	= props.parameters.suffix
 			let close 	= props.parameters.close
 			let environ = props.parameters.environ
@@ -419,94 +336,6 @@ var mathblock_printer = (()=>{
 	})
 })()
 
-var image_printer = (()=>{
-	return get_default_inline_renderer({
-		outer: (props: PrinterRenderFunctionProps) => {
-			let {node , parameters , context , children} = props
-			let globalinfo = React.useContext(GlobalInfo)
-			let BackendData = globalinfo.BackendData
-
-			let type = parameters.type
-			let target = parameters.target
-			let width = parameters.width
-			let height = parameters.height
-
-			let [ url , set_url ] = React.useState("")
-
-			React.useEffect(()=>{(async ()=>{
-				if(type == "internal"){
-					let resource_info = await Interaction.get.resource_info(target , BackendData.node_id)
-					if(!resource_info.url){
-						set_url("")
-					}
-					else{
-						set_url(url_from_root(resource_info.url))
-					}
-				}
-				else{
-					set_url(target)
-				}
-			})()} , [parameters])
-	
-			return <img src = {url || undefined} style = {{
-				width: width > 0 ? `${width}rem` : "100%", 
-				height: height > 0 ? `${height}rem` : "100%" , 
-			}}/>	
-	
-		} , 
-	})
-})()
-
-
-var link_printer = (()=>{
-	let reference_contexter = new ReferenceContexter(()=>undefined)
-
-	return get_default_inline_renderer({
-		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
-			let {node,parameters,context,children} = props
-
-			let target = parameters.target
-			let type = parameters.type
-			let autotext = parameters.autotext
-
-			let globalinfo = React.useContext(GlobalInfo)
-
-			if(type == "index"){ // 本文内的节点。
-				let cache = globalinfo.cache
-				let printer_comp = globalinfo.printer_component as PrinterComponent
-				if(autotext && cache && cache[parseInt(target)] && cache[parseInt(target)][reference_contexter.key]){
-					let reference = cache[parseInt(target)][reference_contexter.key]
-					return <Link 
-						onClick = {()=>{printer_comp.scroll_to(parseInt(target))}}
-					>{reference}</Link>
-				}
-			}
-
-			return <Link href={target}>{children}</Link>
-		}
-	})
-})()
-
-
-let default_renderer_block = new PrinterRenderer({
-    renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
-		let node = props.node
-        return <div>{props.children}</div>
-    }
-})
-
-let default_renderer_inline = new PrinterRenderer({
-    renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
-        return <span>{props.children}</span>
-    }
-})
-
-let default_renderer_text = new PrinterRenderer({
-    renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
-        let node = props.node as TextNode
-        return <span>{node.text}</span>
-    }
-})
 
 let line_printer = (()=>{
     function get_widths(node: StructNode, parameters: ProcessedParameterList){
@@ -552,32 +381,8 @@ let renderers = {
 		"次节": subsection_printer , 
 		
 	} ,
-	"inline" : {
-		"强"  : strong_printer , 
-		"刊"  : delete_printer , 
-		"缀"  : link_printer , 
-		"数学": mathinline_printer , 
-	},
-	"support": {
-		"小节线": sectioner_printer , 
-		"章节线": ender_printer , 
-		"图"  : image_printer , 
-	} , 
-	"abstract": {} , 
+
 	"structure": {
 		"齐言": line_printer , 
 	} , 
-}
-
-
-
-let default_renderers = {
-	"group"     : default_renderer_block , 
-    "structure" : default_renderer_block , 
-    "support"   : default_renderer_block , 
-    "abstract"  : default_renderer_block , 
-    "paragraph" : get_default_paragraph_renderer({}) , 
-    "inline"    : default_renderer_inline , 
-    "text"      : default_renderer_text , 
-
 }

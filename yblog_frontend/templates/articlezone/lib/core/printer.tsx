@@ -285,6 +285,10 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         this.component_refs = {}
     }
 
+    get_printer(){
+        return this.props.printer
+    }
+
     /** 这个函数为渲染时提供用来绑定的ref对象。如果对象不存在会自动创建。 */
     bind_ref(idx: number){
         if(!this.component_refs[idx]){
@@ -307,10 +311,12 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
     }
 
     /**这个函数在印刷之前生成环境和上下文。 */
-    preprocess(): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}, PrinterCache]{
+    preprocess(root?: AbstractNode): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}, PrinterCache]{
         let me = this 
         let printer = me.props.printer
-        let root = me.props.root
+        if(!root){
+            root = me.props.root
+        }
 
         /** 这个函数递归地检查整个节点树，并让每个节点对环境做处理。最终的结果被记录在全局变量中。 
          * @param nowenv 当前的环境。
