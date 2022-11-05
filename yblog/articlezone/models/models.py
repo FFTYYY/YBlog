@@ -28,8 +28,11 @@ class Node(models.Model):
 			return notitle
 
 		root = json.loads(self.content)
-		if (root.get("parameters") is None) or (root["parameters"].get("title") is None) or \
-				(root["parameters"]["title"].get("val") is None):
+		try:
+			if (root.get("parameters") is None) or (root["parameters"].get("title") is None) or \
+					(root["parameters"]["title"].get("val") is None):
+				return notitle
+		except AttributeError: 
 			return notitle
 		title = root["parameters"]["title"]["val"]
 		if title.strip() == "":

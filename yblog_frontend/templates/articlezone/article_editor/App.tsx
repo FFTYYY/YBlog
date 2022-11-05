@@ -122,7 +122,10 @@ class App extends  React.Component<{}, {
 		if(!root){
 			root = editorcore.create_abstract("root")
 			root.parameters = {
-				title: "<Unknown Title>"
+				title: {
+					val: `Article: ${BackendData.node_id}` , 
+					type: "string"
+				}
 			}
 		}
 
