@@ -31,6 +31,7 @@ import {
 	AbstractNode , 
     is_concetnode , 
     slate_is_concept , 
+    ScrollBarBox , 
 } from "../../lib"
 import { Node } from "slate"
 import { LeftBasic } from "./left_basic"
@@ -65,7 +66,7 @@ function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}
             ...theme.fonts.body , 
             fontSize: "0.9rem" , 
         })}>章内目录</Typography>
-        <Box sx={{ 
+        <ScrollBarBox sx={{ 
             position: "absolute" , 
             top: "2rem" , 
             bottom: "2rem" , 
@@ -89,6 +90,6 @@ function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}
                     onClick = {(e)=>{props.onScroll(path)}}
                 ><Typography sx={{fontSize: "0.8rem"}}>{title}</Typography></Link></Box>
             })}
-        </Box>
+        </ScrollBarBox>
     </Box>
 }

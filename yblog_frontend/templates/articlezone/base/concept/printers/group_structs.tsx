@@ -61,10 +61,13 @@ import {
 
 import {
 	make_oerder_str , 
-	remtimes , 
 	node2string , 
 	cut_str , 
 } from "./utils"
+
+import {
+	remtimes , 
+} from "../../utils"
 
 import {
 	MathJaxInline , 

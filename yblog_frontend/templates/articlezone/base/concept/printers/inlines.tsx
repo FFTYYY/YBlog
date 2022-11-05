@@ -63,7 +63,6 @@ import {
 
 import {
 	make_oerder_str , 
-	remtimes , 
     idx2node ,
 	node2string ,  
 	cut_str , 

@@ -18,6 +18,7 @@ import {
 	AutoStack , 
     AutoTooltip , 
     AbstractNode , 
+    ScrollBarBox , 
 } from "../../lib"
 import { Nodetree } from "../../base/nodetree"
 import type { raw_info_item } from "../../base/nodetree"

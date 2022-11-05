@@ -6,8 +6,8 @@ import {
     Tabs , Tab , Button , IconButton , 
     Box , Divider , Typography , Link , TextField , Chip
 } from "@mui/material"
-import { PostSnackbar } from "../../base/construction/snackbar"
 import { Interaction , BackendData } from "../../base/interaction"
+import { ScrollBarBox } from "../../lib"
 
 export { LeftComments }
 
@@ -135,13 +135,6 @@ class NewComments extends React.Component<{
                 textAlign: "right" , 
                 marginTop: "1rem"
             }}><Button variant=  "outlined" onClick = {()=>me.submit()}>新建留言</Button></Box>
-            <PostSnackbar 
-                info_sucess = "提交成功"
-                info_fail = "提交失败"
-                open = { me.state.snakerbar_open }
-                status = { me.state.status }
-                onClose = {()=>me.setState({snakerbar_open : false})}     
-            />
         </React.Fragment>
     }
 }

@@ -26,8 +26,13 @@ class ScrollBarBox extends React.Component<BoxProps>{
         this.scrollinfo = {scrollbar: undefined}
         this.divref = React.createRef()
     }
+    componentDidUpdate(prevProps: Readonly<BoxProps<"div", {}>>, prevState: Readonly<{}>, snapshot?: any): void {
+        
+        console.log("update!")
+    }
 
     componentDidMount(): void {
+        console.log("mount!")
         while(!(this.divref && this.divref.current)); // 等待ref创建
         
         let sb = Scrollbar.init(this.divref.current)

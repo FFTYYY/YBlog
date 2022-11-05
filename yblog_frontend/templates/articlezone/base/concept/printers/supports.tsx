@@ -67,10 +67,9 @@ import {
 } from "../../interaction"
 
 import {
-	make_oerder_str , 
 	remtimes , 
     num2chinese , 
-} from "./utils"
+} from "../../utils"
 
 import {
 	MathJaxInline , 
