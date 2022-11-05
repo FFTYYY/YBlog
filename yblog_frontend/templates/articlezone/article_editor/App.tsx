@@ -38,6 +38,7 @@ import {
 	GlobalInfoProvider, 
 	SecondClassConceptDict, 
 	ScrollBarBox , 
+	PrinterCache , 
 } from "../lib"
 
 import * as Slate from "slate"
@@ -64,22 +65,13 @@ import { MathJaxContext } from "../base/construction"
 import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider  } from 'notistack';
 
-let default_tree = {
-	type: "abstract" as "abstract" ,
-	concept: "default" , 
-	idx: 2333 , 
-	abstract: [] , 
-	parameters: {} , 
-	children: [{children: [{text: "fuck"}]}] , 
-}
-
 class App extends  React.Component<{}, {
 	flags?: number
 
-	printer: Printer 
-	editorcore: EditorCore
-	tree: AbstractNode 
-
+	printer: Printer  | undefined
+	editorcore: EditorCore | undefined
+	tree: AbstractNode  | undefined
+	cache: PrinterCache
 }>{
 
 	editor_ref: React.RefObject<DefaultEditorComponent>
@@ -91,7 +83,8 @@ class App extends  React.Component<{}, {
 		this.state = {		
 			printer: undefined , 
 			editorcore: undefined , 
-			tree: {...default_tree} , 
+			tree: undefined , 
+			cache: undefined , 
 		}
 		this.editor_ref = React.createRef()
 		this.snackerbar_ref = React.createRef()
@@ -144,7 +137,6 @@ class App extends  React.Component<{}, {
 		if(BackendData.linkto && BackendData.linkto != "None"){
 			linkto(printer , Number(BackendData.linkto))
 		}
-
 	}
 
 	/** 获得编辑器对象。 */
@@ -158,13 +150,16 @@ class App extends  React.Component<{}, {
 	/** 这个函数将编辑器的树保存到后端。 
 	 * @param tree 要保存的树。之所以有这个参数是因为state的更新有延迟，这个参数可以允许调用者直接传入最新的版本。
 	*/
-	async save_content(tree: AbstractNode | undefined = undefined){
+	async save_content(tree: AbstractNode | undefined = undefined, cache: PrinterCache | undefined = undefined){
 		if(tree == undefined){
 			tree = this.state.tree
 		}
-		// let success = await Interaction.post.content({content: this.state.tree} , BackendData.node_id)
-		let success = true
-		this.open_snackerbar(success ? "保存成功" : "保存失败")
+		if(cache == undefined){
+			cache = this.state.cache
+		}
+		let success_1 = await Interaction.post.content({content: tree} , BackendData.node_id)
+		let success_2 = await Interaction.post.cache  ({cache : cache} , BackendData.node_id)
+		this.open_snackerbar((success_1 && success_2) ? "保存成功" : "保存失败")
 	}
 
 	update_tree(){
@@ -181,7 +176,7 @@ class App extends  React.Component<{}, {
 		let me = this
 		let {editorcore, printer, tree} = this.state
 
-		if((!editorcore) || (!printer) || (tree.concept == "default")){
+		if(!(editorcore && printer && tree)){
 			return <></>
 		} // 务必等一切都初始化好再开始渲染。
 
@@ -238,7 +233,6 @@ class App extends  React.Component<{}, {
 							onSave = {()=>{
 								let root = me.update_tree()
 								setTimeout(()=>me.save_content(root), 200) // 等待state更新
-								// TODO 直接调用函数没有ui提示
 							}}
 							theme = {my_theme}
 							plugin = { withAllPlugins }
@@ -259,7 +253,12 @@ class App extends  React.Component<{}, {
 							<DefaultPrinterComponent 
 								printer = {printer} 
 								theme = {my_theme}
-								onUpdateCache = {(cache)=>{console.log("cache!")}}
+								onUpdateCache = {(cache)=>{
+									if(cache && JSON.stringify(cache) != JSON.stringify(me.state.cache)){
+										// XXX 这里会报warning，这是因为printer里在render()里调用了这个函数...
+										setTimeout(()=>me.setState({cache: cache}) , 200)
+									}
+								}}
 								root = {tree}
 							></DefaultPrinterComponent>
 						</GlobalInfoProvider>

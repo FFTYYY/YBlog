@@ -41,7 +41,21 @@ def get_node_content(request, node_id):
 		content = json.dumps(None)
 
 	return JsonResponse({
-		"content": JSONDecode( content )
+		"content": JSONDecode( content ) # TODO 为什么不让前端decode呢....
+	})
+
+@debug_convenient
+def get_node_cache(request, node_id):
+	node = Node.objects.get(id = node_id) 
+	if not node_can_view(request , node):
+		return Http404()
+
+	cache = node.cache.strip()
+	if cache == "":
+		cache = json.dumps(None)
+
+	return JsonResponse({
+		"cache": JSONDecode( cache )
 	})
 
 @debug_convenient

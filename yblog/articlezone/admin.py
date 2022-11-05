@@ -46,7 +46,7 @@ class NodeAdmin(admin.ModelAdmin):
                 "description": visualbility_desc , 
             }] , 
             ["内容" , {
-                "fields": ["content" , "concepts"] , 
+                "fields": ["content" , "concepts" , "cache"] , 
                 "description": desc_edit_content , 
             }] , 
             ["结构" , {

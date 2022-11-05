@@ -91,6 +91,7 @@ async function post_node_information(urlmaker:(nodeid:number) => string, data: a
 var urls = {
     get:{
         content     : (nodeid: number)  => url_from_root( `get/node/content/${nodeid}` ) , 
+        cache       : (nodeid: number)  => url_from_root( `get/node/cache/${nodeid}` ) , 
         nodetree    : (nodeid: number)  => url_from_root( `get/nodetree/${nodeid}` ) , 
         shallowtree : (nodeid: number)  => url_from_root( `get/nodetree_shallow/${nodeid}` ) , 
         concept     : (nodeid: number)  => url_from_root( `get/node/concepts/${nodeid}` ) , 
@@ -103,6 +104,7 @@ var urls = {
     } , 
     post: {
         content : (nodeid: number) => url_from_root( `post/node/content/${nodeid}` ) , 
+        cache   : (nodeid: number) => url_from_root( `post/node/cache/${nodeid}` ) , 
         comments: (nodeid: number) => url_from_root( `post/node/comments/${nodeid}` ) , 
         nodetree: (nodeid: number) => url_from_root( `post/nodetree/${nodeid}` ) , 
         file    : (nodeid: number) => url_from_root( `post/file/${nodeid}` ) , 
@@ -128,6 +130,7 @@ var Interaction = {
     /** 所有从后端读取数据的函数。 */
     get: {
         content     :(nodeid: number) => get_node_information(urls.get.content     , "content"  , nodeid), 
+        cache       :(nodeid: number) => get_node_information(urls.get.cache       , "cache"  , nodeid), 
         nodetree    :(nodeid: number) => get_node_information(urls.get.nodetree    , "data"     , nodeid), 
         shallowtree :(nodeid: number) => get_node_information(urls.get.shallowtree , "data"     , nodeid), 
         concept     :(nodeid: number) => get_node_information(urls.get.concept     , "concepts" , nodeid), 
@@ -152,6 +155,7 @@ var Interaction = {
     /** 所有向后端发送数据的函数。 */
     post: {
         content     :(data: any, nodeid: number) => post_node_information(urls.post.content  , data , nodeid) , 
+        cache       :(data: any, nodeid: number) => post_node_information(urls.post.cache    , data , nodeid) , 
         nodetree    :(data: any, nodeid: number) => post_node_information(urls.post.nodetree , data , nodeid) , 
         comments    :(data: any, nodeid: number) => post_node_information(urls.post.comments , data , nodeid) , 
         file        :(data: any, nodeid: number) => post_node_information(urls.post.file     , data , nodeid , {

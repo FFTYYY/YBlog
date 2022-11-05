@@ -53,6 +53,21 @@ def post_node_content(request, node_id):
 	return SUCCESS
 
 @debug_convenient
+@must_login(FAIL)
+def post_node_cache(request, node_id): 
+	
+	if request.body == b"":
+		return FAIL
+
+	node = Node.objects.get(id = node_id)
+
+	cache = JSONDecode(request.body)["cache"]
+	node.cache = json.dumps( cache )
+	node.save()
+
+	return SUCCESS
+
+@debug_convenient
 def post_node_comments(request , node_id):
 
 	if request.body == b"":
