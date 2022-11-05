@@ -54,7 +54,6 @@ import {
 	first_concepts , 
 } from "../base/concept"
 import { BackendData, Interaction } from "../base/interaction"
-import { linkto } from "../base/linkto"
 import { my_theme } from "./uibase"
 import { SaveButton } from "./outside_buttons"
 import { withAllPlugins } from "./plugins"
@@ -75,6 +74,7 @@ class App extends  React.Component<{}, {
 }>{
 
 	editor_ref: React.RefObject<DefaultEditorComponent>
+	printer_ref: React.RefObject<DefaultPrinterComponent>
 	snackerbar_ref: React.RefObject<SnackbarProvider>
 
 	constructor(props: {}){
@@ -87,6 +87,7 @@ class App extends  React.Component<{}, {
 			cache: undefined , 
 		}
 		this.editor_ref = React.createRef()
+		this.printer_ref = React.createRef()
 		this.snackerbar_ref = React.createRef()
 	}
 
@@ -97,6 +98,7 @@ class App extends  React.Component<{}, {
 	}
 
 	async componentDidMount(){
+		let me = this
 
 		// 从后端获得所有概念。
 		let sec_concepts_data = await Interaction.get.concept(BackendData.node_id) as string[]
@@ -134,12 +136,6 @@ class App extends  React.Component<{}, {
 			editorcore: editorcore , 
 			tree: root , 
 		})
-
-		// 初始化跳转
-		// TODO 这个没有生效。
-		if(BackendData.linkto && BackendData.linkto != "None"){
-			linkto(printer , Number(BackendData.linkto))
-		}
 	}
 
 	/** 获得编辑器对象。 */
@@ -265,7 +261,21 @@ class App extends  React.Component<{}, {
 										setTimeout(()=>me.setState({cache: cache}) , 200)
 									}
 								}}
+								ref = {me.printer_ref}
 								root = {tree}
+								onDidMount = {(printer_comp)=>{
+									if(BackendData.linkto){ // 初始化滚动。
+										setTimeout(()=>{
+											let tar_idx = parseInt(BackendData.linkto)
+											printer_comp.scroll_to(tar_idx)
+											let tar = printer_comp.get_rendered_concept(tar_idx)
+											console.log(tar)
+											if(tar){
+												tar.style.border = "2px solid"
+											}
+										} , 300) // 给他一点时间来初始化好
+									}
+								}}
 							></DefaultPrinterComponent>
 						</GlobalInfoProvider>
 					</MathJaxContext></ScrollBarBox>

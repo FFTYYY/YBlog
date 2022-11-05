@@ -297,7 +297,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         return this.component_refs[idx]
     }
 
-    scroll_to(idx: number){
+    scroll_to(idx: number){ // 似乎有些时候不会滚动到正确的位置...
         let globalinfo = this.context
         if(!(this.component_refs[idx] && this.component_refs[idx].current)){
             return 
@@ -308,6 +308,13 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         let comp = this.component_refs[idx].current
         let scrollbar = globalinfo.scrollinfo.scrollbar as Scrollbar
         scrollbar.scrollIntoView(comp)
+    }
+
+    get_rendered_concept(idx: number): HTMLDivElement | HTMLSpanElement | undefined{
+        if(this.component_refs[idx] && this.component_refs[idx].current){
+            return this.component_refs[idx].current
+        }
+        return undefined
     }
 
     /**这个函数在印刷之前生成环境和上下文。 */

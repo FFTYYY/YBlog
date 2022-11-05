@@ -102,8 +102,7 @@ var mathinline_printer = (()=>{
 	return get_default_inline_renderer({
 		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
 			/** 这是一个比较蛋疼的写法，取消原来的children并直接将element序列化。
-			 * 这里的问题在于，如果直接写成${props.children}$，则printer里为了定位元素所添加的空白<span>会阻碍mathjax的处理。
-			 TODO 处理数学
+			 * 这里的问题在于，如果直接写成${props.children}$，则children里方便定位用的span会阻止mathjax的渲染。
 			 */
 			return <Box component="span" sx={{paddingX: "0.1rem"}}>
 				<MathJaxInline>{node2string(props.node)}</MathJaxInline>

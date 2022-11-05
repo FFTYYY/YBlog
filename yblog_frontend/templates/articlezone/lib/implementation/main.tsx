@@ -63,10 +63,14 @@ interface DefaultPrinterProps {
     root: AbstractNode
     theme?: ThemeOptions
     onUpdateCache?: (cache: PrinterCache) => void
+
+    onDidMount?: (printer_comp: PrinterComponent, me: DefaultPrinterComponent)=>void
 }
 
 /** 这个类提供一个默认的印刷器实现。 */
 class DefaultPrinterComponent extends React.Component<DefaultPrinterProps>{
+    printer_ref: React.RefObject<PrinterComponent>
+    
     /**
      * 默认印刷器的构造函数。
      * @param props.printer 要使用的印刷器。
@@ -75,6 +79,22 @@ class DefaultPrinterComponent extends React.Component<DefaultPrinterProps>{
      */
     constructor(props: DefaultPrinterProps){
         super(props)
+        this.printer_ref = React.createRef()
+    }
+
+    componentDidMount(): void {
+        while(!this.get_component());
+
+        if(this.props.onDidMount){
+            this.props.onDidMount(this.get_component(), this)
+        }
+    }
+
+    get_component(){
+        if(this.printer_ref && this.printer_ref.current){
+            return this.printer_ref.current
+        }
+        return undefined
     }
 
     render(){
@@ -88,6 +108,7 @@ class DefaultPrinterComponent extends React.Component<DefaultPrinterProps>{
             <GlobalInfoProvider value={{theme: theme}}>
                 <PrinterBackgroundPaper>
                     <PrinterComponent 
+                        ref = {me.printer_ref}
                         printer = {me.props.printer}
                         root = {me.props.root}
                         onUpdateCache = {me.props.onUpdateCache}
