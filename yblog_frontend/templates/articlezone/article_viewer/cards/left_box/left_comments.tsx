@@ -6,8 +6,8 @@ import {
     Tabs , Tab , Button , IconButton , 
     Box , Divider , Typography , Link , TextField , Chip
 } from "@mui/material"
-import { Interaction , BackendData } from "../../base/interaction"
-import { ScrollBarBox } from "../../lib"
+import { Interaction , BackendData } from "../../../base/interaction"
+import { ScrollBarBox } from "../../../lib"
 
 export { LeftComments }
 

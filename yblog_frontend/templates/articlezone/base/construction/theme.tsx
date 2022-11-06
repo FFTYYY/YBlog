@@ -7,17 +7,17 @@ const my_theme: ThemeOptions = {
         divider: "#eeeeee" , 
         mode: "dark",
         primary: {
-            main: '#aeaef5',
+            main: '#c5cfff',
         },
         secondary: {
-            main: '#cb3f75',
+            main: '#ff99df',
         },
         background: {
             default: 'rgba(35,35,48,0.98)',
             paper: '#393942',
         },
         text: {
-            primary: '#ffffff',
+            primary: '#eeeeee',
             secondary: 'rgba(255,255,255,0.71)',
             disabled: 'rgba(255,255,255,0.5)',
         },

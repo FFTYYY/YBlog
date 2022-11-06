@@ -15,8 +15,8 @@ import {
 	EditorCore , 
     GroupNode , 
     AutoStack , 
-} from "../../lib"
-import { Interaction , BackendData , url_from_root } from "../../base/interaction"
+} from "../../../lib"
+import { Interaction , BackendData , url_from_root } from "../../../base/interaction"
 
 export { LeftEdit }
 

@@ -95,7 +95,7 @@ class App extends  React.Component<{} , {
 				top: "2%" ,
 				left: "1%" , 
 				height: "96%" , 
-				width: "17%" , 
+				width: "23%" , 
 			}}>
 				<LeftBox root={tree} />
 			</Box>
@@ -103,9 +103,9 @@ class App extends  React.Component<{} , {
 			<Box sx={{
 				position: "absolute" , 
 				top: "2%" ,
-				left: "20%" , 
+				left: "25%" , 
 				height: "96%" , 
-				width: "60%" , 
+				width: "62%" , 
 				display: "flex" , 
 			}}>
 				<Box sx = {{
@@ -120,12 +120,13 @@ class App extends  React.Component<{} , {
 					}</PrinterStructureBoxText>
 				</Box>
 
-				<Box><ScrollBarBox  sx = {{
+				<ScrollBarBox  sx = {{
 					position: "absolute" , 
 					width: "98%" ,
 					left: "1%" , 
 					top: "5%" , 
 					height: "94%" , 
+					overflow: "auto" ,
 				}} className = "mathjax_process"><MathJaxContext>
 					
 					<GlobalInfoProvider value={{
@@ -156,14 +157,14 @@ class App extends  React.Component<{} , {
 							}}
 						></DefaultPrinterComponent>
 					</GlobalInfoProvider>
-				</MathJaxContext></ScrollBarBox></Box>
+				</MathJaxContext></ScrollBarBox>
 			</Box>
 			<Box sx={{
 				position: "absolute" , 
 				top: "2%" ,
-				left: "81%" , 
+				left: "88%" , 
 				height: "96%" , 
-				width: "17%" , 
+				width: "11%" , 
 			}}>
 				<RightBox 
 					root = {tree} 

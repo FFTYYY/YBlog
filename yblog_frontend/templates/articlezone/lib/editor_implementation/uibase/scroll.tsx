@@ -45,8 +45,9 @@ class ScrollBarBox extends React.Component<BoxProps>{
 
     render(){
         let {children, ...other_props} = this.props
+        console.log(other_props)
         return <GlobalInfoProvider value={{scrollinfo: this.scrollinfo}}>
-            <Box {...other_props} data-scrollbar ref={this.divref}>{children}</Box>
+            <Box  data-scrollbar ref={this.divref} {...other_props}>{children}</Box>
         </GlobalInfoProvider>
     }
 }

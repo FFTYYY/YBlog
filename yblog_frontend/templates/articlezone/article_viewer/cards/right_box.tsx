@@ -34,8 +34,8 @@ import {
     ScrollBarBox , 
 } from "../../lib"
 import { Node } from "slate"
-import { LeftBasic } from "./left_basic"
-import { LeftComments } from "./left_comments"
+import { LeftBasic } from "./left_box/left_basic"
+import { LeftComments } from "./left_box/left_comments"
 
 export { RightBox }
 

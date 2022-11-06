@@ -4,7 +4,7 @@ import React from "react"
 
 import {
     Tabs , Tab , Button , IconButton , 
-    Box , Divider , Typography , Link , Chip
+    Box , Divider , Typography , Link , Chip , Paper , 
 } from "@mui/material"
 import {
     ExpandMore as ExpandMoreIcon , 
@@ -19,11 +19,12 @@ import {
     AutoTooltip , 
     AbstractNode , 
     ScrollBarBox , 
-} from "../../lib"
-import { Nodetree } from "../../base/nodetree"
-import type { raw_info_item } from "../../base/nodetree"
-import { Interaction , BackendData , urls , url_from_root } from "../../base/interaction"
-import { TitleWord } from "../../base/construction/titleword"
+    PrinterStructureBoxText , 
+} from "../../../lib"
+import { Nodetree } from "../../../base/nodetree"
+import type { raw_info_item } from "../../../base/nodetree"
+import { Interaction , BackendData , urls , url_from_root } from "../../../base/interaction"
+import { TitleWord } from "../../../base/construction/titleword"
 
 
 export { LeftBasic }
@@ -56,7 +57,14 @@ class Navigation extends React.Component<{} , {
     }
 
     async componentDidMount() {
-        this.set_father_id(BackendData.node_id)
+        let son_ids = (await Interaction.get.son_ids(BackendData.node_id)) as number [] // 当前节点的子节点
+        if(son_ids.length == 0){
+            let father_id = (await Interaction.get.father_id(BackendData.node_id)) as number // 将当前节点的父节点作为父节点。
+            this.set_father_id(father_id)
+        }
+        else{
+            this.set_father_id(BackendData.node_id)
+        }
     }
 
     /** 这个组件显示一行带按钮的文字。 */
@@ -65,7 +73,7 @@ class Navigation extends React.Component<{} , {
         return <Box sx={{marginTop: "0.5rem"}}><AutoStack>
             <Box sx={{flex: "0 0 1.5rem"}}>{
                 Icon 
-                ? <AutoTooltip title={props.title}><IconButton size="small" sx={{height: "0.9rem", marginY: "auto"}} onClick={props.onClick}>
+                ? <AutoTooltip title={props.title}><IconButton size="small" onClick={props.onClick}>
                     <Icon sx={{fontSize: "0.9rem"}}/>
                 </IconButton></AutoTooltip>
                 : <></>
@@ -212,12 +220,34 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
             ...theme.fonts.body , 
             overflowY: "auto" , 
             position: "absolute" , 
-            top: "4rem",
+            top: "2%",
             bottom : "2%" ,  
         })}>
-            <BasicInformation root={this.props.root}/>
-            <Divider sx={{fontSize: "0.8rem"}}><Chip sx={{fontSize: "0.8rem"}} label="导航" /></Divider>
-            <Navigation />
+            <Paper sx = {{
+                paddingX: "0.5rem", 
+                paddingY: "0.25rem" , 
+                backgroundColor: (theme)=>theme.palette.background.default , 
+            }} variant = "outlined">
+                <Box sx={{textAlign: "right"}}><Chip  label="基本信息"  variant="outlined" color="secondary" size="small" /></Box>
+                <BasicInformation root={this.props.root}/>
+            </Paper>
+
+            <Box sx = {{
+                position: "absolute" , 
+                width: "100%" , 
+                top: "25%" , 
+                bottom: "5%" , 
+            }}><Paper sx = {{
+                paddingX: "0.5rem", 
+                paddingY: "0.25rem" , 
+                backgroundColor: (theme)=>theme.palette.background.default , 
+                height: "100%", 
+                width: "100%" , 
+                overflow: "auto" , 
+            }} variant = "outlined">
+                <Box sx={{textAlign: "right"}}><Chip  label="导航"  variant="outlined" color="secondary" size="small" /></Box>
+                <Navigation />
+            </Paper></Box>
         </Box>
     }
 }
