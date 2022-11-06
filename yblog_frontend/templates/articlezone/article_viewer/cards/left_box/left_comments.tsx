@@ -4,7 +4,7 @@ import React from "react"
 
 import {
     Tabs , Tab , Button , IconButton , 
-    Box , Divider , Typography , Link , TextField , Chip
+    Box , Divider , Typography , Link , TextField , Chip , Paper
 } from "@mui/material"
 import { Interaction , BackendData } from "../../../base/interaction"
 import { ScrollBarBox } from "../../../lib"
@@ -38,16 +38,18 @@ class Comments extends React.Component<{} , {
         let me = this
         let CommentBox = (props: {name: string , content: string})=>{
             return <Box sx={{marginBottom: "1rem" , marginX: "0.5rem"}}>
-                <Typography sx={{marginLeft: "0.5rem" , fontSize: "0.9rem"}}>{props.content}</Typography>
-                <Typography sx={{textAlign: "right" , marginTop: "0.5rem" , fontSize: "0.9rem"}}>——{props.name}</Typography>
+                <Typography key="typo1" sx={{marginLeft: "0.5rem" , fontSize: "0.9rem"}}>{props.content}</Typography>
+                <Typography key="typo2" sx={{textAlign: "right" , marginTop: "0.5rem" , fontSize: "0.9rem"}}>
+                    —— {props.name ? `${props.name}` : "不知名网友"}
+                </Typography>
             </Box>
         }
-        return <React.Fragment>
+        return <Box>
             {me.state.comments.map((val , idx)=>{
                 let [content , name] = val
-                return <CommentBox name={name} content={content} key={idx}/>
+                return <div><CommentBox name={name} content={content} key={idx}/></div>
             })}
-        </React.Fragment>
+        </Box>
     }
 }
 
@@ -106,7 +108,7 @@ class NewComments extends React.Component<{
     render(){
         let me = this
 
-        return <React.Fragment>
+        return <Box>
             <TextField 
                 label = "留言"
                 placeholder = "说点啥"
@@ -115,9 +117,6 @@ class NewComments extends React.Component<{
                 variant = "outlined" 
                 fullWidth
                 minRows = {4}
-                sx = {{
-                    marginTop: "2rem"
-                }}
                 value = {me.state.content}
             />
             <TextField 
@@ -135,7 +134,7 @@ class NewComments extends React.Component<{
                 textAlign: "right" , 
                 marginTop: "1rem"
             }}><Button variant=  "outlined" onClick = {()=>me.submit()}>新建留言</Button></Box>
-        </React.Fragment>
+        </Box>
     }
 }
 
@@ -150,25 +149,48 @@ class LeftComments extends React.Component<{} , {}>{
     }
     render(){
         let me = this
-        return <Box 
-            sx = {(theme)=>({
-                ...theme.fonts.structure , 
-                overflowY: "auto" , 
+        return <Box sx = {(theme)=>({
+            ...theme.fonts.structure , 
+            position: "absolute" , 
+            top: "2%",
+            bottom : "2%" ,  
+            width: "100%" , 
+        })}>
+
+            <ScrollBarBox sx={{
                 position: "absolute" , 
-                top: "4rem" , 
-                bottom: "2%" , 
-                left: "0" , 
-                right: "0" , 
-                paddingX: "1rem" , 
-            })}
-        >
-            <NewComments onRenew={()=>{
-                if(me.comment_ref && me.comment_ref.current){
-                    me.comment_ref.current.update() // 当提交留言时刷新显示的留言。
-                }
-            }}/>
-            <Divider sx={{marginTop: "3rem"}}><Chip sx={{fontSize: "0.8rem"}} label="留言列表" /></Divider>
-            <Comments ref={me.comment_ref} />
+                height: "36%" , 
+                top: "1%" , 
+                left: "1rem" , 
+                right: "1rem" , 
+                overflow: "auto" , 
+                paddingTop: "1rem" , 
+            }}>
+                <NewComments onRenew={()=>{
+                    if(me.comment_ref && me.comment_ref.current){
+                        me.comment_ref.current.update() // 当提交留言时刷新显示的留言。
+                    }
+                }}/>
+            </ScrollBarBox>
+
+            <Paper sx={{
+                position: "absolute" , 
+                bottom: "1%" , 
+                top: "38%" , 
+                left: "1rem" , 
+                right: "1rem" , 
+                backgroundColor: (theme)=>theme.palette.background.default , 
+                paddingX: "0.25rem" , 
+                paddingY: "0.25rem" , 
+            }} variant="outlined">
+            <ScrollBarBox sx={{
+                width: "100%" , 
+                height: "100%" , 
+                overflowY: "auto" , 
+            }}>
+                <Box sx={{textAlign: "right"}}><Chip  label="留言列表"  variant="outlined" color="secondary" size="small" /></Box>
+                <Comments ref={me.comment_ref} />
+            </ScrollBarBox></Paper>
         </Box>
     }
 }

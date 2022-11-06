@@ -34,7 +34,10 @@ class LeftEdit extends React.Component<{} , {}>{
         super(props)
     }
     render(){
-        return <Box><AutoStack force_direction = "column">
+        return <Box sx={{
+            position: "absolute" , 
+            top: "5%" , 
+        }}><AutoStack force_direction = "column">
             <MyLink underline="hover" href={url_from_root(`/edit/content/${BackendData.node_id}`)}>编辑内容</MyLink>
             <MyLink underline="hover" href={url_from_root(`/edit/structure/${BackendData.node_id}`)}>编辑子节点树</MyLink>
             <MyLink underline="hover" href={url_from_root(`/edit/shallow_structure/${BackendData.node_id}`)}>（浅）编辑子节点树</MyLink>

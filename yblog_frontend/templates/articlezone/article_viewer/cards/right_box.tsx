@@ -74,7 +74,6 @@ function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}
     }}>
         <Box sx={{textAlign: "right"}}><Chip label="目录" size="small" variant="outlined" color="secondary"/></Box>
         <ScrollBarBox sx={{ 
-            position: "absolute" , 
             overflow: "auto" , 
             width: "100%" , 
             marginTop: "0.5rem" , 

@@ -206,11 +206,11 @@ class BasicInformation extends React.Component<{
             </Box>
         }
             
-        return <React.Fragment>
+        return <Box>
             <ItemBox title="题目" content={`${title}`} />
             <ItemBox title="创建时间" content={me.state.create_time} />
             <ItemBox title="修改时间" content={me.state.modify_time} />
-        </React.Fragment>
+        </Box>
     }
 }
 
@@ -222,36 +222,45 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
     render(){
         return <Box sx = {(theme)=>({
             ...theme.fonts.body , 
-            overflowY: "auto" , 
             position: "absolute" , 
             top: "2%",
             bottom : "2%" ,  
+            width: "100%" , 
         })}>
             <Paper sx = {{
-                paddingX: "0.5rem", 
-                paddingY: "0.25rem" , 
-                backgroundColor: (theme)=>theme.palette.background.default , 
-            }} variant = "outlined">
-                <Box sx={{textAlign: "right"}}><Chip  label="基本信息"  variant="outlined" color="secondary" size="small" /></Box>
-                <BasicInformation root={this.props.root}/>
-            </Paper>
-
-            <Box sx = {{
                 position: "absolute" , 
-                width: "100%" , 
-                top: "25%" , 
-                bottom: "5%" , 
-            }}><Paper sx = {{
                 paddingX: "0.5rem", 
                 paddingY: "0.25rem" , 
                 backgroundColor: (theme)=>theme.palette.background.default , 
+                top: "1%" , 
+                left: "0" , 
+                height: "23%" ,  
+                width: "100%" , 
+            }} variant = "outlined"><ScrollBarBox sx = {{
                 height: "100%", 
                 width: "100%" , 
                 overflow: "auto" , 
-            }} variant = "outlined">
+            }}>
+                <Box sx={{textAlign: "right"}}><Chip  label="基本信息"  variant="outlined" color="secondary" size="small" /></Box>
+                <BasicInformation root={this.props.root}/>
+            </ScrollBarBox></Paper>
+
+            <Paper sx = {{
+                position: "absolute" , 
+                paddingX: "0.5rem", 
+                paddingY: "0.25rem" , 
+                backgroundColor: (theme)=>theme.palette.background.default , 
+                top: "27%" , 
+                bottom: "2%" , 
+                width: "100%" , 
+            }} variant = "outlined"><ScrollBarBox sx = {{
+                height: "97%", 
+                width: "100%" , 
+                overflow: "auto" , 
+            }}>
                 <Box sx={{textAlign: "right"}}><Chip  label="外部导航"  variant="outlined" color="secondary" size="small" /></Box>
                 <Navigation />
-            </Paper></Box>
+            </ScrollBarBox></Paper>
         </Box>
     }
 }

@@ -40,14 +40,14 @@ function LeftBox(props: {root: AbstractNode}){
         height: "100%" , 
         width: "100%" , 
     }} >
-        <Box sx={{position: "absolute", left: "0", width: "20%", height: "100%"}}>
+        <Box sx={{position: "absolute", left: "0", width: "5rem", height: "100%"}}>
             <TabList onChange={(e,v)=>set_active_tab(v)} variant="scrollable" scrollButtons="auto" orientation="vertical" sx={{width: "100%"}}>
                 <Tab label="基本" value="1"/>
                 <Tab label="留言" value="2"/>
                 { BackendData.logged_in ? <Tab label="编辑" value="3"/> : <></> }
             </TabList >
         </Box>
-        <Box sx={{position: "absolute", left: "20%", width: "80%", height: "100%"}} >
+        <Box sx={{position: "absolute", left: "5rem", width: "80%", height: "100%"}} >
             <MyTablePanel value={"1"} active_tab={active_tab}><LeftBasic root={props.root}/></MyTablePanel>
             <MyTablePanel value={"2"} active_tab={active_tab}><LeftComments /></MyTablePanel>
             { BackendData.logged_in ? 

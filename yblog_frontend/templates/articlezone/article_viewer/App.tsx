@@ -42,6 +42,7 @@ class App extends  React.Component<{} , {
 	tree: AbstractNode  | undefined
 	cache: PrinterCache | undefined
 }>{
+	printer_comp_ref: React.RefObject<DefaultPrinterComponent>
 
 	constructor(props: {}){
 		super(props)
@@ -51,6 +52,14 @@ class App extends  React.Component<{} , {
 			tree: undefined , 
 			cache: undefined , 
 		}
+		this.printer_comp_ref = React.createRef()
+	}
+
+	get_printer_comp(){
+		if(this.printer_comp_ref && this.printer_comp_ref.current){
+			return this.printer_comp_ref.current
+		}
+		return undefined
 	}
 
 	async componentDidMount(){
@@ -95,7 +104,7 @@ class App extends  React.Component<{} , {
 				top: "2%" ,
 				left: "1%" , 
 				height: "96%" , 
-				width: "23%" , 
+				width: "18%" , 
 			}}>
 				<LeftBox root={tree} />
 			</Box>
@@ -134,6 +143,7 @@ class App extends  React.Component<{} , {
 						cache: me.state.cache , 
 					}}>
 						<DefaultPrinterComponent 
+							ref = {me.printer_comp_ref}
 							printer = {printer} 
 							theme = {my_theme}
 							onUpdateCache = {(cache)=>{
@@ -169,10 +179,15 @@ class App extends  React.Component<{} , {
 				<RightBox 
 					root = {tree} 
 					onScroll = {(path)=>{
-						// let printer = this.get_printer()
-						// if(printer){
-						// 	printer.scroll_to(path)
-						// }
+						let _printer_comp = this.get_printer_comp()
+						if(!_printer_comp){ 
+							return 
+						}
+						let printer_comp = _printer_comp.get_component()
+						if(!printer_comp){ 
+							return 
+						}
+						printer_comp.scroll_to(path)
 					}}
 				/>
 			</Box>

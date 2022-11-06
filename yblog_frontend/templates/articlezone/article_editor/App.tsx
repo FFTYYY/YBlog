@@ -61,8 +61,8 @@ import { FileManageButton , UploadFileButton } from "./outside_buttons/manage_fi
 import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./outside_buttons/redirect"
 import { parse_second_concepts } from "../base/utils"
 import { MathJaxContext } from "../base/construction"
-import CssBaseline from '@mui/material/CssBaseline';
-import { SnackbarProvider  } from 'notistack';
+import CssBaseline from "@mui/material/CssBaseline"
+import { SnackbarProvider  } from "notistack"
 
 class App extends  React.Component<{}, {
 	printer: Printer  | undefined

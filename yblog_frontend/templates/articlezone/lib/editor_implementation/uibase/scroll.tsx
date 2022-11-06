@@ -13,25 +13,33 @@ import {
     GlobalInfo , 
     GlobalInfoProvider , 
 } from "../../core"
-import 'overlayscrollbars/overlayscrollbars.css';
-import { OverlayScrollbars } from 'overlayscrollbars';
+import "overlayscrollbars/overlayscrollbars.css"
+import { OverlayScrollbars } from "overlayscrollbars"
 
 
 export { ScrollBarBox }
 
+/**
+ * 注意，这个里面的所有东西都必须先被box包起来...
+ */
 class ScrollBarBox extends React.Component<BoxProps>{
     divref: React.RefObject<HTMLDivElement>
-    scrollinfo: {scrollbar: undefined | undefined}
+    os: OverlayScrollbars
 
     constructor(props: BoxProps){
         super(props)
-        this.scrollinfo = {scrollbar: undefined}
         this.divref = React.createRef()
+        this.os = undefined
     }
 
     componentDidMount(): void {
         while(!(this.divref && this.divref.current)); // 等待ref创建
-        OverlayScrollbars(this.divref.current, {});
+        this.os = OverlayScrollbars(this.divref.current, {
+            scrollbars:{
+                autoHide: "leave", 
+                autoHideDelay: 700 , 
+            }
+        });
     }
 
     render(){
