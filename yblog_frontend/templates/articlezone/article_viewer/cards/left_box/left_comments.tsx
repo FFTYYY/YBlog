@@ -47,7 +47,7 @@ class Comments extends React.Component<{} , {
         return <Box>
             {me.state.comments.map((val , idx)=>{
                 let [content , name] = val
-                return <div><CommentBox name={name} content={content} key={idx}/></div>
+                return <CommentBox name={name} content={content} key={idx}/>
             })}
         </Box>
     }
