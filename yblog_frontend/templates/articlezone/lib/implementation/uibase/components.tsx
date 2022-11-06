@@ -177,7 +177,7 @@ const PrinterBackgroundPaper = (props: BoxProps) => <Box
             boxSizing: "border-box" , // 设置这个属性来让padding不要撑大宽高。
 			height: "100%" , 
 			width: "100%" , 
-			overflowY: "auto" , 
+			overflowY: "visible" , 
 			wordWrap: "break-word" , 
             paddingX: "2rem" , 
         }) , 

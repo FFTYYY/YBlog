@@ -167,7 +167,7 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                 }}>
                     <EditorComponentEditingBox>
                         <KeyDownUpFunctionProxy.Consumer>{([onkeydown , onkeyup])=>{
-                            return <Box><EditorComponent
+                            return <EditorComponent
                                 ref 		        = {me.editor_ref} 
 
                                 editorcore          = {me.props.editorcore}
@@ -181,7 +181,7 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                                 
                                 onKeyDown           = {onkeydown}
                                 onKeyUp             = {onkeyup}
-                            /></Box>
+                            />
                         }}
                         </KeyDownUpFunctionProxy.Consumer>
                     </EditorComponentEditingBox>

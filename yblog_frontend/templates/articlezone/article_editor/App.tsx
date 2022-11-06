@@ -272,6 +272,9 @@ class App extends  React.Component<{}, {
 							left: "51%" , 
 							top: "0" , 
 							height: "100%" , 
+							overflow: "auto" , 
+							paddingRight: "1%" , 
+
 						}} 
 						className = "mathjax_process" // 启动mathjax处理
 					><MathJaxContext>

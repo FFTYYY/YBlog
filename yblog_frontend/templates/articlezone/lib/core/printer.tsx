@@ -36,7 +36,6 @@ import {
     GlobalInfo , 
     GlobalInfoProvider , 
 } from "./globalinfo"
-import { Scrollbar } from "smooth-scrollbar/scrollbar"
 
 export type {
     FirstClassConceptDict , 
@@ -280,8 +279,6 @@ interface PrinterComponentProps {
  */
 class PrinterComponent extends React.Component<PrinterComponentProps>{
 
-    static contextType = GlobalInfo
-
     idx2path: {[idx: number]: number[]}
     path_refs: {[path_str: string]: React.RefObject<HTMLDivElement>} // 如果写 HTMLDivElement | SpanElement则div会报错，事儿真多。
 
@@ -329,13 +326,11 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
     }
     
     scroll_to(path: number[]){ // XXX 似乎有些时候不会滚动到正确的位置...
-        let globalinfo = this.context
         let component = this.get_ref(path)
-        if(!(component && globalinfo.scrollinfo && globalinfo.scrollinfo.scrollbar)){
+        if(!component){
             return 
         }
-        let scrollbar = globalinfo.scrollinfo.scrollbar as Scrollbar
-        scrollbar.scrollIntoView(component , {offsetTop: 200}) // 他不能居中，有点傻逼啊...
+        component.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"})
     }
 
     /**这个函数在印刷之前生成环境和上下文。 */
