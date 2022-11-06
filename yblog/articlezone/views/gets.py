@@ -64,8 +64,8 @@ def get_node_create_time(request , node_id):
 	if not node_can_view(request , node):
 		return Http404()
 
-	create_time = node.create_time
-	modify_time = node.update_time
+	create_time = node.create_time.strftime('%Y / %m / %d')
+	modify_time = node.update_time.strftime('%Y / %m / %d')
 
 	return JsonResponse({
 		"create_time": create_time , 

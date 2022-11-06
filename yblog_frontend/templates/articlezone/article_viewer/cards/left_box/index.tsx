@@ -19,6 +19,7 @@ import { LeftComments } from "./left_comments"
 import { LeftEdit } from "./left_edit"
 export {LeftBox}
 
+// XXX 我想搞个渐变啥的...
 class MyTablePanel extends React.Component<{value: string, children: any, active_tab: string}>{
     constructor(props){
         super(props)
@@ -28,7 +29,7 @@ class MyTablePanel extends React.Component<{value: string, children: any, active
         return <Box sx={{
             display: active_tab == value ? "block" : "none" , 
             paddingLeft: "1.5rem" , 
-        }}>{children}</Box>
+       }}>{children}</Box>
     }
 }
 
