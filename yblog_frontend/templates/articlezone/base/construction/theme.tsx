@@ -10,10 +10,10 @@ const my_theme: ThemeOptions = {
             main: '#c5cfff',
         },
         secondary: {
-            main: '#ff99df',
+            main: '#cf80bf',
         },
         background: {
-            default: 'rgba(35,35,48,0.98)',
+            default: 'rgba(35,35,48,0.96)',
             paper: '#393942',
         },
         text: {
