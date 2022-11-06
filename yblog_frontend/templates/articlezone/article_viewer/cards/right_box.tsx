@@ -2,7 +2,7 @@ import React from "react"
 
 import {
     Tabs , Tab , Button , IconButton , 
-    Box , Divider , Typography , Link , Paper , 
+    Box , Divider , Typography , Link , Paper , Chip , 
 
 } from "@mui/material"
 import {
@@ -72,10 +72,7 @@ function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}
         paddingX: "0.5rem" , 
         paddingY: "0.25rem" , 
     }}>
-        <Typography color="text.secondary" sx={(theme)=>({
-            ...theme.fonts.body , 
-            fontSize: "0.9rem" , 
-        })}>章内目录</Typography>
+        <Box sx={{textAlign: "right"}}><Chip label="目录" size="small" variant="outlined" color="secondary"/></Box>
         <ScrollBarBox sx={{ 
             position: "absolute" , 
             overflow: "auto" , 
@@ -97,6 +94,7 @@ function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}
                 component = "button" 
                 underline = "hover"
                 onClick = {(e)=>{props.onScroll(path)}}
+                color = "text.primary"
             ><Typography sx={{fontSize: "0.8rem"}}>{title}</Typography></Link></Box>
         })}</ScrollBarBox>
     </Paper></Box>

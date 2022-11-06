@@ -71,7 +71,7 @@ class Navigation extends React.Component<{} , {
     WordsWithButton(props:{words: any , onClick?: ((e)=>void) , title?: any, icon?: any, url: string}){
         let Icon = props.icon
         return <Box sx={{marginTop: "0.5rem"}}><AutoStack>
-            <Box sx={{flex: "0 0 1.5rem"}}>{
+            <Box sx={{flex: "0 0 1.5rem"}} key="box">{
                 Icon 
                 ? <AutoTooltip title={props.title}><IconButton size="small" onClick={props.onClick}>
                     <Icon sx={{fontSize: "0.9rem"}}/>
@@ -79,9 +79,11 @@ class Navigation extends React.Component<{} , {
                 : <></>
             }</ Box>
             <Link 
+                key = "link"
                 sx = {(theme)=>({fontSize: "0.9rem"})} 
                 underline = "hover" 
                 href = {props.url}
+                color = "text.primary"
             >{props.words}</Link>
         </AutoStack></Box>
     }
@@ -101,6 +103,7 @@ class Navigation extends React.Component<{} , {
         return <React.Fragment>{
             have_sons 
             ? <WordsWithButton // 有子节点
+                key = "word"
                 words = {<TitleWord node_id={node_id} />} 
                 title = "下行" 
                 onClick = { ()=>me.set_father_id(node_id) }
@@ -108,6 +111,7 @@ class Navigation extends React.Component<{} , {
                 url = { urls.view.content(node_id) }
             />
             : <WordsWithButton // 不能再往下惹
+                key = "word"
                 words = {<TitleWord node_id={node_id} />} 
                 url = { urls.view.content(node_id) }
             />  
@@ -245,7 +249,7 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
                 width: "100%" , 
                 overflow: "auto" , 
             }} variant = "outlined">
-                <Box sx={{textAlign: "right"}}><Chip  label="导航"  variant="outlined" color="secondary" size="small" /></Box>
+                <Box sx={{textAlign: "right"}}><Chip  label="外部导航"  variant="outlined" color="secondary" size="small" /></Box>
                 <Navigation />
             </Paper></Box>
         </Box>

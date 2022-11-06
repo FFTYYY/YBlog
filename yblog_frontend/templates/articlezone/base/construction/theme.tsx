@@ -7,7 +7,7 @@ const my_theme: ThemeOptions = {
         divider: "#eeeeee" , 
         mode: "dark",
         primary: {
-            main: '#c5cfff',
+            main: '#b5dfff',
         },
         secondary: {
             main: '#cf80bf',
@@ -18,7 +18,7 @@ const my_theme: ThemeOptions = {
         },
         text: {
             primary: '#eeeeee',
-            secondary: 'rgba(255,255,255,0.71)',
+            secondary: 'rgba(255,255,255,0.70)',
             disabled: 'rgba(255,255,255,0.5)',
         },
       
