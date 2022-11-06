@@ -115,7 +115,6 @@ class App extends  React.Component<{} , {
 				left: "25%" , 
 				height: "96%" , 
 				width: "62%" , 
-				display: "flex" , 
 			}}>
 				<Box sx = {{
 					position: "absolute" , 

@@ -229,21 +229,28 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
         })}>
             <Paper sx = {{
                 position: "absolute" , 
-                paddingX: "0.5rem", 
+                paddingLeft: "1rem", 
+                paddingRight: "0.5rem", 
                 paddingY: "0.25rem" , 
                 backgroundColor: (theme)=>theme.palette.background.default , 
                 top: "1%" , 
                 left: "0" , 
                 height: "23%" ,  
                 width: "100%" , 
-            }} variant = "outlined"><ScrollBarBox sx = {{
-                height: "100%", 
-                width: "100%" , 
-                overflow: "auto" , 
-            }}>
+            }} variant = "outlined">
+                
                 <Box sx={{textAlign: "right"}}><Chip  label="基本信息"  variant="outlined" color="secondary" size="small" /></Box>
-                <BasicInformation root={this.props.root}/>
-            </ScrollBarBox></Paper>
+                <ScrollBarBox sx = {{
+                    position: "absolute" , 
+                    top: "2.25rem" , 
+                    bottom: "0.5rem", 
+                    left: "1rem" , 
+                    right: "0.25rem" , 
+                    overflow: "auto" , 
+                }}>
+                    <BasicInformation root={this.props.root}/>
+                </ScrollBarBox>
+            </Paper>
 
             <Paper sx = {{
                 position: "absolute" , 
@@ -253,14 +260,20 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
                 top: "27%" , 
                 bottom: "2%" , 
                 width: "100%" , 
-            }} variant = "outlined"><ScrollBarBox sx = {{
-                height: "97%", 
-                width: "100%" , 
-                overflow: "auto" , 
-            }}>
+            }} variant = "outlined">
                 <Box sx={{textAlign: "right"}}><Chip  label="外部导航"  variant="outlined" color="secondary" size="small" /></Box>
-                <Navigation />
-            </ScrollBarBox></Paper>
+
+                <ScrollBarBox sx = {{
+                    position: "absolute" , 
+                    top: "2.25rem" , 
+                    bottom: "0.5rem", 
+                    left: "0.5rem" , 
+                    right: "0.25rem" , 
+                    overflow: "auto" , 
+                }}>
+                    <Navigation />
+                </ScrollBarBox>
+            </Paper>
         </Box>
     }
 }

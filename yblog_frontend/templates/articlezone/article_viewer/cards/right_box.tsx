@@ -69,14 +69,21 @@ function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}
     })}><Paper variant="outlined" sx={{
         backgroundColor: (theme)=>theme.palette.background.default , 
         
-        paddingX: "0.5rem" , 
+        position: "absolute" , 
+        width: "100%", 
+        height: "100%", 
+        paddingLeft: "1rem" , 
+        paddingRight: "0.5rem" , 
         paddingY: "0.25rem" , 
     }}>
         <Box sx={{textAlign: "right"}}><Chip label="目录" size="small" variant="outlined" color="secondary"/></Box>
         <ScrollBarBox sx={{ 
             overflow: "auto" , 
-            width: "100%" , 
-            marginTop: "0.5rem" , 
+            position: "absolute" , 
+            left: "1rem" , 
+            right: "0.5rem" , 
+            top: "2rem" , 
+            bottom: "0.5rem" , 
         }}>{sectioners.map((val,idx)=>{
             let [node, path] = val
             let title = <>章节</>

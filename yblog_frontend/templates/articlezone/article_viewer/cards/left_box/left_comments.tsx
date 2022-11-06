@@ -183,14 +183,18 @@ class LeftComments extends React.Component<{} , {}>{
                 paddingX: "0.25rem" , 
                 paddingY: "0.25rem" , 
             }} variant="outlined">
-            <ScrollBarBox sx={{
-                width: "100%" , 
-                height: "100%" , 
-                overflowY: "auto" , 
-            }}>
                 <Box sx={{textAlign: "right"}}><Chip  label="留言列表"  variant="outlined" color="secondary" size="small" /></Box>
-                <Comments ref={me.comment_ref} />
-            </ScrollBarBox></Paper>
+                <ScrollBarBox sx={{
+                    position: "absolute" , 
+                    left: "0.25rem" , 
+                    right: "0.25rem" , 
+                    top: "2.25rem" , 
+                    bottom: "0.25rem" , 
+                    overflowY: "auto" , 
+                }}>
+                    <Comments ref={me.comment_ref} />
+                </ScrollBarBox>
+            </Paper>
         </Box>
     }
 }
