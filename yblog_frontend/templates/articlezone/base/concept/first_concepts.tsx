@@ -29,6 +29,7 @@ export {
     dimwords_style , 
     showchildren_style , 
     insertchildren_style , 
+    nothing_style , 
 }
 
 /** 自动添加type */
@@ -169,6 +170,11 @@ var mathinline_style  = new FirstClassConcept  ({type: "inline", name: "数学" 
         label: "数学" ,
     })
 })
+var nothing_style  = new FirstClassConcept  ({type: "inline", name: "无" , 
+    parameter_prototype: make_param({
+        label: "无" ,
+    })
+})
 
 
 var image_style       = new FirstClassConcept ({type: "support", name: "图"   , 
@@ -252,4 +258,5 @@ let first_concepts = [
     dimwords_style , 
     showchildren_style , 
     insertchildren_style , 
+    nothing_style , 
 ]

@@ -44,6 +44,7 @@ let subwords_editor     = get_default_group_editor_with_rightbar({})
 let sectioner_editor    = get_default_spliter_editor({get_title: (n,p)=>p.title})
 let ender_editor        = get_default_spliter_editor({get_title: (n,p)=>"章节"})
 var strong_editor       = get_default_inline_editor({})
+var nothing_editor      = get_default_inline_editor({})
 var delete_editor       = get_default_inline_editor({surrounder: (props)=><del>{props.children}</del>  })
 var link_editor         = get_default_inline_editor({surrounder: (props)=><u>{props.children}</u>      })
 var mathinline_editor   = get_default_inline_editor({surrounder: (props)=><>{props.children}</>        })
@@ -137,6 +138,7 @@ let editors = {
         "刊": delete_editor , 
         "缀": link_editor , 
         "数学": mathinline_editor , 
+        "无": nothing_editor , 
     } , 
     "structure": {
         "齐言": alignedwords_editor , 

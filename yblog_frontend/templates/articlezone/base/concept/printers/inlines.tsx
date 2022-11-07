@@ -54,7 +54,7 @@ import {
     PrinterRenderFunction, 
 	PrinterCache, 
 	AbstractNode , 
-
+	DefaultAbstractRendererAsProperty , 
 } from "../../../lib"
 
 import {
@@ -77,12 +77,36 @@ export {
 	renderers , 
 }
 
+/** 无。 */
+var nothing_printer = (()=>{
+	return get_default_inline_renderer({
+		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
+			return <DefaultAbstractRendererAsProperty 
+					node = {props.node} 
+					context = {props.context} 
+					parameters = {props.parameters} 
+					senario = "title"
+				>
+				<span>{props.children}</span>
+			</DefaultAbstractRendererAsProperty>
+		}
+	})
+})()
+
+
 
 /** 强调。 */
 var strong_printer = (()=>{
 	return get_default_inline_renderer({
 		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
-			return <strong>{props.children}</strong>
+			return <DefaultAbstractRendererAsProperty 
+				node = {props.node} 
+				context = {props.context} 
+				parameters = {props.parameters} 
+				senario = "title"
+			>
+				<strong>{props.children}</strong>
+			</DefaultAbstractRendererAsProperty>
 		}
 	})
 })()
@@ -91,7 +115,14 @@ var strong_printer = (()=>{
 var delete_printer = (()=>{
 	return get_default_inline_renderer({
 		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
-			return <del>{props.children}</del>
+			return <DefaultAbstractRendererAsProperty 
+				node = {props.node} 
+				context = {props.context} 
+				parameters = {props.parameters} 
+				senario = "title"
+			>
+				<del>{props.children}</del>
+			</DefaultAbstractRendererAsProperty>
 		}
 	})
 })()
@@ -103,9 +134,14 @@ var mathinline_printer = (()=>{
 			/** 这是一个比较蛋疼的写法，取消原来的children并直接将element序列化。
 			 * 这里的问题在于，如果直接写成${props.children}$，则children里方便定位用的span会阻止mathjax的渲染。
 			 */
-			return <Box component="span" sx={{paddingX: "0.1rem"}}>
+			return <Box component="span" sx={{paddingX: "0.1rem"}}><DefaultAbstractRendererAsProperty 
+				node = {props.node} 
+				context = {props.context} 
+				parameters = {props.parameters} 
+				senario = "title"
+			>
 				<MathJaxInline>{node2string(props.node)}</MathJaxInline>
-			</Box>
+			</DefaultAbstractRendererAsProperty></Box>
 		}
 	})
 })()
@@ -220,5 +256,6 @@ let renderers = {
 		"刊"  : delete_printer , 
 		"缀"  : link_printer , 
 		"数学": mathinline_printer , 
+		"无": nothing_printer , 
 	},
 }

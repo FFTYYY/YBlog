@@ -57,11 +57,11 @@ function convert_concept(node: Node){
                     type: "boolean" , 
                 }
             }
-            node.parameters["enter"] = {
+            node.parameters["title"] = {
                 val: node.parameters.title.val as string , 
                 type: "string" , 
             }
-            node.parameters["exit"] = {
+            node.parameters["source"] = {
                 val: node.parameters.close.val as boolean , 
                 type: "boolean" , 
             }

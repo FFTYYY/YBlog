@@ -141,8 +141,20 @@ function get_default_abstract_renderer({
                         color = "secondary" 
                         variant = "dot" 
                         overlap = "circular" 
+                        sx = {{
+                            verticalAlign: "baseline" , 
+                        }}
                     >
-                        <Link href="#" onClick={(e)=>set_show_abstract(true)} color="inherit">{props.children}</Link>
+                        <Link 
+                            onClick = {(e)=>set_show_abstract(true)} 
+                            color = "inherit"
+                            href = "#"
+                            underline = "none"
+                            sx={{
+                                width: "auto" , 
+                                height: "auto" , 
+                            }}
+                        >{props.children}</Link>
                     </Badge>
                 </Tooltip>
                 <Dialog fullWidth maxWidth="lg" open={show_abstract} onClose={()=>set_show_abstract(false)}>{subcomp}</Dialog>

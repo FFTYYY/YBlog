@@ -56,7 +56,7 @@ export {
     }
 }
 
-// TODO 把small_margin_exit用上，这需要另一个contexter来实现。
+// XXX 把small_margin_exit用上，这需要另一个contexter来实现。
 /** 这个函数快速生产一个默认的块级组件的渲染器。 
  * 同时，这个函数会使用上下文工具，快捷地允许向段落的开头和结尾添加元素。
  * 

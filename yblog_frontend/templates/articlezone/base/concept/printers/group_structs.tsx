@@ -259,9 +259,11 @@ var subwords_printer = (()=>{
 			return <React.Fragment>
 				<AutoStack force_direction="column">
 					<AutoStack>
-						<PrinterOldLevelBox sx={{position: "relative"}}> {/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
-							{title_content ? <PrinterParagraphBox>{title_jsx}</PrinterParagraphBox> : <></>}
-						</PrinterOldLevelBox>
+						<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+							<PrinterOldLevelBox sx={{position: "relative"}}> {/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
+								{title_content ? <PrinterParagraphBox>{title_jsx}</PrinterParagraphBox> : <></>}
+							</PrinterOldLevelBox>
+						</DefaultAbstractRendererAsProperty>
 						<Box>{props.children}</Box>
 					</AutoStack>
 					{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
@@ -289,7 +291,9 @@ var mount_printer = (()=>{
 			}
 
 			return <AutoStack force_direction="column">
-				{title ? <PrinterStructureBoxText>{title}</PrinterStructureBoxText> : <></>}
+				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+					{title ? <PrinterStructureBoxText>{title}</PrinterStructureBoxText> : <></>}
+				</DefaultAbstractRendererAsProperty>
 				{text_jsx}
 				{close ? <PrinterStructureBoxText align="right">{close}</PrinterStructureBoxText> : <></>}
 			</AutoStack>
@@ -313,12 +317,13 @@ var display_printer = (()=>{
 	return get_default_group_renderer({
 		inner: (props: PrinterRenderFunctionProps<GroupNode>) => {
 			let {node , parameters , context , children} = props
-			return <AutoStack force_direction="column">
+			// XXX 这里为啥有autostack
+			return <AutoStack force_direction="column"><DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
 				<PrinterDisplayText sx={{
 					fontSize: (theme)=>remtimes(theme.fonts.structure.fontSize , 1.4) , //字号翻倍
 					lineHeight: (theme)=>remtimes(theme.fonts.structure.lineHeight , 1.4) ,  //行高翻倍
 				}}>{props.children}</PrinterDisplayText>
-			</AutoStack>
+			</DefaultAbstractRendererAsProperty></AutoStack>
 		} , 
 	})
 })()
@@ -328,20 +333,23 @@ var display_printer = (()=>{
 var mathblock_printer = (()=>{
 	return get_default_group_renderer({
 		inner: (props: PrinterRenderFunctionProps<GroupNode>) => {
-			let value 	= node2string(props.node)
-			let suffix 	= props.parameters.suffix
-			let close 	= props.parameters.close
-			let environ = props.parameters.environ
+			let {node,parameters, context} = props
+
+			let value 	= node2string(node)
+			let suffix 	= parameters.suffix
+			let close 	= parameters.close
+			let environ = parameters.environ
 			let environ_enter = environ ? `\\begin{${environ}}` : ""
 			let environ_exit  = environ ? `\\end{${environ}}`   : ""
 
 			value = `${environ_enter}${value}\\text{${suffix}}${environ_exit}`
 			
-			return <React.Fragment>
-				{props.context.anchor}
-				<MathJaxBlock>{value}</MathJaxBlock>
-				{close}
-			</React.Fragment>
+			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+				<React.Fragment>
+					<MathJaxBlock>{value}</MathJaxBlock>
+					{close}
+				</React.Fragment>
+			</DefaultAbstractRendererAsProperty>
 		} , 
 	})
 })()
@@ -369,7 +377,9 @@ let line_printer = (()=>{
             return <Box sx={{
 				width: `${tot_width}%`
 			}}
-			><Grid container columns={sum} sx={{width: "100%"}} spacing={2}>{props.children}</Grid></Box>
+			><DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+				<Grid container columns={sum} sx={{width: "100%"}} spacing={2}>{props.children}</Grid>
+			</DefaultAbstractRendererAsProperty></Box>
         } , 
         subinner(props){
             let {node , parameters , context , children , subidx} = props
