@@ -117,8 +117,9 @@ class ParameterItemComponent extends React.Component <ParameterItemComponentProp
             let choices = this.props.parameter_item.choices as (typeof val [])
 
             return <FormControl sx = {{...standard_sx , width: "100%"}}>
-                <FormLabel>{name}</FormLabel>
+                <FormLabel key="form">{name}</FormLabel>
                 <RadioGroup
+                    key = "ratio"
                     value = {val}
                     onChange = {e=>{
                         me.setState({val: e.target.value})

@@ -202,6 +202,9 @@ function DefaultSidebar(props: {
                         poper_props     = {{
                             stacker: AutoStackButtons ,
                             component: SideBarContainer ,  
+                            sx: {
+                                opacity: "80%" , 
+                            }
                         }}
                         outer_button    = {IconButton}
                         outer_props     = {{
@@ -221,7 +224,7 @@ function DefaultSidebar(props: {
                                         onClick = {e => editor.new_concept_node(typename , sec_ccpt)}
                                         variant = "text"
                                         sx = {{
-                                            marginX: "0.1rem"
+                                            marginX: "0.1rem" ,
                                         }}
                                     >
                                         {sec_ccpt}

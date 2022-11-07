@@ -361,7 +361,7 @@ class AutoStackedPopperButtonGroupMouseless extends React.Component<AutoStackedP
         let idxs = this.get_idxs().slice(1) // 去掉第一个idx之后剩下的
 
         let poper = <Box sx={{
-            border: this.state.active ? "2px solid" : "none"
+            border: this.state.active ? "2px solid" : "none" , 
         }}>
             <AutoStackedPopperWithButton
                 outer_button        = {this.props.outer_button}
@@ -374,13 +374,15 @@ class AutoStackedPopperButtonGroupMouseless extends React.Component<AutoStackedP
                 ref = {this.button_ref}
             >
                 {children}
-                <ButtonGroup 
-                    node    = {props.node}
-                    buttons = {props.buttons}
-                    idxs    = {idxs}
+                <Box sx={{marginX: "auto"}}>
+                    <ButtonGroup 
+                        node    = {props.node}
+                        buttons = {props.buttons}
+                        idxs    = {idxs}
 
-                    extra_unactivate = {this.extra_unactive.bind(this)}
-                />
+                        extra_unactivate = {this.extra_unactive.bind(this)}
+                    />
+                </Box>
             </AutoStackedPopperWithButton>
         </Box>
     

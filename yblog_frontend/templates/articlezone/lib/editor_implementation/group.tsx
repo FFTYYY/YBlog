@@ -31,7 +31,7 @@ import {
 from "@mui/material"
 
 import {
-    KeyboardArrowDown as KeyboardArrowDownIcon
+    KeyboardArrowDown as KeyboardArrowDownIcon, Opacity
 } from "@mui/icons-material"
 
 import * as Slate from "slate"
@@ -124,7 +124,7 @@ function get_deafult_group_editor_with_appbar({
 
         return <GroupPaper node={node}>
             <AutoStack force_direction="column">
-                <UnselecableBox>
+                <UnselecableBox key="uns">
                     <Box sx={{
                         overflow: "auto" , 
                         marginX: "1rem"
@@ -149,7 +149,7 @@ function get_deafult_group_editor_with_appbar({
                     </AutoStack></ScrollBarBox></Box>
                 </UnselecableBox >
                 <Divider />
-                <ComponentEditorBox autogrow>
+                <ComponentEditorBox autogrow key="edi">
                     <SUR node={node}>{props.children}</SUR>
                 </ComponentEditorBox>
             </AutoStack>
@@ -187,10 +187,10 @@ function get_default_group_editor_with_rightbar({
 
         return <GroupPaper node={node}>
             <SimpleAutoStack force_direction="row">
-                <ComponentEditorBox autogrow>
+                <ComponentEditorBox autogrow key="edit">
                     <SUR node={node}>{props.children}</SUR>
                 </ComponentEditorBox>                
-                <UnselecableBox>
+                <UnselecableBox key="uns">
                     <AutoStack force_direction = {guess_high ? "column" : "row"}>
                         <ButtonGroup // 额外添加的元素。
                             autostack 
@@ -199,6 +199,11 @@ function get_default_group_editor_with_rightbar({
                         />
                         <StructureTypography variant = "overline">{mylabel}</StructureTypography>
                         <AutoStackedPopperButtonGroupMouseless 
+                            poper_props = {{
+                                sx:{
+                                    opacity: "80%" , 
+                                }
+                            }}
                             node = {node}
                             close_on_otherclick 
                             outer_button = {IconButton}

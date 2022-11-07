@@ -37,8 +37,6 @@ function MouselessElement(props: MouselessElementProps){
     let [regiester_func, unregister_func] = React.useContext(MouselessRegister)
     let eleref = React.useRef<HTMLDivElement | undefined>(undefined)
 
-    let globalinfo = React.useContext(GlobalInfo)
-
     React.useEffect(()=>{
         regiester_func(space, position, 
             () => {
@@ -46,7 +44,6 @@ function MouselessElement(props: MouselessElementProps){
                 if(extra_activate){
                     extra_activate()
                 }
-                console.log(eleref.current)
                 eleref.current.scrollIntoView({block: "center", inline: "center"}) // 自动滚到
             }, 
             (new_pos) => {

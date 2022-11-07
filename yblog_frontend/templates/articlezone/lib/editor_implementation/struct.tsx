@@ -178,6 +178,11 @@ function get_default_struct_editor_with_rightbar({
                         />
                         <StructureTypography sx={{marginX: "auto"}}>{mylabel}</StructureTypography>
                         <AutoStackedPopperButtonGroupMouseless 
+                            poper_props = {{
+                                sx:{
+                                    opacity: "80%" , 
+                                }
+                            }}
                             node = {node}
                             close_on_otherclick 
                             outer_button = {IconButton}

@@ -80,13 +80,18 @@ function get_default_inline_editor({
 
         return <ComponentPaper is_inline>
             <AutoStack force_direction="row">
-                <ComponentEditorBox>
+                <ComponentEditorBox key="edi">
                     <SUR node={node}>{props.children}</SUR>
                 </ComponentEditorBox>
-                <UnselecableBox>
+                <UnselecableBox key="uns">
                     <AutoStack force_direction="row">
                         <Extra node={node}/>
                         <AutoStackedPopperButtonGroupMouseless
+                            poper_props = {{
+                                sx:{
+                                    opacity: "80%" , 
+                                }
+                            }}
                             node = {node}
                             idxs = {[0]}
                             close_on_otherclick
@@ -108,7 +113,7 @@ function get_default_inline_editor({
                                 DefaultEditAbstractButton , 
                             ]}
                         >
-                            <StructureTypography sx={{marginY: "0.2rem", marginX: "auto"}}>{label}</StructureTypography>
+                            <StructureTypography sx={{marginY: "0.2rem", marginX: "auto", paddingX: "0.25rem"}}>{label}</StructureTypography>
                         </AutoStackedPopperButtonGroupMouseless>
                     </AutoStack>
                 </UnselecableBox>

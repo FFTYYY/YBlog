@@ -42,10 +42,10 @@ function get_default_block_editor<NodeType extends Node>(){
 
 function get_default_support_editor(){
     return (props: EditorRendererProps<SupportNode>) => (<ComponentPaper sx={{border: "2px block"}}>
-    <UnselecableBox>
-        {props.children}
-    </UnselecableBox>
-</ComponentPaper>)
+        <UnselecableBox>
+            {props.children}
+        </UnselecableBox>
+    </ComponentPaper>)
 }
 
 function get_default_editors(): {[key in AllNodeTypes]: EditorRenderer}{
