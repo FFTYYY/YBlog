@@ -76,7 +76,7 @@ function AutoIconButton(props:{
     let icon_props = props.icon_props || {}
     
     return <AutoTooltip title={props.title}>
-        <IconButton onClick={props.onClick} size={props.size} component={component} {...icon_props}>
+        <IconButton onClick={props.onClick} size={props.size} component={component} {...icon_props} key="button">
             <Icon/>
         </IconButton>
     </AutoTooltip>
@@ -325,6 +325,7 @@ class DefaultSwicth extends React.PureComponent<EditorButtonInformation<GroupNod
     render(): React.ReactNode {
         return <AutoTooltip title = "贴贴">
             <Switch 
+                key = "switch"
                 checked = {this.state.checked} 
                 onChange = {this.switch_check_change.bind(this)} 
                 inputRef = {this.switchref}
@@ -425,11 +426,13 @@ class AutoStackedPopperWithButton extends React.PureComponent<AutoStackedPopperW
 
         let poper = <React.Fragment>
             <AutoTooltip title={props.label}><B 
+                key = "b"
                 onClick     = {this.run.bind(this)}
                 ref         = {this.menu_anchor_ref}
                 {...props.outer_props}
             /></AutoTooltip>
             <AutoStackedPopper 
+                key = "autostackpoper"
                 anchorEl    = {this.get_anchor()} 
                 open        = {this.state.menu_open}
                 {...props.poper_props}

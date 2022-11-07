@@ -18,7 +18,7 @@ import {
 	AutoTooltip , 
 	AutoIconButton , 
 } 
-from "../../lib"
+from "../../../../ytext"
 import { BackendData, Interaction } from "../../base/interaction"
 import { useSnackbar  } from "notistack"
 
@@ -28,7 +28,9 @@ function UploadFileButton(){
 	return <Box sx={{marginX: "auto"}}><label>
 		<input 
 			type = "file"  
-			style = {{display: "none"}}
+			style = {{
+				display: "none" , 
+			}}
 			onChange = {(e)=>{
 				if(e.target.files.length > 0){
 					var form_data = new FormData()
@@ -44,7 +46,10 @@ function UploadFileButton(){
 			component = "span"
 			size = "small"
 			icon_props = {{
-				"color": "primary" , 
+				sx: {
+					marginLeft: "-0.1rem" , 
+					color: "#b5dfff" ,  // 这就是primary，但是他会把theme理解成ytext的默认theme，不知道为啥...
+				}
 			}}
 		/>
 	</label></Box>

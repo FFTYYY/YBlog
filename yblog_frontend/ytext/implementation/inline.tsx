@@ -90,7 +90,7 @@ let useless_renderer_inline = new PrinterRenderer({
 let useless_renderer_text = new PrinterRenderer({
     renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
         let node = props.node as TextNode
-        return <span style={{whiteSpace: "pre"}}>{node.text}</span>
+        return <span style={{whiteSpace: "normal"}}>{node.text}</span>
     }
 })
 

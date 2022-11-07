@@ -1,7 +1,7 @@
 import {
     SecondClassConcept , 
     Node , 
-} from "../lib"
+} from "../../../ytext"
 
 
 export {

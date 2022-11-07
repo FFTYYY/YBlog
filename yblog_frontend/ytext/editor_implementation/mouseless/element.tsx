@@ -10,7 +10,6 @@ import {
     MouselessUnActivateOperation , 
 } from "./manager"
 import { GlobalInfo } from "../../core"
-import Scrollbar from "smooth-scrollbar"
 
 export {
     MouselessElement , 

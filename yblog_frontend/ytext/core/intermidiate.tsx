@@ -42,7 +42,7 @@ interface TextNode {text: string}
 
 /** 段落节点的接口。 */
 interface ParagraphNode {
-	children: (TextNode | InlineNode | StructNode) []
+	children: (TextNode | InlineNode | SupportNode) []
 }
 
 /** 所有参数项的可行类型。 */

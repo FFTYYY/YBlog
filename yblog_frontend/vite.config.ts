@@ -7,11 +7,11 @@ export default defineConfig({
 	build: {
 		rollupOptions:{
 			input: {
-				// default: "./templates/articlezone/about_index.html" , 
+				default: "./templates/articlezone/about_index.html" , 
 				editor: "./templates/articlezone/article_editor_index.html" , 
-				// viewer: "./templates/articlezone/article_viewer_index.html" , 
-				// nodetree: "./templates/articlezone/nodetree_index.html" , 
-				// pureprinter: "./templates/articlezone/pure_printer_index.html" , 
+				viewer: "./templates/articlezone/article_viewer_index.html" , 
+				nodetree: "./templates/articlezone/nodetree_index.html" , 
+				pureprinter: "./templates/articlezone/pure_printer_index.html" , 
 			},
 		} , 
 		outDir: "../yblog/articlezone/" , 

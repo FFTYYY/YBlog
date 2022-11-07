@@ -26,7 +26,7 @@ import {
 	EditorCore , 
 	PrinterCache , 
 	ScrollBarBox , 
-} from "../lib"
+} from "../../../ytext"
 import { my_theme } from "../base/construction"
 import { Interaction , BackendData } from "../base/interaction"
 import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../base/construction"
@@ -34,7 +34,8 @@ import { renderers , default_renderers } from "../base/concept"
 import { parse_second_concepts } from "../base/utils"
 import { first_concepts } from "../base/concept"
 
-// TODO 好像滚轮没有生效...
+import "overlayscrollbars/overlayscrollbars.css"
+import { OverlayScrollbars } from "overlayscrollbars"
 
 class App extends  React.Component<{} , {
 	printer: Printer  | undefined
@@ -98,6 +99,9 @@ class App extends  React.Component<{} , {
 				top: "0" , 
 				height: "100%" , 
 				overflow: "auto" , 
+				backgroundColor: (theme)=>theme.palette.background.default , 
+				color: (theme)=>theme.palette.text.primary , 
+	
 			}} className = "mathjax_process"><MathJaxContext>
 				
 				<GlobalInfoProvider value={{

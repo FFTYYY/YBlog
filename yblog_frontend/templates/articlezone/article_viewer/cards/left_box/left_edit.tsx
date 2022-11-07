@@ -15,7 +15,7 @@ import {
 	EditorCore , 
     GroupNode , 
     AutoStack , 
-} from "../../../lib"
+} from "../../../../../ytext"
 import { Interaction , BackendData , url_from_root } from "../../../base/interaction"
 
 export { LeftEdit }

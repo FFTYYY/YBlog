@@ -12,7 +12,7 @@ import {
 
 import {
     AbstractNode , 
-} from "../../../lib"
+} from "../../../../../ytext"
 import { Interaction , BackendData } from "../../../base/interaction"
 import { LeftBasic } from "./left_basic"
 import { LeftComments } from "./left_comments"

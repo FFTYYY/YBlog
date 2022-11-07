@@ -5,6 +5,7 @@ import {
     Checkbox  , 
     Typography , 
     Link , 
+    IconButton , 
 } from "@mui/material"
 import {
     TreeItem , TreeView , 
@@ -13,18 +14,45 @@ import {
 import {
     ExpandMore as ExpandMoreIcon , 
     ChevronRight as ChevronRightIcon , 
+    Save as SaveIcon , 
 } from "@mui/icons-material"
 
 import { DndProvider , useDrag , useDrop , DropTargetMonitor} from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
 
-import { SaveButton } from "../base/construction/buttons"
-import { FlexibleDrawer , FlexibleItem } from "../base/construction/framework"
 import { Interaction , BackendData , url_from_root } from "../base/interaction"
 import { Nodetree } from "../base/nodetree"
 import { TitleWord } from "../base/construction/titleword"
 import type { info_item , raw_info_item } from "../base/nodetree"
-import { AutoStack } from "../../../lib"
+import { AutoStack , AutoTooltip ,  } from "../../../ytext"
+
+class SaveButton extends React.Component<{
+    save_func: (()=>Promise<boolean>)
+} , {
+    snackbar_open: boolean
+    status: boolean
+}>{
+    constructor(props){
+        super(props)
+
+        this.state = {
+            snackbar_open: false , 
+            status: false , 
+        }
+    }
+
+    render(){
+        let me = this
+
+        return <React.Fragment>
+            <AutoTooltip title="保存"><IconButton size="small" onClick = {()=>this.props.save_func()}>
+                    <SaveIcon fontSize="small" color="primary"/>
+            </IconButton></AutoTooltip>
+        </React.Fragment>
+    }
+}
+
+
 
 interface App_State{
 
@@ -271,11 +299,13 @@ class App extends React.Component<{},App_State>{
             }
         }
 
+        console.log(to_update.length)
         let status = true
         let bs = 50
         for(let i = 0;i < to_update.length;i += bs){
             status = status && (await Interaction.post.nodetree( {"nodetree": to_update.slice(i,i+bs)} , BackendData.node_id))
             console.log(`${i} / ${to_update.length}`) // TODO 搞成好看点的提示信息。
+            console.log(status)
         }
 
 		return status
@@ -293,11 +323,11 @@ class App extends React.Component<{},App_State>{
 				width: "96%" , 
 				display: "flex" ,
             }}>
-            <FlexibleDrawer sx={{
+            <Box sx={{
 				marginRight: "1%"
 			}}>
 				<SaveButton save_func={me.save_nodetree.bind(me)}/>
-			</FlexibleDrawer>
+			</Box>
 
             <Box sx={{
                 position: "relative" ,

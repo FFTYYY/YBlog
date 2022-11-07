@@ -1,3 +1,4 @@
+import { default_theme } from "../../../../ytext"
 import { createTheme, ThemeProvider, styled , ThemeOptions, PaletteOptions } from "@mui/material/styles"
 import { PaletteColor} from "@mui/material/styles"
 export { my_theme }

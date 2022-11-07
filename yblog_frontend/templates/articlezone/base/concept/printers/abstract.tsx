@@ -1,36 +1,10 @@
 import * as React from "react"
 import { Grid , Box } from "@mui/material"
 import {
-    PrinterRenderer , 
-    Env , 
-    Context , 
-    Node , 
-    PrinterRenderFunctionProps, 
-    GroupNode,
-    StructNode , 
-    InlineNode,
-    TextNode, 
-    OrderContexter , 
-    auto_renderer , 
-
-    get_default_group_renderer , 
-    get_default_inline_renderer , 
-    get_default_paragraph_renderer, 
     get_default_abstract_renderer , 
-    get_default_structure_renderer , 
-
-    DefaultAbstractRendererAsProperty , 
-
-    PreprocessInformation , 
-    PrinterStructureBoxText , 
     PrinterPartBox , 
-
-    useless_renderer_block , 
-    useless_renderer_inline ,
-    useless_renderer_text,
-    ProcessedParameterList,
     ScrollBarBox, 
-} from "../../../lib"
+} from "../../../../../ytext"
 
 export {
     renderers

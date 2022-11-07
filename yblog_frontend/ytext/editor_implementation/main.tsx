@@ -53,7 +53,6 @@ import {
     AutoTooltip , 
     AutoStackedPopper , 
     AutoStackButtons , 
-    default_editor_theme , 
 } from "./uibase"
 import {
     object_foreach , 
@@ -80,6 +79,9 @@ import {
 import {
     get_mouseless_space as buttons_get_mouseless_space
 } from "./buttons"
+import {
+    default_theme
+} from "../theme"
 
 export { DefaultEditorComponent }
 
@@ -140,7 +142,7 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
         let paper_right   = {xs: "89%" , md: "92%" , xl: "95%"} // 纸张的宽度，
         let toolbar_width = {xs: "10%" , md: "7%" , xl: "5%"} // 工具栏的宽度。
 
-        let theme = merge_object(default_editor_theme , this.props.theme)
+        let theme = merge_object(default_theme , this.props.theme)
 
         let me = this
 

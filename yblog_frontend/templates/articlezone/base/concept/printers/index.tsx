@@ -7,58 +7,17 @@ import {
 } from "@mui/material"
 
 import {
-    Node , 
-	TextNode , 
-
-	get_default_group_renderer , 
     get_default_paragraph_renderer , 
-    get_default_inline_renderer , 
-
-    ContexterBase , 
-    OrderContexter , 
-    InjectContexter , 
-    ConsumerContexter , 
-
-	PreprocessFunction , 
-	PreprocessInformation , 
-
-	auto_renderer , 
-	
-	PrinterDivider , 
-	PrinterWeakenText , 
-	PrinterDisplayText , 
-	PrinterStructureBoxText  , 
-	PrinterParagraphBox , 
-	PrinterPartBox , 
-	PrinterNewLevelBox , 
-	PrinterOldLevelBox , 
-	PrinterBackgroundPaper , 
-	
-	AutoStack , 
-
-	GlobalInfo , 
-	GlobalInfoProvider, 
-	AutoTooltip, 
-	ProcessedParameterList , 
-	get_default_structure_renderer , 
-
-	ReferenceContexter , 
-	PrinterComponent , 
-    PrinterRenderFunctionProps , 
-    PrinterRenderer , 
 	useless_renderer_text , 
 	useless_renderer_inline , 
 	useless_renderer_block , 
-} from "../../../lib"
+} from "../../../../../ytext"
 
 
 import {renderers as group_struct_renderers} from "./group_structs"
 import {renderers as inline_renderers} from "./inlines"
 import {renderers as support_renderers} from "./supports"
 import {renderers as abstract_renderers} from "./abstract"
-
-// TODO abtract的printer
-// TODO 再加几个概念。
 
 export {
     default_renderers , 

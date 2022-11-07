@@ -7,7 +7,7 @@ import {
     Box , Divider , Typography , Link , TextField , Chip , Paper
 } from "@mui/material"
 import { Interaction , BackendData } from "../../../base/interaction"
-import { ScrollBarBox } from "../../../lib"
+import { ScrollBarBox } from "../../../../../ytext"
 
 export { LeftComments }
 

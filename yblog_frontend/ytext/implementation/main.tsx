@@ -16,10 +16,11 @@ import {
     PrinterCache , 
 } from "../core"
 import {
-    default_theme , 
     PrinterBackgroundPaper , 
 } from "./uibase"
-
+import {
+    default_theme
+} from "../theme"
 export {
     merge_theme , 
     DefaultPrinterComponent , 

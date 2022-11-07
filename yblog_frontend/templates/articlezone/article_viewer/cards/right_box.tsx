@@ -35,7 +35,7 @@ import {
     ScrollBarBox , 
     Node, 
     is_paragraphnode, 
-} from "../../lib"
+} from "../../../../ytext"
 import { LeftBasic } from "./left_box/left_basic"
 import { LeftComments } from "./left_box/left_comments"
 

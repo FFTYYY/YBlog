@@ -38,8 +38,12 @@ import {
 	GlobalInfoProvider, 
 	SecondClassConceptDict, 
 	ScrollBarBox , 
-	PrinterCache , 
-} from "../lib"
+	PrinterCache, 
+	RendererDict,
+	DefaultRendererhDict,
+	EditorDefaultRendererhDict, 
+	EditorRendererDict , 
+} from "../../../ytext"
 
 import * as Slate from "slate"
 import * as SlateReact from "slate-react"
@@ -63,8 +67,8 @@ import { parse_second_concepts } from "../base/utils"
 import { MathJaxContext } from "../base/construction"
 import CssBaseline from "@mui/material/CssBaseline"
 import { SnackbarProvider  } from "notistack"
-
-// TODO 需要新增：参考文献管理、定义
+import "overlayscrollbars/overlayscrollbars.css"
+import { OverlayScrollbars } from "overlayscrollbars"
 
 class App extends  React.Component<{}, {
 	printer: Printer  | undefined
@@ -108,14 +112,14 @@ class App extends  React.Component<{}, {
 		let printer = new Printer(
 			first_concepts , 
 			sec_concepts , 
-			renderers , 
-			default_renderers , 
+			renderers as RendererDict, 
+			default_renderers as DefaultRendererhDict, 
 		)
 		
 		// 建立编辑器核心。
 		let editorcore = new EditorCore({
-			renderers: editors , 
-			default_renderers: default_editors, 
+			renderers: editors as EditorRendererDict , 
+			default_renderers: default_editors as EditorDefaultRendererhDict, 
 			printer: printer , 
 		})
 
@@ -210,13 +214,21 @@ class App extends  React.Component<{}, {
 			return [tree_property , children]
 		})()
 
-		return <ThemeProvider theme={createTheme(my_theme)}><SnackbarProvider 
+		return <ThemeProvider theme={createTheme(my_theme)}><Box sx={(theme)=>({
+			position: "fixed" , 
+			width: "100%" , 
+			height: "100%" , 
+			left: "0" , 
+			right: "0" , 
+			backgroundColor: theme.palette.background.default , 
+			color: theme.palette.text.primary , 
+		})}><CssBaseline /><SnackbarProvider 
 				maxSnack = {3} 
 				ref = {me.snackerbar_ref}
 				anchorOrigin = {{horizontal: "right" , vertical: "top"}}
 				variant = {"info"}
 			>
-			<CssBaseline /><Box sx={{
+			<Box sx={{
 				position: "absolute" , 
 				top: "2%" ,
 				left: "1%" , 
@@ -313,7 +325,7 @@ class App extends  React.Component<{}, {
 				</Box>
 				
 			</Box>
-		</SnackbarProvider></ThemeProvider>
+		</SnackbarProvider></Box></ThemeProvider>
 	}
 
 }

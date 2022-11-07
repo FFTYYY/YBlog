@@ -20,7 +20,7 @@ import {
     AbstractNode , 
     ScrollBarBox , 
     PrinterStructureBoxText , 
-} from "../../../lib"
+} from "../../../../../ytext"
 import { Nodetree } from "../../../base/nodetree"
 import type { raw_info_item } from "../../../base/nodetree"
 import { Interaction , BackendData , urls , url_from_root } from "../../../base/interaction"

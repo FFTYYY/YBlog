@@ -1,21 +1,5 @@
 import React , { useState } from "react"
-import {
-	Drawer , 
-	Fab , 
-	Box , 
-	Grid , 
-	Button , 
-	Stack , 
-	Paper , 
-	Divider , 
-	Container, 
-	CssBaseline, 
-} from "@mui/material"
 
-
-import { Node , Transforms , Element } from "slate"
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
-	
 import {
 	Printer , 
 	GroupNode , 
@@ -26,7 +10,11 @@ import {
 	EditorCore , 
 	PrinterCache , 
 	ScrollBarBox , 
-} from "../lib"
+} from "../../../ytext"
+
+
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
+	
 import { my_theme } from "../base/construction"
 import { Interaction , BackendData } from "../base/interaction"
 import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../base/construction"
@@ -35,7 +23,12 @@ import { parse_second_concepts } from "../base/utils"
 import { first_concepts } from "../base/concept"
 import {LeftBox, RightBox} from "./cards"
 
-// TODO 好像滚轮没有生效...
+import "overlayscrollbars/overlayscrollbars.css"
+import { OverlayScrollbars } from "overlayscrollbars"
+import {
+	Box , 
+	CssBaseline, 
+} from "@mui/material"
 
 class App extends  React.Component<{} , {
 	printer: Printer  | undefined
@@ -98,7 +91,16 @@ class App extends  React.Component<{} , {
 		if(!(printer && tree)){
 			return <></>
 		}
-		return <ThemeProvider theme={createTheme(my_theme)}><CssBaseline />
+		// TODO 不知道为什么build之后cssbaseline没有生效，需要手动加入背景和前景颜色。
+		return <ThemeProvider theme={{...createTheme({...my_theme})}}><Box sx={(theme)=>({
+			position: "fixed" , 
+			width: "100%" , 
+			height: "100%" , 
+			left: "0" , 
+			right: "0" , 
+			backgroundColor: theme.palette.background.default , 
+			color: theme.palette.text.primary , 
+		})}><CssBaseline />
 			<Box sx={{
 				position: "absolute" , 
 				top: "2%" ,
@@ -108,7 +110,6 @@ class App extends  React.Component<{} , {
 			}}>
 				<LeftBox root={tree} />
 			</Box>
-	
 			<Box sx={{
 				position: "absolute" , 
 				top: "2%" ,
@@ -134,7 +135,8 @@ class App extends  React.Component<{} , {
 					left: "1%" , 
 					top: "5%" , 
 					height: "94%" , 
-					overflow: "auto" ,
+					overflowY: "auto" ,
+					wordBreak:"break-all" , 
 				}} className = "mathjax_process"><MathJaxContext>
 					
 					<GlobalInfoProvider value={{
@@ -144,7 +146,7 @@ class App extends  React.Component<{} , {
 						<DefaultPrinterComponent 
 							ref = {me.printer_comp_ref}
 							printer = {printer} 
-							theme = {my_theme}
+							theme = {{...my_theme}}
 							onUpdateCache = {(cache)=>{
 								if(cache && JSON.stringify(cache) != JSON.stringify(me.state.cache)){
 									// XXX 这里会报warning，这是因为printer里在render()里调用了这个函数...
@@ -191,7 +193,7 @@ class App extends  React.Component<{} , {
 				/>
 			</Box>
 
-		</ThemeProvider>
+			</Box></ThemeProvider>
 	}
 }
 

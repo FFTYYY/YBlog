@@ -11,7 +11,7 @@ import {
     AutoStack , 
     AutoTooltip , 
 } 
-from "../../lib"
+from "../../../../ytext"
 
 export { SaveButton }
 
