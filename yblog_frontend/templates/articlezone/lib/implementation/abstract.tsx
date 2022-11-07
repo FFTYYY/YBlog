@@ -153,6 +153,7 @@ function get_default_abstract_renderer({
                             sx={{
                                 width: "auto" , 
                                 height: "auto" , 
+                                paddingRight: "0.35rem" , 
                             }}
                         >{props.children}</Link>
                     </Badge>

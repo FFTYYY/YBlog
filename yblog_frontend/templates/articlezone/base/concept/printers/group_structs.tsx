@@ -195,9 +195,12 @@ var followwords_printer = (()=>{
 
 			// followwords 不论如何都会有额外的缩进。
 			return <AutoStack force_direction="column">
-				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-					{title_content ? <PrinterStructureBoxText>{title_content}</PrinterStructureBoxText> : <></>}
-				</DefaultAbstractRendererAsProperty>
+				
+					{title_content ? <PrinterStructureBoxText>{
+						<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+							<>{title_content}</>
+						</DefaultAbstractRendererAsProperty>}</PrinterStructureBoxText> 
+					: <></>}
 				<PrinterNewLevelBox><PrinterWeakenText>{props.children}</PrinterWeakenText></PrinterNewLevelBox>
 				{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
 			</AutoStack>
@@ -259,11 +262,15 @@ var subwords_printer = (()=>{
 			return <React.Fragment>
 				<AutoStack force_direction="column">
 					<AutoStack>
-						<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-							<PrinterOldLevelBox sx={{position: "relative"}}> {/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
-								{title_content ? <PrinterParagraphBox>{title_jsx}</PrinterParagraphBox> : <></>}
-							</PrinterOldLevelBox>
-						</DefaultAbstractRendererAsProperty>
+						<PrinterOldLevelBox sx={{position: "relative"}}> {/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
+							{title_content ? 
+								<PrinterParagraphBox>
+									<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+										{title_jsx}
+									</DefaultAbstractRendererAsProperty>
+								</PrinterParagraphBox> 
+							: <></>}
+						</PrinterOldLevelBox>
 						<Box>{props.children}</Box>
 					</AutoStack>
 					{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
@@ -318,12 +325,15 @@ var display_printer = (()=>{
 		inner: (props: PrinterRenderFunctionProps<GroupNode>) => {
 			let {node , parameters , context , children} = props
 			// XXX 这里为啥有autostack
-			return <AutoStack force_direction="column"><DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				<PrinterDisplayText sx={{
-					fontSize: (theme)=>remtimes(theme.fonts.structure.fontSize , 1.4) , //字号翻倍
-					lineHeight: (theme)=>remtimes(theme.fonts.structure.lineHeight , 1.4) ,  //行高翻倍
-				}}>{props.children}</PrinterDisplayText>
-			</DefaultAbstractRendererAsProperty></AutoStack>
+			return <PrinterDisplayText sx={{
+				fontSize: (theme)=>remtimes(theme.fonts.structure.fontSize , 1.4) , //字号翻倍
+				lineHeight: (theme)=>remtimes(theme.fonts.structure.lineHeight , 1.4) ,  //行高翻倍
+			}}>
+				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+					{props.children}
+				</DefaultAbstractRendererAsProperty>
+			</PrinterDisplayText>
+			
 		} , 
 	})
 })()

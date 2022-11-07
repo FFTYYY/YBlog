@@ -256,6 +256,6 @@ let renderers = {
 		"刊"  : delete_printer , 
 		"缀"  : link_printer , 
 		"数学": mathinline_printer , 
-		"无": nothing_printer , 
+		"无"  : nothing_printer , 
 	},
 }
