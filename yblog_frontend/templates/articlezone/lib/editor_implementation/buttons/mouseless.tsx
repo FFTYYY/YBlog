@@ -115,22 +115,22 @@ function get_switch_position(editor: EditorComponent): SwitchPositionFunction{
                 break
             }
 
-            cancidate_idxs.sort()
+            cancidate_idxs.sort((a,b)=>a-b)
             return JSON.stringify([father.idx, cancidate_idxs[0]])
         }
 
         // 所选中的节点有哪些候选的位置。
-        let cancidate_idx = position_list.reduce<number[]>((s,x)=>{
+        let cancidate_idxs = position_list.reduce<number[]>((s,x)=>{
             let [nodeidx,subidx]: [number,number] = JSON.parse(x)
             if(nodeidx == now_idx){
                 return [...s, subidx]
             }
             return s
         } , [])
-        cancidate_idx.sort()
+        cancidate_idxs.sort((a,b)=>a-b)
         
         // 目前激活的按钮的编号的排名。
-        let now_sub_idx = cancidate_idx.indexOf(now_sub)
+        let now_sub_idx = cancidate_idxs.indexOf(now_sub)
 
         if(direction == "ArrowLeft" || direction == "ArrowUp"){
             now_sub_idx --
@@ -138,8 +138,8 @@ function get_switch_position(editor: EditorComponent): SwitchPositionFunction{
         if(direction == "ArrowRight" || direction == "ArrowDown"){
             now_sub_idx ++
         }
-        now_sub_idx = ((now_sub_idx % cancidate_idx.length) + cancidate_idx.length) % cancidate_idx.length
-        let new_sub = cancidate_idx[now_sub_idx]
+        now_sub_idx = ((now_sub_idx % cancidate_idxs.length) + cancidate_idxs.length) % cancidate_idxs.length
+        let new_sub = cancidate_idxs[now_sub_idx]
 
         return JSON.stringify([now_idx, new_sub])
     }
@@ -181,7 +181,7 @@ function activate_position_brother(editor: EditorComponent, position_list: strin
     if(!res_node){
         return cur_position
     }
-    res_cancidate_idxs.sort()
+    res_cancidate_idxs.sort((a,b)=>a-b)
     return JSON.stringify([res_node.idx, res_cancidate_idxs[0]])
 }
 
@@ -217,7 +217,7 @@ function get_activate_position(editor: EditorComponent){
             }
         }
         
-        cancidate_idxs.sort()
+        cancidate_idxs.sort((a,b)=>a-b)
         return JSON.stringify([now_idx, cancidate_idxs[0]])
     }
 }

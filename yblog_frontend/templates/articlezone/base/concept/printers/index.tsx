@@ -55,6 +55,7 @@ import {
 import {renderers as group_struct_renderers} from "./group_structs"
 import {renderers as inline_renderers} from "./inlines"
 import {renderers as support_renderers} from "./supports"
+import {renderers as abstract_renderers} from "./abstract"
 
 // TODO abtract的printer
 // TODO 再加几个概念。
@@ -79,6 +80,6 @@ let renderers = {
 	group: group_struct_renderers.group ,
 	inline : inline_renderers.inline,
 	support: support_renderers.support , 
-	abstract: {} , 
+	abstract: abstract_renderers.abstract , 
 	structure: group_struct_renderers.structure , 
 }

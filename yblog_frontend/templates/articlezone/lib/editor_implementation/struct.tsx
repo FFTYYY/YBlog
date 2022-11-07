@@ -46,6 +46,7 @@ import {
     DefaultSoftDeleteButton , 
 
     EditorButtonInformation , 
+    CopyButton , 
 } from "./buttons"
 import { 
     DefaultNewAbstractButton , 
@@ -194,6 +195,7 @@ function get_default_struct_editor_with_rightbar({
                                 DefaultSoftDeleteButton , 
                                 NewParagraphButtonUp , 
                                 NewParagraphButtonDown , 
+                                CopyButton , 
                             ]}
                         /> 
                     </AutoStack>

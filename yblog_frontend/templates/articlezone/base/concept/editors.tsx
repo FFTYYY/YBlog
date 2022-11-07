@@ -119,6 +119,8 @@ var insertchildren_editor = get_default_display_editor({
     get_label: (n,p)=>"插入子节点",
 })
 
+var comment_editor = get_default_abstract_editor({get_label: (n)=>n.parameters.label?.val as string})
+
 let editors = {
     "group": {
         "昭言": brightwords_editor , 
@@ -147,7 +149,7 @@ let editors = {
         "插入子节点": insertchildren_editor , 
     } , 
     "abstract": {
-        "穆言": get_default_abstract_editor({get_label: (n)=>"comment"})
+        "穆言": comment_editor
     } ,
 }
 

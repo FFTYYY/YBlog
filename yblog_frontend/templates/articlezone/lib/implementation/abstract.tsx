@@ -34,7 +34,7 @@ import {
 import { 
     PrinterPartBox , 
     PrinterParagraphBox, 
-} from "./uibase/components"
+} from "./uibase"
 import {
     auto_renderer , 
 } from "./utils"
@@ -43,41 +43,41 @@ import {
 } from "./main"
 
 import {
-    Link, ThemeOptions , Dialog, Tooltip  , 
+    Link, ThemeOptions , Dialog, Tooltip  , Box , Badge  , Button , Paper , IconButton  , 
 } from "@mui/material"
 
 export {get_default_abstract_renderer , DefaultAbstractRendererAsProperty , DefaultAbstractAsRoot}
 
 /** 这个组件为其他组件提供一个默认的渲染抽象节点的方法。 */
 function DefaultAbstractRendererAsProperty(props: PrinterRenderFunctionProps<ConceptNode> & {senario:string}){
-    return <GlobalInfo.Consumer>{(globalinfo)=>{
-        let printer = globalinfo.printer as Printer
-        let abstracts = props.node.abstract
+    let globalinfo = React.useContext(GlobalInfo)
+    let printer = globalinfo.printer as Printer
 
-        let children = props.children
+    let abstracts = props.node.abstract
+    let children = props.children
 
-        for(let subidx in abstracts){
-            let subroot = abstracts[subidx]
+    for(let subidx in abstracts){
+        let subroot = abstracts[subidx]
 
-            let subrenderer = printer.get_node_renderer(subroot) 
-            let R = subrenderer.renderer_as_property // 获取渲染器
+        let subrenderer = printer.get_node_renderer(subroot) 
+        let R = subrenderer.renderer_as_property // 获取渲染器
 
-            // 在children外面套一层渲染
-            children = <R
-                node = {subroot}
-                parameters = {props.parameters}
-                context = {props.context}
-                flags = {{
-                    senario: props.senario
-                }}
-                key = {subidx}
-            >{children}</R>
+        if(!R){
+            continue
         }
 
-
-        return children
-
-    }}</GlobalInfo.Consumer>
+        // 在children外面套一层渲染
+        children = <R
+            node = {subroot}
+            parameters = {props.parameters}
+            context = {props.context}
+            flags = {{
+                senario: props.senario
+            }}
+            key = {subidx}
+        >{children}</R>
+    }
+    return <>{children}</>
 }
 
 /** 这个节点为抽象节点提供一个默认的作为一整棵树渲染的方法。 
@@ -86,20 +86,15 @@ function DefaultAbstractRendererAsProperty(props: PrinterRenderFunctionProps<Con
 */
 function DefaultAbstractAsRoot(props: PrinterRenderFunctionProps<AbstractNode> & {printer?: Printer , theme?: ThemeOptions}){
     let {node , parameters , context , flags, printer, theme} = props
+    let globalinfo = React.useContext(GlobalInfo)
+    let p = printer || globalinfo.printer as Printer
+    let t = theme || globalinfo.theme as ThemeOptions
 
-    return <GlobalInfo.Consumer>{(globalinfo)=>{
-        let p = printer || globalinfo.printer as Printer
-        let t = theme || globalinfo.theme as ThemeOptions
-
-        console.log(theme)
-        
-        return <DefaultPrinterComponent 
-            root = {node}
-            printer = {p}
-            theme = {t}
-        />
-    }}</GlobalInfo.Consumer>
-
+    return <DefaultPrinterComponent 
+        root = {node}
+        printer = {p}
+        theme = {t}
+    />
 }
 
 /** 这个函数提供一个渲染抽象节点的方案。
@@ -140,9 +135,17 @@ function get_default_abstract_renderer({
             ></DefaultAbstractAsRoot>
 
             return <React.Fragment>
-                <Link href="#" onClick={(e)=>set_show_abstract(true)}>{props.children}</Link>
-                <Dialog open={show_abstract} onClose={()=>set_show_abstract(false)}>{subcomp}</Dialog>
-                {/* <Tooltip title = {subcomp}><Link href="#">{props.children}</Link></Tooltip> */}
+                <Tooltip title = {subcomp} placement="right">
+                    <Badge 
+                        badgeContent = "" 
+                        color = "secondary" 
+                        variant = "dot" 
+                        overlap = "circular" 
+                    >
+                        <Link href="#" onClick={(e)=>set_show_abstract(true)} color="inherit">{props.children}</Link>
+                    </Badge>
+                </Tooltip>
+                <Dialog fullWidth maxWidth="lg" open={show_abstract} onClose={()=>set_show_abstract(false)}>{subcomp}</Dialog>
             </React.Fragment> 
         } , 
         render_function: (props: PrinterRenderFunctionProps<AbstractNode>) => {

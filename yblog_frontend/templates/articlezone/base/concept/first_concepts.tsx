@@ -205,6 +205,7 @@ var alignedwords_style = new FirstClassConcept({type: "structure", name: "齐言
     parameter_prototype: make_param( { 
         label: "齐言" , 
         widths: "1" , 
+        tot_width_ratio: 100 , 
     } ) 
 })
 

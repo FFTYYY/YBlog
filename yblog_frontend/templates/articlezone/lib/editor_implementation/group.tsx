@@ -54,6 +54,7 @@ import {
     DefaultSoftDeleteButton , 
 
     EditorButtonInformation , 
+    CopyButton , 
 } from "./buttons"
 
 import {     
@@ -141,6 +142,7 @@ function get_deafult_group_editor_with_appbar({
                                 NewParagraphButtonDown , 
                                 DefaultCloseButton , 
                                 DefaultSoftDeleteButton , 
+                                CopyButton , 
                                 ... appbar_extra(node, parameters)
                             ]}
                         />
@@ -214,6 +216,7 @@ function get_default_group_editor_with_rightbar({
                                 DefaultSoftDeleteButton , 
                                 NewParagraphButtonUp , 
                                 NewParagraphButtonDown , 
+                                CopyButton , 
                             ]}
                             idxs = {[extra_buttons.length]} // 从extra_buttons.length开始编号。
                         /> 

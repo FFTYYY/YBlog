@@ -25,6 +25,7 @@ import {
     North as NorthIcon , 
     South as SouthIcon , 
     MoveUp as MoveUpIcon  , 
+    PhoneMissed as PhoneMissedIcon
 }
 from "@mui/icons-material"
 
@@ -58,6 +59,7 @@ export {
     DefaultSwicth , 
     AutoIconButton , 
     DefaultSoftDeleteButton , 
+    CopyButton , 
 }
 
 /** 这个函数是一个语法糖，用于自动创建带tooltip的按钮。 */
@@ -201,7 +203,7 @@ class NewParagraphButtonUp extends React.PureComponent<EditorButtonInformation> 
 /** 这个组件提供一个在组件的下新建段落的节点。 
  * @param props.node 这个组件所服务的节点。
  */
-class NewParagraphButtonDown extends React.PureComponent<EditorButtonInformation> implements ButtonBase{
+ class NewParagraphButtonDown extends React.PureComponent<EditorButtonInformation> implements ButtonBase{
     static contextType = GlobalInfo
 
     constructor(props: EditorButtonInformation){
@@ -215,6 +217,44 @@ class NewParagraphButtonDown extends React.PureComponent<EditorButtonInformation
     }
     render(): React.ReactNode {
         return <AutoIconButton onClick={this.run.bind(this)} title="向下添加段落" icon={SouthIcon} />
+    }
+}
+
+
+/** 这个按钮在一个概念下方复制此概念，并设置同样的参数。 
+ * @param props.node 这个组件所服务的节点。
+ */
+ class CopyButton extends React.PureComponent<EditorButtonInformation> implements ButtonBase{
+    static contextType = GlobalInfo
+
+    constructor(props: EditorButtonInformation){
+        super(props)
+    }
+
+    run(){
+        let globalinfo = this.context
+        let editor = globalinfo.editor as EditorComponent
+
+        let node = this.props.node
+        let new_node: ConceptNode | undefined = undefined
+        if(node.type == "group"){
+            new_node = editor.get_core().create_group(node.concept, "chaining") // 自动跟上一个节点贴贴
+            new_node.parameters = JSON.parse( JSON.stringify(node.parameters) )
+        }
+        else if(node.type == "structure"){
+            new_node = editor.get_core().create_structure(node.concept, "chaining")
+            new_node.parameters = JSON.parse( JSON.stringify(node.parameters) )
+        }
+        else if(node.type == "support"){
+            new_node = editor.get_core().create_support(node.concept)
+            new_node.parameters = JSON.parse( JSON.stringify(node.parameters) )
+        }
+        if(new_node){
+            editor.add_nodes_after(new_node , this.props.node )    
+        }
+    }
+    render(): React.ReactNode {
+        return <AutoIconButton onClick={this.run.bind(this)} title="复制此节点" icon={PhoneMissedIcon} />
     }
 }
 

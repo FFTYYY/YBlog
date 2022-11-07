@@ -53,6 +53,7 @@ import {
 	Context  , 
     PrinterRenderFunctionProps, 
     PrinterRenderFunction , 
+	DefaultAbstractRendererAsProperty , 
 } from "../../../lib"
 
 import {
@@ -96,7 +97,9 @@ var subsection_printer = (()=>{
 
 			let title = parameters.title
 			return <PrinterPartBox>
-			    <PrinterPartBox subtitle_like>{order_str}{title}</PrinterPartBox>
+				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+			    	<PrinterPartBox subtitle_like>{order_str}{title}</PrinterPartBox>
+				</DefaultAbstractRendererAsProperty>
                 {children}
             </PrinterPartBox>
 		} , 
@@ -145,7 +148,9 @@ var brightwords_printer = (()=>{
 				inject_content = inject_content + ` （${prefix}）`
 			}
 			
-			return <PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
+			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+				<PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
+			</DefaultAbstractRendererAsProperty>
 		} , 
 		outer: (props) => {
 			return <PrinterPartBox subtitle_like>{props.children}</PrinterPartBox>
@@ -190,7 +195,9 @@ var followwords_printer = (()=>{
 
 			// followwords 不论如何都会有额外的缩进。
 			return <AutoStack force_direction="column">
-				{title_content ? <PrinterStructureBoxText>{title_content}</PrinterStructureBoxText> : <></>}
+				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+					{title_content ? <PrinterStructureBoxText>{title_content}</PrinterStructureBoxText> : <></>}
+				</DefaultAbstractRendererAsProperty>
 				<PrinterNewLevelBox><PrinterWeakenText>{props.children}</PrinterWeakenText></PrinterNewLevelBox>
 				{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
 			</AutoStack>
@@ -358,7 +365,11 @@ let line_printer = (()=>{
             let {node , parameters , context , children} = props
             let widths = get_widths(node , parameters)
             let sum = widths.reduce((s , x)=>s + x , 0)
-            return <Grid container columns={sum} sx={{width: "100%"}} spacing={2}>{props.children}</Grid>
+			let tot_width = parameters.tot_width_ratio
+            return <Box sx={{
+				width: `${tot_width}%`
+			}}
+			><Grid container columns={sum} sx={{width: "100%"}} spacing={2}>{props.children}</Grid></Box>
         } , 
         subinner(props){
             let {node , parameters , context , children , subidx} = props
@@ -372,7 +383,7 @@ let line_printer = (()=>{
 
 
 let renderers = {
-	"group":{
+	group:{
 		"昭言": brightwords_printer , 
 		"随言": followwords_printer , 
 		"裱示": mount_printer , 
@@ -384,7 +395,7 @@ let renderers = {
 		
 	} ,
 
-	"structure": {
+	structure: {
 		"齐言": line_printer , 
 	} , 
 }
