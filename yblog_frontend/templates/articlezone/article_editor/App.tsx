@@ -65,7 +65,6 @@ import CssBaseline from "@mui/material/CssBaseline"
 import { SnackbarProvider  } from "notistack"
 
 // TODO 需要新增：参考文献管理、定义
-// TODO 穆言的渲染
 
 class App extends  React.Component<{}, {
 	printer: Printer  | undefined

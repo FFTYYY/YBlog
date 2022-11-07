@@ -1,16 +1,14 @@
 from django.contrib import admin
-from .models import Node , Comment , Resource
+from .models import Node , Comment , Resource , Concept
 from django import forms
 from django_json_widget.widgets import JSONEditorWidget
 from functools import partial
-from .constants import CONCEPT_METAS
-from YTools.universe.beautiful_str import beautiful_str
 
 class NodeAdmin(admin.ModelAdmin):
     add_form_template 	 = "customize_admin/node_add.html"
 
     list_display = ["get_title" , "id" , "can_public_view" ]
-    raw_id_fields = ["father"]
+    raw_id_fields = ["father", "concept_def"]
 
     def get_fieldsets(self, request, object):
         node = object 
@@ -46,7 +44,7 @@ class NodeAdmin(admin.ModelAdmin):
                 "description": visualbility_desc , 
             }] , 
             ["内容" , {
-                "fields": ["content" , "concepts" , "cache"] , 
+                "fields": ["concept_def" , "content" , "cache"] , 
                 "description": desc_edit_content , 
             }] , 
             ["结构" , {
@@ -63,7 +61,10 @@ class CommentAdmin(admin.ModelAdmin):
     pass
 class ResourceAdmin(admin.ModelAdmin):
     pass
+class ConceptAdmin(admin.ModelAdmin):
+    pass
 
 admin.site.register(Node        , NodeAdmin     )
 admin.site.register(Comment     , CommentAdmin  ) 
 admin.site.register(Resource    , ResourceAdmin )
+admin.site.register(Concept     , ConceptAdmin )

@@ -1,9 +1,17 @@
 from re import L
 from django.db import models
-from ..constants import SHORT_STR_LENGTH , CONCEPT_METAS
+from ..constants import SHORT_STR_LENGTH 
 import django.utils.timezone as timezone
 import json
 from django.contrib import admin
+
+class Concept(models.Model):
+	content = models.TextField(default = "", blank = True)
+
+	def __str__(self):
+		if self.node != None:
+			return "Concept Attached to Node {0}".format( [x.id for x in self.node.all()] )
+		return "Concept {0}".format(self.id)
 
 class Node(models.Model):
 	father = models.ForeignKey("self", on_delete = models.SET_NULL , null = True , blank = True , related_name = "son")
@@ -11,7 +19,7 @@ class Node(models.Model):
 
 	content  = models.TextField(default = "", blank = True)
 	cache    = models.TextField(default = "", blank = True)
-	concepts = models.TextField(default = "", blank = True)
+	concept_def  = models.ForeignKey(Concept, on_delete = models.SET_NULL , null = True , blank = True , related_name = "node")
 
 	create_time = models.DateTimeField(default = timezone.now)
 	update_time = models.DateTimeField(default = timezone.now)
@@ -62,7 +70,9 @@ class Node(models.Model):
 
 	def get_all_concepts(self):
 		'''收集自己到根的所有组件。'''
-		ret = [self.concepts]
+		ret = []
+		if self.concept_def:
+			ret = [self.concept_def.content]
 		if self.father is not None:
 			ret = ret + self.father.get_all_concepts()
 		return list( filter(lambda x: len(x) > 0 , ret) )
@@ -72,6 +82,7 @@ class Node(models.Model):
 		self.update_time = timezone.now()
 	
 		return super().save(*args , **kwargs)
+
 
 
 class Comment(models.Model):
