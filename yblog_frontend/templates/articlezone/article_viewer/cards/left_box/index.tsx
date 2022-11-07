@@ -34,7 +34,7 @@ class MyTablePanel extends React.Component<{value: string, children: any, active
 }
 
 function LeftBox(props: {root: AbstractNode}){
-    const [active_tab, set_active_tab] = React.useState("1");
+    const [active_tab, set_active_tab] = React.useState("0");
 
     return <TabContext value={active_tab}><Box sx={{
         position: "absolute" , 
@@ -43,7 +43,7 @@ function LeftBox(props: {root: AbstractNode}){
     }} >
         <Box sx={{position: "absolute", left: "0", width: "5rem", height: "100%"}}>
             <TabList onChange={(e,v)=>set_active_tab(v)} variant="scrollable" scrollButtons="auto" orientation="vertical" sx={{width: "100%"}}>
-                <Tab label="基本" value="1"/>
+                <Tab label="信息" value="1"/>
                 <Tab label="留言" value="2"/>
                 { BackendData.logged_in ? <Tab label="编辑" value="3"/> : <></> }
             </TabList >

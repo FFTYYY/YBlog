@@ -68,18 +68,18 @@ function DefaultNewAbstract(props: {node: ConceptNode, anchor_element: any, open
     let editor = globalinfo.editor as EditorComponent
 
     // 这个列表罗列所有可选的抽象概念以供选择。
-    let abstract_concepts = editor.get_editorcore().renderers["abstract"]
+    let abstract_concepts = editor.get_editorcore().get_sec_concept_list("abstract")
 
     let onClose = props.onClose || ((e:any)=>{})
 
-    function get_new_abstract_func(choice: string | undefined){
+    function get_new_abstract_func(idx: number){
         return (e: any)=>{
             onClose(e)
 
-            if(choice == undefined || abstract_concepts[choice] == undefined)
+            if(idx == undefined || abstract_concepts[idx] == undefined)
                 return 
 
-            let new_node_abstract = [...node.abstract , editor.get_editorcore().create_abstract(choice)]
+            let new_node_abstract = [...node.abstract , editor.get_editorcore().create_abstract(abstract_concepts[idx])]
             
             editor.set_node( node , {abstract: new_node_abstract})
         }
@@ -90,8 +90,8 @@ function DefaultNewAbstract(props: {node: ConceptNode, anchor_element: any, open
         open = {props.open}
         onClose = {onClose}
     >
-        {Object.keys(abstract_concepts).map(name=>{
-            return <MenuItem onClick={get_new_abstract_func(name)} key={name}>{name}</ MenuItem>
+        {abstract_concepts.map((name,idx)=>{
+            return <MenuItem onClick={get_new_abstract_func(idx)} key={name}>{name}</ MenuItem>
         })}
         <MenuItem onClick={e=>onClose(e)}>算了</MenuItem>
     </Menu>

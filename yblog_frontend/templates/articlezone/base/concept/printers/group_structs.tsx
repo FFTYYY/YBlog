@@ -358,7 +358,6 @@ let line_printer = (()=>{
             let {node , parameters , context , children} = props
             let widths = get_widths(node , parameters)
             let sum = widths.reduce((s , x)=>s + x , 0)
-			console.log(sum)
             return <Grid container columns={sum} sx={{width: "100%"}} spacing={2}>{props.children}</Grid>
         } , 
         subinner(props){

@@ -66,6 +66,7 @@ import { SnackbarProvider  } from "notistack"
 
 // TODO 需要新增：参考文献管理、定义、width不占满全屏的行
 // TODO 穆言的渲染
+// TODO 开头空格被忽略的问题
 
 class App extends  React.Component<{}, {
 	printer: Printer  | undefined

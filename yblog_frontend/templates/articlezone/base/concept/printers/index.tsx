@@ -46,6 +46,9 @@ import {
 	PrinterComponent , 
     PrinterRenderFunctionProps , 
     PrinterRenderer , 
+	useless_renderer_text , 
+	useless_renderer_inline , 
+	useless_renderer_block , 
 } from "../../../lib"
 
 
@@ -61,35 +64,14 @@ export {
     renderers , 
 }
 
-let default_renderer_block = new PrinterRenderer({
-    renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
-		let node = props.node
-        return <div>{props.children}</div>
-    }
-})
-
-let default_renderer_inline = new PrinterRenderer({
-    renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
-        return <span>{props.children}</span>
-    }
-})
-
-let default_renderer_text = new PrinterRenderer({
-    renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
-        let node = props.node as TextNode
-        return <span>{node.text}</span>
-    }
-})
-
-
 let default_renderers = {
-	"group"     : default_renderer_block , 
-    "structure" : default_renderer_block , 
-    "support"   : default_renderer_block , 
-    "abstract"  : default_renderer_block , 
+	"group"     : useless_renderer_block , 
+    "structure" : useless_renderer_block , 
+    "support"   : useless_renderer_block , 
+    "abstract"  : useless_renderer_block , 
     "paragraph" : get_default_paragraph_renderer({}) , 
-    "inline"    : default_renderer_inline , 
-    "text"      : default_renderer_text , 
+    "inline"    : useless_renderer_inline , 
+    "text"      : useless_renderer_text , 
 
 }
 
