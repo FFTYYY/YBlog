@@ -356,7 +356,9 @@ class EditorComponent extends React.Component<EditorComponentProps , {
     root_children: (SlateReact.ReactEditor & AbstractNode)["children"]
 }>{
     
-    update_debounce: DoSomething<Slate.Node[]>
+    // update_debounce: DoSomething<Slate.Node[]> // XXX 见contructor()结尾
+
+
     constructor(props:EditorComponentProps){
         super(props)
 
@@ -391,7 +393,12 @@ class EditorComponent extends React.Component<EditorComponentProps , {
             root_property: props.init_rootproperty || default_root_but_children , 
         }
 
-        this.update_debounce = new DoSomething((val)=>{this.update_value(val)} , 500)
+        // XXX 本来这个函数是想让一定时间内的修改batch在一起来更新，从而避免频繁更新state，频繁重新渲染，但是
+        //     实际上这个函数会导致光标位置错误...
+        // this.update_debounce = new DoSomething((val)=>{
+        //     this.update_value(val)
+        //     console.log("updating value!")
+        // } , 5000)
     }
 
     get_core(){
@@ -532,7 +539,9 @@ class EditorComponent extends React.Component<EditorComponentProps , {
                         // 实际上没有改变，就不更新了。
                         return
                     }
-                    me.update_debounce.go(value)
+                    // me.update_debounce.go(value)
+                    me.update_value(value)
+
                     me.onFocusChange()
                 }}
             >

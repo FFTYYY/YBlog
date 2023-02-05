@@ -1,4 +1,4 @@
 Django>=4.0.0
 django-extensions>=2.1.4
 django-json-widget
-YTools
+YYYTools

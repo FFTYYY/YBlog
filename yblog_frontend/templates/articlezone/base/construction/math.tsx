@@ -3,7 +3,7 @@ import $ from "jquery"
 import { DoSomething } from "../../../../ytext"
 // import "mathjax/es5/tex-svg"
 
-export { MathJaxContext , MathJaxInline , MathJaxBlock , }
+export { MathJaxContext , MathJaxInline , MathJaxBlock , flush_math, }
 
 let MATHJAX_INLINE_START = "$"
 let MATHJAX_INLINE_END = "$"
@@ -13,10 +13,11 @@ let MATHJAX_BLOCK_END = "$$"
 var flush_math = new DoSomething(()=>{
     let MathJax = (window as any).MathJax
     if(MathJax != undefined && MathJax.typesetPromise != undefined){
-        MathJax.typesetPromise()
         MathJax.texReset()
+        MathJax.typesetPromise()
+        MathJax.typeset()
     }
-} , 3000)
+} , 1000)
 
 function flush_mathjax(){
     flush_math.go()

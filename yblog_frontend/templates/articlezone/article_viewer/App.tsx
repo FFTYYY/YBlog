@@ -21,7 +21,8 @@ import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../base/construct
 import { renderers , default_renderers } from "../base/concept"
 import { parse_second_concepts } from "../base/utils"
 import { first_concepts } from "../base/concept"
-import {LeftBox, RightBox} from "./cards"
+import { LeftBox, RightBox } from "./cards"
+import { flush_math } from "../base/construction/math"
 
 import "overlayscrollbars/overlayscrollbars.css"
 import { OverlayScrollbars } from "overlayscrollbars"
@@ -81,6 +82,10 @@ class App extends  React.Component<{} , {
 			tree: root , 
 			cache: cache , 
 		})
+
+		setTimeout(()=>{
+			flush_math.go()
+		} , 1000)
 	}
 
 	render(){
