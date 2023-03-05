@@ -4,22 +4,22 @@ export { my_theme }
 const my_theme: Theme = {
     mui:{
         palette: {
-            divider: "#eeeeee" , 
-            mode: "dark",
+            divider: "#060606" , 
+            mode: "light",
             primary: {
-                main: '#b5dfff',
+                main: "#404080",
             },
             secondary: {
-                main: '#cf80bf',
+                main: "#A02020",
             },
             background: {
-                default: 'rgba(35,35,48,0.96)',
-                paper: '#393942',
+                default: "rgba(230,230,230,0.96)",
+                paper: "#393942",
             },
             text: {
-                primary: '#eeeeee',
-                secondary: 'rgba(255,255,255,0.70)',
-                disabled: 'rgba(255,255,255,0.5)',
+                primary     : "#020202",
+                secondary   : "rgba(6,6,6,0.70)" , 
+                disabled    : "rgba(6,6,6,0.5)",
             },
         },
     } , 
@@ -33,18 +33,28 @@ const my_theme: Theme = {
         fonts: {
             body: {
                 fontFamily: "STXihei" , 
+                fontSize: "1.1rem" ,
+                lineHeight: "1.6rem" , 
             },
             title: {
                 fontFamily: "SimHei" , 
+                fontSize: "1.1rem" ,
+                lineHeight: "1.6rem" , 
             } , 
             structure: {
                 fontFamily: "SimHei" , 
+                fontSize: "1.1rem" ,
+                lineHeight: "1.6rem" , 
             } , 
             display: {
                 fontFamily: "KaiTi" , 
+                fontSize: "1.1rem" ,
+                lineHeight: "1.6rem" , 
             } , 
             weaken: {
                 fontFamily: "FangSong" , 
+                fontSize: "1.1rem" ,
+                lineHeight: "1.6rem" , 
             }
         } , 
     }

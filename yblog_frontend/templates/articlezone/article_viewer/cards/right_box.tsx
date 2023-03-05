@@ -68,7 +68,7 @@ function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}
             top: "30%" , 
             height: "40%" , 
             width: "auto" , 
-    }}><Paper variant="outlined" sx={{
+    }}><Box sx={{
         backgroundColor: "background.default" , 
         
         position: "absolute" , 
@@ -90,10 +90,12 @@ function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}
             let [node, path] = val
             let title = <>章节</>
             if(is_supportnode(node) && node.type == "support" && node.concept == "小节线"){
-                title = <React.Fragment>
-                    <Box component = "span" sx={{marginRight: "1rem"}}>{num2chinese(Number(idx)+1)}</Box>
-                    <Box component = "span">{node.parameters.title.val}</Box>
-                </React.Fragment>
+                title = <Box sx={{display: "flex", flexDirection: "row"}}>
+                    <Box sx={{marginRight: "1rem"}}>{num2chinese(Number(idx)+1)}</Box>
+                    <Box sx={{textAlign: "left"}}>{node.parameters.title.val}</Box>
+                    {/* <Box component = "span" sx={{marginRight: "1rem"}}>{num2chinese(Number(idx)+1)}</Box>
+                    <Box component = "span">{node.parameters.title.val}</Box> */}
+                </Box>
             }
 
             return <Box key={idx} sx={{
@@ -105,5 +107,5 @@ function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}
                 color = "text.primary"
             ><Typography sx={{fontSize: "0.8rem"}}>{title}</Typography></Link></Box>
         })}</ScrollBarBox>
-    </Paper></Box>
+    </Box></Box>
 }

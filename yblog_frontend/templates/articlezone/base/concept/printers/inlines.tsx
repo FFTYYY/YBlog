@@ -71,7 +71,7 @@ import {
 import {
 	MathJaxInline , 
 	MathJaxBlock , 
-} from "../../../base/construction"
+} from "../../construction"
 
 export {
 	renderers , 

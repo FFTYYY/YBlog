@@ -211,7 +211,7 @@ class BasicInformation extends React.Component<{
         }
             
         return <Box>
-            <ItemBox title="题目" content={`${title}`} />
+            {/* <ItemBox title="题目" content={`${title}`} /> */}
             <ItemBox title="创建时间" content={me.state.create_time} />
             <ItemBox title="修改时间" content={me.state.modify_time} />
         </Box>
@@ -233,7 +233,7 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
             bottom : "2%" ,  
             width: "100%" , 
         }}>
-            <Paper sx = {{
+            <Box sx = {{
                 position: "absolute" , 
                 paddingLeft: "1rem", 
                 paddingRight: "0.5rem", 
@@ -243,7 +243,7 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
                 left: "0" , 
                 height: "23%" ,  
                 width: "100%" , 
-            }} variant = "outlined">
+            }}>
                 
                 <Box sx={{textAlign: "right"}}><Chip  label="基本信息"  variant="outlined" color="secondary" size="small" /></Box>
                 <ScrollBarBox sx = {{
@@ -256,9 +256,9 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
                 }}>
                     <BasicInformation root={this.props.root}/>
                 </ScrollBarBox>
-            </Paper>
+            </Box>
 
-            <Paper sx = {{
+            <Box sx = {{
                 position: "absolute" , 
                 paddingX: "0.5rem", 
                 paddingY: "0.25rem" , 
@@ -266,8 +266,8 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
                 top: "27%" , 
                 bottom: "2%" , 
                 width: "100%" , 
-            }} variant = "outlined">
-                <Box sx={{textAlign: "right"}}><Chip  label="外部导航"  variant="outlined" color="secondary" size="small" /></Box>
+            }}>
+                <Box sx={{textAlign: "right"}}><Chip  label="其他文章"  variant="outlined" color="secondary" size="small" /></Box>
 
                 <ScrollBarBox sx = {{
                     position: "absolute" , 
@@ -279,7 +279,7 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
                 }}>
                     <Navigation />
                 </ScrollBarBox>
-            </Paper>
+            </Box>
         </Box>
     }
 }

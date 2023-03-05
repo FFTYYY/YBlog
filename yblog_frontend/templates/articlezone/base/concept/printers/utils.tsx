@@ -3,7 +3,7 @@ import {
     Node , 
     is_textnode , 
     ConceptNode , 
-} from "../../../../../ytext"
+} from "@ftyyy/ytext"
 
 import {
     num2chinese

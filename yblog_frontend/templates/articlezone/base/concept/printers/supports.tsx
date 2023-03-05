@@ -77,7 +77,7 @@ import {
 	MathJaxInline , 
 	MathJaxBlock , 
 	TitleWord , 
-} from "../../../base/construction"
+} from "../../construction"
 import { insertchildren_style } from "../first_concepts"
 
 export {

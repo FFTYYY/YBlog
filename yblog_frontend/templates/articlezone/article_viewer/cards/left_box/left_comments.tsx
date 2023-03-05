@@ -175,7 +175,7 @@ class LeftComments extends React.Component<{} , {}>{
                 }}/>
             </ScrollBarBox>
 
-            <Paper sx={{
+            <Box sx={{
                 position: "absolute" , 
                 bottom: "1%" , 
                 top: "38%" , 
@@ -184,7 +184,7 @@ class LeftComments extends React.Component<{} , {}>{
                 backgroundColor: "background.default" , 
                 paddingX: "0.25rem" , 
                 paddingY: "0.25rem" , 
-            }} variant="outlined">
+            }}>
                 <Box sx={{textAlign: "right"}}><Chip  label="留言列表"  variant="outlined" color="secondary" size="small" /></Box>
                 <ScrollBarBox sx={{
                     position: "absolute" , 
@@ -196,7 +196,7 @@ class LeftComments extends React.Component<{} , {}>{
                 }}>
                     <Comments ref={me.comment_ref} />
                 </ScrollBarBox>
-            </Paper>
+            </Box>
         </Box>
     }
 }
