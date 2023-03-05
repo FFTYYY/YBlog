@@ -221,7 +221,7 @@ var showchildren_printer = (()=>{
 						}
 					}, [])
 
-					let iframe_height = `${height + 40}px`
+					let iframe_height = `${height + 140}px`
 					let overflow = parameters.scroll ? "auto" : "hidden"
 
 					return <Box>

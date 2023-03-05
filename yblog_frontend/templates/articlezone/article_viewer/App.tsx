@@ -79,6 +79,8 @@ class App extends  React.Component<{} , {
 
 		// 获得树。
 		let root = await Interaction.get.content(BackendData.node_id)
+		// 设置网页标题
+		document.title = root.parameters.title.val
 
 		// 获得缓存内容（其实是不必要的...）
 		let cache = await Interaction.get.cache(BackendData.node_id)

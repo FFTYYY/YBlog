@@ -231,11 +231,9 @@ var link_printer = (()=>{
 						if(title_ref == undefined || contt_ref == undefined){ // 最后尝试直接从节点获得信息
 							[title_ref , contt_ref] = get_reference_from_root(root, tar_idx)
 						}
-						if(!(title_ref == undefined || contt_ref == undefined)){
-							return <AutoTooltip title = {contt_ref}><Link 
-								href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
-							>此页面的{title_ref}</Link></AutoTooltip>
-						}
+						return <AutoTooltip title = {contt_ref}><Link 
+							href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
+						>此页面的{title_ref}</Link></AutoTooltip>
 					}
 
 				}

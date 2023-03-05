@@ -102,6 +102,17 @@ class App extends  React.Component<{}, {
 		this.snackerbar_ref = React.createRef()
 	}
 
+	// 更新网页的标题
+	update_title(tree?: AbstractNode){
+		let me = this
+		if(!tree){
+			tree = me.state.tree
+		}
+		if(tree){
+			document.title = `编辑：${tree.parameters?.title?.val}`
+		}
+	}
+
 	open_snackerbar(message: string){
 		if(this.snackerbar_ref && this.snackerbar_ref.current){
 			this.snackerbar_ref.current.enqueueSnackbar(message)
@@ -141,6 +152,7 @@ class App extends  React.Component<{}, {
 				}
 			}
 		}
+		me.update_title(root)
 
 		// 获得缓存内容（其实是不必要的...）
 		let cache = await Interaction.get.cache(BackendData.node_id)
@@ -205,6 +217,7 @@ class App extends  React.Component<{}, {
 		}
 		let root = editor.get_root()
 		this.setState({tree: root})
+		this.update_title()
 		return root
 	}
 
