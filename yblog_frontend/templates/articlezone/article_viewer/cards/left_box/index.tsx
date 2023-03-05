@@ -45,7 +45,7 @@ function LeftBox(props: {root: AbstractNode}){
             <TabList onChange={(e,v)=>set_active_tab(v)} variant="scrollable" scrollButtons="auto" orientation="vertical" sx={{width: "100%"}}>
                 <Tab label="信息" value="0"/>
                 <Tab label="留言" value="1"/>
-                { BackendData.logged_in ? <Tab label="编辑" value="3"/> : <></> }
+                { BackendData.logged_in ? <Tab label="编辑" value="2"/> : <></> }
             </TabList >
         </Box>
         <Box sx={{position: "absolute", left: "5rem", width: "80%", height: "100%"}} >

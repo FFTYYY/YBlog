@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title></title>
-    <script type="module" crossorigin src="/static/articlezone/pureprinter.4df6d195.js"></script>
+    <script type="module" crossorigin src="/static/articlezone/pureprinter.4c1950db.js"></script>
     <link rel="modulepreload" href="/static/articlezone/titleword.f7f7728b.js">
     <link rel="modulepreload" href="/static/articlezone/Link.4c9f1461.js">
     <link rel="modulepreload" href="/static/articlezone/math.e82b0f78.js">
-    <link rel="modulepreload" href="/static/articlezone/index.aa4195b8.js">
+    <link rel="modulepreload" href="/static/articlezone/index.b6b43d7c.js">
     <link rel="stylesheet" href="/static/articlezone/index.0ebad6fb.css">
   </head>
   <body>
@@ -24,6 +24,9 @@
 </html>
 
 <script>
+	// TODO 还是不对，发送的高度不正确...
+	// 他好像发送的就是iframe的初始高度...
+	
 	let my_id = {{node_id}}
 	// 向父节点发送信息。
 	let my_height = -1
@@ -35,8 +38,8 @@
 		}
 		height_provider = height_provider[0]
 
-		if(my_height != height_provider.offsetHeight){
-			my_height = height_provider.offsetHeight
+		if(my_height != height_provider.scrollHeight){
+			my_height = height_provider.scrollHeight
 			window.parent.postMessage({ // 向父节点发送消息
 				verification: "showchildren" , 
 				son_id: my_id , 
