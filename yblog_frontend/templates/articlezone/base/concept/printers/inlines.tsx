@@ -191,14 +191,18 @@ var link_printer = (()=>{
 				let tar_idx = parseInt(target)
 				let cache = globalinfo.cache
 				let root = globalinfo.root as AbstractNode
-				if(autotext && cache){
-					let [title_ref , contt_ref] = get_reference_from_cache(cache, tar_idx) // 首先尝试从cache获得
+				let [title_ref , contt_ref] = [undefined , undefined]
+				if(cache){
+					[title_ref , contt_ref] = get_reference_from_cache(cache, tar_idx) // 首先尝试从cache获得
 					if(title_ref == undefined || contt_ref == undefined){ // 然后尝试重新建立cache
 						[title_ref , contt_ref] = get_reference_from_printer(printer_comp, root, tar_idx)
 					}
 					if(title_ref == undefined || contt_ref == undefined){ // 最后尝试直接从节点获得信息
 						[title_ref , contt_ref] = get_reference_from_root(root, tar_idx)
 					}
+				}
+
+				if(autotext){
 					if(!(title_ref == undefined || contt_ref == undefined)){
 						return <AutoTooltip title = {contt_ref}><Link 
 							onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
@@ -207,36 +211,39 @@ var link_printer = (()=>{
 				}
 
 				// 不要自动确定文本。
-				return <Link 
+				return <AutoTooltip title = {contt_ref}><Link 
 					onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
-				>{children}</Link> // 呃呃
+				>{children}</Link></AutoTooltip>
 			}
 			else if(type == "outer-index"){
 				let [_tar_page , _tar_idx] = target.split(":")
 				let [ tar_page ,  tar_idx] = [ parseInt(_tar_page)  , parseInt(_tar_idx) ]
 
-				if(autotext){
-					let [ root  , set_root  ] = React.useState<AbstractNode | undefined>(undefined)
-					let [ cache , set_cache ] = React.useState<PrinterCache | undefined>(undefined)
-					useEffect(()=>{
-						Interaction.get.content(tar_page).then(data=>{set_root (data)})
-						Interaction.get.cache  (tar_page).then(data=>{set_cache(data)})
-					} , []) // 传入空依赖确保这个函数只被调用一次。
-
-					if(root && cache){
-						let [title_ref , contt_ref] = get_reference_from_cache(cache, tar_idx) // 首先尝试从cache获得
-						if(title_ref == undefined || contt_ref == undefined){ // 然后尝试重新建立cache
-							[title_ref , contt_ref] = get_reference_from_printer(printer_comp, root, tar_idx)
-						}
-						if(title_ref == undefined || contt_ref == undefined){ // 最后尝试直接从节点获得信息
-							[title_ref , contt_ref] = get_reference_from_root(root, tar_idx)
-						}
-						return <AutoTooltip title = {contt_ref}><Link 
-							href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
-						>此页面的{title_ref}</Link></AutoTooltip>
+				let [ root  , set_root  ] = React.useState<AbstractNode | undefined>(undefined)
+				let [ cache , set_cache ] = React.useState<PrinterCache | undefined>(undefined)
+				useEffect(()=>{
+					Interaction.get.content(tar_page).then(data=>{set_root (data)})
+					Interaction.get.cache  (tar_page).then(data=>{set_cache(data)})
+				} , []) // 传入空依赖确保这个函数只被调用一次。
+				
+				let [title_ref , contt_ref] = [undefined , undefined]
+				if(root && cache){
+					[title_ref , contt_ref] = get_reference_from_cache(cache, tar_idx) // 首先尝试从cache获得
+					if(title_ref == undefined || contt_ref == undefined){ // 然后尝试重新建立cache
+						[title_ref , contt_ref] = get_reference_from_printer(printer_comp, root, tar_idx)
 					}
-
+					if(title_ref == undefined || contt_ref == undefined){ // 最后尝试直接从节点获得信息
+						[title_ref , contt_ref] = get_reference_from_root(root, tar_idx)
+					}
 				}
+				if(autotext){
+					return <AutoTooltip title = {contt_ref}><Link 
+						href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
+					>此页面的{title_ref}</Link></AutoTooltip>
+				}
+				return <AutoTooltip title = {contt_ref}><Link 
+					href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
+				>{children}</Link></AutoTooltip>
 			}
 
 
