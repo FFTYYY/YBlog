@@ -34,12 +34,15 @@ class ScrollBarBox extends React.Component<BoxProps>{
 
     componentDidMount(): void {
         while(!(this.divref && this.divref.current)); // 等待ref创建
-        this.os = OverlayScrollbars(this.divref.current, {
-            scrollbars:{
-                autoHide: "leave", 
-                autoHideDelay: 700 , 
-            }
-        });
+        this.os = OverlayScrollbars(
+            this.divref.current, 
+            {
+                scrollbars:{
+                    autoHide: "leave", 
+                    autoHideDelay: 700 , 
+                }
+            } , 
+        )
     }
 
     render(){

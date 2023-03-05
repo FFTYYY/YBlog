@@ -323,7 +323,6 @@ var insertchildren_printer = (()=>{
 
 			React.useEffect(()=>{(async ()=>{
 				let son_ids = await Interaction.get.son_ids(globalinfo.BackendData.node_id)
-				console.log(son_ids)
 				
 				let last_env = JSON.parse(JSON.stringify(context["env"])) // deepcopy
 				let init_envs = [] // init_envs表示每个位置所用的初始env

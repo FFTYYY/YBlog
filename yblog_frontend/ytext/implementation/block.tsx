@@ -1,5 +1,5 @@
 import React, { ReactComponentElement } from "react"
-import { ThemeOptions , Grid} from "@mui/material"
+import { Grid } from "@mui/material"
 
 import {
     Printer , 
@@ -13,6 +13,9 @@ import {
     Context, 
     ParagraphNode, 
     StructNode , 
+
+    Theme , 
+    ThemeContext , 
 } from "../core"
 import {
     ContexterBase , 
@@ -43,12 +46,14 @@ export {
  */
  function get_default_outer<NodeType extends ConceptNode>(box_props: any = {}){
     return (props: PrinterRenderFunctionProps<NodeType>) => {
+        let theme = React.useContext(ThemeContext)
+
         let {node , parameters , context} = props
         let flag = false // 是否跟前面的节点相连。
         if(node.type == "structure" || node.type == "group"){
             flag = node.relation == "chaining"
         }
-        let chaining_sx: any = {marginTop: (theme: ThemeOptions)=>remtimes(theme.margins.special , 0.5)}
+        let chaining_sx: any = {marginTop: remtimes(theme.printer.margins.special , 0.5)}
         if(box_props["small_margin"]){ // 如果要求一个小的间距
             chaining_sx = {}
         }

@@ -23,8 +23,6 @@ import {
     Settings as SettingsIcon , 
     QrCode as QrCodeIcon , 
 } from "@mui/icons-material"
-import { ThemeProvider , createTheme , styled } from "@mui/material/styles"
-import type { Theme , ThemeOptions } from "@mui/material/styles"
 
 import * as Slate from "slate"
 import * as SlateReact from "slate-react"
@@ -58,7 +56,8 @@ import {
     object_foreach , 
     merge_object ,
 
-} from "./uibase"
+} from "../core/utils"
+
 import {
     KeyEventManager , 
     MouselessElement , 
@@ -80,14 +79,16 @@ import {
     get_mouseless_space as buttons_get_mouseless_space
 } from "./buttons"
 import {
-    default_theme
-} from "../theme"
+    ThemeProvider , 
+    Theme , 
+    default_theme , 
+} from "../core/theme"
 
 export { DefaultEditorComponent }
 
 
 type DefaultEditorComponentprops = EditorComponentProps & {
-    theme?: ThemeOptions
+    theme?: Theme
     extra_buttons?: any
     onSave?: ()=>void // 保存时操作。
 
@@ -146,7 +147,7 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
 
         let me = this
 
-        return <GlobalInfoProvider value={{theme: theme}}><ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
+        return <GlobalInfoProvider value={{theme: theme}}><ThemeProvider value={theme}><EditorBackgroundPaper>
             <KeyEventManager
                 spaces = {[
                     sidebar_get_mouseless_space(me.get_editor()) , 

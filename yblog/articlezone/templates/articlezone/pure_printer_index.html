@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title></title>
-    <script type="module" crossorigin src="/static/articlezone/pureprinter.9f3f4c2d.js"></script>
-    <link rel="modulepreload" href="/static/articlezone/titleword.d4448fc4.js">
-    <link rel="modulepreload" href="/static/articlezone/math.4d5d97dc.js">
-    <link rel="modulepreload" href="/static/articlezone/Link.16ee6ed9.js">
-    <link rel="modulepreload" href="/static/articlezone/index.d70ec406.js">
-    <link rel="stylesheet" href="/static/articlezone/titleword.6b6aca55.css">
+    <script type="module" crossorigin src="/static/articlezone/pureprinter.4df6d195.js"></script>
+    <link rel="modulepreload" href="/static/articlezone/titleword.f7f7728b.js">
+    <link rel="modulepreload" href="/static/articlezone/Link.4c9f1461.js">
+    <link rel="modulepreload" href="/static/articlezone/math.e82b0f78.js">
+    <link rel="modulepreload" href="/static/articlezone/index.aa4195b8.js">
+    <link rel="stylesheet" href="/static/articlezone/index.0ebad6fb.css">
   </head>
   <body>
     
@@ -24,23 +24,24 @@
 </html>
 
 <script>
-  		// 向父节点发送信息。
-      window.addEventListener("message" , (e)=>{
-			if(e.data.verification != "showchildren" || e.data.son_id == undefined){
-				return
-			}
+	let my_id = {{node_id}}
+	// 向父节点发送信息。
+	let my_height = -1
+	setTimeout(()=>{ // 监听高度变化
+		
+		let height_provider = document.getElementsByClassName("heightProvider")
+		if(height_provider.length <= 0){
+			return 
+		}
+		height_provider = height_provider[0]
 
-			let my_height = -1
-			setInterval(()=>{ // 监听高度变化
-				if(my_height != document.body.scrollHeight){
-					my_height = document.body.scrollHeight
-					parent.postMessage({ // 向父节点发送消息
-						verification: "showchildren" , 
-						son_id: e.data.son_id , 
-						height: my_height , 
-					} , "*")
-				}
-			} , 200)
-		})
-
+		if(my_height != height_provider.offsetHeight){
+			my_height = height_provider.offsetHeight
+			window.parent.postMessage({ // 向父节点发送消息
+				verification: "showchildren" , 
+				son_id: my_id , 
+				height: my_height , 
+			} , "*")
+		}
+	} , 2000)
 </script>

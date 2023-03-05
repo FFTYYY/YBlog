@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import $ from "jquery"
-import { DoSomething } from "../../../../ytext"
+import { DoSomething } from "@ftyyy/ytext"
 // import "mathjax/es5/tex-svg"
 
 export { MathJaxContext , MathJaxInline , MathJaxBlock , flush_math, }

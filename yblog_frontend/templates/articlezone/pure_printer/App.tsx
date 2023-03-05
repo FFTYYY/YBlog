@@ -13,8 +13,11 @@ import {
 } from "@mui/material"
 
 
-import { Node , Transforms , Element } from "slate"
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
+import { 
+	createTheme as MUICreateTheme, 
+	ThemeProvider as MUIThemeProvider ,  
+} from "@mui/material/styles"
+	
 	
 import {
 	Printer , 
@@ -26,6 +29,9 @@ import {
 	EditorCore , 
 	PrinterCache , 
 	ScrollBarBox , 
+
+	ThemeContext , 
+	ThemeProvider , 
 } from "../../../ytext"
 import { my_theme } from "../base/construction"
 import { Interaction , BackendData } from "../base/interaction"
@@ -90,19 +96,22 @@ class App extends  React.Component<{} , {
 			return <></>
 		}
 
-		return <ThemeProvider theme={createTheme(my_theme)}>
+		return <MUIThemeProvider theme={MUICreateTheme(my_theme.mui)}><ThemeProvider value={my_theme} mui>
 			<CssBaseline />
-			<Box><ScrollBarBox  sx = {{
-				position: "absolute" , 
-				width: "100%" ,
-				left: "0%" , 
-				top: "0" , 
-				height: "100%" , 
-				overflow: "auto" , 
-				backgroundColor: (theme)=>theme.palette.background.default , 
-				color: (theme)=>theme.palette.text.primary , 
-	
-			}} className = "mathjax_process"><MathJaxContext>
+			<Box><ScrollBarBox  
+				sx = {{
+					position: "absolute" , 
+					width: "100%" ,
+					left: "0%" , 
+					top: "0" , 
+					height: "100%" , 
+					overflow: "auto" , 
+					backgroundColor: "background.default" , 
+					color: "text.primary" , 
+				}}
+				// heightProvider 是为了能捕获到这个元素的高度。因为body的高度是0，而这个元素的高度才是真实的高度。
+				className = "heightProvider mathjax_process" 
+			><MathJaxContext>
 				
 				<GlobalInfoProvider value={{
 					BackendData: BackendData , 
@@ -133,7 +142,7 @@ class App extends  React.Component<{} , {
 					></DefaultPrinterComponent>
 				</GlobalInfoProvider>
 			</MathJaxContext></ScrollBarBox></Box>
-		</ThemeProvider>
+		</ThemeProvider></MUIThemeProvider>
 	}
 
 }

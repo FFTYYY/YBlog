@@ -24,7 +24,7 @@ import { Interaction , BackendData , url_from_root } from "../base/interaction"
 import { Nodetree } from "../base/nodetree"
 import { TitleWord } from "../base/construction/titleword"
 import type { info_item , raw_info_item } from "../base/nodetree"
-import { AutoStack , AutoTooltip ,  } from "../../../ytext"
+import { AutoStack , AutoTooltip ,  } from "@ftyyy/ytext"
 
 class SaveButton extends React.Component<{
     save_func: (()=>Promise<boolean>)
