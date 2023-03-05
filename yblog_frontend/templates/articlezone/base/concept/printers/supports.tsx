@@ -60,7 +60,9 @@ import {
 	is_concetnode,
 	is_supportnode, 
 
-} from "../../../../../ytext"
+	ThemeContext , 
+
+} from "@ftyyy/ytext"
 
 import {
 	url_from_root , Interaction , urls , 
@@ -197,6 +199,8 @@ var showchildren_printer = (()=>{
 
 			return <React.Fragment>{sons.map((son_id , idx) => {
 				let SubIframe = (props: {}) => {
+					let theme = React.useContext(ThemeContext)
+
 					let iframe_ref = React.useRef<HTMLIFrameElement>()
 					let [ height , set_height ] = React.useState(0)
 
@@ -224,9 +228,9 @@ var showchildren_printer = (()=>{
 						<Link 
 							href = {urls.view.content(son_id)} 
 							underline = "hover" 
-							sx = {(theme)=>({
-								...theme.fonts.structure
-							})}
+							sx = {{
+								...theme.printer.fonts.structure
+							}}
 						>▶<TitleWord node_id={son_id}/></Link>
 						<Box sx={{
 							maxHeight: `${parameters.max_height}rem` , 

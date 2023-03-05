@@ -17,8 +17,10 @@ import {
 	AutoStack , 
 	AutoTooltip , 
 	AutoIconButton , 
+
+	ThemeContext , 
 } 
-from "../../../../ytext"
+from "@ftyyy/ytext"
 import { BackendData, Interaction } from "../../base/interaction"
 import { useSnackbar  } from "notistack"
 
@@ -48,7 +50,7 @@ function UploadFileButton(){
 			icon_props = {{
 				sx: {
 					marginLeft: "-0.1rem" , 
-					color: "#b5dfff" ,  // 这就是primary，但是他会把theme理解成ytext的默认theme，不知道为啥...
+					color: "primary" ,  // 这就是primary，但是他会把theme理解成ytext的默认theme，不知道为啥...
 				}
 			}}
 		/>
@@ -187,6 +189,8 @@ function SubCard(props: {id: number , name: string , url: string , onSuccess?: (
 class FileManager extends React.Component<{} , {
 	resources: [id: number , name: string , url: string][]
 }>{
+	contextType = ThemeContext
+
 	constructor(props){
 		super(props)
 
@@ -207,7 +211,7 @@ class FileManager extends React.Component<{} , {
 
 	render(){
 		let me = this
-		return <Box sx={(theme)=>({...theme.fonts.body})}><AutoStack force_direction="column">{
+		return <Box sx={me.context.printer.fonts.body}><AutoStack force_direction="column">{
 			me.state.resources.map((val , idx)=>{
 				let [id, name , url] = val
 				return <React.Fragment key={idx}>

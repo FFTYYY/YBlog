@@ -7,7 +7,7 @@ import {
     Box , Divider , Typography , Link , TextField , Chip , Paper
 } from "@mui/material"
 import { Interaction , BackendData } from "../../../base/interaction"
-import { ScrollBarBox } from "../../../../../ytext"
+import { ScrollBarBox, Theme, ThemeContext } from "@ftyyy/ytext"
 
 export { LeftComments }
 
@@ -141,6 +141,7 @@ class NewComments extends React.Component<{
 
 /** 这个组件是左边留言区域的总体。 */
 class LeftComments extends React.Component<{} , {}>{
+    static contextType = ThemeContext
     comment_ref: React.RefObject<Comments>
     constructor(props){
         super(props)
@@ -149,13 +150,14 @@ class LeftComments extends React.Component<{} , {}>{
     }
     render(){
         let me = this
-        return <Box sx = {(theme)=>({
-            ...theme.fonts.structure , 
+        let theme = me.context as Theme
+        return <Box sx = {{
+            ...theme.printer.fonts.structure , 
             position: "absolute" , 
             top: "2%",
             bottom : "2%" ,  
             width: "100%" , 
-        })}>
+        }}>
 
             <ScrollBarBox sx={{
                 position: "absolute" , 
@@ -179,7 +181,7 @@ class LeftComments extends React.Component<{} , {}>{
                 top: "38%" , 
                 left: "1rem" , 
                 right: "1rem" , 
-                backgroundColor: (theme)=>theme.palette.background.default , 
+                backgroundColor: "background.default" , 
                 paddingX: "0.25rem" , 
                 paddingY: "0.25rem" , 
             }} variant="outlined">

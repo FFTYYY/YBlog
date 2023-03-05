@@ -55,7 +55,7 @@ import {
 	PrinterCache, 
 	AbstractNode , 
 	DefaultAbstractRendererAsProperty , 
-} from "../../../../../ytext"
+} from "@ftyyy/ytext"
 
 import {
 	url_from_root , Interaction , urls , 

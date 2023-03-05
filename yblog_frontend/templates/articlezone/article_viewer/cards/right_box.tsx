@@ -34,8 +34,9 @@ import {
     is_supportnode , 
     ScrollBarBox , 
     Node, 
-    is_paragraphnode, 
-} from "../../../../ytext"
+    is_paragraphnode,
+    ThemeContext, 
+} from "@ftyyy/ytext"
 import { LeftBasic } from "./left_box/left_basic"
 import { LeftComments } from "./left_box/left_comments"
 
@@ -59,15 +60,16 @@ function find_sectioner(node: Node, path: number[] = []){
 function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}){
 
     let sectioners = find_sectioner(props.root)
+    let theme = React.useContext(ThemeContext)
 
-    return <Box sx={(theme)=>({
-            ...theme.fonts.body , 
+    return <Box sx={{
+            ...theme.printer.fonts.body , 
             position: "relative" , 
             top: "30%" , 
             height: "40%" , 
             width: "auto" , 
-    })}><Paper variant="outlined" sx={{
-        backgroundColor: (theme)=>theme.palette.background.default , 
+    }}><Paper variant="outlined" sx={{
+        backgroundColor: "background.default" , 
         
         position: "absolute" , 
         width: "100%", 

@@ -20,7 +20,10 @@ import {
     AbstractNode , 
     ScrollBarBox , 
     PrinterStructureBoxText , 
-} from "../../../../../ytext"
+
+    ThemeContext , 
+    Theme , 
+} from "@ftyyy/ytext"
 import { Nodetree } from "../../../base/nodetree"
 import type { raw_info_item } from "../../../base/nodetree"
 import { Interaction , BackendData , urls , url_from_root } from "../../../base/interaction"
@@ -80,7 +83,7 @@ class Navigation extends React.Component<{} , {
             }</ Box>
             <Link 
                 key = "link"
-                sx = {(theme)=>({fontSize: "0.9rem"})} 
+                sx = {{fontSize: "0.9rem"}} 
                 underline = "hover" 
                 href = {props.url}
                 color = "text.primary"
@@ -194,11 +197,12 @@ class BasicInformation extends React.Component<{
         let title = this.props.root.parameters.title.val
 
         let ItemBox = (props: {title: string, content: string}) => { 
+            let theme = React.useContext(ThemeContext)
             return <Box
-                sx = {(theme)=>({marginBottom: "1rem"})}
+                sx = {{marginBottom: "1rem"}}
             >
                 <Typography color="text.secondary" sx={{
-                    marginRight: (theme)=>theme.margins.colon , 
+                    marginRight: theme.printer.margins.colon , 
                     fontSize: "0.5rem" , 
                     display: "inline-block" , 
                 }}>{props.title}</Typography>
@@ -216,23 +220,25 @@ class BasicInformation extends React.Component<{
 
 /** 这个组件是左边基本信息部分的总体。 */
 class LeftBasic extends React.Component<{root: AbstractNode}>{
+    static contextType = ThemeContext
     constructor(props){
         super (props)
     }
     render(){
-        return <Box sx = {(theme)=>({
-            ...theme.fonts.body , 
+        let theme = this.context as Theme
+        return <Box sx = {{
+            ...theme.printer.fonts.body , 
             position: "absolute" , 
             top: "2%",
             bottom : "2%" ,  
             width: "100%" , 
-        })}>
+        }}>
             <Paper sx = {{
                 position: "absolute" , 
                 paddingLeft: "1rem", 
                 paddingRight: "0.5rem", 
                 paddingY: "0.25rem" , 
-                backgroundColor: (theme)=>theme.palette.background.default , 
+                backgroundColor: "background.default" , 
                 top: "1%" , 
                 left: "0" , 
                 height: "23%" ,  
@@ -256,7 +262,7 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
                 position: "absolute" , 
                 paddingX: "0.5rem", 
                 paddingY: "0.25rem" , 
-                backgroundColor: (theme)=>theme.palette.background.default , 
+                backgroundColor: "background.default" , 
                 top: "27%" , 
                 bottom: "2%" , 
                 width: "100%" , 

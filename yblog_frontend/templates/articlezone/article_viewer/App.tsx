@@ -10,10 +10,16 @@ import {
 	EditorCore , 
 	PrinterCache , 
 	ScrollBarBox , 
-} from "../../../ytext"
+
+	ThemeContext , 
+	ThemeProvider , 
+} from "@ftyyy/ytext"
 
 
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
+import { 
+	createTheme as MUICreateTheme, 
+	ThemeProvider as MUIThemeProvider ,  
+} from "@mui/material/styles"
 	
 import { my_theme } from "../base/construction"
 import { Interaction , BackendData } from "../base/interaction"
@@ -97,15 +103,15 @@ class App extends  React.Component<{} , {
 			return <></>
 		}
 		// TODO 不知道为什么build之后cssbaseline没有生效，需要手动加入背景和前景颜色。
-		return <ThemeProvider theme={{...createTheme({...my_theme})}}><Box sx={(theme)=>({
+		return <MUIThemeProvider theme={MUICreateTheme(my_theme.mui)}><ThemeProvider value={my_theme}><Box sx={{
 			position: "fixed" , 
 			width: "100%" , 
 			height: "100%" , 
 			left: "0" , 
 			right: "0" , 
-			backgroundColor: theme.palette.background.default , 
-			color: theme.palette.text.primary , 
-		})}><CssBaseline />
+			backgroundColor: "background.default" , 
+			color: "text.primary" , 
+		}}><CssBaseline />
 			<Box sx={{
 				position: "absolute" , 
 				top: "2%" ,
@@ -151,7 +157,7 @@ class App extends  React.Component<{} , {
 						<DefaultPrinterComponent 
 							ref = {me.printer_comp_ref}
 							printer = {printer} 
-							theme = {{...my_theme}}
+							theme = {my_theme}
 							onUpdateCache = {(cache)=>{
 								if(cache && JSON.stringify(cache) != JSON.stringify(me.state.cache)){
 									// XXX 这里会报warning，这是因为printer里在render()里调用了这个函数...
@@ -197,8 +203,7 @@ class App extends  React.Component<{} , {
 					}}
 				/>
 			</Box>
-
-			</Box></ThemeProvider>
+		</Box></ThemeProvider></MUIThemeProvider>
 	}
 }
 

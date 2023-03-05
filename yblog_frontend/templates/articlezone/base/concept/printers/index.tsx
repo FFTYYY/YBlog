@@ -11,7 +11,7 @@ import {
 	useless_renderer_text , 
 	useless_renderer_inline , 
 	useless_renderer_block , 
-} from "../../../../../ytext"
+} from "@ftyyy/ytext"
 
 
 import {renderers as group_struct_renderers} from "./group_structs"

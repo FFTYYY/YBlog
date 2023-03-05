@@ -14,18 +14,20 @@ import {
 import {
 	EditorCore , 
     GroupNode , 
-    AutoStack , 
-} from "../../../../../ytext"
+    AutoStack, 
+    ThemeContext, 
+} from "@ftyyy/ytext"
 import { Interaction , BackendData , url_from_root } from "../../../base/interaction"
 
 export { LeftEdit }
 
 let MyLink = (props: LinkProps)=>{
-    return <Link {...props} sx={(theme)=>({
+    let theme = React.useContext(ThemeContext)
+    return <Link {...props} sx={{
         marginTop: "0.2rem",
         marginBottom: "0.3rem",
-        ...theme.fonts.body , 
-    })}></Link>
+        ...theme.printer.fonts.body , 
+    }}></Link>
 }
 
 class LeftEdit extends React.Component<{} , {}>{

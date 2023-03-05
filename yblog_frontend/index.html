@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite App</title>
+    
   </head>
   <body>
     <div id = "root" class = "mathjax_ignore"></div>
@@ -12,18 +13,25 @@
     <!-- <script type="module" src="/convert/main.tsx"></script> -->
 
     <!-- <script type="module" src="/templates/articlezone/article_editor/main.tsx"></script> -->
-
-    <script type="module" src="/templates/articlezone/article_editor/main.tsx"></script>
     <!-- <script type="module" src="/templates/articlezone/nodetree/main.tsx"></script> -->
-    <!-- <script type="module" src="/templates/articlezone/article_viewer/main.tsx"></script> -->
+    <script type="module" src="/templates/articlezone/article_viewer/main.tsx"></script>
     <!-- <script type="module" src="/templates/articlezone/pure_printer/main.tsx"></script> -->
   </body>
 
-  <div style="display:none;" id="_data_node_id">1000</div>
+  <div style="display:none;" id="_data_node_id">431</div>
   <div style="display:none;" id="_data_csrf">xxx</div>
   <div style="display:none;" id="_data_logged_in">true</div>
   <div style="display:none;" id="_data_linkto">168510037</div>
   <div style="display:none;" id="_data_shallow">true</div>
 
+  <script>
+    const old_console_error = console.error
+    console.error = (msg, ...args) => { // filter out react warnings
+      if(msg.startsWith(`Warning: Each child in a list should have a unique "key" prop.`)){
+        return undefined
+      }
+      return old_console_error(msg, ...args)
+    }
+  </script>
 
 </html>

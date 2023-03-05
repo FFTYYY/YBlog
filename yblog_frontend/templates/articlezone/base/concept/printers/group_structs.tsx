@@ -54,7 +54,9 @@ import {
     PrinterRenderFunctionProps, 
     PrinterRenderFunction , 
 	DefaultAbstractRendererAsProperty , 
-} from "../../../../../ytext"
+
+	ThemeContext , 
+} from "@ftyyy/ytext"
 
 import {
 	url_from_root , Interaction , urls , 
@@ -324,10 +326,11 @@ var display_printer = (()=>{
 	return get_default_group_renderer({
 		inner: (props: PrinterRenderFunctionProps<GroupNode>) => {
 			let {node , parameters , context , children} = props
+			let theme = React.useContext(ThemeContext)
 			// XXX 这里为啥有autostack
 			return <PrinterDisplayText sx={{
-				fontSize: (theme)=>remtimes(theme.fonts.structure.fontSize , 1.4) , //字号翻倍
-				lineHeight: (theme)=>remtimes(theme.fonts.structure.lineHeight , 1.4) ,  //行高翻倍
+				fontSize	: remtimes(theme.printer.fonts.structure.fontSize 	, 1.4) , //字号翻倍
+				lineHeight	: remtimes(theme.printer.fonts.structure.lineHeight , 1.4) ,  //行高翻倍
 			}}>
 				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
 					{props.children}

@@ -4,7 +4,7 @@ import {
     get_default_abstract_renderer , 
     PrinterPartBox , 
     ScrollBarBox, 
-} from "../../../../../ytext"
+} from "@ftyyy/ytext"
 
 export {
     renderers

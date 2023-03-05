@@ -43,12 +43,18 @@ import {
 	DefaultRendererhDict,
 	EditorDefaultRendererhDict, 
 	EditorRendererDict , 
-} from "../../../ytext"
+
+	ThemeProvider , 
+	ThemeContext , 
+} from "@ftyyy/ytext"
 
 import * as Slate from "slate"
 import * as SlateReact from "slate-react"
 
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
+import { 
+	createTheme as MUICreateTheme , 
+	ThemeProvider  as MUIThemeProvider ,
+} from "@mui/material/styles"
 
 import { 
 	renderers , 
@@ -215,7 +221,7 @@ class App extends  React.Component<{}, {
 			return [tree_property , children]
 		})()
 
-		return <ThemeProvider theme={createTheme(my_theme)}><Box sx={(theme)=>({
+		return <MUIThemeProvider theme={MUICreateTheme(my_theme.mui)}><ThemeProvider value={my_theme} mui><Box sx={(theme)=>({
 			position: "fixed" , 
 			width: "100%" , 
 			height: "100%" , 
@@ -290,7 +296,6 @@ class App extends  React.Component<{}, {
 							height: "100%" , 
 							overflow: "auto" , 
 							paddingRight: "1%" , 
-
 						}} 
 						className = "mathjax_process" // 启动mathjax处理
 					><MathJaxContext>
@@ -327,7 +332,7 @@ class App extends  React.Component<{}, {
 				</Box>
 				
 			</Box>
-		</SnackbarProvider></Box></ThemeProvider>
+		</SnackbarProvider></Box></ThemeProvider></MUIThemeProvider>
 	}
 
 }
