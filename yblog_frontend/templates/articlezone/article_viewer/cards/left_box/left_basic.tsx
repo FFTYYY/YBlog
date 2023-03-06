@@ -173,6 +173,9 @@ class BasicInformation extends React.Component<{
 } , {
     create_time: any , 
     modify_time: any , 
+    TLDR?: string , 
+    vis_secret?: boolean 
+    vis_indis?: boolean 
 }>{
     constructor(props){
         super(props)
@@ -180,14 +183,24 @@ class BasicInformation extends React.Component<{
         this.state = {
             create_time: undefined , 
             modify_time: undefined , 
+            TLDR: undefined , 
+
+            vis_secret: undefined , // 是否不让看
+            vis_indis : undefined , // 是否杂陈
         }
     }
 
     async componentDidMount() {
         let time_info = await Interaction.get.create_time(BackendData.node_id)
+        let tldr = await Interaction.get.tldr(BackendData.node_id)
+        let visibility = await Interaction.get.visibility(BackendData.node_id)
         this.setState({
             create_time: time_info.create_time , 
             modify_time: time_info.modify_time , 
+            TLDR: tldr , 
+            vis_secret: visibility.secret , 
+            vis_indis : visibility.indiscriminate_provider , 
+
         })
 
     }
@@ -196,7 +209,7 @@ class BasicInformation extends React.Component<{
         let me = this
         let title = this.props.root.parameters.title.val
 
-        let ItemBox = (props: {title: string, content: string}) => { 
+        let ItemBox = (props: {title: string, content: any}) => { 
             let theme = React.useContext(ThemeContext)
             return <Box
                 sx = {{marginBottom: "1rem"}}
@@ -209,11 +222,30 @@ class BasicInformation extends React.Component<{
                 <Typography sx={{fontSize: "0.8rem" , display: "inline-block" , }}>{props.content}</Typography>
             </Box>
         }
-            
+        
+        let Vis = <></>
+        if(BackendData.logged_in){
+            Vis = <Box sx={{textAlign: "left"}}>
+                {me.state.vis_secret ? <Chip  label="不让看"  variant="outlined" color="primary" size="small" /> : <></>}
+                {me.state.vis_indis  ? <Chip  label="杂陈"    variant="outlined" color="primary" size="small" /> : <></>}
+            </Box>
+        }
+
         return <Box>
             {/* <ItemBox title="题目" content={`${title}`} /> */}
             <ItemBox title="创建时间" content={me.state.create_time} />
             <ItemBox title="修改时间" content={me.state.modify_time} />
+            <ItemBox title="太长不看" content={me.state.TLDR} />
+            {
+                BackendData.logged_in ? 
+                <ItemBox title="可见性" content={
+                    <Box sx={{textAlign: "left"}}>
+                        {me.state.vis_secret ? <Chip  label="不让看"  variant="outlined" color="info" size="small" /> : <></>}
+                        {me.state.vis_indis  ? <Chip  label="杂陈"    variant="outlined" color="info" size="small" /> : <></>}
+                    </Box>
+                } /> : <></>
+            }
+    
         </Box>
     }
 }
@@ -245,7 +277,7 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
                 width: "100%" , 
             }}>
                 
-                <Box sx={{textAlign: "right"}}><Chip  label="基本信息"  variant="outlined" color="secondary" size="small" /></Box>
+                <Box sx={{textAlign: "right"}}><Chip  label="基本信息"  color="secondary" size="small" /></Box>
                 <ScrollBarBox sx = {{
                     position: "absolute" , 
                     top: "2.25rem" , 
@@ -267,7 +299,7 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
                 bottom: "2%" , 
                 width: "100%" , 
             }}>
-                <Box sx={{textAlign: "right"}}><Chip  label="其他文章"  variant="outlined" color="secondary" size="small" /></Box>
+                <Box sx={{textAlign: "right"}}><Chip  label="其他文章"  color="secondary" size="small" /></Box>
 
                 <ScrollBarBox sx = {{
                     position: "absolute" , 

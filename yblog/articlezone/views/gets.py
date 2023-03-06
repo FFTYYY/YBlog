@@ -73,6 +73,29 @@ def get_node_create_time(request , node_id):
 	})
 
 @debug_convenient
+def get_node_tldr(request , node_id):
+	node = Node.objects.get(id = node_id) 
+	if not node_can_view(request , node):
+		return Http404()
+
+	return JsonResponse({
+		"tldr": node.tldr , 
+	})
+
+@debug_convenient
+def get_node_visibility(request , node_id):
+	node = Node.objects.get(id = node_id) 
+	if not node_can_view(request , node):
+		return Http404()
+
+	return JsonResponse({
+		"visibility": {
+			"secret": node.secret , 
+			"indiscriminate_provider": node.indiscriminate_provider , 
+		}
+	})
+
+@debug_convenient
 def get_nodetree(request , node_id):
 
 	if node_id == 0:

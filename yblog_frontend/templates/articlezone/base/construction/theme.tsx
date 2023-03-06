@@ -9,11 +9,14 @@ const my_theme: Theme = {
             primary: {
                 main: "#404080",
             },
+            info: {
+                main: "#666677",
+            },
             secondary: {
-                main: "#A02020",
+                main: "#8080AA",
             },
             background: {
-                default: "rgba(230,230,230,0.96)",
+                default: "rgba(220,220,220,0.96)",
                 paper: "#393942",
             },
             text: {

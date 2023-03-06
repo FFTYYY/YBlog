@@ -101,6 +101,8 @@ var urls = {
         resource_info : (nodeid: number)  => url_from_root( `get/node/resource_info/${nodeid}` ) , 
         son_ids     : (nodeid: number)  => url_from_root( `get/node/son_ids/${nodeid}` ) ,  
         father_id   : (nodeid: number)  => url_from_root( `get/node/father_id/${nodeid}` ) , 
+        tldr        : (nodeid: number)  => url_from_root( `get/node/tldr/${nodeid}` ) , 
+        visibility  : (nodeid: number)  => url_from_root( `get/node/visibility/${nodeid}` ) , 
     } , 
     post: {
         content : (nodeid: number) => url_from_root( `post/node/content/${nodeid}` ) , 
@@ -148,8 +150,10 @@ var Interaction = {
             })).data
         } , 
         
-        son_ids     :(nodeid: number) => get_node_information(urls.get.son_ids    , "son_ids" , nodeid), 
-        father_id   :(nodeid: number) => get_node_information(urls.get.father_id  , "father_id", nodeid), 
+        son_ids     :(nodeid: number) => get_node_information(urls.get.son_ids      , "son_ids"     , nodeid), 
+        father_id   :(nodeid: number) => get_node_information(urls.get.father_id    , "father_id"   , nodeid), 
+        tldr        :(nodeid: number) => get_node_information(urls.get.tldr         , "tldr"        , nodeid), 
+        visibility  :(nodeid: number) => get_node_information(urls.get.visibility   , "visibility"  , nodeid), 
     } , 
 
     /** 所有向后端发送数据的函数。 */

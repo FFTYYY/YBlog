@@ -185,7 +185,7 @@ class LeftComments extends React.Component<{} , {}>{
                 paddingX: "0.25rem" , 
                 paddingY: "0.25rem" , 
             }}>
-                <Box sx={{textAlign: "right"}}><Chip  label="留言列表"  variant="outlined" color="secondary" size="small" /></Box>
+                <Box sx={{textAlign: "right"}}><Chip  label="留言列表"  color="secondary" size="small" /></Box>
                 <ScrollBarBox sx={{
                     position: "absolute" , 
                     left: "0.25rem" , 
