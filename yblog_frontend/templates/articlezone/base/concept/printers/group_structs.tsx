@@ -122,7 +122,6 @@ var brightwords_printer = (()=>{
 		let title_ref = `${info.parameters.title} ${order_str}`
 
 		let content_ref = cut_str( node2string_autotip(info.node) )
-		console.log( node2string_autotip(info.node) )
 
 		return {
 			title: title_ref , 

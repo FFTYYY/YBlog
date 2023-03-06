@@ -4,13 +4,14 @@ import React from "react"
 
 import {
     Tabs , Tab , Button , IconButton , 
-    Box , Divider , Typography , Link , Chip , Paper , 
+    Box , Divider , Typography , Link , Chip , Paper , Avatar 
 } from "@mui/material"
 import {
     ExpandMore as ExpandMoreIcon , 
     ChevronRight as ChevronRightIcon , 
     ArrowUpward as ArrowUpwardIcon , 
     ArrowDownward as ArrowDownwardIcon , 
+    DoNotTouch as DoNotTouchIcon  , 
 } from "@mui/icons-material"
 
 import {
@@ -71,24 +72,31 @@ class Navigation extends React.Component<{} , {
     }
 
     /** 这个组件显示一行带按钮的文字。 */
-    WordsWithButton(props:{words: any , onClick?: ((e)=>void) , title?: any, icon?: any, url: string}){
+    WordsWithButton(props:{words: any , onClick?: ((e)=>void) , title?: any, icon?: any, url: string, weak: boolean}){
         let Icon = props.icon
-        return <Box sx={{marginTop: "0.5rem"}}><AutoStack>
-            <Box sx={{flex: "0 0 1.5rem"}} key="box">{
+        return <Box sx={{marginTop: "0.5rem"}}>
+            <Box key="box" sx={{display: "inline-block", width: "1.5rem", verticalAlign:"top"}}>{
                 Icon 
                 ? <AutoTooltip title={props.title}><IconButton size="small" onClick={props.onClick}>
                     <Icon sx={{fontSize: "0.9rem"}}/>
                 </IconButton></AutoTooltip>
                 : <></>
             }</ Box>
-            <Link 
-                key = "link"
-                sx = {{fontSize: "0.9rem"}} 
-                underline = "hover" 
-                href = {props.url}
-                color = "text.primary"
-            >{props.words}</Link>
-        </AutoStack></Box>
+
+            <Box key="link" sx={{display: "inline-block", left: "1.5rem", width: "80%" }}>{
+                <Link 
+                    sx = {{fontSize: "0.9rem", textAlign: "left", }} 
+                    underline = "hover" 
+                    href = {props.url}
+                    color = {"text.primary"}
+                >{props.words}</Link>
+            }</ Box>
+            <Box key="unseen" sx={{display: "inline-block", right: 0, height: "auto", position: "absolute"}}>{
+                props.weak ? 
+                <AutoTooltip title="不让看"><DoNotTouchIcon color="secondary" fontSize="small"/></AutoTooltip>
+                : <></>
+        }</ Box>
+        </Box>
     }
 
     /** 这个组件显示一个子节点的项。 */
@@ -96,12 +104,17 @@ class Navigation extends React.Component<{} , {
         let me = this
         let node_id = props.node_id
         let [ have_sons , set_have_sons ] = React.useState(true) // 这个子节点是否还有子节点。
+        let [ visible   , set_visible   ] = React.useState(false) // 这个节点是否不可见。
         let WordsWithButton = this.WordsWithButton.bind(this)
 
         React.useEffect(()=>{(async ()=>{
             let sons = await Interaction.get.son_ids(node_id)
             set_have_sons(sons.length > 0)
+
+            let visibility = await Interaction.get.visibility(node_id)
+            set_visible(!visibility.secret)
         })()})
+
 
         return <React.Fragment>{
             have_sons 
@@ -112,11 +125,13 @@ class Navigation extends React.Component<{} , {
                 onClick = { ()=>me.set_father_id(node_id) }
                 icon = {ArrowDownwardIcon}
                 url = { urls.view.content(node_id) }
+                weak = { !visible}
             />
             : <WordsWithButton // 不能再往下惹
                 key = "word"
                 words = {<TitleWord node_id={node_id} />} 
                 url = { urls.view.content(node_id) }
+                weak = { !visible }
             />  
         }</React.Fragment>
     }
@@ -128,9 +143,14 @@ class Navigation extends React.Component<{} , {
         let WordsWithButton = this.WordsWithButton.bind(this)
 
         let [ father_id , set_father_id ] = React.useState(-1) // 当前父节点的父节点
+        let [ visible   , set_visible   ] = React.useState(true) // 当前父节点是否不可见。
 
         React.useEffect(()=>{(async ()=>{
-            set_father_id(await Interaction.get.father_id(node_id))
+            let _father_id = await Interaction.get.father_id(node_id)
+            set_father_id(_father_id)
+
+            let visibility = await Interaction.get.visibility(node_id)
+            set_visible(!visibility.secret)
         })()})
 
         return <React.Fragment>{
@@ -141,10 +161,12 @@ class Navigation extends React.Component<{} , {
                 onClick = { ()=>me.set_father_id(father_id)}
                 icon = {ArrowUpwardIcon}
                 url = { urls.view.content(node_id) }
+                weak = { !visible }
             />
             : <WordsWithButton // 不能往上惹
                 words = {<TitleWord node_id={node_id} />} 
                 url = { urls.view.content(node_id) }
+                weak = { !visible }
             />
         }</React.Fragment>
     }
@@ -235,7 +257,7 @@ class BasicInformation extends React.Component<{
             {/* <ItemBox title="题目" content={`${title}`} /> */}
             <ItemBox title="创建时间" content={me.state.create_time} />
             <ItemBox title="修改时间" content={me.state.modify_time} />
-            <ItemBox title="太长不看" content={me.state.TLDR} />
+            {me.state.TLDR ? <ItemBox title="太长不看" content={me.state.TLDR} /> : <></>}
             {
                 BackendData.logged_in ? 
                 <ItemBox title="可见性" content={
