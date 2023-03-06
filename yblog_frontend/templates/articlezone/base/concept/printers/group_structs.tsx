@@ -65,7 +65,8 @@ import {
 import {
 	make_oerder_str , 
 	node2string , 
-	cut_str , 
+	cut_str, 
+	node2string_autotip, 
 } from "./utils"
 
 import {
@@ -120,7 +121,8 @@ var brightwords_printer = (()=>{
 		let order_str = make_oerder_str(order , info.parameters.ordering) // 生成标题字符串
 		let title_ref = `${info.parameters.title} ${order_str}`
 
-		let content_ref = cut_str( node2string(info.node) )
+		let content_ref = cut_str( node2string_autotip(info.node) )
+		console.log( node2string_autotip(info.node) )
 
 		return {
 			title: title_ref , 

@@ -17,6 +17,7 @@ import { Interaction , BackendData } from "../../../base/interaction"
 import { LeftBasic } from "./left_basic"
 import { LeftComments } from "./left_comments"
 import { LeftEdit } from "./left_edit"
+import { LeftContact } from "./left_contact"
 export {LeftBox}
 
 // XXX 我想搞个渐变啥的...
@@ -45,14 +46,16 @@ function LeftBox(props: {root: AbstractNode}){
             <TabList onChange={(e,v)=>set_active_tab(v)} variant="scrollable" scrollButtons="auto" orientation="vertical" sx={{width: "100%"}}>
                 <Tab label="信息" value="0"/>
                 <Tab label="留言" value="1"/>
-                { BackendData.logged_in ? <Tab label="编辑" value="2"/> : <></> }
+                <Tab label="关于" value="2"/>
+                { BackendData.logged_in ? <Tab label="编辑" value="3"/> : <></> }
             </TabList >
         </Box>
         <Box sx={{position: "absolute", left: "5rem", width: "80%", height: "100%"}} >
             <MyTablePanel value={"0"} active_tab={active_tab}><LeftBasic root={props.root}/></MyTablePanel>
             <MyTablePanel value={"1"} active_tab={active_tab}><LeftComments /></MyTablePanel>
+            <MyTablePanel value={"2"} active_tab={active_tab}><LeftContact  /></MyTablePanel>
             { BackendData.logged_in ? 
-                <MyTablePanel value={"2"} active_tab={active_tab}><LeftEdit /></MyTablePanel>
+                <MyTablePanel value={"3"} active_tab={active_tab}><LeftEdit /></MyTablePanel>
             : <></> }
         </Box>
         

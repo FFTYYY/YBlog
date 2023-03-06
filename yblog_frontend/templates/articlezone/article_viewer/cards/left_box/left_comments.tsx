@@ -131,7 +131,7 @@ class NewComments extends React.Component<{
                 value = {me.state.name}
             />
             <Box sx={{
-                textAlign: "right" , 
+                textAlign: "left" , 
                 marginTop: "1rem"
             }}><Button variant=  "outlined" onClick = {()=>me.submit()}>新建留言</Button></Box>
         </Box>

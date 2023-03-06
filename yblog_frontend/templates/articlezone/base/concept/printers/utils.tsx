@@ -3,6 +3,8 @@ import {
     Node , 
     is_textnode , 
     ConceptNode , 
+    is_groupnode , 
+    is_inlinenode , 
 } from "@ftyyy/ytext"
 
 import {
@@ -14,6 +16,7 @@ export {
     idx2node , 
     node2string , 
     cut_str , 
+    node2string_autotip , 
 }
 
 /** 根据给定的编号和编号格式，生成编号字符串。 */
@@ -55,14 +58,31 @@ function idx2node(root: Node, idx: number): ConceptNode | undefined{
     return undefined
 }
 
+/** 这个是一般的节点转字符串函数。这个函数会忠实地只转换叶子text节点。 */
 function node2string(node: Node){
     if(is_textnode(node)){
         return node.text
     }
-    return (node.children as Node[]).reduce((s: string,x: Node)=>s + node2string(x), "")
+    let ret = (node.children as Node[]).reduce((s: string,x: Node)=>s + node2string(x), "")
+    return ret
 }
 
-function cut_str(str: string, len: number = 100){
+/** 这个是给autotooltip用的node2string。这个节点会给数学节点加上额外内容。 */
+function node2string_autotip(node: Node){
+    if(is_textnode(node)){
+        return node.text
+    }
+    let ret = (node.children as Node[]).reduce((s: string,x: Node)=>s + node2string_autotip(x), "")
+    if(is_groupnode(node) && node.concept == "数学-块"){
+        return "$$" + ret + `\\text{${node?.parameters?.suffix?.val}}` + "$$"
+    }
+    if(is_inlinenode(node) && node.concept == "数学-行内"){
+        return "$" + ret + "$"
+    }
+    return ret
+}
+
+function cut_str(str: string, len: number = 300){
     if(str.length < len){
         return str
     }

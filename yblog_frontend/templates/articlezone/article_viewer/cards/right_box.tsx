@@ -93,8 +93,6 @@ function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}
                 title = <Box sx={{display: "flex", flexDirection: "row"}}>
                     <Box sx={{marginRight: "1rem"}}>{num2chinese(Number(idx)+1)}</Box>
                     <Box sx={{textAlign: "left"}}>{node.parameters.title.val}</Box>
-                    {/* <Box component = "span" sx={{marginRight: "1rem"}}>{num2chinese(Number(idx)+1)}</Box>
-                    <Box component = "span">{node.parameters.title.val}</Box> */}
                 </Box>
             }
 

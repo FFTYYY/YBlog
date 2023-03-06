@@ -33,28 +33,28 @@ const my_theme: Theme = {
         fonts: {
             body: {
                 fontFamily: "STXihei" , 
-                fontSize: "1.1rem" ,
-                lineHeight: "1.6rem" , 
+                fontSize: "1.0rem" ,
+                lineHeight: "1.5rem" , 
             },
             title: {
                 fontFamily: "SimHei" , 
-                fontSize: "1.1rem" ,
-                lineHeight: "1.6rem" , 
+                fontSize: "1.0rem" ,
+                lineHeight: "1.5rem" , 
             } , 
             structure: {
                 fontFamily: "SimHei" , 
-                fontSize: "1.1rem" ,
-                lineHeight: "1.6rem" , 
+                fontSize: "1.0rem" ,
+                lineHeight: "1.5rem" , 
             } , 
             display: {
                 fontFamily: "KaiTi" , 
                 fontSize: "1.1rem" ,
-                lineHeight: "1.6rem" , 
+                lineHeight: "1.5rem" , 
             } , 
             weaken: {
                 fontFamily: "FangSong" , 
-                fontSize: "1.1rem" ,
-                lineHeight: "1.6rem" , 
+                fontSize: "1.0rem" ,
+                lineHeight: "1.5rem" , 
             }
         } , 
     }

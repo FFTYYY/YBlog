@@ -5,53 +5,16 @@ import {
 } from "@mui/material"
 
 import {
-    Node , 
-	TextNode , 
-
-	get_default_group_renderer , 
-    get_default_paragraph_renderer , 
     get_default_inline_renderer , 
 
-    ContexterBase , 
-    OrderContexter , 
-    InjectContexter , 
-    ConsumerContexter , 
-
-	PreprocessFunction , 
-	PreprocessInformation , 
-
-	auto_renderer , 
-	
-	PrinterDivider , 
-	PrinterWeakenText , 
-	PrinterDisplayText , 
-	PrinterStructureBoxText  , 
-	PrinterParagraphBox , 
-	PrinterPartBox , 
-	PrinterNewLevelBox , 
-	PrinterOldLevelBox , 
-	PrinterBackgroundPaper , 
-	
-	AutoStack , 
-
 	GlobalInfo , 
-	GlobalInfoProvider, 
 	AutoTooltip, 
-	ProcessedParameterList , 
-	get_default_structure_renderer , 
 
 	ReferenceContexter , 
 	PrinterComponent , 
 
-    PrinterRenderer , 
-	GroupNode , 
-	StructNode , 
-	SupportNode , 
 	InlineNode , 
-	Env  , 
-	Context  , 
     PrinterRenderFunctionProps, 
-    PrinterRenderFunction, 
 	PrinterCache, 
 	AbstractNode , 
 	DefaultAbstractRendererAsProperty , 
@@ -66,11 +29,14 @@ import {
     idx2node ,
 	node2string ,  
 	cut_str , 
+	node2string_autotip , 
 } from "./utils"
 
 import {
 	MathJaxInline , 
 	MathJaxBlock , 
+	flush_math , 
+	MathJaxFlusher , 
 } from "../../construction"
 
 export {
@@ -172,7 +138,7 @@ var link_printer = (()=>{
 			return [undefined, undefined]
 		}
 
-		return [ `此${tar_node.concept}`, cut_str(node2string(tar_node)) ]
+		return [ `此${tar_node.concept}`, cut_str(node2string_autotip(tar_node)) ]
 
 	}
 
@@ -202,9 +168,11 @@ var link_printer = (()=>{
 					}
 				}
 
+				let contt_ref_comp = <MathJaxFlusher>{contt_ref}</MathJaxFlusher> as any
+
 				if(autotext){
 					if(!(title_ref == undefined || contt_ref == undefined)){
-						return <AutoTooltip title = {contt_ref}><Link 
+						return <AutoTooltip title={contt_ref_comp}><Link 
 							onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
 						>{title_ref}</Link></AutoTooltip>
 					}
@@ -236,12 +204,16 @@ var link_printer = (()=>{
 						[title_ref , contt_ref] = get_reference_from_root(root, tar_idx)
 					}
 				}
+				
+				// 添加数学刷新器。
+				let contt_ref_comp = <MathJaxFlusher>{contt_ref}</MathJaxFlusher> as any
+
 				if(autotext){
-					return <AutoTooltip title = {contt_ref}><Link 
+					return <AutoTooltip title = {contt_ref_comp}><Link 
 						href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
 					>此页面的{title_ref}</Link></AutoTooltip>
 				}
-				return <AutoTooltip title = {contt_ref}><Link 
+				return <AutoTooltip title = {contt_ref_comp}><Link 
 					href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
 				>{children}</Link></AutoTooltip>
 			}

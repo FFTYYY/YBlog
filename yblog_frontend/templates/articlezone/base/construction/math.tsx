@@ -3,7 +3,7 @@ import $ from "jquery"
 import { DoSomething } from "@ftyyy/ytext"
 // import "mathjax/es5/tex-svg"
 
-export { MathJaxContext , MathJaxInline , MathJaxBlock , flush_math, }
+export { MathJaxContext , MathJaxInline , MathJaxBlock , MathJaxFlusher , flush_math, }
 
 let MATHJAX_INLINE_START = "$"
 let MATHJAX_INLINE_END = "$"
@@ -91,3 +91,12 @@ function MathJaxBlock(props: {children: any}){
     } , [props.children] )
     return <div className = "mathjax_process">{MATHJAX_BLOCK_START}{props.children}{MATHJAX_BLOCK_END}</div>
 }
+
+function MathJaxFlusher(props: {children: any}){
+
+    React.useEffect(()=>{
+        flush_mathjax()
+    } , [props.children] )
+    return <div className = "mathjax_process">{props.children}</ div>
+}
+
