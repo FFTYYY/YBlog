@@ -12,6 +12,7 @@ import {
     ArrowUpward as ArrowUpwardIcon , 
     ArrowDownward as ArrowDownwardIcon , 
     DoNotTouch as DoNotTouchIcon  , 
+    TaxiAlert  as TaxiAlertIcon ,
 } from "@mui/icons-material"
 
 import {
@@ -45,6 +46,9 @@ class Navigation extends React.Component<{} , {
 
     /** 当前所有子节点的`id`。 */
     son_ids: number[]
+
+    /** 杂陈节点的`id`。 */
+    indis_ids: number[]
 }>{
     constructor(props){
         super(props)
@@ -52,12 +56,21 @@ class Navigation extends React.Component<{} , {
         this.state = {
             father_id: BackendData.node_id , 
             son_ids: [] , // 当前展开的树节点。
+            indis_ids: [] , // 当前的杂陈节点。
         }
     }
 
     async set_father_id(new_father_id: number) {
         let son_ids = (await Interaction.get.son_ids(new_father_id)) as number []
-        this.setState({father_id: new_father_id , son_ids: son_ids})
+
+        
+        let indiscriminants = (await Interaction.get.indiscriminates(new_father_id)) as number []
+
+        this.setState({
+            father_id: new_father_id , 
+            son_ids  : son_ids , 
+            indis_ids: indiscriminants , 
+        })
     }
 
     async componentDidMount() {
@@ -72,8 +85,22 @@ class Navigation extends React.Component<{} , {
     }
 
     /** 这个组件显示一行带按钮的文字。 */
-    WordsWithButton(props:{words: any , onClick?: ((e)=>void) , title?: any, icon?: any, url: string, weak: boolean}){
+    WordsWithButton(props:{
+        words: any , 
+        title?: any, 
+        icon?: any, 
+        url: string, 
+        onClick?: ((e)=>void) , 
+
+        weak?: boolean, 
+        indis?: boolean
+    }){
         let Icon = props.icon
+        
+        let middle_width = "80%" // 中间部分的长度
+        if(props.weak && props.indis)
+            middle_width = "75%"
+
         return <Box sx={{marginTop: "0.5rem"}}>
             <Box key="box" sx={{display: "inline-block", width: "1.5rem", verticalAlign:"top"}}>{
                 Icon 
@@ -83,7 +110,7 @@ class Navigation extends React.Component<{} , {
                 : <></>
             }</ Box>
 
-            <Box key="link" sx={{display: "inline-block", left: "1.5rem", width: "80%" }}>{
+            <Box key="link" sx={{display: "inline-block", left: "1.5rem", width: middle_width }}>{
                 <Link 
                     sx = {{fontSize: "0.9rem", textAlign: "left", }} 
                     underline = "hover" 
@@ -91,16 +118,28 @@ class Navigation extends React.Component<{} , {
                     color = {"text.primary"}
                 >{props.words}</Link>
             }</ Box>
-            <Box key="unseen" sx={{display: "inline-block", right: 0, height: "auto", position: "absolute"}}>{
+            {
                 props.weak ? 
-                <AutoTooltip title="不让看"><DoNotTouchIcon color="secondary" fontSize="small"/></AutoTooltip>
+                <Box key="unseen" sx={{display: "inline-block", right: 0, height: "1.2rem", position: "absolute"}}>
+                    <AutoTooltip title="不让看"><DoNotTouchIcon color="secondary" sx={{fontSize: "1.2rem"}}/></AutoTooltip>
+                </ Box>
                 : <></>
-        }</ Box>
+            }
+            {
+                props.indis ? 
+                <Box key="indis" sx={{display: "inline-block", right: "1.2rem", height: "1.2rem", position: "absolute"}}>
+                    <AutoTooltip title="杂陈"><TaxiAlertIcon color="secondary" sx={{fontSize: "1.2rem"}}/></AutoTooltip>
+                </ Box>
+                : <></>
+            }
         </Box>
     }
 
-    /** 这个组件显示一个子节点的项。 */
-    SubnodeItem(props: {node_id: number}){
+    /** 这个组件显示一个子节点的项。 
+     * @param props.node_id 这个节点的`id`。
+     * @param props.indis 这个节点是不是一个杂陈节点。
+    */
+    SubnodeItem(props: {node_id: number, indis?: boolean}){
         let me = this
         let node_id = props.node_id
         let [ have_sons , set_have_sons ] = React.useState(true) // 这个子节点是否还有子节点。
@@ -119,19 +158,21 @@ class Navigation extends React.Component<{} , {
         return <React.Fragment>{
             have_sons 
             ? <WordsWithButton // 有子节点
-                key = "word"
+                key   = "word"
                 words = {<TitleWord node_id={node_id} />} 
                 title = "下行" 
                 onClick = { ()=>me.set_father_id(node_id) }
-                icon = {ArrowDownwardIcon}
-                url = { urls.view.content(node_id) }
-                weak = { !visible}
+                icon  = {ArrowDownwardIcon}
+                url   = { urls.view.content(node_id) }
+                weak  = { !visible}
+                indis = { props.indis }
             />
             : <WordsWithButton // 不能再往下惹
-                key = "word"
+                key   = "word"
                 words = {<TitleWord node_id={node_id} />} 
-                url = { urls.view.content(node_id) }
-                weak = { !visible }
+                url   = { urls.view.content(node_id) }
+                weak  = { !visible }
+                indis = { props.indis }
             />  
         }</React.Fragment>
     }
@@ -174,15 +215,20 @@ class Navigation extends React.Component<{} , {
     render(){
 
         let me = this
-        let now_id       = this.state.father_id
-        let now_son_ids  = this.state.son_ids
+        let now_id          = this.state.father_id
+        let now_son_ids     = this.state.son_ids
+        let now_indis_ids   = this.state.indis_ids
         let F = this.FathernodeItem.bind(this)
         let S = this.SubnodeItem.bind(this)
+
 
         return <Box sx={{marginTop: "0.5rem"}}><AutoStack force_direction="column">
             {<F node_id = {now_id}/>}
             <Box sx={{marginLeft: "1rem"}}>{
-                now_son_ids.map((son_id , idx)=><React.Fragment key={idx}><S node_id={son_id}/></React.Fragment>)
+                now_indis_ids.map((son_id , idx)=><React.Fragment key={idx}><S node_id={son_id} indis/></React.Fragment>)
+            }</Box>
+            <Box sx={{marginLeft: "1rem"}}>{
+                now_son_ids  .map((son_id , idx)=><React.Fragment key={idx}><S node_id={son_id}/></React.Fragment>)
             }</Box>
         </AutoStack></Box>
     }

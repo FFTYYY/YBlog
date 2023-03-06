@@ -96,6 +96,22 @@ def get_node_visibility(request , node_id):
 	})
 
 @debug_convenient
+def get_indiscriminates(request , node_id):
+
+	node = Node.objects.get(id = node_id) 
+
+	if not node_can_view(request , node):
+		return Http404()
+
+	lis = node.gather_indiscriminates()
+
+	return JsonResponse({
+		"indiscriminates": [ 
+			x.id for x in lis if node_can_view(request , x) # 只返回能被看见的节点的信息
+		]
+	})
+
+@debug_convenient
 def get_nodetree(request , node_id):
 
 	if node_id == 0:

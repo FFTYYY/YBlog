@@ -61,6 +61,14 @@ class Node(models.Model):
 			return self.father.can_public_view()
 		return True
 
+	def gather_indiscriminates(self):
+		'''收集子树中所有的indiscriminate_provider节点'''
+		if not self.indiscriminate_consumer: # 自己必须是consumer才能提供indiscriminate_provider信息
+			return []
+		sons = list(filter(lambda x: x.indiscriminate_provider, self.get_sons()))
+		return sons
+
+
 	def get_sons(self , max_depth = 999):
 		'''返回所有子节点，包括自己。'''
 		if max_depth < 0:
