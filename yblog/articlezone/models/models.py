@@ -20,10 +20,14 @@ class Node(models.Model):
 	content  = models.TextField(default = "", blank = True)
 	cache    = models.TextField(default = "", blank = True)
 	concept_def  = models.ForeignKey(Concept, on_delete = models.SET_NULL , null = True , blank = True , related_name = "node")
+	tldr 	 = models.TextField(default = "", blank = True) # 摘要...
 
 	create_time = models.DateTimeField(default = timezone.now)
 	update_time = models.DateTimeField(default = timezone.now)
 	secret = models.BooleanField(default = True)
+
+	indiscriminate_provider = models.BooleanField(default = False) # 这个节点将要被杂陈展示
+	indiscriminate_consumer = models.BooleanField(default = False) # 这个节点杂陈展示其子节点中要被杂陈展示者
 
 	def __str__(self):
 		return self.get_title()

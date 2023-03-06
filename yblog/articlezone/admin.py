@@ -40,11 +40,11 @@ class NodeAdmin(admin.ModelAdmin):
                                
         return [
             ["可见性" , {
-                "fields": ["secret"] , 
+                "fields": ["secret" , "indiscriminate_provider" , "indiscriminate_consumer"] , 
                 "description": visualbility_desc , 
             }] , 
             ["内容" , {
-                "fields": ["concept_def" , "content" , "cache"] , 
+                "fields": ["concept_def" , "tldr" , "content" , "cache"] , 
                 "description": desc_edit_content , 
             }] , 
             ["结构" , {
