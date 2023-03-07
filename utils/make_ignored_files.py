@@ -14,7 +14,7 @@ def generate_key():
 	length = random.randint(20,50)
 	return "".join( random.sample(dic * length , length) )
 
-file_path =  Path(__file__) / "../../yblog/yblog/extra_infos.py" 
+file_path =  Path(__file__).parent / "../yblog/yblog/extra_infos.py" 
 file_content = '''
 SECRET_KEY = '{0}'
 DEBUG = False

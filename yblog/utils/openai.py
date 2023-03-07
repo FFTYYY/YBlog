@@ -3,7 +3,7 @@ import openai
 from pathlib import Path
 import time
 
-file_path =  Path(__file__) / "../openai_keys.txt" 
+file_path =  Path(__file__).parent / "openai_keys.txt" 
 
 flag_initialized = True
 if not os.path.exists(file_path):

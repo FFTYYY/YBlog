@@ -1,7 +1,7 @@
 
 from pathlib import Path
 
-file_path =  Path(__file__) / "../../yblog/utils/openai_keys.txt"
+file_path =  Path(__file__).parent / "../yblog/utils/openai_keys.txt"
 
 org = input("organization:")
 key = input("api_key:")
