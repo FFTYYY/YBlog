@@ -3,7 +3,9 @@ from django.db import models
 from ..constants import SHORT_STR_LENGTH 
 import django.utils.timezone as timezone
 import json
+from .chatgpt import generate_tldr
 from django.contrib import admin
+import time
 
 class Concept(models.Model):
 	content = models.TextField(default = "", blank = True)
@@ -20,7 +22,8 @@ class Node(models.Model):
 	content  = models.TextField(default = "", blank = True)
 	cache    = models.TextField(default = "", blank = True)
 	concept_def  = models.ForeignKey(Concept, on_delete = models.SET_NULL , null = True , blank = True , related_name = "node")
-	tldr 	 = models.TextField(default = "", blank = True) # 摘要...
+	tldr 	 = models.TextField(default = "", blank = True, null = True) # 摘要...
+	tldr_updatetime = models.IntegerField(default = 0) # 摘要...
 
 	create_time = models.DateTimeField(default = timezone.now)
 	update_time = models.DateTimeField(default = timezone.now)
@@ -92,6 +95,11 @@ class Node(models.Model):
 	def save(self , *args , **kwargs):
 
 		self.update_time = timezone.now()
+
+		now_time = int( time.time() )
+		if now_time - self.tldr_updatetime > 864000: # 10天更新一次。
+			self.tldr = generate_tldr(self)
+			self.tldr_updatetime = now_time
 	
 		return super().save(*args , **kwargs)
 

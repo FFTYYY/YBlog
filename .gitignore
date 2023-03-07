@@ -22,3 +22,4 @@ yblog/scripts/export.json
 backgit
 yblog_frontend/convert/output.json
 yblog_frontend/convert/output_converted.json
+openai_keys.txt

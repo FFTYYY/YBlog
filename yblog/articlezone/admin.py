@@ -51,8 +51,8 @@ class NodeAdmin(admin.ModelAdmin):
                 "fields": ["father" , "index_in_father"] , 
                 "description": desc_edit_struct , 
             }] , 
-            ["元信息" , {
-                "fields": ["create_time" , "update_time"] , 
+            ["信息" , {
+                "fields": ["tldr_updatetime", "create_time" , "update_time"] , 
             }]
         ]
 
