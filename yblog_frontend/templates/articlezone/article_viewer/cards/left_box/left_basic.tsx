@@ -30,6 +30,7 @@ import { Nodetree } from "../../../base/nodetree"
 import type { raw_info_item } from "../../../base/nodetree"
 import { Interaction , BackendData , urls , url_from_root } from "../../../base/interaction"
 import { TitleWord } from "../../../base/construction/titleword"
+import { MathJaxFlusher } from "../../../base/construction/math"
 
 
 export { LeftBasic }
@@ -155,7 +156,7 @@ class Navigation extends React.Component<{} , {
         })()})
 
 
-        return <React.Fragment>{
+        return <React.Fragment><MathJaxFlusher>{
             have_sons 
             ? <WordsWithButton // 有子节点
                 key   = "word"
@@ -174,7 +175,7 @@ class Navigation extends React.Component<{} , {
                 weak  = { !visible }
                 indis = { props.indis }
             />  
-        }</React.Fragment>
+        }</MathJaxFlusher></React.Fragment>
     }
 
     /** 这个组件显示父节点的项。 */
@@ -194,7 +195,7 @@ class Navigation extends React.Component<{} , {
             set_visible(!visibility.secret)
         })()})
 
-        return <React.Fragment>{
+        return <React.Fragment><MathJaxFlusher>{
             father_id > 0
             ? <WordsWithButton  // 可以往上
                 words = {<TitleWord node_id={node_id} />} 
@@ -209,7 +210,7 @@ class Navigation extends React.Component<{} , {
                 url = { urls.view.content(node_id) }
                 weak = { !visible }
             />
-        }</React.Fragment>
+        }</MathJaxFlusher></React.Fragment>
     }
     
     render(){
@@ -287,7 +288,9 @@ class BasicInformation extends React.Component<{
                     fontSize: "0.5rem" , 
                     display: "inline-block" , 
                 }}>{props.title}</Typography>
-                <Typography sx={{fontSize: "0.8rem" , display: "inline-block" , }}>{props.content}</Typography>
+                <Typography sx={{fontSize: "0.8rem" , display: "inline-block" , whiteSpace: "pre-wrap"}}>{
+                    props.content
+                }</Typography>
             </Box>
         }
         
@@ -303,7 +306,13 @@ class BasicInformation extends React.Component<{
             {/* <ItemBox title="题目" content={`${title}`} /> */}
             <ItemBox title="创建时间" content={me.state.create_time} />
             <ItemBox title="修改时间" content={me.state.modify_time} />
-            {me.state.TLDR ? <ItemBox title="太长不看" content={me.state.TLDR} /> : <></>}
+            {
+                me.state.TLDR ? 
+                <MathJaxFlusher>
+                    <ItemBox title="太长不看" content={me.state.TLDR} /> 
+                </MathJaxFlusher>
+                : <></>
+            }
             {
                 BackendData.logged_in ? 
                 <ItemBox title="可见性" content={

@@ -28,7 +28,7 @@ import { renderers , default_renderers } from "../base/concept"
 import { parse_second_concepts } from "../base/utils"
 import { first_concepts } from "../base/concept"
 import { LeftBox, RightBox } from "./cards"
-import { flush_math } from "../base/construction/math"
+import { flush_math , MathJaxFlusher } from "../base/construction/math"
 
 import "overlayscrollbars/overlayscrollbars.css"
 import { OverlayScrollbars } from "overlayscrollbars"
@@ -137,9 +137,9 @@ class App extends  React.Component<{} , {
 					top: "1%" , 
 					height: "3%" , 
 				}}>
-					<PrinterStructureBoxText sx={{textAlign: "center"}}>{
+					<PrinterStructureBoxText sx={{textAlign: "center"}}><MathJaxFlusher>{
 						tree.parameters.title.val
-					}</PrinterStructureBoxText>
+					}</MathJaxFlusher></PrinterStructureBoxText>
 				</Box>
 
 				<ScrollBarBox  sx = {{

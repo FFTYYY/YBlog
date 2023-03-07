@@ -98,8 +98,10 @@ class Node(models.Model):
 
 		now_time = int( time.time() )
 		if now_time - self.tldr_updatetime > 864000: # 10天更新一次。
-			self.tldr = generate_tldr(self)
-			self.tldr_updatetime = now_time
+			new_tldr = generate_tldr(self)
+			if new_tldr is not None and new_tldr.strip() != "":
+				self.tldr = new_tldr
+				self.tldr_updatetime = now_time
 	
 		return super().save(*args , **kwargs)
 

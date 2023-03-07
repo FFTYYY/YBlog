@@ -128,7 +128,11 @@ var sectioner_printer = (()=>{
 var ender_printer = (()=>{
 	return auto_renderer<SupportNode>({
 		render_function: (props: PrinterRenderFunctionProps<SupportNode>) => {
-			return <Divider />
+			// 手动添加了一个box，来防止滚动条的高度异常。
+			return <React.Fragment>
+				<Divider/>
+				<Box sx={{height: "2rem"}}></Box> 
+			</React.Fragment> 
 		}
 	})
 })()

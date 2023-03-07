@@ -25,6 +25,7 @@ import {
 } from "@mui/icons-material"
 
 import { num2chinese } from "../../base/utils"
+import { MathJaxFlusher } from "../../base/construction"
 
 
 import {
@@ -37,8 +38,6 @@ import {
     is_paragraphnode,
     ThemeContext, 
 } from "@ftyyy/ytext"
-import { LeftBasic } from "./left_box/left_basic"
-import { LeftComments } from "./left_box/left_comments"
 
 export { RightBox }
 
@@ -92,7 +91,7 @@ function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}
             if(is_supportnode(node) && node.type == "support" && node.concept == "小节线"){
                 title = <Box sx={{display: "flex", flexDirection: "row"}}>
                     <Box sx={{marginRight: "1rem"}}>{num2chinese(Number(idx)+1)}</Box>
-                    <Box sx={{textAlign: "left"}}>{node.parameters.title.val}</Box>
+                    <Box sx={{textAlign: "left"}}><MathJaxFlusher>{node.parameters.title.val}</MathJaxFlusher></Box>
                 </Box>
             }
 
