@@ -254,11 +254,14 @@ class App extends  React.Component<{}, {
 				left: "1%" , 
 				height: "96%" , 
 				width: "98%" , 
+				textAlign: "center" , 
 			}}>
 				<Card sx={{
 					position: "absolute" , 
 					left: "0" , 
-					width: "2%" ,
+					width: "auto" ,
+					display: "flex" , 
+					flexDirection: "column"
 				}}>
 					<SaveButton save_func = {me.save_content.bind(me)}/>
 					<FileManageButton />

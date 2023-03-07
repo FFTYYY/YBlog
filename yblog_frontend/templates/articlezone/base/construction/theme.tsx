@@ -17,7 +17,7 @@ const my_theme: Theme = {
             },
             background: {
                 default: "rgba(220,220,220,0.96)",
-                paper: "#393942",
+                paper: "rgba(210,210,210,1)",
             },
             text: {
                 primary     : "#020202",

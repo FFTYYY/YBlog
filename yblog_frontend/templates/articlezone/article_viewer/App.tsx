@@ -13,6 +13,8 @@ import {
 
 	ThemeContext , 
 	ThemeProvider , 
+
+	KeyEventManager , 
 } from "@ftyyy/ytext"
 
 
@@ -41,6 +43,7 @@ class App extends  React.Component<{} , {
 	printer: Printer  | undefined
 	tree: AbstractNode  | undefined
 	cache: PrinterCache | undefined
+	link_mode: boolean 
 }>{
 	printer_comp_ref: React.RefObject<DefaultPrinterComponent>
 
@@ -51,6 +54,8 @@ class App extends  React.Component<{} , {
 			printer: undefined , 
 			tree: undefined , 
 			cache: undefined , 
+
+			link_mode: false , // 如果进入链接模式，每个元素都可以单击并提供自己的链接路径。
 		}
 		this.printer_comp_ref = React.createRef()
 	}
@@ -111,9 +116,10 @@ class App extends  React.Component<{} , {
 			height: "100%" , 
 			left: "0" , 
 			right: "0" , 
-			backgroundColor: "background.default" , 
+			backgroundColor: "background.default", 
 			color: "text.primary" , 
-		}}><CssBaseline />
+		}}
+		><CssBaseline />
 			<Box sx={{
 				position: "absolute" , 
 				top: "2%" ,
@@ -142,15 +148,18 @@ class App extends  React.Component<{} , {
 					}</MathJaxFlusher></PrinterStructureBoxText>
 				</Box>
 
-				<ScrollBarBox  sx = {{
-					position: "absolute" , 
-					width: "98%" ,
-					left: "1%" , 
-					top: "5%" , 
-					height: "94%" , 
-					overflowY: "auto" ,
-					wordBreak:"break-all" , 
-				}} className = "mathjax_process"><MathJaxContext>
+				<ScrollBarBox  
+					sx = {{
+						position: "absolute" , 
+						width: "98%" ,
+						left: "1%" , 
+						top: "5%" , 
+						height: "94%" , 
+						overflowY: "auto" ,
+						wordBreak:"break-all" , 
+					}} 
+					className = "mathjax_process"
+				><MathJaxContext>
 					
 					<GlobalInfoProvider value={{
 						BackendData: BackendData , 
