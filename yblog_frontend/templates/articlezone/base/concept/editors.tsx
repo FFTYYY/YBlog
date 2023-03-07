@@ -114,6 +114,9 @@ var image_editor = get_default_display_editor({
 var showchildren_editor = get_default_display_editor({
     get_label: (n,p)=>"展示子节点", 
 })
+var gatherindis_editor = get_default_display_editor({
+    get_label: (n,p)=>"展示杂陈节点", 
+})
 
 
 var insertchildren_editor = get_default_display_editor({
@@ -148,6 +151,7 @@ let editors = {
         "小节线": sectioner_editor , 
         "章节线": ender_editor , 
         "展示子节点": showchildren_editor , 
+        "展示杂陈节点": gatherindis_editor , 
         "插入子节点": insertchildren_editor , 
     } , 
     "abstract": {

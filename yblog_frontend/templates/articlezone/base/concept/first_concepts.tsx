@@ -28,6 +28,7 @@ export {
     alignedwords_style , 
     dimwords_style , 
     showchildren_style , 
+    gatherindis_style , 
     insertchildren_style , 
     nothing_style , 
 }
@@ -230,6 +231,15 @@ var showchildren_style = new FirstClassConcept ({type: "support", name: "展示�
         scroll: true , 
     })
 })
+var gatherindis_style = new FirstClassConcept ({type: "support", name: "展示杂陈节点" , 
+    parameter_prototype: make_param({
+        label: "展示杂陈节点" , 
+        max_height: -1 , 
+        min_height: -1 , 
+        scroll: true , 
+    })
+})
+
 var insertchildren_style = new FirstClassConcept ({type: "support", name: "插入子节点" , 
     parameter_prototype: make_param({
         label: "插入子节点" , 
@@ -257,6 +267,7 @@ let first_concepts = [
     alignedwords_style , 
     dimwords_style , 
     showchildren_style , 
+    gatherindis_style , 
     insertchildren_style , 
     nothing_style , 
 ]

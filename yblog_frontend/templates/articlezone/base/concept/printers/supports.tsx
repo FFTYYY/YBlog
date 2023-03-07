@@ -3,8 +3,16 @@ import ReactDom from "react-dom"
 import * as Slate from "slate"
 
 import {
-	Box , Link , Typography , Divider , Grid
+	Box , Link , Typography , Divider , Grid , Chip
 } from "@mui/material"
+import {
+    ExpandMore as ExpandMoreIcon , 
+    ChevronRight as ChevronRightIcon , 
+    ArrowUpward as ArrowUpwardIcon , 
+    ArrowDownward as ArrowDownwardIcon , 
+    DoNotTouch as DoNotTouchIcon  , 
+    TaxiAlert  as TaxiAlertIcon ,
+} from "@mui/icons-material"
 
 import {
     Node , 
@@ -174,7 +182,6 @@ var image_printer = (()=>{
 	})
 })()
 
-// TODO 高度不对...
 var showchildren_printer = (()=>{
 	return new PrinterRenderer({
 		enter(node: Readonly<SupportNode> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){    
@@ -188,11 +195,19 @@ var showchildren_printer = (()=>{
 			let {node , parameters , context , children} = props
 			
 			let [ sons , set_sons ] = React.useState([])
+			let [ tldrs , set_tldrs ] = React.useState({})
 
 			React.useEffect(()=>{
 				(async ()=>{
 					let son_ids = await Interaction.get.son_ids(globalinfo.BackendData.node_id)
 					set_sons( son_ids )
+
+					let now_tldrs = {}
+					for(let son_id of son_ids){
+						let now_tldr = await Interaction.get.tldr(son_id)
+						now_tldrs[son_id] = now_tldr
+					}
+					set_tldrs(now_tldrs)
 				})()
 
 			} , [ JSON.stringify(parameters) ])
@@ -200,38 +215,26 @@ var showchildren_printer = (()=>{
 			return <React.Fragment>{sons.map((son_id , idx) => {
 				let SubIframe = (props: {}) => {
 					let theme = React.useContext(ThemeContext)
-
-					let iframe_ref = React.useRef<HTMLIFrameElement>()
-					let [ height , set_height ] = React.useState(0)
-
-					let listen_to_resize = (e)=>{
-						if(e.data.verification != "showchildren" || e.data.son_id == undefined){
-							return
-						}
-						if(String(e.data.son_id) == String(son_id) && e.data.height != height){
-							set_height(e.data.height)
-						}
-					}
-
-					React.useEffect( ()=>{
-						window.addEventListener("message" , listen_to_resize)
-
-						return ()=>{
-							window.removeEventListener("message" , listen_to_resize)
-						}
-					}, [])
-
-					let iframe_height = `${height + 140}px`
 					let overflow = parameters.scroll ? "auto" : "hidden"
 
+					let tldr = tldrs[son_id]
+					let estimate_height = (tldr / 100) * 12 // XXX xjb估计的...
+
 					return <Box>
-						<Link 
-							href = {urls.view.content(son_id)} 
-							underline = "hover" 
-							sx = {{
-								...theme.printer.fonts.structure
-							}}
-						>▶<TitleWord node_id={son_id}/></Link>
+						<Box >
+							<Link 
+								href = {urls.view.content(son_id)} 
+								underline = "hover" 
+								sx = {{
+									...theme.printer.fonts.structure
+								}}
+							>▶<TitleWord node_id={son_id}/></Link>
+							<Box sx={{display: "inline", textAlign: "right", right: 0, position: "absolute"}}>
+								<AutoTooltip title="这个节点是一个子节点">
+									<ChevronRightIcon color="secondary" sx={{fontSize: "1.2rem"}}/>
+								</AutoTooltip>
+							</Box>
+						</Box>
 						<Box sx={{
 							maxHeight: `${parameters.max_height}rem` , 
 							minHeight: `${parameters.min_height}rem` , 
@@ -239,26 +242,15 @@ var showchildren_printer = (()=>{
 							borderLeft: "1px solid" , 
 							marginLeft: "2px" , 
 							paddingLeft: "1rem" , 
+							paddingY: "2rem" , 
+							marginY: "0.5rem" , 
+							whiteSpace: "pre-wrap" , 
 						}}>
-							<iframe 
-								ref = {iframe_ref}
-								src = {urls.view.pure_printer(son_id)} 
-								onLoad = {()=>{
-									iframe_ref.current.contentWindow.postMessage({
-										son_id: son_id , 
-										verification: "showchildren"
-									} , "*")
-								}}
-								style = {{
-									width: "100%" , 
-									border: "none" , 
-									height: iframe_height , 
-								}}
-							/>
+							{tldr}
 						</Box>
 						{(()=>{
 							if(overflow == "hidden"){
-								let inner_height = (height + 40) // 估计实际高度
+								let inner_height = estimate_height // 估计实际高度
 								let outer_height = parseInt(parameters.max_height) * 16 // 估计裁剪高度
 								if(outer_height > 0 && outer_height < inner_height){ // 估计有被截断
 									return <>...</>
@@ -371,12 +363,98 @@ var insertchildren_printer = (()=>{
 })()
 
 
+var gatherindis_printer = (()=>{
+	return new PrinterRenderer({
+		enter(node: Readonly<SupportNode> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){    
+			context["env"] = JSON.parse(JSON.stringify(env)) // 把整个env记到context里面去。
+        } ,
+		exit(node: Readonly<SupportNode> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context): [PrinterCacheItem, boolean]{
+			return [{} , true]
+		} , 
+		renderer(props: PrinterRenderFunctionProps<SupportNode>){
+			let globalinfo = React.useContext(GlobalInfo)
+			let {node , parameters , context , children} = props
+			
+			let [ indis , set_indis ] = React.useState([])
+			let [ tldrs , set_tldrs ] = React.useState({})
+
+			React.useEffect(()=>{
+				(async ()=>{
+					let son_ids = await Interaction.get.indiscriminates(globalinfo.BackendData.node_id)
+					set_indis( son_ids )
+
+					let now_tldrs = {}
+					for(let son_id of son_ids){
+						let now_tldr = await Interaction.get.tldr(son_id)
+						now_tldrs[son_id] = now_tldr
+					}
+					set_tldrs(now_tldrs)
+				})()
+
+			} , [ JSON.stringify(parameters) ])
+
+			return <React.Fragment>{indis.map((son_id , idx) => {
+				let SubIframe = (props: {}) => {
+					let theme = React.useContext(ThemeContext)
+					let overflow = parameters.scroll ? "auto" : "hidden"
+
+					let tldr = tldrs[son_id]
+					let estimate_height = (tldr / 100) * 12 // XXX xjb估计的...
+
+					return <Box>
+						<Box >
+							<Link 
+								href = {urls.view.content(son_id)} 
+								underline = "hover" 
+								sx = {{
+									...theme.printer.fonts.structure
+								}}
+							>▶<TitleWord node_id={son_id}/></Link>
+							<Box sx={{display: "inline", textAlign: "right", right: 0, position: "absolute"}}>
+								<AutoTooltip title="这个节点是一个杂陈节点">
+									<TaxiAlertIcon color="secondary" sx={{fontSize: "1.2rem"}}/>
+								</AutoTooltip>
+							</Box>
+						</Box>
+						<Box sx={{
+							maxHeight: `${parameters.max_height}rem` , 
+							minHeight: `${parameters.min_height}rem` , 
+							overflow: overflow , 
+							borderLeft: "1px solid" , 
+							marginLeft: "2px" , 
+							paddingLeft: "1rem" , 
+							paddingY: "2rem" , 
+							marginY: "0.5rem" , 
+							whiteSpace: "pre-wrap" , 
+						}}>
+							{tldr}
+						</Box>
+						{(()=>{
+							if(overflow == "hidden"){
+								let inner_height = estimate_height // 估计实际高度
+								let outer_height = parseInt(parameters.max_height) * 16 // 估计裁剪高度
+								if(outer_height > 0 && outer_height < inner_height){ // 估计有被截断
+									return <>...</>
+								}
+							}
+							return <></>
+						})()}
+					</Box>
+				}
+				return <SubIframe key = {idx} />
+			})}</React.Fragment>
+		} , 
+	})
+})()
+
+
 let renderers = {
 	"support": {
 		"小节线": sectioner_printer , 
 		"章节线": ender_printer , 
 		"图"  : image_printer , 
 		"展示子节点": showchildren_printer , 
+		"展示杂陈节点": gatherindis_printer , 
 		"插入子节点": insertchildren_printer , 
 	} , 
 }
