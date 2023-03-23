@@ -6,12 +6,6 @@ import {
     Tabs , Tab , Button , IconButton , 
     Box , Divider , Typography , Link , Chip , Paper , 
 } from "@mui/material"
-import {
-    ExpandMore as ExpandMoreIcon , 
-    ChevronRight as ChevronRightIcon , 
-    ArrowUpward as ArrowUpwardIcon , 
-    ArrowDownward as ArrowDownwardIcon , 
-} from "@mui/icons-material"
 
 import {
 	EditorCore , 

@@ -69,6 +69,7 @@ import {
 	is_supportnode, 
 
 	ThemeContext , 
+	TextIcon , 
 
 } from "@ftyyy/ytext"
 
@@ -234,9 +235,9 @@ var showchildren_printer = (()=>{
 								}}
 							>▶<TitleWord node_id={son_id}/></Link>
 							<Box sx={{display: "inline", textAlign: "right", right: 0, position: "absolute"}}>
-								<AutoTooltip title="这个节点是一个子节点">
-									<ChevronRightIcon color="secondary" sx={{fontSize: "1.2rem"}}/>
-								</AutoTooltip>
+								<AutoTooltip title="这个节点是一个子节点"><Box>
+								<TextIcon text="子" fontSize="small" color={(theme.mui.palette.info as any).main}/>
+							</Box></AutoTooltip>
 							</Box>
 						</Box>
 						<Box sx={{
@@ -415,9 +416,9 @@ var gatherindis_printer = (()=>{
 								}}
 							>▶<TitleWord node_id={son_id}/></Link>
 							<Box sx={{display: "inline", textAlign: "right", right: 0, position: "absolute"}}>
-								<AutoTooltip title="这个节点是一个杂陈节点">
-									<TaxiAlertIcon color="secondary" sx={{fontSize: "1.2rem"}}/>
-								</AutoTooltip>
+								<AutoTooltip title="这个节点是浮上来的节点"><Box>
+									<TextIcon text="浮" fontSize="small" color={(theme.mui.palette.info as any).main}/>
+								</Box></AutoTooltip>
 							</Box>
 						</Box>
 						<Box sx={{

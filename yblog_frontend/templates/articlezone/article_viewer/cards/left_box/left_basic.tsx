@@ -7,12 +7,8 @@ import {
     Box , Divider , Typography , Link , Chip , Paper , Avatar 
 } from "@mui/material"
 import {
-    ExpandMore as ExpandMoreIcon , 
-    ChevronRight as ChevronRightIcon , 
     ArrowUpward as ArrowUpwardIcon , 
     ArrowDownward as ArrowDownwardIcon , 
-    DoNotTouch as DoNotTouchIcon  , 
-    TaxiAlert  as TaxiAlertIcon ,
 } from "@mui/icons-material"
 
 import {
@@ -25,6 +21,7 @@ import {
 
     ThemeContext , 
     Theme , 
+	TextIcon , 
 } from "@ftyyy/ytext"
 import { Nodetree } from "../../../base/nodetree"
 import type { raw_info_item } from "../../../base/nodetree"
@@ -101,6 +98,7 @@ class Navigation extends React.Component<{} , {
         let middle_width = "80%" // 中间部分的长度
         if(props.weak && props.indis)
             middle_width = "75%"
+        let theme = React.useContext(ThemeContext)
 
         return <Box sx={{marginTop: "0.5rem"}}>
             <Box key="box" sx={{display: "inline-block", width: "1.5rem", verticalAlign:"top"}}>{
@@ -122,14 +120,18 @@ class Navigation extends React.Component<{} , {
             {
                 props.weak ? 
                 <Box key="unseen" sx={{display: "inline-block", right: 0, height: "1.2rem", position: "absolute"}}>
-                    <AutoTooltip title="不让看"><DoNotTouchIcon color="secondary" sx={{fontSize: "1.2rem"}}/></AutoTooltip>
+                    <AutoTooltip title="不让看"><Box>
+                        <TextIcon text="隐" fontSize="small" color={(theme.mui.palette.info as any).main}/>
+                    </Box></AutoTooltip>
                 </ Box>
                 : <></>
             }
             {
                 props.indis ? 
                 <Box key="indis" sx={{display: "inline-block", right: "1.2rem", height: "1.2rem", position: "absolute"}}>
-                    <AutoTooltip title="杂陈"><TaxiAlertIcon color="secondary" sx={{fontSize: "1.2rem"}}/></AutoTooltip>
+                    <AutoTooltip title="这个节点是下面浮上来的"><Box>
+                        <TextIcon text="浮" fontSize="small" color={(theme.mui.palette.info as any).main}/>
+                    </Box></AutoTooltip>
                 </ Box>
                 : <></>
             }
@@ -376,7 +378,7 @@ class LeftBasic extends React.Component<{root: AbstractNode}>{
                 bottom: "2%" , 
                 width: "100%" , 
             }}>
-                <Box sx={{textAlign: "right"}}><Chip  label="其他文章"  color="secondary" size="small" /></Box>
+                <Box sx={{textAlign: "right"}}><Chip  label="文章树"  color="secondary" size="small" /></Box>
 
                 <ScrollBarBox sx = {{
                     position: "absolute" , 

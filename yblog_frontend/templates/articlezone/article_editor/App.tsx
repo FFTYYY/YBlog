@@ -65,10 +65,17 @@ import {
 } from "../base/concept"
 import { BackendData, Interaction } from "../base/interaction"
 import { my_theme } from "../base"
-import { SaveButton } from "./outside_buttons"
+import { 
+	SaveButton, 
+	GenerateTLDRButton , 
+	UploadFileButton , 
+	FileManageButton , 
+	BackendEdit , 
+	NodeStructEdit , 
+	NodeStructEditShallow , 
+	NodeView , 
+} from "./outside_buttons"
 import { withAllPlugins } from "./plugins"
-import { FileManageButton , UploadFileButton } from "./outside_buttons/manage_files"
-import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./outside_buttons/redirect"
 import { parse_second_concepts } from "../base/utils"
 import { MathJaxContext } from "../base/construction"
 import CssBaseline from "@mui/material/CssBaseline"
@@ -269,6 +276,7 @@ class App extends  React.Component<{}, {
 					<NodeStructEdit /> 
 					<NodeStructEditShallow /> 
 					<NodeView />
+					<GenerateTLDRButton onSuccess = {()=>{me.open_snackerbar("生成摘要完成！")}}/>
 				</Card>
 
 				<Box sx={{

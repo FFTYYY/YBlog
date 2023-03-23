@@ -109,6 +109,7 @@ var urls = {
         content : (nodeid: number) => url_from_root( `post/node/content/${nodeid}` ) , 
         cache   : (nodeid: number) => url_from_root( `post/node/cache/${nodeid}` ) , 
         comments: (nodeid: number) => url_from_root( `post/node/comments/${nodeid}` ) , 
+        tldr    : (nodeid: number) => url_from_root( `post/node/generate_tldr/${nodeid}` ) , 
         nodetree: (nodeid: number) => url_from_root( `post/nodetree/${nodeid}` ) , 
         file    : (nodeid: number) => url_from_root( `post/file/${nodeid}` ) , 
         manage_recourse    : (resourceid: number) => url_from_root( `post/manage_recourse/${resourceid}` ) , 
@@ -164,6 +165,7 @@ var Interaction = {
         cache       :(data: any, nodeid: number) => post_node_information(urls.post.cache    , data , nodeid) , 
         nodetree    :(data: any, nodeid: number) => post_node_information(urls.post.nodetree , data , nodeid) , 
         comments    :(data: any, nodeid: number) => post_node_information(urls.post.comments , data , nodeid) , 
+        tldr        :(           nodeid: number) => post_node_information(urls.post.tldr     , {}   , nodeid) , 
         file        :(data: any, nodeid: number) => post_node_information(urls.post.file     , data , nodeid , {
             headers: {
                 "Content-Type": "multipart/form-data"

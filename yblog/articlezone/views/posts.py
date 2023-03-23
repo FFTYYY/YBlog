@@ -54,6 +54,17 @@ def post_node_content(request, node_id):
 
 @debug_convenient
 @must_login(FAIL)
+def post_generate_tldr(request, node_id): 
+	
+	node = Node.objects.get(id = node_id)
+	node.update_tldr()
+	node.save()
+
+	return SUCCESS
+
+
+@debug_convenient
+@must_login(FAIL)
 def post_node_cache(request, node_id): 
 	
 	if request.body == b"":

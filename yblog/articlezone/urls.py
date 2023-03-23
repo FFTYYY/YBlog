@@ -1,6 +1,7 @@
 from django.urls import path
 from .views.views import edit_node_view , edit_nodetree_view , read_node_view , edit_nodetree_shallow_view , read_node_pure_view
-from .views.posts import post_nodetree , post_node_content , post_node_comments , post_node_comments
+from .views.posts import post_nodetree , post_node_content , post_node_comments , post_node_comments 
+from .views.posts import post_generate_tldr
 from .views.posts import post_upload_file , post_manage_resource , post_delete_resource , post_node_cache
 from .views.gets import get_nodetree , get_node_concepts , get_node_comments , get_node_create_time , get_node_content
 from .views.gets import  get_node_resources , get_node_resource_info , get_node_son_ids , get_node_father_id
@@ -34,6 +35,7 @@ urlpatterns = [
     path("get/node/indiscriminates/<int:node_id>"    , get_indiscriminates) , 
 
     path("post/node/content/<int:node_id>"      , post_node_content) , 
+    path("post/node/generate_tldr/<int:node_id>", post_generate_tldr) , 
     path("post/node/cache/<int:node_id>"        , post_node_cache) , 
     path("post/node/comments/<int:node_id>"     , post_node_comments) , 
     path("post/nodetree/<int:node_id>"          , post_nodetree) , 

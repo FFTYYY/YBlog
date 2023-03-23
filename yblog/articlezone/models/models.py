@@ -92,16 +92,27 @@ class Node(models.Model):
 			ret = ret + self.father.get_all_concepts()
 		return list( filter(lambda x: len(x) > 0 , ret) )
 
+	def update_tldr(self):
+		
+		now_time = int( time.time() )
+		new_tldr = generate_tldr(self)
+		if new_tldr is not None and new_tldr.strip() != "":
+			self.tldr = new_tldr
+			self.tldr_updatetime = now_time
+			return True
+		return False
+
 	def save(self , *args , **kwargs):
 
 		self.update_time = timezone.now()
 
+		# 自动更新tldr
 		now_time = int( time.time() )
-		if now_time - self.tldr_updatetime > 864000: # 10天更新一次。
-			new_tldr = generate_tldr(self)
-			if new_tldr is not None and new_tldr.strip() != "":
-				self.tldr = new_tldr
-				self.tldr_updatetime = now_time
+		flag = self.tldr_updatetime > 0 # 防止对空文章生成tldr
+		flag = flag and (self.tldr is not None)
+		flag = flag and (self.tldr != "")
+		if flag and now_time - self.tldr_updatetime > 864000: # 10天更新一次。
+			self.update_tldr()
 	
 		return super().save(*args , **kwargs)
 
