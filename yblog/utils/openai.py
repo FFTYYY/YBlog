@@ -34,7 +34,7 @@ def post_chatgpt(messages):
         except Exception:
             fail_time = fail_time + 1
             if fail_time < 10:
-                time.sleep(200) # 休息一下
+                time.sleep(1) # 休息一下
                 continue 
             else:
                 break
