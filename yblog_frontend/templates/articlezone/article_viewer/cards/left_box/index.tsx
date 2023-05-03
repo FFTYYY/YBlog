@@ -46,10 +46,7 @@ function LeftBox(props: {root: AbstractNode}){
     let set_active_tab = (v)=>{
         _set_active_tab(v)
         let cookies = new Cookies()
-        cookies.set(cookie_key , v, {path: "/"})
-        console.log("cookie val:", cookies.get(cookie_key))
-        console.log("cookie set to ", v)
-        console.log("cookie val:", cookies.get(cookie_key))
+        cookies.set(cookie_key , v, {path: "/", maxAge: 6000000})
     }
 
     let button_click = ()=>{
