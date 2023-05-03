@@ -57,7 +57,7 @@ function LeftBox(props: {root: AbstractNode}){
         let cookies = new Cookies()
         let val = cookies.get(cookie_key)
         if(!val){
-            cookies.set(cookie_key , "-1", {path: "/"})
+            cookies.set(cookie_key , "-1", {path: "/", domain: "yyy.zone"})
         }
         else{
             _set_active_tab(val)
