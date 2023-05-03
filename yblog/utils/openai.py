@@ -46,7 +46,7 @@ def ask_chatgpt(prompt):
     ret_msg = post_chatgpt([{"role": "user", "content": prompt}])
     if ret_msg is None:
         return None
-    ret = ret_msg["choices"][0]["message"]["content"]
+    ret = ret_msg ["choices"][0]["message"]["content"] #type: ignore
     return ret
 
 

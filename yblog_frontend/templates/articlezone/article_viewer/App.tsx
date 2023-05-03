@@ -14,7 +14,8 @@ import {
 	ThemeContext , 
 	ThemeProvider , 
 
-	KeyEventManager , 
+	KeyEventManager, 
+	AutoStack, 
 } from "@ftyyy/ytext"
 
 
@@ -31,12 +32,13 @@ import { parse_second_concepts } from "../base/utils"
 import { first_concepts } from "../base/concept"
 import { LeftBox, RightBox } from "./cards"
 import { flush_math , MathJaxFlusher } from "../base/construction/math"
-
+import { FangSheng, BaJiao, Hui, BaoXiangHua } from "../assets/decors"
 import "overlayscrollbars/overlayscrollbars.css"
 import { OverlayScrollbars } from "overlayscrollbars"
 import {
 	Box , 
-	CssBaseline, 
+	CssBaseline,
+	SvgIcon, 
 } from "@mui/material"
 
 class App extends  React.Component<{} , {
@@ -143,7 +145,10 @@ class App extends  React.Component<{} , {
 					top: "1%" , 
 					height: "3%" , 
 				}}>
-					<PrinterStructureBoxText sx={{textAlign: "center"}}><MathJaxFlusher>{
+					<PrinterStructureBoxText sx={{
+						textAlign: "center" , 
+						fontSize: "2rem", 
+					}}><MathJaxFlusher>{
 						tree.parameters.title.val
 					}</MathJaxFlusher></PrinterStructureBoxText>
 				</Box>
