@@ -116,6 +116,10 @@ var sectioner_printer = (()=>{
 			let title = parameters.title
 			let alone = parameters.alone
 
+			if(alone && !title){
+				return <Divider></Divider>
+			}
+			
 			// 如果是`alone`的就不显示序号惹。
 			let order_word = alone ? <></> : <PrinterStructureBoxText inline>第{num2chinese(order)}节</PrinterStructureBoxText>
 			let title_word = title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>

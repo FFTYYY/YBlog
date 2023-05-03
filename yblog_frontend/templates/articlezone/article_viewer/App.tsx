@@ -32,7 +32,7 @@ import { parse_second_concepts } from "../base/utils"
 import { first_concepts } from "../base/concept"
 import { LeftBox, RightBox } from "./cards"
 import { flush_math , MathJaxFlusher } from "../base/construction/math"
-import { FangSheng, BaJiao, Hui, BaoXiangHua } from "../assets/decors"
+import { FangSheng, BaJiao, Hui, BaoXiangHua, Acanthus, Acanthus3, Acanthus4 } from "../assets"
 import "overlayscrollbars/overlayscrollbars.css"
 import { OverlayScrollbars } from "overlayscrollbars"
 import {
@@ -144,13 +144,23 @@ class App extends  React.Component<{} , {
 					left: "1%" , 
 					top: "1%" , 
 					height: "3%" , 
+					display: "flex" , 
+					justifyContent: "center" , 
+					alignContent: "space-between" , 
 				}}>
+					<FangSheng fill="rgba(0,0,0,0)" strokeWidth="4px" style={{
+						height: "1.5rem" , 
+					}} />
 					<PrinterStructureBoxText sx={{
 						textAlign: "center" , 
-						fontSize: "2rem", 
+						fontSize: "1.5rem", 
+						marginX: "1.5rem", 
 					}}><MathJaxFlusher>{
 						tree.parameters.title.val
 					}</MathJaxFlusher></PrinterStructureBoxText>
+					<FangSheng fill="rgba(0,0,0,0)" strokeWidth="4px" style={{
+						height: "1.5rem" , 
+					}} />
 				</Box>
 
 				<ScrollBarBox  
