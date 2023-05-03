@@ -45,6 +45,7 @@ function LeftBox(props: {root: AbstractNode}){
 
     let set_active_tab = (v)=>{
         _set_active_tab(v)
+        console.log("set", v, active_tab)
         let cookies = new Cookies()
         cookies.set(cookie_key , v, {path: "/"})
     }
@@ -57,12 +58,14 @@ function LeftBox(props: {root: AbstractNode}){
         let cookies = new Cookies()
         let val = cookies.get(cookie_key)
         if(!val){
-            cookies.set(cookie_key , "-1", {path: "/", domain: "yyy.zone"})
+            cookies.set(cookie_key , "-1", {path: "/"})
+            console.log("init", "no")
         }
         else{
             _set_active_tab(val)
+            console.log("init", val)
         }
-    })
+    }, [])
 
     return <TabContext value={active_tab}><Box sx={{
         position: "absolute" , 
