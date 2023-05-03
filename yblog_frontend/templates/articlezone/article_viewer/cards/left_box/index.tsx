@@ -45,8 +45,8 @@ function LeftBox(props: {root: AbstractNode}){
 
     let set_active_tab = (v)=>{
         _set_active_tab(v)
-        let cookies = new Cookies()
-        cookies.set(cookie_key , v, {path: "/"})
+        // let cookies = new Cookies()
+        // cookies.set(cookie_key , v, {path: "/"})
     }
 
     let button_click = ()=>{
@@ -54,14 +54,14 @@ function LeftBox(props: {root: AbstractNode}){
     }
 
     React.useEffect(()=>{
-        let cookies = new Cookies()
-        let val = cookies.get(cookie_key)
-        if(!val){
-            cookies.set(cookie_key , "-1", {path: "/", domain: "yyy.zone"})
-        }
-        else{
-            _set_active_tab(val)
-        }
+        // let cookies = new Cookies()
+        // let val = cookies.get(cookie_key)
+        // if(!val){
+        //     cookies.set(cookie_key , "-1", {path: "/", domain: "yyy.zone"})
+        // }
+        // else{
+        //     _set_active_tab(val)
+        // }
     })
 
     return <TabContext value={active_tab}><Box sx={{
