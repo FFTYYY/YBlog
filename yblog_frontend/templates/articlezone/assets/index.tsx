@@ -1,4 +1,5 @@
 export { BaoXiangHua } from "./baoxianghua"
+export { MeiGui } from "./meigui"
 export { Acanthus } from "./acanthus"
 export {
     Hui , 

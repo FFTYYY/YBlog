@@ -29,7 +29,8 @@
 		"slate-history": "^0.66.0",
 		"slate-react": "^0.72.1",
 		"typedoc": "^0.22.18",
-		"typedoc-plugin-missing-exports": "^0.22.6"
+		"typedoc-plugin-missing-exports": "^0.22.6",
+		"universal-cookie": "^4.0.4"
 	},
 	"devDependencies": {
 		"@types/node": "^17.0.8",

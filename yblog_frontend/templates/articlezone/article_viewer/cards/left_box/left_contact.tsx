@@ -66,16 +66,7 @@ class LeftContact extends React.Component{
                             marginRight: theme.printer.margins.colon , 
                             fontSize: "0.5rem" , 
                             display: "inline-block" , 
-                        }}><Link underline="hover" href="https://fftyyy.github.io">博主个人主页</Link></Typography>
-                    </Box>
-                    
-                    <Box sx = {{marginBottom: "1rem"}}>
-                        <Typography color="text.secondary" sx={{
-                            marginRight: theme.printer.margins.colon , 
-                            fontSize: "0.5rem" , 
-                            display: "inline-block" , 
-                        }}>邮箱</Typography>
-                        <Typography sx={{fontSize: "0.8rem" , display: "inline-block" , }}>yongyi at umich dot edu</Typography>
+                        }}><Link underline="hover" href="https://fftyyy.github.io">我的个人主页</Link></Typography>
                     </Box>
                 </ScrollBarBox>
             </Box>

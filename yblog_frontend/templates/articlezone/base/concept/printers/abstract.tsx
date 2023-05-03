@@ -1,19 +1,35 @@
 import * as React from "react"
-import { Grid , Box } from "@mui/material"
+import { Grid , Box , 
+    Link, ThemeOptions , Dialog, Tooltip  , Badge  , Button , Paper , IconButton  ,  } from "@mui/material"
 import {
-    get_default_abstract_renderer , 
     PrinterPartBox , 
     ScrollBarBox, 
+    auto_renderer , 
+    AbstractNode ,    
+    Printer , 
+    ConceptNode , 
+    PrinterRenderFunctionProps , 
+    PrinterRenderFunction , 
+    GlobalInfo , 
+    ContexterBase , 
+    PreprocessFunction , 
+    DefaultPrinterComponent , 
+    DefaultAbstractAsRoot, 
+    AutoStack, 
+
 } from "@ftyyy/ytext"
+import {
+    BaoXiangHua, MeiGui , 
+} from "../../../assets"
+import { BaJiao, LiuBian, SanJiao } from "../../../assets/decors"
 
 export {
     renderers
 }
 
-
-let renderer_comment = get_default_abstract_renderer({
-    senario: "title" , 
-    container: (props)=>{
+let renderer_comment = (()=>{
+    let senario = "title"
+    let CONT = (props)=>{
         let {node,parameters,context,children} = props
 
         return <ScrollBarBox sx={{
@@ -25,7 +41,60 @@ let renderer_comment = get_default_abstract_renderer({
             <PrinterPartBox>{children}</PrinterPartBox>
         </ScrollBarBox>
     }
-})
+    return auto_renderer<AbstractNode>({
+        contexters: [] , 
+        render_function_as_property: (props: PrinterRenderFunctionProps<AbstractNode>) => {
+    
+            if(props.flags["senario"] != senario){
+                return <>{props.children}</>
+            }
+    
+            let [show_abstract , set_show_abstract] = React.useState(false)
+    
+            let subcomp = <DefaultAbstractAsRoot
+                {...props}
+            ></DefaultAbstractAsRoot>
+    
+            return <React.Fragment>
+                <Tooltip title = {subcomp} placement="right"><span>
+                    <Link 
+                        onClick = {(e)=>set_show_abstract(true)} 
+                        color = "inherit"
+                        href = "#"
+                        underline = "none"
+                        sx={{
+                            width: "auto" , 
+                            height: "auto" , 
+                            paddingRight: "0.35rem" , 
+                        }}
+                    >{props.children}</Link>
+                    <SanJiao fill="rgba(0,50,50,0.5)" strokeWidth="1px" style={{
+                        top: "-5px", 
+                        left: "-5px" , 
+                        marginRight: "-5px" , 
+                        width: "10px" , 
+                        height: "10px" , 
+                        display: "inline-block" , 
+                        position: "relative" , 
+                        transform: "scaleY(-1)",
+                    }} />
+                </span></Tooltip>
+                <Dialog fullWidth maxWidth="lg" open={show_abstract} onClose={()=>set_show_abstract(false)}>{subcomp}</Dialog>
+            </React.Fragment> 
+        } , 
+        render_function: (props: PrinterRenderFunctionProps<AbstractNode>) => {
+            let props_except_children = {
+                node: props.node , 
+                context: props.context , 
+                parameters: props.parameters ,             
+            }
+            return <CONT {...props_except_children}>{props.children}</CONT>
+        } , 
+    })    
+})()
+
+
+
 
 let renderers = {
     abstract: {
