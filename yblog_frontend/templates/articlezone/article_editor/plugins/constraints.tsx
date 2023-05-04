@@ -8,7 +8,7 @@ import {
 
     EditorComponent, 
     AllConceptTypes, 
-} from "../../../../ytext"
+} from "@ftyyy/ytext"
 import { 
     sectioner_style , 
     ender_style  

@@ -32,13 +32,14 @@ import {
 
 	ThemeContext , 
 	ThemeProvider , 
-} from "../../../ytext"
+} from "@ftyyy/ytext"
 import { my_theme } from "../base/construction"
 import { Interaction , BackendData } from "../base/interaction"
 import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../base/construction"
 import { renderers , default_renderers } from "../base/concept"
 import { parse_second_concepts } from "../base/utils"
 import { first_concepts } from "../base/concept"
+import { flush_math , MathJaxFlusher } from "../base/construction/math"
 
 import "overlayscrollbars/overlayscrollbars.css"
 import { OverlayScrollbars } from "overlayscrollbars"
@@ -71,11 +72,13 @@ class App extends  React.Component<{} , {
 			first_concepts , 
 			sec_concepts , 
 			renderers , 
-			default_renderers , 
+			default_renderers, 
 		)
 
 		// 获得树。
 		let root = await Interaction.get.content(BackendData.node_id)
+		// 设置网页标题
+		document.title = root.parameters.title.val
 
 		// 获得缓存内容（其实是不必要的...）
 		let cache = await Interaction.get.cache(BackendData.node_id)
@@ -85,6 +88,10 @@ class App extends  React.Component<{} , {
 			tree: root , 
 			cache: cache , 
 		})
+
+		setTimeout(()=>{
+			flush_math.go()
+		} , 1000)
 	}
 
 	render(){

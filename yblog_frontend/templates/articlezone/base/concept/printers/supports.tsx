@@ -89,6 +89,10 @@ import {
 } from "../../construction"
 import { insertchildren_style } from "../first_concepts"
 
+import {
+	IndexContexter , 
+} from "./contexter"
+
 export {
 	renderers , 
 }
@@ -106,9 +110,20 @@ var sectioner_printer = (()=>{
 			content: "" , 
 		}
 	} ))
+	let index_gene = ()=>{
+		return new IndexContexter<SupportNode>( (info)=>{
+			let orderer = orderer_gene(info) // 现场生成orderer。
+			let order = orderer.get_context(info.context) // 获得自身的编号。
+			let param = info.parameters
+			if(param.alone){
+				return undefined
+			}
+			return `${num2chinese(order)} ${param.title}`
+		} )
+	}
 
 	return auto_renderer<SupportNode>({
-		contexters: [orderer_gene, reference_gene] , 
+		contexters: [orderer_gene, reference_gene, index_gene] , 
 
 		render_function: (props: PrinterRenderFunctionProps<SupportNode>)=>{
 			let {node,parameters,context,children} = props
@@ -131,7 +146,14 @@ var sectioner_printer = (()=>{
 
 /** 章节线。 */
 var ender_printer = (()=>{
+	let index_gene = ()=>{
+		return new IndexContexter<SupportNode>( (info)=>{
+			return `章`
+		} )
+	}
+
 	return auto_renderer<SupportNode>({
+		contexters: [index_gene] , 
 		render_function: (props: PrinterRenderFunctionProps<SupportNode>) => {
 			// 手动添加了一个box，来防止滚动条的高度异常。
 			return <React.Fragment>
@@ -193,10 +215,10 @@ var image_printer = (()=>{
 
 var showchildren_printer = (()=>{
 	return new PrinterRenderer({
-		enter(node: Readonly<SupportNode> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){    
+		enter(node: Readonly<SupportNode> , path: Readonly<number []>, parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){    
 			context["env"] = JSON.parse(JSON.stringify(env)) // 把整个env记到context里面去。
         } ,
-		exit(node: Readonly<SupportNode> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context): [PrinterCacheItem, boolean]{
+		exit(node: Readonly<SupportNode> , path: Readonly<number []>, parameters: Readonly<ProcessedParameterList>, env: Env , context: Context): [PrinterCacheItem, boolean]{
 			return [{} , true]
 		} , 
 		renderer(props: PrinterRenderFunctionProps<SupportNode>){
@@ -300,10 +322,10 @@ var insertchildren_printer = (()=>{
 		return root
 	}
 	return new PrinterRenderer({
-		enter(node: Readonly<SupportNode> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){    
+		enter(node: Readonly<SupportNode> , path: Readonly<number []>, parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){    
 			context["env"] = JSON.parse(JSON.stringify(env)) // 把整个env记到context里面去。
         } ,
-		exit(node: Readonly<SupportNode> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context): [PrinterCacheItem, boolean]{
+		exit(node: Readonly<SupportNode> , path: Readonly<number []>, parameters: Readonly<ProcessedParameterList>, env: Env , context: Context): [PrinterCacheItem, boolean]{
 			return [{} , true]
 		} , 
 		renderer(props: PrinterRenderFunctionProps<SupportNode>){
@@ -373,11 +395,29 @@ var insertchildren_printer = (()=>{
 
 
 var gatherindis_printer = (()=>{
+	let index_gene = new IndexContexter((info) => {
+		return undefined // TODO 
+	})
 	return new PrinterRenderer({
-		enter(node: Readonly<SupportNode> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){    
+		enter(
+			node: Readonly<SupportNode> , 
+			path: Readonly<number[]>,  
+			parameters: Readonly<ProcessedParameterList>, 
+			env: Env , 
+			context: Context , 
+		){    
 			context["env"] = JSON.parse(JSON.stringify(env)) // 把整个env记到context里面去。
+			// index_gene.enter(node,path,parameters,env,context)
         } ,
-		exit(node: Readonly<SupportNode> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context): [PrinterCacheItem, boolean]{
+		exit(
+			node: Readonly<SupportNode> , 
+			path: Readonly<number[]>, 
+			parameters: Readonly<ProcessedParameterList>, 
+			env: Env , 
+			context: Context , 
+		): [PrinterCacheItem, boolean]{
+			
+			// index_gene.exit(node,path,parameters,env,context)
 			return [{} , true]
 		} , 
 		renderer(props: PrinterRenderFunctionProps<SupportNode>){
@@ -389,13 +429,13 @@ var gatherindis_printer = (()=>{
 
 			React.useEffect(()=>{
 				(async ()=>{
-					let son_ids = await Interaction.get.indiscriminates(globalinfo.BackendData.node_id)
-					set_indis( son_ids )
+					let indis_ids = await Interaction.get.indiscriminates(globalinfo.BackendData.node_id)
+					set_indis( indis_ids )
 
 					let now_tldrs = {}
-					for(let son_id of son_ids){
-						let now_tldr = await Interaction.get.tldr(son_id)
-						now_tldrs[son_id] = now_tldr
+					for(let indis_id of indis_ids){
+						let now_tldr = await Interaction.get.tldr(indis_id)
+						now_tldrs[indis_id] = now_tldr
 					}
 					set_tldrs(now_tldrs)
 				})()

@@ -46,18 +46,20 @@ class App extends  React.Component<{} , {
 	tree: AbstractNode  | undefined
 	cache: PrinterCache | undefined
 	link_mode: boolean 
+
 }>{
 	printer_comp_ref: React.RefObject<DefaultPrinterComponent>
 
 	constructor(props: {}){
 		super(props)
-
+		
 		this.state = {		
 			printer: undefined , 
 			tree: undefined , 
 			cache: undefined , 
-
+			
 			link_mode: false , // 如果进入链接模式，每个元素都可以单击并提供自己的链接路径。
+
 		}
 		this.printer_comp_ref = React.createRef()
 	}
@@ -181,7 +183,7 @@ class App extends  React.Component<{} , {
 						cache: me.state.cache , 
 					}}>
 						<DefaultPrinterComponent 
-							ref = {me.printer_comp_ref}
+							ref = {this.printer_comp_ref}
 							printer = {printer} 
 							theme = {my_theme}
 							onUpdateCache = {(cache)=>{
@@ -216,16 +218,11 @@ class App extends  React.Component<{} , {
 			}}>
 				<RightBox 
 					root = {tree} 
+					printer = {me.state.printer}
 					onScroll = {(path)=>{
-						let _printer_comp = this.get_printer_comp()
-						if(!_printer_comp){ 
-							return 
-						}
-						let printer_comp = _printer_comp.get_component()
-						if(!printer_comp){ 
-							return 
-						}
-						printer_comp.scroll_to(path)
+						let printer_comp = me.get_printer_comp()?.get_component()
+						if(printer_comp)
+							printer_comp.scroll_to(path)
 					}}
 				/>
 			</Box>

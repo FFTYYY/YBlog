@@ -26,7 +26,10 @@ import {
 
 import { num2chinese } from "../../base/utils"
 import { MathJaxFlusher } from "../../base/construction"
-
+import {
+    IndexContexter , 
+    IndexItem , 
+} from "../../base/concept/printers/contexter"
 
 import {
 	EditorCore , 
@@ -37,11 +40,15 @@ import {
     Node, 
     is_paragraphnode,
     ThemeContext, 
+    Printer, 
+    PrinterComponent, 
 } from "@ftyyy/ytext"
 
 export { RightBox }
 
-/** 这个函数查找节点树中的所有小节线和章节线。 */
+/** 这个函数查找节点树中的所有小节线和章节线。 
+ XXX 废弃了
+*/
 function find_sectioner(node: Node, path: number[] = []){
     let ret = []
     if(is_supportnode(node) && (node.concept == "小节线" || node.concept == "章节线")){
@@ -55,11 +62,41 @@ function find_sectioner(node: Node, path: number[] = []){
     return ret
 }
 
-/** 这个组件在显示一个章节内部的导航。导航到每个小节线和章节线。 */
-function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}){
+function RenderIndexItem (props:{item: IndexItem, onScroll: (path: number[])=>void}){
+    let item = props.item 
+    return <Box sx={{
+        marginTop: "0.2rem" , 
+    }}>
+        <Link 
+            component = "button" 
+            underline = "hover"
+            onClick = {(e)=>{props.onScroll(item.node_path)}}
+            color = "text.primary"
+        ><Typography sx={{fontSize: "0.8rem"}}>{item.name}</Typography></Link>
+        <Box>{item.sons.map((son, idx)=>{
+            return <RenderIndexItem item={son} key={idx} onScroll={props.onScroll}/>
+        })}</Box>
+    </Box>
+}
 
-    let sectioners = find_sectioner(props.root)
+
+
+/** 这个组件在显示一个章节内部的导航。导航到每个小节线和章节线。 */
+function RightBox(props: {root: AbstractNode, printer: Printer , onScroll: (path: number[])=>void}){
+
+    if(!props.printer){
+        return <></>
+    }
     let theme = React.useContext(ThemeContext)
+
+    let index_contexter = new IndexContexter(()=>"")
+    let [env , all_contexts , all_parameters, all_caches] = props.printer.preprocess({root: props.root, init_env: {}})
+    let env_root = index_contexter.get_env(env).root
+
+    // 就一个人就没必要搞目录了
+    if(env_root.sons.length < 2){
+        return <></>
+    }
 
     return <Box sx={{
             ...theme.printer.fonts.body , 
@@ -78,31 +115,16 @@ function RightBox(props: {root: AbstractNode , onScroll: (path: number[])=>void}
         paddingY: "0.25rem" , 
     }}>
         <Box sx={{textAlign: "right"}}><Chip label="目录" size="small" color="secondary"/></Box>
-        <ScrollBarBox sx={{ 
+        {<ScrollBarBox sx={{ 
             overflow: "auto" , 
             position: "absolute" , 
             left: "1rem" , 
             right: "0.5rem" , 
             top: "2rem" , 
             bottom: "0.5rem" , 
-        }}>{sectioners.map((val,idx)=>{
-            let [node, path] = val
-            let title = <>章节</>
-            if(is_supportnode(node) && node.type == "support" && node.concept == "小节线"){
-                title = <Box sx={{display: "flex", flexDirection: "row"}}>
-                    <Box sx={{marginRight: "1rem"}}>{num2chinese(Number(idx)+1)}</Box>
-                    <Box sx={{textAlign: "left"}}><MathJaxFlusher>{node.parameters.title.val}</MathJaxFlusher></Box>
-                </Box>
-            }
-
-            return <Box key={idx} sx={{
-                marginTop: "0.2rem" , 
-            }}><Link 
-                component = "button" 
-                underline = "hover"
-                onClick = {(e)=>{props.onScroll(path)}}
-                color = "text.primary"
-            ><Typography sx={{fontSize: "0.8rem"}}>{title}</Typography></Link></Box>
-        })}</ScrollBarBox>
+        }}>{env_root.sons.map((son, idx)=>{
+            return <RenderIndexItem item={son} key={idx} onScroll={props.onScroll}/>
+        })}</ScrollBarBox>}
     </Box></Box>
 }
+

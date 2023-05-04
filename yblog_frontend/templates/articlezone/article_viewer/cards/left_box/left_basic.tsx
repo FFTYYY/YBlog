@@ -271,7 +271,6 @@ class BasicInformation extends React.Component<{
             TLDR: tldr , 
             vis_secret: visibility.secret , 
             vis_indis : visibility.indiscriminate_provider , 
-
         })
 
     }
