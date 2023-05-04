@@ -4,6 +4,7 @@
 
 import axios from "axios"
 import $ from "jquery"
+import {UniversalCache} from "./universal_cache"
 
 export { Interaction , BackendData , get_backend_data , url_from_root , urls}
 
@@ -55,6 +56,8 @@ axios.defaults.baseURL = root
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.headers.post["X-CSRFToken"] = BackendData.csrf
 
+let node_info_cache = new UniversalCache(500)
+
 /** 这个函数从后端读取一个节点相关的信息。
  * @param urlmaker 从节点编号生成 url 的函数。
  * @param key 要从获得的数据中直接取得的项。如果为`undefined`，就直接返回从后端获得的数据。
@@ -63,8 +66,14 @@ axios.defaults.headers.post["X-CSRFToken"] = BackendData.csrf
 async function get_node_information(urlmaker:(nodeid:number) => string , key?: string, node_id?: number){
     if(node_id == undefined)
         node_id = BackendData.node_id
-    
-    let data = (await axios.get(urlmaker(node_id))).data
+    let url = urlmaker(node_id)
+
+    let cache_key = JSON.stringify([url,key,node_id])
+    let data = node_info_cache.get(cache_key)
+    if(data == undefined){
+        data = (await axios.get(url)).data
+        node_info_cache.set(cache_key, data)
+    }
     
     if(key != undefined)
         data = data[key]
