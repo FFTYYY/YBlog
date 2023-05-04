@@ -77,6 +77,7 @@ import {
 	MathJaxInline , 
 	MathJaxBlock , 
 } from "../../construction"
+import { Acanthus, Acanthus2, Acanthus3, Acanthus4, BaJiao, BaoXiangHua, Hui, MeiGui } from "../../../assets"
 
 export {
 	renderers , 
@@ -101,9 +102,16 @@ var subsection_printer = (()=>{
 			let title = parameters.title
 			return <PrinterPartBox>
 				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-			    	<PrinterPartBox subtitle_like>{order_str}{title}</PrinterPartBox>
+					
+			    	<PrinterPartBox subtitle_like>
+						<Hui fill="rgba(0,0,0,0.8)" strokeWidth="2px" style={{
+							height: "0.75rem", 
+							marginRight: "0.5rem",
+						}}/>
+						{order_str}{title}
+					</PrinterPartBox>
 				</DefaultAbstractRendererAsProperty>
-                {children}
+				<PrinterNewLevelBox>{children}</PrinterNewLevelBox>
             </PrinterPartBox>
 		} , 
 	})
