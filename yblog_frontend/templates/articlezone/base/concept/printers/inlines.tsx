@@ -173,6 +173,7 @@ var link_printer = (()=>{
 				if(autotext){
 					if(!(title_ref == undefined || contt_ref == undefined)){
 						return <AutoTooltip title={contt_ref_comp}><Link 
+							underline = "hover"
 							onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
 						>{title_ref}</Link></AutoTooltip>
 					}
@@ -180,12 +181,25 @@ var link_printer = (()=>{
 
 				// 不要自动确定文本。
 				return <AutoTooltip title = {contt_ref}><Link 
+					underline = "hover"
 					onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
 				>{children}</Link></AutoTooltip>
 			}
 			else if(type == "outer-index"){
 				let [_tar_page , _tar_idx] = target.split(":")
 				let [ tar_page ,  tar_idx] = [ parseInt(_tar_page)  , parseInt(_tar_idx) ]
+				if(_tar_idx == undefined || tar_idx <= 0){ // 页面跳转
+					if(autotext){
+						return <Link 
+							href = {urls.view.content(tar_page , {linkto: tar_idx})}
+							underline = "hover"
+						>此页</Link>
+					}
+					return <Link 
+						href = {urls.view.content(tar_page , {linkto: tar_idx})}
+						underline = "hover"
+					>{children}</Link>		
+				}
 
 				let [ root  , set_root  ] = React.useState<AbstractNode | undefined>(undefined)
 				let [ cache , set_cache ] = React.useState<PrinterCache | undefined>(undefined)
@@ -211,18 +225,20 @@ var link_printer = (()=>{
 				if(autotext){
 					return <AutoTooltip title = {contt_ref_comp}><Link 
 						href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
-					>此页面的{title_ref}</Link></AutoTooltip>
+						underline = "hover"
+					>此页的{title_ref}</Link></AutoTooltip>
 				}
 				return <AutoTooltip title = {contt_ref_comp}><Link 
 					href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
+					underline = "hover"
 				>{children}</Link></AutoTooltip>
 			}
 
 
 			if(autotext){
-				return <Link href={target}>此页面</Link>
+				return <Link href = {target} underline = "hover">此页</Link>
 			}
-			return <Link href={target}>{children}</Link>
+			return <Link href = {target} underline = "hover">{children}</Link>
 		}
 	})
 })()

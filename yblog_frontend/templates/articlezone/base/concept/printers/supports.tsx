@@ -139,7 +139,7 @@ var sectioner_printer = (()=>{
 			}
 			
 			// 如果是`alone`的就不显示序号惹。
-			let order_word = alone ? <></> : <PrinterStructureBoxText inline>{num2chinese(order)} </PrinterStructureBoxText>
+			let order_word = alone ? <></> : <PrinterStructureBoxText inline>第{num2chinese(order)} </PrinterStructureBoxText>
 			let title_word = title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>
 			return <Divider>{order_word}{title_word}</Divider>
 

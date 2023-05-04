@@ -5,20 +5,20 @@ let light_paltte = {
     divider: "#060606" , 
     mode: "light" as "light",
     primary: {
-        main: "#354060",
+        main: "#40797E",
     },
     info: {
         main: "#666677",
     },
     secondary: {
-        main: "#8080AA",
+        main: "#606099",
     },
     background: {
         default: "rgba(235,233,230,1)",
         paper: "rgba(235,233,230,1)",
     },
     text: {
-        primary     : "#15203A",
+        primary     : "rgb(6,6,6)",
         secondary   : "rgba(6,6,6,0.70)" , 
         disabled    : "rgba(6,6,6,0.5)",
     },

@@ -66,7 +66,7 @@ class LeftContact extends React.Component{
                             marginRight: theme.printer.margins.colon , 
                             fontSize: "0.5rem" , 
                             display: "inline-block" , 
-                        }}><Link underline="hover" href="https://fftyyy.github.io">我的个人主页</Link></Typography>
+                        }}>👉<Link href="https://fftyyy.github.io">我的个人主页</Link></Typography>
                     </Box>
                 </ScrollBarBox>
             </Box>

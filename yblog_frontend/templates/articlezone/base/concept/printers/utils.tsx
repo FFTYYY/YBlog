@@ -82,7 +82,7 @@ function node2string_autotip(node: Node){
     return ret
 }
 
-function cut_str(str: string, len: number = 300){
+function cut_str(str: string, len: number = 1000){
     if(str.length < len){
         return str
     }

@@ -1,0 +1,1 @@
+import{R as e,j as t,a,b as r}from"./titleword.3c636ab5.js";import{M as o}from"./math.12551fef.js";e.render(t(a.StrictMode,{children:r("div",{children:[t(o,{children:" $12$ "})," about! "]})}),document.getElementById("root"));
