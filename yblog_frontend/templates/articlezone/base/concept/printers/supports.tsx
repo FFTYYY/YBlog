@@ -86,6 +86,8 @@ import {
 	MathJaxInline , 
 	MathJaxBlock , 
 	TitleWord , 
+	flush_math , 
+	MathJaxFlusher , 
 } from "../../construction"
 import { insertchildren_style } from "../first_concepts"
 
@@ -239,11 +241,12 @@ var showchildren_printer = (()=>{
 						now_tldrs[son_id] = now_tldr
 					}
 					set_tldrs(now_tldrs)
+					setTimeout(()=>{flush_math.go()}, 500)
 				})()
 
 			} , [ JSON.stringify(parameters) ])
 
-			return <React.Fragment>{sons.map((son_id , idx) => {
+			return <MathJaxFlusher>{sons.map((son_id , idx) => {
 				let SubIframe = (props: {}) => {
 					let theme = React.useContext(ThemeContext)
 					let overflow = parameters.scroll ? "auto" : "hidden"
@@ -292,7 +295,7 @@ var showchildren_printer = (()=>{
 					</Box>
 				}
 				return <SubIframe key = {idx} />
-			})}</React.Fragment>
+			})}</MathJaxFlusher>
 		} , 
 	})
 })()
@@ -368,6 +371,7 @@ var insertchildren_printer = (()=>{
 
 				set_son_ids(son_ids)
 				set_sub_infos({roots: roots, init_envs: init_envs})
+				setTimeout(()=>{flush_math.go()}, 500)
 			})()}, [])
 
 			let {roots , init_envs} = sub_infos
@@ -375,7 +379,7 @@ var insertchildren_printer = (()=>{
 				return <></>
 			}
 
-			return <React.Fragment>{
+			return <MathJaxFlusher>{
 				son_ids.map((son_id , idx) => {
 					return <GlobalInfoProvider key = {idx} value = {{
 						BackendData: {BackendData , node_id: son_id} // 老子真是天才！
@@ -387,7 +391,7 @@ var insertchildren_printer = (()=>{
 						/>
 					</GlobalInfoProvider>
 				})
-			}</React.Fragment>	
+			}</MathJaxFlusher>	
 
 		} , 
 	})
@@ -438,11 +442,12 @@ var gatherindis_printer = (()=>{
 						now_tldrs[indis_id] = now_tldr
 					}
 					set_tldrs(now_tldrs)
+					setTimeout(()=>{flush_math.go()}, 500)
 				})()
 
 			} , [ JSON.stringify(parameters) ])
 
-			return <React.Fragment>{indis.map((son_id , idx) => {
+			return <MathJaxFlusher>{indis.map((son_id , idx) => {
 				let SubIframe = (props: {}) => {
 					let theme = React.useContext(ThemeContext)
 					let overflow = parameters.scroll ? "auto" : "hidden"
@@ -491,7 +496,7 @@ var gatherindis_printer = (()=>{
 					</Box>
 				}
 				return <SubIframe key = {idx} />
-			})}</React.Fragment>
+			})}</MathJaxFlusher>
 		} , 
 	})
 })()

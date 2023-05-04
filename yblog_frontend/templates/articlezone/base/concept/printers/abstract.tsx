@@ -23,6 +23,8 @@ import {
 } from "../../../assets"
 import { BaJiao, LiuBian, SanJiao } from "../../../assets/decors"
 
+import { flush_math , MathJaxFlusher } from "../../construction/math"
+
 export {
     renderers
 }
@@ -56,9 +58,14 @@ let renderer_comment = (()=>{
             ></DefaultAbstractAsRoot>
     
             return <React.Fragment>
-                <Tooltip title = {subcomp} placement="right"><span>
+                <Tooltip title={subcomp} placement="right" onMouseMove={()=>{
+                    flush_math.go()
+                }}><span>
                     <Link 
-                        onClick = {(e)=>set_show_abstract(true)} 
+                        onClick = {(e)=>{
+                            set_show_abstract(true)
+                            // setTimeout(()=>{flush_math.go()} , 500)
+                        }} 
                         color = "inherit"
                         href = "#"
                         underline = "none"
@@ -79,7 +86,15 @@ let renderer_comment = (()=>{
                         transform: "scaleY(-1)",
                     }} />
                 </span></Tooltip>
-                <Dialog fullWidth maxWidth="lg" open={show_abstract} onClose={()=>set_show_abstract(false)}>{subcomp}</Dialog>
+                <Dialog 
+                    fullWidth 
+                    maxWidth = "lg" 
+                    open = {show_abstract} 
+                    onClose = {()=>set_show_abstract(false)}
+                    onAnimationEnd = {()=>{
+                        flush_math.go()
+                    }}
+                >{subcomp}</Dialog>
             </React.Fragment> 
         } , 
         render_function: (props: PrinterRenderFunctionProps<AbstractNode>) => {

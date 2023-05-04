@@ -123,7 +123,9 @@ function RightBox(props: {root: AbstractNode, printer: Printer , onScroll: (path
             top: "2rem" , 
             bottom: "0.5rem" , 
         }}>{env_root.sons.map((son, idx)=>{
-            return <RenderIndexItem item={son} key={idx} onScroll={props.onScroll}/>
+            return <MathJaxFlusher>
+                <RenderIndexItem item={son} key={idx} onScroll={props.onScroll}/>
+            </MathJaxFlusher>
         })}</ScrollBarBox>}
     </Box></Box>
 }
