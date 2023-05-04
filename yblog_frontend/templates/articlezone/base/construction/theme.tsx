@@ -1,30 +1,54 @@
 import { Theme } from "@ftyyy/ytext"
 export { my_theme }
 
+let light_paltte = {
+    divider: "#060606" , 
+    mode: "light" as "light",
+    primary: {
+        main: "#354060",
+    },
+    info: {
+        main: "#666677",
+    },
+    secondary: {
+        main: "#8080AA",
+    },
+    background: {
+        default: "rgba(235,233,230,1)",
+        paper: "rgba(235,233,230,1)",
+    },
+    text: {
+        primary     : "#15203A",
+        secondary   : "rgba(6,6,6,0.70)" , 
+        disabled    : "rgba(6,6,6,0.5)",
+    },
+}
+let dark_paltte = {
+    divider: "#DDDDDD" , 
+    mode: "dark" as "dark",
+    primary: {
+        main: "#DDDDDD",
+    },
+    info: {
+        main: "#DDAAAA",
+    },
+    secondary: {
+        main: "#FFDDCC",
+    },
+    background: {
+        default: "rgba(55,50,50,1)",
+        paper: "rgba(55,50,50,1)",
+    },
+    text: {
+        primary     : "#DDDDDD",
+        secondary   : "rgba(220,220,220,0.70)" , 
+        disabled    : "rgba(220,220,220,0.5)",
+    },
+}
+
 const my_theme: Theme = {
     mui:{
-        palette: {
-            divider: "#060606" , 
-            mode: "light",
-            primary: {
-                main: "#404080",
-            },
-            info: {
-                main: "#666677",
-            },
-            secondary: {
-                main: "#8080AA",
-            },
-            background: {
-                default: "rgba(220,220,220,0.96)",
-                paper: "rgba(210,210,210,1)",
-            },
-            text: {
-                primary     : "#020202",
-                secondary   : "rgba(6,6,6,0.70)" , 
-                disabled    : "rgba(6,6,6,0.5)",
-            },
-        },
+        palette: light_paltte , 
     } , 
     printer: {
         margins: {

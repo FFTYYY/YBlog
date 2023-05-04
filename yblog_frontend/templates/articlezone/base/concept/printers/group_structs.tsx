@@ -104,7 +104,7 @@ var subsection_printer = (()=>{
 				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
 					
 			    	<PrinterPartBox subtitle_like>
-						<Hui fill="rgba(0,0,0,0.8)" strokeWidth="2px" style={{
+						<Hui strokeWidth="2px" style={{
 							height: "0.75rem", 
 							marginRight: "0.5rem",
 						}}/>

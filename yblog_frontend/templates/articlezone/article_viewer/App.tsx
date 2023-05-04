@@ -160,7 +160,7 @@ class App extends  React.Component<{} , {
 					}}><MathJaxFlusher>{
 						tree.parameters.title.val
 					}</MathJaxFlusher></PrinterStructureBoxText>
-					<FangSheng fill="rgba(0,0,0,0)" strokeWidth="4px" style={{
+					<FangSheng style={{
 						height: "1.5rem" , 
 					}} />
 				</Box>
