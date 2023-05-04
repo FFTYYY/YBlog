@@ -134,11 +134,12 @@ var sectioner_printer = (()=>{
 			let alone = parameters.alone
 
 			if(alone && !title){
-				return <Divider></Divider>
+				return <Divider />
+				// return <></>
 			}
 			
 			// 如果是`alone`的就不显示序号惹。
-			let order_word = alone ? <></> : <PrinterStructureBoxText inline>第{num2chinese(order)}节</PrinterStructureBoxText>
+			let order_word = alone ? <></> : <PrinterStructureBoxText inline>{num2chinese(order)} </PrinterStructureBoxText>
 			let title_word = title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>
 			return <Divider>{order_word}{title_word}</Divider>
 
@@ -456,7 +457,10 @@ var gatherindis_printer = (()=>{
 					let estimate_height = (tldr / 100) * 12 // XXX xjb估计的...
 
 					return <Box>
-						<Box >
+						<Box sx={{
+							display: "flex" , 
+							justifyContent: "space-between"
+						}}>
 							<Link 
 								href = {urls.view.content(son_id)} 
 								underline = "hover" 
@@ -464,7 +468,7 @@ var gatherindis_printer = (()=>{
 									...theme.printer.fonts.structure
 								}}
 							>▶<TitleWord node_id={son_id}/></Link>
-							<Box sx={{display: "inline", textAlign: "right", right: 0, position: "absolute"}}>
+							<Box sx={{display: "inline", textAlign: "right"}}>
 								<AutoTooltip title="这个节点是浮上来的节点"><Box>
 									<TextIcon text="浮" fontSize="small" color={(theme.mui.palette.info as any).main}/>
 								</Box></AutoTooltip>
