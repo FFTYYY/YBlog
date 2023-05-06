@@ -78,7 +78,7 @@ class Node(models.Model):
 			return set()
 
 		all_sons = set()
-		for son in Node.objects.filter(father_id = self.id):
+		for son in Node.objects.filter(father_id = self.id): 
 			all_sons = all_sons | son.get_sons(max_depth - 1)
 		all_sons.add(self)
 		return all_sons
@@ -104,6 +104,8 @@ class Node(models.Model):
 
 	def save(self , *args , **kwargs):
 
+		flag_new = (self.update_time == self.create_time) # 是否是新建的节点
+
 		self.update_time = timezone.now()
 
 		# 自动更新tldr
@@ -113,7 +115,13 @@ class Node(models.Model):
 		flag = flag and (self.tldr != "")
 		if flag and now_time - self.tldr_updatetime > 864000: # 10天更新一次。
 			self.update_tldr()
-	
+
+		# 自动确定 index in father
+		if flag_new and self.father:
+			father = self.father
+			min_iif = min([x.index_in_father for x in Node.objects.filter(father_id = father.id)])
+			self.index_in_father = min_iif - 1
+			
 		return super().save(*args , **kwargs)
 
 

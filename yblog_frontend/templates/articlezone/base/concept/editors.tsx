@@ -34,7 +34,7 @@ let brightwords_editor  = get_deafult_group_editor_with_appbar({
     get_label: (n,p) => p.label
 })
 var subsection_editor   = get_deafult_group_editor_with_appbar({
-    get_label: (n,p)=>`次节：${p.title}`
+    get_label: (n,p)=>`${p.label}：${p.title}`
 })
 var formatted_editor    = get_default_group_editor_with_rightbar({})
 var followwords_editor  = get_default_group_editor_with_rightbar({})

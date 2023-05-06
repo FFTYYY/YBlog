@@ -435,6 +435,7 @@ var gatherindis_printer = (()=>{
 			React.useEffect(()=>{
 				(async ()=>{
 					let indis_ids = await Interaction.get.indiscriminates(globalinfo.BackendData.node_id)
+					indis_ids = indis_ids.sort((a,b)=>b-a)
 					set_indis( indis_ids )
 
 					let now_tldrs = {}
@@ -481,7 +482,8 @@ var gatherindis_printer = (()=>{
 							borderLeft: "1px solid" , 
 							marginLeft: "2px" , 
 							paddingLeft: "1rem" , 
-							paddingY: "2rem" , 
+							paddingTop: "0.5rem" , 
+							paddingBottom: "1.5rem" , 
 							marginY: "0.5rem" , 
 							whiteSpace: "pre-wrap" , 
 						}}>

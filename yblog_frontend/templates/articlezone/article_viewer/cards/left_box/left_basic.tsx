@@ -127,6 +127,8 @@ class Navigation extends React.Component<{} , {
                 : <></>
             }
             {
+            // 显示杂陈节点
+            /* {
                 props.indis ? 
                 <Box key="indis" sx={{display: "inline-block", right: "1.2rem", height: "1.2rem", position: "absolute"}}>
                     <AutoTooltip title="这个节点是下面浮上来的"><Box>
@@ -134,7 +136,7 @@ class Navigation extends React.Component<{} , {
                     </Box></AutoTooltip>
                 </ Box>
                 : <></>
-            }
+            } */}
         </Box>
     }
 
@@ -227,9 +229,10 @@ class Navigation extends React.Component<{} , {
 
         return <Box sx={{marginTop: "0.5rem"}}><AutoStack force_direction="column">
             {<F node_id = {now_id}/>}
-            <Box sx={{marginLeft: "1rem"}}>{
+            {// 显示杂陈节点
+            /* <Box sx={{marginLeft: "1rem"}}>{
                 now_indis_ids.map((son_id , idx)=><React.Fragment key={idx}><S node_id={son_id} indis/></React.Fragment>)
-            }</Box>
+            }</Box> */}
             <Box sx={{marginLeft: "1rem"}}>{
                 now_son_ids  .map((son_id , idx)=><React.Fragment key={idx}><S node_id={son_id}/></React.Fragment>)
             }</Box>
