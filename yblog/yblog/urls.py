@@ -23,7 +23,7 @@ urlpatterns = [
     path("" , include("articlezone.urls")) , 
     path("admin/", admin.site.urls),
 
-    path('all/rss/', AllPostsRssFeed(), name = "rss"),
+    path('rss/', AllPostsRssFeed(), name = "rss"),
 ]
 
 
