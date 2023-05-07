@@ -18,6 +18,7 @@ file_path =  Path(__file__).parent / "../yblog/yblog/extra_infos.py"
 file_content = '''
 SECRET_KEY = '{0}'
 DEBUG = False
+blog_name = "blog name"
 '''.format(generate_key())
 
 make_ignored_file(os.path.abspath(file_path) , file_content)
