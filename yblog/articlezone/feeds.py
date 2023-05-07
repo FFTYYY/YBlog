@@ -1,13 +1,13 @@
 from django.contrib.syndication.views import Feed
 
 from .models import Node
-
+from yblog.extra_infos import blog_name
 
 class AllPostsRssFeed(Feed):
 
-    title = "识文解意的爱书人"
+    title = blog_name
     link = "/"
-    description = "识文解意的爱书人 全部文章"
+    description = "%s 全部文章" % blog_name
 
     def items(self):
         return Node.objects.all()
