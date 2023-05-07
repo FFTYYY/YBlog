@@ -109,12 +109,13 @@ class Node(models.Model):
 		self.update_time = timezone.now()
 
 		# 自动更新tldr
-		now_time = int( time.time() )
-		flag = self.tldr_updatetime > 0 # 防止对空文章生成tldr
-		flag = flag and (self.tldr is not None)
-		flag = flag and (self.tldr != "")
-		if flag and now_time - self.tldr_updatetime > 864000: # 10天更新一次。
-			self.update_tldr()
+		# 自动更新个鬼
+		# now_time = int( time.time() )
+		# flag = self.tldr_updatetime > 0 # 防止对空文章生成tldr
+		# flag = flag and (self.tldr is not None)
+		# flag = flag and (self.tldr != "")
+		# if flag and now_time - self.tldr_updatetime > 864000: # 10天更新一次。
+		# 	self.update_tldr()
 
 		# 自动确定 index in father
 		if flag_new and self.father:
