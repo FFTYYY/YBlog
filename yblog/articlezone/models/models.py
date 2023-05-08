@@ -119,7 +119,8 @@ class Node(models.Model):
 		# 自动确定 index in father
 		if flag_new and self.father:
 			father = self.father
-			min_iif = min([x.index_in_father for x in Node.objects.filter(father_id = father.id)])
+			bros = [x.index_in_father for x in Node.objects.filter(father_id = father.id)]
+			min_iif = min(bros) if len(bros) > 0 else 0
 			self.index_in_father = min_iif - 1
 			
 		return super().save(*args , **kwargs)
