@@ -18,10 +18,12 @@ from django.urls import path
 from django.urls import include
 from django.conf.urls.static import static
 from .settings import MEDIA_ROOT , MEDIA_URL , STATIC_URL , STATIC_ROOT
-
+from articlezone.feeds import AllPostsRssFeed
 urlpatterns = [
     path("" , include("articlezone.urls")) , 
     path("admin/", admin.site.urls),
+
+    path('rss/', AllPostsRssFeed(), name = "rss"),
 ]
 
 
