@@ -58,9 +58,10 @@ let renderer_comment = (()=>{
             ></DefaultAbstractAsRoot>
     
             return <React.Fragment>
+                <div style={{display: "inline-block", marginRight: "5px"}}>{props.children}</div>
                 <Tooltip title={subcomp} placement="right" onMouseMove={()=>{
                     flush_math.go()
-                }}><span>
+                }}>
                     <Link 
                         onClick = {(e)=>{
                             set_show_abstract(true)
@@ -74,18 +75,21 @@ let renderer_comment = (()=>{
                             height: "auto" , 
                             paddingRight: "0.35rem" , 
                         }}
-                    >{props.children}</Link>
-                    <SanJiao fill="rgba(0,50,50,0.5)" strokeWidth="1px" style={{
-                        top: "-5px", 
-                        left: "-5px" , 
-                        marginRight: "-5px" , 
-                        width: "10px" , 
-                        height: "10px" , 
-                        display: "inline-block" , 
-                        position: "relative" , 
-                        transform: "scaleY(-1)",
-                    }} />
-                </span></Tooltip>
+                    >
+                        <div style={{display: "inline-block"}}>
+                            <SanJiao fill="rgba(0,50,50,0.5)" strokeWidth="1px" style={{
+                                top: "-5px", 
+                                left: "-5px" , 
+                                marginRight: "-5px" , 
+                                width: "10px" , 
+                                height: "10px" , 
+                                display: "inline-block" , 
+                                position: "relative" , 
+                                transform: "scaleY(-1)",
+                            }} />
+                        </div>
+                    </Link>
+                </Tooltip>
                 <Dialog 
                     fullWidth 
                     maxWidth = "lg" 
