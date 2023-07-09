@@ -65,7 +65,7 @@ class ConceptAdmin(admin.ModelAdmin):
     pass
 class ConceptInstanceAdmin(admin.ModelAdmin):
     list_display = ["concept_id" , "node" ]
-    search_fields = ["concept_id"]
+    search_fields = ["concept_id", "node__id"]
 
 admin.site.register(ConceptInstance     , ConceptInstanceAdmin)
 admin.site.register(Node                , NodeAdmin     )

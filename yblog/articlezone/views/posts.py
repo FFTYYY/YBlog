@@ -75,11 +75,12 @@ def post_node_cache(request: HttpRequest, node_id: int):
 	cache = JSONDecode(request.body)["cache"]
 	node.cache = json.dumps( cache )
 
-	node.concept_instants.delete() # 先删除所有跟自己有关的实例
-	for instid, instcont in cache: # 先创建所有instance
+	node.concept_instants.all().delete() # 先删除所有跟自己有关的实例
+
+	for instid, instcont in cache.items(): # 先创建所有instance
 		inst = ConceptInstance(concept_id = instid, node = node)
 		inst.save()
-	for instid, instcont in cache: # 再更新linkto
+	for instid, instcont in cache.items(): # 再更新linkto
 		linkto = instcont.get("linkto")
 		if linkto is not None:
 			inst = ConceptInstance.objects.get(instid = instid)

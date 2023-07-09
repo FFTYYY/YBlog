@@ -333,6 +333,7 @@ class App extends  React.Component<{}, {
 									if(cache && JSON.stringify(cache) != JSON.stringify(me.state.cache)){
 										// XXX 这里会报warning，这是因为printer里在render()里调用了这个函数...
 										setTimeout(()=>me.setState({cache: cache}) , 200)
+										me.open_snackerbar("生成缓存数据完成！")
 									}
 								}}
 								ref = {me.printer_ref}

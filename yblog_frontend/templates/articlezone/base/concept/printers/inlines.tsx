@@ -39,6 +39,10 @@ import {
 	MathJaxFlusher , 
 } from "../../construction"
 
+import {
+	LinktoContexter
+} from "./contexter"
+
 export {
 	renderers , 
 }
@@ -139,10 +143,12 @@ var link_printer = (()=>{
 		}
 
 		return [ `此${tar_node.concept}`, cut_str(node2string_autotip(tar_node)) ]
-
 	}
 
+	let linktocontexter = new LinktoContexter()
+
 	return get_default_inline_renderer({
+		contexters: [()=>linktocontexter] , 
 		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
 			let {node,parameters,context,children} = props
 
@@ -168,7 +174,8 @@ var link_printer = (()=>{
 				}
 
 				// 如果确认这是一个其他页面
-				if(tar_node != undefined && tar_node <= 0 && tar_node != backend_data.node_id){
+				if(tar_node != undefined && tar_node >= 1 && tar_node != backend_data.node_id){
+					
 					let tar_conctent = await Interaction.get.content(tar_node)
 					let tar_cache    = await Interaction.get.cache  (tar_node)
 					set_root  (tar_conctent)
@@ -177,7 +184,6 @@ var link_printer = (()=>{
 			})()} , []) // 传入空依赖确保这个函数只被调用一次。
 
 			if(target_idx >= 1){
-
 				if(target_node == undefined || target_node <= 0){ // 在加载完成之前传入一个空link
 					return <Link href = "#" underline = "hover">{children}</Link>	
 				}
@@ -217,7 +223,7 @@ var link_printer = (()=>{
 				else{ // 本文外的节点
 					let tar_page = parseInt(target_node as any)
 					let tar_idx  = parseInt(target_idx)
-
+	
 					if(tar_idx == undefined || tar_idx <= 0){ // 页面跳转
 						if(autotext){
 							return <Link 

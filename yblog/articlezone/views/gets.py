@@ -7,11 +7,10 @@ import pdb
 @debug_convenient
 def get_conceptins_location(request: HttpRequest , concept_id: int):
 	'''查询编号为`concept_id`的概念所在的文章编号。'''
-
+	
 	try:
 		concept = ConceptInstance.objects.get(concept_id = concept_id) 
 	except ConceptInstance.DoesNotExist:
-		pdb.set_trace()
 		return JsonResponse({
 			"node_id": -1
 		}) 
@@ -93,8 +92,8 @@ def get_node_create_time(request , node_id):
 	if not node_can_view(request , node):
 		raise Http404()
 
-	create_time = node.create_time.strftime('%Y / %m / %d')
-	modify_time = node.update_time.strftime('%Y / %m / %d')
+	create_time = node.create_time.strftime("%Y / %m / %d")
+	modify_time = node.update_time.strftime("%Y / %m / %d")
 
 	return JsonResponse({
 		"create_time": create_time , 

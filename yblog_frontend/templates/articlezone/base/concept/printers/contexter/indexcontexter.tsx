@@ -32,7 +32,7 @@ interface EnvType{
 type IndexGenerateFunction<NodeType extends Node = Node> = (info: PreprocessInformation<NodeType>) => string
 
 /** 
- * 这个上下文工具在印刷器缓存中生成节点的引用名。
+ * 这个上下文工具生成目录的条目。
  * 
 */
 class IndexContexter<NodeType extends Node = Node> extends ContexterBase<NodeType , any , EnvType>{
