@@ -1,15 +1,44 @@
-from django.http import HttpResponse , JsonResponse , Http404
+from django.http import HttpResponse , JsonResponse , Http404, HttpRequest
 import json
-from ..models import Node , Comment , Resource
+from ..models import Node , Comment , Resource, Concept, ConceptInstance
 from .utils import debug_convenient , JSONDecode , node_can_view
 import pdb
 
 @debug_convenient
-def get_node_concepts(request , node_id):
+def get_conceptins_location(request: HttpRequest , concept_id: int):
+	'''查询编号为`concept_id`的概念所在的文章编号。'''
+
+	try:
+		concept = ConceptInstance.objects.get(concept_id = concept_id) 
+	except ConceptInstance.DoesNotExist:
+		pdb.set_trace()
+		return JsonResponse({
+			"node_id": -1
+		}) 
+	node_id = concept.node.id
+
+	return JsonResponse({
+		"node_id": node_id
+	})
+
+@debug_convenient
+def get_referenced_by(request: HttpRequest , concept_id: int):
+	'''查询编号为`concept_id`的所有被引用实例。'''
+
+	concept = ConceptInstance.objects.get(concept_id = concept_id) 
+	referenced_by = concept.referenced_by.all()
+
+	return JsonResponse({
+		"referenced_by": referenced_by
+	})
+
+
+@debug_convenient
+def get_node_concepts(request: HttpRequest , node_id: int):
 
 	node = Node.objects.get(id = node_id) 
 	if not node_can_view(request , node):
-		return Http404()
+		raise Http404()
 
 	return JsonResponse({
 		"concepts": node.get_all_concepts()
@@ -17,11 +46,11 @@ def get_node_concepts(request , node_id):
 
 
 @debug_convenient
-def get_node_comments(request , node_id):
+def get_node_comments(request: HttpRequest , node_id: int):
 
 	node = Node.objects.get(id = node_id) 
 	if not node_can_view(request , node):
-		return Http404()
+		raise Http404()
 
 	return JsonResponse({
 		"comments": [
@@ -31,10 +60,10 @@ def get_node_comments(request , node_id):
 	})
 
 @debug_convenient
-def get_node_content(request, node_id):
+def get_node_content(request, node_id) -> HttpResponse:
 	node = Node.objects.get(id = node_id) 
 	if not node_can_view(request , node):
-		return Http404()
+		raise Http404()
 
 	content = node.content.strip()
 	if content == "":
@@ -48,7 +77,7 @@ def get_node_content(request, node_id):
 def get_node_cache(request, node_id):
 	node = Node.objects.get(id = node_id) 
 	if not node_can_view(request , node):
-		return Http404()
+		raise Http404()
 
 	cache = node.cache.strip()
 	if cache == "":
@@ -62,7 +91,7 @@ def get_node_cache(request, node_id):
 def get_node_create_time(request , node_id):
 	node = Node.objects.get(id = node_id) 
 	if not node_can_view(request , node):
-		return Http404()
+		raise Http404()
 
 	create_time = node.create_time.strftime('%Y / %m / %d')
 	modify_time = node.update_time.strftime('%Y / %m / %d')
@@ -76,7 +105,7 @@ def get_node_create_time(request , node_id):
 def get_node_tldr(request , node_id):
 	node = Node.objects.get(id = node_id) 
 	if not node_can_view(request , node):
-		return Http404()
+		raise Http404()
 
 	return JsonResponse({
 		"tldr": node.tldr , 
@@ -86,7 +115,7 @@ def get_node_tldr(request , node_id):
 def get_node_visibility(request , node_id):
 	node = Node.objects.get(id = node_id) 
 	if not node_can_view(request , node):
-		return Http404()
+		raise Http404()
 
 	return JsonResponse({
 		"visibility": {
@@ -101,7 +130,7 @@ def get_indiscriminates(request , node_id):
 	node = Node.objects.get(id = node_id) 
 
 	if not node_can_view(request , node):
-		return Http404()
+		raise Http404()
 
 	lis = node.gather_indiscriminates()
 
@@ -115,7 +144,7 @@ def get_indiscriminates(request , node_id):
 def get_nodetree(request , node_id):
 
 	if node_id == 0:
-		lis = Node.objects.all().sort("index_in_father")
+		lis = Node.objects.all()
 	else:
 		lis = Node.objects.get(id = node_id).get_sons()
 	lis = list(lis)
@@ -137,10 +166,9 @@ def get_nodetree(request , node_id):
 @debug_convenient
 def get_nodetree_shallow(request , node_id):
 	if node_id == 0:
-		lis = Node.objects.get(id = 1).get_sons(2).sort("index_in_father")
-	else:
-		lis = Node.objects.get(id = node_id).get_sons(2)
-	lis = list(lis)
+		node_id = 1
+		
+	lis = list( Node.objects.get(id = node_id).get_sons(2) )
 	lis.sort(key = lambda nd: nd.index_in_father)
 	
 	return JsonResponse({
@@ -160,7 +188,7 @@ def get_nodetree_shallow(request , node_id):
 def get_node_resources(request , node_id):
 	node = Node.objects.get(id = node_id)
 	if not node_can_view(request , node):
-		return Http404()
+		raise Http404()
 
 	return JsonResponse({
 		"resources": [
@@ -173,7 +201,7 @@ def get_node_resource_info(request , node_id):
 	'''给定一个资源文件的和所在节点和名称，查询其`url`。'''
 	node = Node.objects.get(id = node_id)
 	if not node_can_view(request , node):
-		return Http404()
+		raise Http404()
 
 	resource_name = request.GET.get("name")
 	resources = []
@@ -216,7 +244,7 @@ def get_node_father_id(request , node_id):
 
 	node = Node.objects.get(id = node_id)
 	if not node_can_view(request , node):
-		return Http404()
+		raise Http404()
 	# 如果节点可见，那么其父节点也一定可见，因此无需额外判断。
 
 	

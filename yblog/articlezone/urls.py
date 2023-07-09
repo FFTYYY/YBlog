@@ -1,12 +1,15 @@
 from django.urls import path
-from .views.views import edit_node_view , edit_nodetree_view , read_node_view , edit_nodetree_shallow_view , read_node_pure_view
+from .views.views import edit_node_view , edit_nodetree_view , read_node_view  
+from .views.views import edit_nodetree_shallow_view , read_node_pure_view
 from .views.posts import post_nodetree , post_node_content , post_node_comments , post_node_comments 
 from .views.posts import post_generate_tldr
 from .views.posts import post_upload_file , post_manage_resource , post_delete_resource , post_node_cache
-from .views.gets import get_nodetree , get_node_concepts , get_node_comments , get_node_create_time , get_node_content
-from .views.gets import  get_node_resources , get_node_resource_info , get_node_son_ids , get_node_father_id
+from .views.gets import get_nodetree , get_node_concepts , get_node_comments
+from .views.gets import get_node_create_time , get_node_content
+from .views.gets import get_node_resources , get_node_resource_info , get_node_son_ids , get_node_father_id
 from .views.gets import get_nodetree_shallow , get_node_cache
 from .views.gets import get_node_tldr , get_node_visibility , get_indiscriminates
+from .views.gets import get_conceptins_location, get_referenced_by
 from functools import partial
 
 urlpatterns = [
@@ -32,7 +35,9 @@ urlpatterns = [
     path("get/node/father_id/<int:node_id>"     , get_node_father_id) , 
     path("get/node/tldr/<int:node_id>"          , get_node_tldr) , 
     path("get/node/visibility/<int:node_id>"    , get_node_visibility) , 
-    path("get/node/indiscriminates/<int:node_id>"    , get_indiscriminates) , 
+    path("get/node/indiscriminates/<int:node_id>"           , get_indiscriminates) , 
+    path("get/conceptins/location/<int:concept_id>"         , get_conceptins_location) , 
+    path("get/conceptins/referenced_by/<int:concept_id>"    , get_referenced_by) , 
 
     path("post/node/content/<int:node_id>"      , post_node_content) , 
     path("post/node/generate_tldr/<int:node_id>", post_generate_tldr) , 

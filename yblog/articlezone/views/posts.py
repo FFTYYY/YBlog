@@ -1,6 +1,6 @@
-from django.http import HttpResponse , JsonResponse , Http404
+from django.http import HttpResponse , JsonResponse , Http404, HttpRequest
 import json
-from ..models import Node , Comment , Resource
+from ..models import Node , Comment , Resource , ConceptInstance
 from ..constants import SHORT_STR_LENGTH
 from .utils import debug_convenient , JSONDecode , must_login , node_can_view
 from django import forms
@@ -13,7 +13,7 @@ SUCCESS = JsonResponse({"status": True})
 #注意`debug_convenient`必须放在外面，否则debug时访问失败无法正确接收失败信息。
 @debug_convenient
 @must_login(FAIL)
-def post_nodetree(request , node_id):
+def post_nodetree(request: HttpRequest , node_id: int):
 
 	if request.body == b"":
 		return JsonResponse({"status": False})
@@ -29,7 +29,7 @@ def post_nodetree(request , node_id):
 		if father_id == -1: 
 			node.father = None
 		else:
-			node.father = Node.objects.get(id = father_id)
+			node.father = Node.objects.get(id = father_id) 
 		node.index_in_father = idx_in_father
 		node.secret = secret
 		node.save()
@@ -39,7 +39,7 @@ def post_nodetree(request , node_id):
 
 @debug_convenient
 @must_login(FAIL)
-def post_node_content(request, node_id): 
+def post_node_content(request: HttpRequest, node_id: int): 
 	
 	if request.body == b"":
 		return FAIL
@@ -54,7 +54,7 @@ def post_node_content(request, node_id):
 
 @debug_convenient
 @must_login(FAIL)
-def post_generate_tldr(request, node_id): 
+def post_generate_tldr(request: HttpRequest, node_id: int): 
 	
 	node = Node.objects.get(id = node_id)
 	node.update_tldr()
@@ -65,7 +65,7 @@ def post_generate_tldr(request, node_id):
 
 @debug_convenient
 @must_login(FAIL)
-def post_node_cache(request, node_id): 
+def post_node_cache(request: HttpRequest, node_id: int): 
 	
 	if request.body == b"":
 		return FAIL
@@ -74,12 +74,25 @@ def post_node_cache(request, node_id):
 
 	cache = JSONDecode(request.body)["cache"]
 	node.cache = json.dumps( cache )
+
+	node.concept_instants.delete() # 先删除所有跟自己有关的实例
+	for instid, instcont in cache: # 先创建所有instance
+		inst = ConceptInstance(concept_id = instid, node = node)
+		inst.save()
+	for instid, instcont in cache: # 再更新linkto
+		linkto = instcont.get("linkto")
+		if linkto is not None:
+			inst = ConceptInstance.objects.get(instid = instid)
+			targ = ConceptInstance.objects.get(instid = linkto)
+			inst.linkto = targ
+			inst.save()
+
 	node.save()
 
 	return SUCCESS
 
 @debug_convenient
-def post_node_comments(request , node_id):
+def post_node_comments(request: HttpRequest , node_id: int):
 
 	if request.body == b"":
 		return FAIL
@@ -100,7 +113,7 @@ def post_node_comments(request , node_id):
 
 @debug_convenient
 @must_login(FAIL)
-def post_upload_file(request , node_id):
+def post_upload_file(request: HttpRequest , node_id: int):
 
 	if request.method != "POST":
 		return FAIL
@@ -116,7 +129,7 @@ def post_upload_file(request , node_id):
 
 @debug_convenient
 @must_login(FAIL)
-def post_manage_resource(request , resource_id):
+def post_manage_resource(request: HttpRequest , resource_id: int):
 
 	if request.method != "POST":
 		return FAIL
@@ -126,7 +139,7 @@ def post_manage_resource(request , resource_id):
 	file = request.FILES.get("file")
 
 	if file is not None: # 这是一次修改文件
-		resource.file = file
+		resource.file = file # type: ignore
 		resource.save()
 	elif request.body != b"": # 这是一次修改文件名
 		data = JSONDecode(request.body)
@@ -140,7 +153,7 @@ def post_manage_resource(request , resource_id):
 
 @debug_convenient
 @must_login(FAIL)
-def post_delete_resource(request):
+def post_delete_resource(request: HttpRequest):
 
 	if request.method != "POST":
 		return FAIL

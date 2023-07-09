@@ -154,16 +154,11 @@ var delete_style      = new FirstClassConcept  ({type: "inline", name: "刊"   ,
 
 var link_style      = new FirstClassConcept  ({type: "inline", name: "缀"   , 
     parameter_prototype: {...make_param({
-            label: "缀" ,
-            target: "" , 
-            autotext: false , 
-        }) , 
-        type: {
-            val: "index" , 
-            type: "string" , 
-            choices: ["index", "outer-index", "http"]
-        }
-    }
+        label: "缀" ,
+        target_idx: 0 , 
+        target_url: "" , 
+        autotext: false , 
+    }) , }
 })
 
 var mathinline_style  = new FirstClassConcept  ({type: "inline", name: "数学" , 

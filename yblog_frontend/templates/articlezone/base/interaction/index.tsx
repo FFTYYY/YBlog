@@ -80,6 +80,8 @@ async function get_node_information(urlmaker:(nodeid:number) => string , key?: s
 
     return data
 }
+
+
 /** 这个函数向后端发送一些信息。
  * @param urlmaker 从节点编号生成 url 的函数。
  * @param data 要发送的数据。
@@ -112,7 +114,10 @@ var urls = {
         father_id   : (nodeid: number)  => url_from_root( `get/node/father_id/${nodeid}` ) , 
         tldr        : (nodeid: number)  => url_from_root( `get/node/tldr/${nodeid}` ) , 
         visibility  : (nodeid: number)  => url_from_root( `get/node/visibility/${nodeid}` ) , 
-        indiscriminates : (nodeid: number) => url_from_root( `get/node/indiscriminates/${nodeid}` )
+        indiscriminates : (nodeid: number) => url_from_root( `get/node/indiscriminates/${nodeid}` ) , 
+
+        conceptins_location : (cins_id: number) => url_from_root( `get/conceptins/location/${cins_id}` ) , 
+        referenced_by       : (cins_id: number) => url_from_root( `get/conceptins/referenced_by/${cins_id}` ) , 
     } , 
     post: {
         content : (nodeid: number) => url_from_root( `post/node/content/${nodeid}` ) , 
@@ -165,7 +170,16 @@ var Interaction = {
         father_id   :(nodeid: number) => get_node_information(urls.get.father_id    , "father_id"   , nodeid), 
         tldr        :(nodeid: number) => get_node_information(urls.get.tldr         , "tldr"        , nodeid), 
         visibility  :(nodeid: number) => get_node_information(urls.get.visibility   , "visibility"  , nodeid), 
-        indiscriminates: (nodeid: number) => get_node_information(urls.get.indiscriminates   , "indiscriminates"  , nodeid), 
+        indiscriminates: (nodeid: number) => get_node_information(
+            urls.get.indiscriminates   , "indiscriminates"  , nodeid
+        ), 
+        
+        conceptins_location: (cins_id: number) => get_node_information(
+            urls.get.conceptins_location   , "node_id"  , cins_id
+        ), 
+        referenced_by: (cins_id: number) => get_node_information(
+            urls.get.referenced_by   , "referenced_by"  , cins_id
+        ), 
     } , 
 
     /** 所有向后端发送数据的函数。 */

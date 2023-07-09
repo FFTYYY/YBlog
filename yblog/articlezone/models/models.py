@@ -1,29 +1,77 @@
-from re import L
+from typing import Any
 from django.db import models
-from ..constants import SHORT_STR_LENGTH 
+from django.db.models.manager import BaseManager
+from django.contrib import admin
 import django.utils.timezone as timezone
+import django as que
+from ..constants import SHORT_STR_LENGTH 
 import json
 from .chatgpt import generate_tldr
-from django.contrib import admin
 import time
 
 class Concept(models.Model):
 	content = models.TextField(default = "", blank = True)
+	node: BaseManager["Node"]
+	id: int
 
 	def __str__(self):
+	
 		if self.node != None:
 			return "Concept Attached to Node {0}".format( [x.id for x in self.node.all()] )
 		return "Concept {0}".format(self.id)
 
+
+class ConceptInstance(models.Model):
+	'''这个类用来记录所有概念的实例所在的页面'''
+	id: int
+	referenced_by: BaseManager["ConceptInstance"]
+
+	# 这个概念的全局唯一编号。
+	concept_id  = models.IntegerField(default = 0)
+
+	# 这个组件所在的节点。
+	node    	= models.ForeignKey("Node", on_delete = models.CASCADE, related_name = "concept_instants")
+
+	# 这个组件引用了谁。一个组件只能引用一个人。
+	linkto      = models.ForeignKey["ConceptInstance"](
+		"self", 
+		null = True, 
+		on_delete = models.SET_NULL, 
+		related_name = "referenced_by"
+	)
+
+	def __str__(self):
+		return "Concept Instance -" + str(self.concept_id)
+
+
+
 class Node(models.Model):
-	father = models.ForeignKey("self", on_delete = models.SET_NULL , null = True , blank = True , related_name = "son")
+	id				: int
+	comments		: BaseManager["Comment"]
+	files			: BaseManager["Resource"]
+	concept_instants: BaseManager[ConceptInstance]
+	father			: models.ForeignKey
+
+	father 			= models.ForeignKey(
+		"self", 
+		on_delete = models.SET_NULL , 
+		null = True , 
+		blank = True , 
+		related_name = "son"
+	)
 	index_in_father = models.IntegerField(default = 0)
 
-	content  = models.TextField(default = "", blank = True)
-	cache    = models.TextField(default = "", blank = True)
-	concept_def  = models.ForeignKey(Concept, on_delete = models.SET_NULL , null = True , blank = True , related_name = "node")
-	tldr 	 = models.TextField(default = "", blank = True, null = True) # 摘要...
-	tldr_updatetime = models.IntegerField(default = 0) # 摘要...
+	content  		= models.TextField(default = "", blank = True)
+	cache    		= models.TextField(default = "", blank = True)
+	concept_def  	= models.ForeignKey(
+		Concept, 
+		on_delete = models.SET_NULL , 
+		null = True , 
+		blank = True , 
+		related_name = "node"
+	)
+	tldr 	 		= models.TextField(default = "", blank = True, null = True) # 摘要...
+	tldr_updatetime = models.IntegerField(default = 0) # 摘要更新时间
 
 	create_time = models.DateTimeField(default = timezone.now)
 	update_time = models.DateTimeField(default = timezone.now)
@@ -36,7 +84,7 @@ class Node(models.Model):
 		return self.get_title()
 	
 	@admin.display(description = "title")
-	def get_title(self):
+	def get_title(self) -> str:
 		'''这个方法效率极低，尽量避免调用。'''
 		notitle = "<NoTitle: {0}>".format(self.id)
 		if self.content.strip() == "":
@@ -56,7 +104,7 @@ class Node(models.Model):
 
 
 	@admin.display(boolean = True, description = "public")
-	def can_public_view(self):
+	def can_public_view(self) -> bool:
 		'''是否可以被公开看见'''
 		if self.secret:
 			return False
@@ -64,7 +112,7 @@ class Node(models.Model):
 			return self.father.can_public_view()
 		return True
 
-	def gather_indiscriminates(self):
+	def gather_indiscriminates(self) -> list["Node"]:
 		'''收集子树中所有的indiscriminate_provider节点'''
 		if not self.indiscriminate_consumer: # 自己必须是consumer才能提供indiscriminate_provider信息
 			return []
@@ -72,7 +120,7 @@ class Node(models.Model):
 		return sons
 
 
-	def get_sons(self , max_depth = 999):
+	def get_sons(self , max_depth = 999) -> set["Node"]:
 		'''返回所有子节点，包括自己。'''
 		if max_depth < 0:
 			return set()
@@ -83,7 +131,7 @@ class Node(models.Model):
 		all_sons.add(self)
 		return all_sons
 
-	def get_all_concepts(self):
+	def get_all_concepts(self) -> list[str]:
 		'''收集自己到根的所有组件。'''
 		ret = []
 		if self.concept_def:
@@ -92,7 +140,8 @@ class Node(models.Model):
 			ret = ret + self.father.get_all_concepts()
 		return list( filter(lambda x: len(x) > 0 , ret) )
 
-	def update_tldr(self):
+	def update_tldr(self) -> bool:
+		'''更新摘要'''
 		
 		now_time = int( time.time() )
 		new_tldr = generate_tldr(self)
@@ -108,7 +157,7 @@ class Node(models.Model):
 
 		self.update_time = timezone.now()
 
-		# 自动更新tldr
+		# <del>自动更新tldr</del>
 		# 自动更新个鬼
 		# now_time = int( time.time() )
 		# flag = self.tldr_updatetime > 0 # 防止对空文章生成tldr
@@ -123,15 +172,16 @@ class Node(models.Model):
 			bros = [x.index_in_father for x in Node.objects.filter(father_id = father.id)]
 			min_iif = min(bros) if len(bros) > 0 else 0
 			self.index_in_father = min_iif - 1
+	
 			
 		return super().save(*args , **kwargs)
 
-
-
 class Comment(models.Model):
+	id: int
+
 	content = models.TextField(default = "" , null = True , blank = True)
-	name = models.CharField(max_length = SHORT_STR_LENGTH , default = "" , null = True , blank = True)
-	father = models.ForeignKey(Node , on_delete = models.SET_NULL , related_name = "comments" , null = True)
+	name 	= models.CharField(max_length = SHORT_STR_LENGTH , default = "" , null = True , blank = True)
+	father 	= models.ForeignKey(Node , on_delete = models.SET_NULL , related_name = "comments" , null = True)
 
 # 存到 /MEDIA_ROOT/article_files/node_<id>/<filename> 这个文件下。
 def upload_to(instance , filename):
@@ -139,6 +189,7 @@ def upload_to(instance , filename):
 	return "article_files/node_{father_id}/{filename}".format(father_id = father_id , filename = filename)
 
 class Resource(models.Model):
+	id: int
 
 	name = models.CharField(max_length = SHORT_STR_LENGTH)
 	file = models.FileField( upload_to = upload_to )

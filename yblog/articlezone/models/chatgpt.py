@@ -27,6 +27,10 @@ def generate_tldr(node):
         node_content = analyze_tree(node_tree)
     except Exception:
         node_content =  node.content
+        
+    if len(node_content) <= 100:
+        return ""
+    
     node_content = node_content[:2700] # 防止token太多
 
     ret = ask_chatgpt(prompt_suff + node_content + prompt_post)

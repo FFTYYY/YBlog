@@ -17,7 +17,7 @@ def node_can_view(request , node):
         return True
     return request.user.is_authenticated or node.can_public_view()
 
-def must_login(fail_return = Http404()):
+def must_login(fail_return: HttpResponse | Http404 | JsonResponse = Http404()):
     '''这个包装器确保一个函数只能在用户已经登录的情况下调用。'''
     def _must_login(response_func):
         def warp_response_func(request , *args , **kwargs):
@@ -42,7 +42,7 @@ def debug_convenient(response_func):
     return warp_response_func
 
 
-def JSONDecode(s):
+def JSONDecode(s: str | bytes):
     s = s.strip()
     if s == "":
         return {}

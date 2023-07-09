@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Node , Comment , Resource , Concept
+from .models import Node , Comment , Resource , Concept, ConceptInstance
 from django import forms
 from django_json_widget.widgets import JSONEditorWidget
 from functools import partial
@@ -63,8 +63,12 @@ class ResourceAdmin(admin.ModelAdmin):
     pass
 class ConceptAdmin(admin.ModelAdmin):
     pass
+class ConceptInstanceAdmin(admin.ModelAdmin):
+    list_display = ["concept_id" , "node" ]
+    search_fields = ["concept_id"]
 
-admin.site.register(Node        , NodeAdmin     )
-admin.site.register(Comment     , CommentAdmin  ) 
-admin.site.register(Resource    , ResourceAdmin )
-admin.site.register(Concept     , ConceptAdmin )
+admin.site.register(ConceptInstance     , ConceptInstanceAdmin)
+admin.site.register(Node                , NodeAdmin     )
+admin.site.register(Comment             , CommentAdmin  ) 
+admin.site.register(Resource            , ResourceAdmin )
+admin.site.register(Concept             , ConceptAdmin  )

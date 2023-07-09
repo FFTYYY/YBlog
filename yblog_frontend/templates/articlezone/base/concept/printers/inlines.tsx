@@ -146,99 +146,131 @@ var link_printer = (()=>{
 		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
 			let {node,parameters,context,children} = props
 
-			let target = parameters.target
-			let type = parameters.type
+			let target_idx = parameters.target_idx
+			let target_url = parameters.target_url
 			let autotext = parameters.autotext
 
 			let globalinfo = React.useContext(GlobalInfo)
 			let printer_comp = globalinfo.printer_component as PrinterComponent
+			let backend_data = globalinfo.BackendData 
 
-			if(type == "index"){ // 本文内的节点。
-				let tar_idx = parseInt(target)
-				let cache = globalinfo.cache
-				let root = globalinfo.root as AbstractNode
-				let [title_ref , contt_ref] = [undefined , undefined]
-				if(cache){
-					[title_ref , contt_ref] = get_reference_from_cache(cache, tar_idx) // 首先尝试从cache获得
-					if(title_ref == undefined || contt_ref == undefined){ // 然后尝试重新建立cache
-						[title_ref , contt_ref] = get_reference_from_printer(printer_comp, root, tar_idx)
-					}
-					if(title_ref == undefined || contt_ref == undefined){ // 最后尝试直接从节点获得信息
-						[title_ref , contt_ref] = get_reference_from_root(root, tar_idx)
-					}
+
+			// 先获得目标概念所在节点
+			let [ target_node  , set_target_node  ] = React.useState<number | undefined>(undefined)	
+			let [ root  , set_root  ] = React.useState<AbstractNode | undefined>(undefined)
+			let [ cache , set_cache ] = React.useState<PrinterCache | undefined>(undefined)
+
+			useEffect(()=>{(async ()=>{
+				let tar_node = 0
+				if(target_idx >= 1){ // 如果是连接到概念，那么就询问概念所在的页面
+					tar_node = await Interaction.get.conceptins_location(target_idx)
+					set_target_node(tar_node)
 				}
 
-				let contt_ref_comp = <MathJaxFlusher>{contt_ref}</MathJaxFlusher> as any
+				// 如果确认这是一个其他页面
+				if(tar_node != undefined && tar_node <= 0 && tar_node != backend_data.node_id){
+					let tar_conctent = await Interaction.get.content(tar_node)
+					let tar_cache    = await Interaction.get.cache  (tar_node)
+					set_root  (tar_conctent)
+					set_cache (tar_cache)
+				}
+			})()} , []) // 传入空依赖确保这个函数只被调用一次。
 
-				if(autotext){
-					if(!(title_ref == undefined || contt_ref == undefined)){
-						return <AutoTooltip title={contt_ref_comp}><Link 
-							underline = "hover"
-							onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
-						>{title_ref}</Link></AutoTooltip>
-					}
+			if(target_idx >= 1){
+
+				if(target_node == undefined || target_node <= 0){ // 在加载完成之前传入一个空link
+					return <Link href = "#" underline = "hover">{children}</Link>	
 				}
 
-				// 不要自动确定文本。
-				return <AutoTooltip title = {contt_ref}><Link 
-					underline = "hover"
-					onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
-				>{children}</Link></AutoTooltip>
-			}
-			else if(type == "outer-index"){
-				let [_tar_page , _tar_idx] = target.split(":")
-				let [ tar_page ,  tar_idx] = [ parseInt(_tar_page)  , parseInt(_tar_idx) ]
-				if(_tar_idx == undefined || tar_idx <= 0){ // 页面跳转
+				if(target_node == backend_data.node_id){ // 本文内的节点。
+					let tar_idx = parseInt(target_idx)
+					let cache = globalinfo.cache
+					let root = globalinfo.root as AbstractNode
+					let [title_ref , contt_ref] = [undefined , undefined]
+					if(cache){
+						[title_ref , contt_ref] = get_reference_from_cache(cache, tar_idx) // 首先尝试从cache获得
+						if(title_ref == undefined || contt_ref == undefined){ // 然后尝试重新建立cache
+							[title_ref , contt_ref] = get_reference_from_printer(printer_comp, root, tar_idx)
+						}
+						if(title_ref == undefined || contt_ref == undefined){ // 最后尝试直接从节点获得信息
+							[title_ref , contt_ref] = get_reference_from_root(root, tar_idx)
+						}
+					}
+	
+					let contt_ref_comp = <MathJaxFlusher>{contt_ref}</MathJaxFlusher> as any
+	
 					if(autotext){
+						if(!(title_ref == undefined || contt_ref == undefined)){
+							return <AutoTooltip title={contt_ref_comp}><Link 
+								underline = "hover"
+								onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
+							>{title_ref}</Link></AutoTooltip>
+						}
+					}
+	
+					// 不要自动确定文本。
+					return <AutoTooltip title = {contt_ref}><Link 
+						underline = "hover"
+						onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
+					>{children}</Link></AutoTooltip>
+				}
+				else{ // 本文外的节点
+					let tar_page = parseInt(target_node as any)
+					let tar_idx  = parseInt(target_idx)
+
+					if(tar_idx == undefined || tar_idx <= 0){ // 页面跳转
+						if(autotext){
+							return <Link 
+								href = {urls.view.content(tar_page , {linkto: tar_idx})}
+								underline = "hover"
+							>此页</Link>
+						}
 						return <Link 
 							href = {urls.view.content(tar_page , {linkto: tar_idx})}
 							underline = "hover"
-						>此页</Link>
+						>{children}</Link>		
 					}
-					return <Link 
-						href = {urls.view.content(tar_page , {linkto: tar_idx})}
-						underline = "hover"
-					>{children}</Link>		
-				}
-
-				let [ root  , set_root  ] = React.useState<AbstractNode | undefined>(undefined)
-				let [ cache , set_cache ] = React.useState<PrinterCache | undefined>(undefined)
-				useEffect(()=>{
-					Interaction.get.content(tar_page).then(data=>{set_root (data)})
-					Interaction.get.cache  (tar_page).then(data=>{set_cache(data)})
-				} , []) // 传入空依赖确保这个函数只被调用一次。
-				
-				let [title_ref , contt_ref] = [undefined , undefined]
-				if(root && cache){
-					[title_ref , contt_ref] = get_reference_from_cache(cache, tar_idx) // 首先尝试从cache获得
-					if(title_ref == undefined || contt_ref == undefined){ // 然后尝试重新建立cache
-						[title_ref , contt_ref] = get_reference_from_printer(printer_comp, root, tar_idx)
+	
+					
+					let [title_ref , contt_ref] = [undefined , undefined]
+					if(root && cache){
+						[title_ref , contt_ref] = get_reference_from_cache(cache, tar_idx) // 首先尝试从cache获得
+						if(title_ref == undefined || contt_ref == undefined){ // 然后尝试重新建立cache
+							[title_ref , contt_ref] = get_reference_from_printer(printer_comp, root, tar_idx)
+						}
+						if(title_ref == undefined || contt_ref == undefined){ // 最后尝试直接从节点获得信息
+							[title_ref , contt_ref] = get_reference_from_root(root, tar_idx)
+						}
 					}
-					if(title_ref == undefined || contt_ref == undefined){ // 最后尝试直接从节点获得信息
-						[title_ref , contt_ref] = get_reference_from_root(root, tar_idx)
+					
+					// 添加数学刷新器。
+					let contt_ref_comp = <MathJaxFlusher>{contt_ref}</MathJaxFlusher> as any
+	
+					if(autotext){
+						return <AutoTooltip title = {contt_ref_comp}><Link 
+							href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
+							underline = "hover"
+						>此页的{title_ref}</Link></AutoTooltip>
 					}
-				}
-				
-				// 添加数学刷新器。
-				let contt_ref_comp = <MathJaxFlusher>{contt_ref}</MathJaxFlusher> as any
-
-				if(autotext){
 					return <AutoTooltip title = {contt_ref_comp}><Link 
 						href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
 						underline = "hover"
-					>此页的{title_ref}</Link></AutoTooltip>
+					>{children}</Link></AutoTooltip>
 				}
-				return <AutoTooltip title = {contt_ref_comp}><Link 
-					href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
-					underline = "hover"
-				>{children}</Link></AutoTooltip>
-			}
+	
 
 
-			if(autotext){
-				return <Link href = {target} underline = "hover">此页</Link>
 			}
-			return <Link href = {target} underline = "hover">{children}</Link>
+			
+			if(target_url){
+				if(autotext){
+					return <Link href = {target_url} underline = "hover">此页</Link>
+				}
+				return <Link href = {target_url} underline = "hover">{children}</Link>	
+			}
+
+			return <Link href = "#" underline = "hover">{children}</Link>	
+
 		}
 	})
 })()
