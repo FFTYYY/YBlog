@@ -150,6 +150,55 @@ class Node(models.Model):
 			self.tldr_updatetime = now_time
 			return True
 		return False
+	
+	def get_instances(self):
+		ret = set()
+		def _process(tree):
+			if tree.get("idx") is not None:
+				ret.add(tree["idx"])
+
+			if tree.get("children") is not None:
+				for ch in range(len(tree["children"])):
+					_process(tree["children"][ch])
+
+			if tree.get("abstract") is not None:
+				for ch in range(len(tree["abstract"])):
+					_process(tree["abstract"][ch])
+		content_tree = json.loads(self.content)
+		_process(content_tree)
+		return ret
+
+
+	def update_concept_instances(self):
+		
+		real_instances = self.get_instances()
+		save_instances = ConceptInstance.objects.filter(node = self)
+		save_instances_id = set([x.concept_id for x in save_instances])
+		for inst in save_instances:
+			if inst.concept_id not in real_instances: # 删除没有的概念。
+				inst.delete()
+			
+		for instid in real_instances - save_instances_id: # 添加所有的新概念
+			inst = ConceptInstance(concept_id = instid, node = self)
+			inst.save()
+
+	def update_linkto(self):
+
+		cache_content = json.loads(self.cache)
+		for ins_id, ins_cont in cache_content.items():
+			if ins_cont.get("linkto"):
+				try:
+					inst = ConceptInstance.objects.get(concept_id = ins_id)
+				except ConceptInstance.DoesNotExist:
+					print ("warning: no linker element %d" % ins_id)
+					continue
+				try:
+					targ = ConceptInstance.objects.get(concept_id = ins_cont["linkto"])
+				except ConceptInstance.DoesNotExist:
+					continue
+
+				inst.linkto = targ
+				inst.save()
 
 	def save(self , *args , **kwargs):
 
@@ -172,7 +221,12 @@ class Node(models.Model):
 			bros = [x.index_in_father for x in Node.objects.filter(father_id = father.id)]
 			min_iif = min(bros) if len(bros) > 0 else 0
 			self.index_in_father = min_iif - 1
-	
+
+		# 更新概念实例
+		self.update_concept_instances()
+
+		# 更新linkto
+		self.update_linkto()
 			
 		return super().save(*args , **kwargs)
 

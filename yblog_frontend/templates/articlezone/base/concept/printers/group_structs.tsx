@@ -78,6 +78,9 @@ import {
 	MathJaxBlock , 
 } from "../../construction"
 import { Acanthus, Acanthus2, Acanthus3, Acanthus4, BaJiao, BaoXiangHua, Hui, MeiGui } from "../../../assets"
+import {
+	ReferencePrinter , 
+} from "./base"
 
 export {
 	renderers , 
@@ -101,16 +104,17 @@ var subsection_printer = (()=>{
 
 			let title = parameters.title
 			return <PrinterPartBox>
-				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-					
-			    	<PrinterPartBox subtitle_like>
-						<Hui strokeWidth="2px" style={{
-							height: "0.75rem", 
-							marginRight: "0.5rem",
-						}}/>
-						{order_str}{title}
-					</PrinterPartBox>
-				</DefaultAbstractRendererAsProperty>
+				<ReferencePrinter node={node} inline>
+					<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+						<PrinterPartBox subtitle_like>
+							<Hui strokeWidth="2px" style={{
+								height: "0.75rem", 
+								marginRight: "0.5rem",
+							}}/>
+							{order_str}{title}
+						</PrinterPartBox>
+					</DefaultAbstractRendererAsProperty>
+				</ReferencePrinter>
 				<PrinterNewLevelBox>{children}</PrinterNewLevelBox>
             </PrinterPartBox>
 		} , 
@@ -160,7 +164,9 @@ var brightwords_printer = (()=>{
 			}
 			
 			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				<PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
+				<ReferencePrinter node={node} parameters={parameters} inline>
+					<PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
+				</ReferencePrinter>
 			</DefaultAbstractRendererAsProperty>
 		} , 
 		outer: (props) => {
@@ -324,7 +330,9 @@ var formatted_printer = (()=>{
 	return get_default_group_renderer({
 		inner: (props: PrinterRenderFunctionProps<GroupNode>) => {
 			let {node , parameters , context , children} = props
-			return <pre>{props.children}</pre>
+			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+				<pre>{props.children}</pre>
+			</DefaultAbstractRendererAsProperty>
 		} , 
 	})
 })()

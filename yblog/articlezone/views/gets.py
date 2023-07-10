@@ -23,9 +23,15 @@ def get_conceptins_location(request: HttpRequest , concept_id: int):
 @debug_convenient
 def get_referenced_by(request: HttpRequest , concept_id: int):
 	'''查询编号为`concept_id`的所有被引用实例。'''
+	
+	try:
+		concept = ConceptInstance.objects.get(concept_id = concept_id) 
+	except ConceptInstance.DoesNotExist:
+		return JsonResponse({
+			"referenced_by": []
+		}) 
 
-	concept = ConceptInstance.objects.get(concept_id = concept_id) 
-	referenced_by = concept.referenced_by.all()
+	referenced_by = [[x.node.id, x.concept_id] for x in concept.referenced_by.all()]
 
 	return JsonResponse({
 		"referenced_by": referenced_by

@@ -70,6 +70,7 @@ import {
 
 	ThemeContext , 
 	TextIcon , 
+	DefaultAbstractRendererAsProperty , 
 
 } from "@ftyyy/ytext"
 
@@ -133,16 +134,18 @@ var sectioner_printer = (()=>{
 			let title = parameters.title
 			let alone = parameters.alone
 
-			if(alone && !title){
+			if(alone && !title && node.abstract.length <= 0){
 				return <Divider />
-				// return <></>
 			}
 			
 			// 如果是`alone`的就不显示序号惹。
 			let order_word = alone ? <></> : <PrinterStructureBoxText inline>第{num2chinese(order)} </PrinterStructureBoxText>
-			let title_word = title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>
-			return <Divider>{order_word}{title_word}</Divider>
 
+			let title_word = <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">{
+				title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>
+			}</DefaultAbstractRendererAsProperty>
+
+			return <Divider>{order_word}{title_word}</Divider>
 		}
 	})
 })()
@@ -158,8 +161,11 @@ var ender_printer = (()=>{
 	return auto_renderer<SupportNode>({
 		contexters: [index_gene] , 
 		render_function: (props: PrinterRenderFunctionProps<SupportNode>) => {
+			let {node,parameters,context,children} = props
+
 			// 手动添加了一个box，来防止滚动条的高度异常。
 			return <React.Fragment>
+				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
 				<Divider/>
 				<Box sx={{height: "2rem"}}></Box> 
 			</React.Fragment> 
@@ -169,7 +175,7 @@ var ender_printer = (()=>{
 
 var image_printer = (()=>{
 	return get_default_inline_renderer({
-		outer: (props: PrinterRenderFunctionProps) => {
+		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
 			let {node , parameters , context , children} = props
 			let globalinfo = React.useContext(GlobalInfo)
 			let BackendData = globalinfo.BackendData
@@ -206,12 +212,10 @@ var image_printer = (()=>{
 					height: height > 0 ? `${height}rem` : "100%" , 
 				}}/>	
 			}
-			return <Box sx={{
+			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title"><Box sx={{
 				widths: width > 0 ? `${width}rem` : `${height}rem`, 
 				height: height > 0 ? `${height}rem` : `${width}rem`, 
-			}}></Box>
-	
-	
+			}}></Box></DefaultAbstractRendererAsProperty>
 		} , 
 	})
 })()
@@ -247,56 +251,59 @@ var showchildren_printer = (()=>{
 
 			} , [ JSON.stringify(parameters) ])
 
-			return <MathJaxFlusher>{sons.map((son_id , idx) => {
-				let SubIframe = (props: {}) => {
-					let theme = React.useContext(ThemeContext)
-					let overflow = parameters.scroll ? "auto" : "hidden"
+			return <MathJaxFlusher>
+				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
+				{sons.map((son_id , idx) => {
+					let SubIframe = (props: {}) => {
+						let theme = React.useContext(ThemeContext)
+						let overflow = parameters.scroll ? "auto" : "hidden"
 
-					let tldr = tldrs[son_id]
-					let estimate_height = (tldr / 100) * 12 // XXX xjb估计的...
+						let tldr = tldrs[son_id]
+						let estimate_height = (tldr / 100) * 12 // XXX xjb估计的...
 
-					return <Box>
-						<Box >
-							<Link 
-								href = {urls.view.content(son_id)} 
-								underline = "hover" 
-								sx = {{
-									...theme.printer.fonts.structure
-								}}
-							>▶<TitleWord node_id={son_id}/></Link>
-							<Box sx={{display: "inline", textAlign: "right", right: 0, position: "absolute"}}>
-								<AutoTooltip title="这个节点是一个子节点"><Box>
-								<TextIcon text="子" fontSize="small" color={(theme.mui.palette.info as any).main}/>
-							</Box></AutoTooltip>
+						return <Box>
+							<Box >
+								<Link 
+									href = {urls.view.content(son_id)} 
+									underline = "hover" 
+									sx = {{
+										...theme.printer.fonts.structure
+									}}
+								>▶<TitleWord node_id={son_id}/></Link>
+								<Box sx={{display: "inline", textAlign: "right", right: 0, position: "absolute"}}>
+									<AutoTooltip title="这个节点是一个子节点"><Box>
+									<TextIcon text="子" fontSize="small" color={(theme.mui.palette.info as any).main}/>
+								</Box></AutoTooltip>
+								</Box>
 							</Box>
-						</Box>
-						<Box sx={{
-							maxHeight: `${parameters.max_height}rem` , 
-							minHeight: `${parameters.min_height}rem` , 
-							overflow: overflow , 
-							borderLeft: "1px solid" , 
-							marginLeft: "2px" , 
-							paddingLeft: "1rem" , 
-							paddingY: "2rem" , 
-							marginY: "0.5rem" , 
-							whiteSpace: "pre-wrap" , 
-						}}>
-							{tldr}
-						</Box>
-						{(()=>{
-							if(overflow == "hidden"){
-								let inner_height = estimate_height // 估计实际高度
-								let outer_height = parseInt(parameters.max_height) * 16 // 估计裁剪高度
-								if(outer_height > 0 && outer_height < inner_height){ // 估计有被截断
-									return <>...</>
+							<Box sx={{
+								maxHeight: `${parameters.max_height}rem` , 
+								minHeight: `${parameters.min_height}rem` , 
+								overflow: overflow , 
+								borderLeft: "1px solid" , 
+								marginLeft: "2px" , 
+								paddingLeft: "1rem" , 
+								paddingY: "2rem" , 
+								marginY: "0.5rem" , 
+								whiteSpace: "pre-wrap" , 
+							}}>
+								{tldr}
+							</Box>
+							{(()=>{
+								if(overflow == "hidden"){
+									let inner_height = estimate_height // 估计实际高度
+									let outer_height = parseInt(parameters.max_height) * 16 // 估计裁剪高度
+									if(outer_height > 0 && outer_height < inner_height){ // 估计有被截断
+										return <>...</>
+									}
 								}
-							}
-							return <></>
-						})()}
-					</Box>
-				}
-				return <SubIframe key = {idx} />
-			})}</MathJaxFlusher>
+								return <></>
+							})()}
+						</Box>
+					}
+					return <SubIframe key = {idx} />
+				})}
+			</MathJaxFlusher>
 		} , 
 	})
 })()
@@ -380,20 +387,22 @@ var insertchildren_printer = (()=>{
 				return <></>
 			}
 
-			return <MathJaxFlusher>{
-				son_ids.map((son_id , idx) => {
-					return <GlobalInfoProvider key = {idx} value = {{
-						BackendData: {BackendData , node_id: son_id} // 老子真是天才！
-					}}>
-						<PrinterComponent 
-							init_env = {init_envs[idx]}
-							root = {roots[idx]}
-							printer = {printer_comp.get_printer()}
-						/>
-					</GlobalInfoProvider>
-				})
-			}</MathJaxFlusher>	
-
+			return <MathJaxFlusher>
+				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
+				{
+					son_ids.map((son_id , idx) => {
+						return <GlobalInfoProvider key = {idx} value = {{
+							BackendData: {BackendData , node_id: son_id} // 老子真是天才！
+						}}>
+							<PrinterComponent 
+								init_env = {init_envs[idx]}
+								root = {roots[idx]}
+								printer = {printer_comp.get_printer()}
+							/>
+						</GlobalInfoProvider>
+					})
+				}
+			</MathJaxFlusher>	
 		} , 
 	})
 })()
@@ -449,60 +458,63 @@ var gatherindis_printer = (()=>{
 
 			} , [ JSON.stringify(parameters) ])
 
-			return <MathJaxFlusher>{indis.map((son_id , idx) => {
-				let SubIframe = (props: {}) => {
-					let theme = React.useContext(ThemeContext)
-					let overflow = parameters.scroll ? "auto" : "hidden"
+			return <MathJaxFlusher>
+				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
+				{indis.map((son_id , idx) => {
+					let SubIframe = (props: {}) => {
+						let theme = React.useContext(ThemeContext)
+						let overflow = parameters.scroll ? "auto" : "hidden"
 
-					let tldr = tldrs[son_id]
-					let estimate_height = (tldr / 100) * 12 // XXX xjb估计的...
+						let tldr = tldrs[son_id]
+						let estimate_height = (tldr / 100) * 12 // XXX xjb估计的...
 
-					return <Box>
-						<Box sx={{
-							display: "flex" , 
-							justifyContent: "space-between"
-						}}>
-							<Link 
-								href = {urls.view.content(son_id)} 
-								underline = "hover" 
-								sx = {{
-									...theme.printer.fonts.structure
-								}}
-							>▶<TitleWord node_id={son_id}/></Link>
-							<Box sx={{display: "inline", textAlign: "right"}}>
-								<AutoTooltip title="这个节点是浮上来的节点"><Box>
-									<TextIcon text="浮" fontSize="small" color={(theme.mui.palette.info as any).main}/>
-								</Box></AutoTooltip>
+						return <Box>
+							<Box sx={{
+								display: "flex" , 
+								justifyContent: "space-between"
+							}}>
+								<Link 
+									href = {urls.view.content(son_id)} 
+									underline = "hover" 
+									sx = {{
+										...theme.printer.fonts.structure
+									}}
+								>▶<TitleWord node_id={son_id}/></Link>
+								<Box sx={{display: "inline", textAlign: "right"}}>
+									<AutoTooltip title="这个节点是浮上来的节点"><Box>
+										<TextIcon text="浮" fontSize="small" color={(theme.mui.palette.info as any).main}/>
+									</Box></AutoTooltip>
+								</Box>
 							</Box>
-						</Box>
-						<Box sx={{
-							maxHeight: `${parameters.max_height}rem` , 
-							minHeight: `${parameters.min_height}rem` , 
-							overflow: overflow , 
-							borderLeft: "1px solid" , 
-							marginLeft: "2px" , 
-							paddingLeft: "1rem" , 
-							paddingTop: "0.5rem" , 
-							paddingBottom: "1.5rem" , 
-							marginY: "0.5rem" , 
-							whiteSpace: "pre-wrap" , 
-						}}>
-							{tldr}
-						</Box>
-						{(()=>{
-							if(overflow == "hidden"){
-								let inner_height = estimate_height // 估计实际高度
-								let outer_height = parseInt(parameters.max_height) * 16 // 估计裁剪高度
-								if(outer_height > 0 && outer_height < inner_height){ // 估计有被截断
-									return <>...</>
+							<Box sx={{
+								maxHeight: `${parameters.max_height}rem` , 
+								minHeight: `${parameters.min_height}rem` , 
+								overflow: overflow , 
+								borderLeft: "1px solid" , 
+								marginLeft: "2px" , 
+								paddingLeft: "1rem" , 
+								paddingTop: "0.5rem" , 
+								paddingBottom: "1.5rem" , 
+								marginY: "0.5rem" , 
+								whiteSpace: "pre-wrap" , 
+							}}>
+								{tldr}
+							</Box>
+							{(()=>{
+								if(overflow == "hidden"){
+									let inner_height = estimate_height // 估计实际高度
+									let outer_height = parseInt(parameters.max_height) * 16 // 估计裁剪高度
+									if(outer_height > 0 && outer_height < inner_height){ // 估计有被截断
+										return <>...</>
+									}
 								}
-							}
-							return <></>
-						})()}
-					</Box>
-				}
-				return <SubIframe key = {idx} />
-			})}</MathJaxFlusher>
+								return <></>
+							})()}
+						</Box>
+					}
+					return <SubIframe key = {idx} />
+				})}
+			</MathJaxFlusher>
 		} , 
 	})
 })()

@@ -18,6 +18,8 @@ import {
 	DriveFolderUpload as DriveFolderUploadIcon
 } from "@mui/icons-material"
 
+import $ from "jquery"
+
 import {
 	EditorComponent , 
 	ConceptNode , 
@@ -299,6 +301,7 @@ class App extends  React.Component<{}, {
 							init_rootchildren = {tree_children} // 编辑器会记住第一次看到的树，所以务必在树初始化之后再渲染编辑器
 							onSave = {()=>{
 								let root = me.update_tree()
+								console.log($(".yblog-error").length)
 								setTimeout(()=>{
 									flush_math.go()
 									me.save_content(root)
@@ -334,6 +337,9 @@ class App extends  React.Component<{}, {
 										// XXX 这里会报warning，这是因为printer里在render()里调用了这个函数...
 										setTimeout(()=>me.setState({cache: cache}) , 200)
 										me.open_snackerbar("生成缓存数据完成！")
+									}
+									else{
+										me.open_snackerbar("缓存数据没有变化。")
 									}
 								}}
 								ref = {me.printer_ref}

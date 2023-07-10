@@ -25,8 +25,14 @@ class LinktoContexter<NodeType extends Node = Node> extends ContexterBase<NodeTy
         super("__yblog_linkto" , undefined)
     }
 
-    exit(node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): [PrinterCacheItem, boolean] {
-        let cache_val = parameters.targer_val?.val
+    exit(
+        node: Readonly<NodeType>, 
+        path: Readonly<number []>, 
+        parameters: Readonly<ProcessedParameterList>, 
+        env: Env, 
+        context: Context
+    ): [PrinterCacheItem, boolean] {
+        let cache_val = parameters.target_idx
         if(cache_val == undefined || cache_val <= 0){
             return [{},true]
         }
