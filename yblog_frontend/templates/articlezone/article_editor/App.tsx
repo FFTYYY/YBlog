@@ -12,6 +12,7 @@ import {
 	Container, 
 	Typography, 
 	Card , 
+	IconButton , 
 } from "@mui/material"
 
 import {
@@ -48,6 +49,8 @@ import {
 
 	ThemeProvider , 
 	ThemeContext , 
+
+	TextIcon , 
 } from "@ftyyy/ytext"
 
 import * as Slate from "slate"
@@ -91,6 +94,8 @@ class App extends  React.Component<{}, {
 	editorcore: EditorCore | undefined
 	tree: AbstractNode  | undefined
 	cache: PrinterCache | undefined
+
+	activate_idx: boolean // 是否要显示每个组件的IDX
 }>{
 
 	editor_ref: React.RefObject<DefaultEditorComponent>
@@ -105,6 +110,7 @@ class App extends  React.Component<{}, {
 			editorcore: undefined , 
 			tree: undefined , 
 			cache: undefined , 
+			activate_idx: true , 
 		}
 		this.editor_ref = React.createRef()
 		this.printer_ref = React.createRef()
@@ -230,6 +236,25 @@ class App extends  React.Component<{}, {
 		return root
 	}
 
+	ShowIDButton(){
+		let me = this
+		let icon_style = me.state.activate_idx ? {
+			backgroundColor: "black" , 
+			color: "rgb(200,170,220)" , 	
+		} : {}
+		return <IconButton sx={{
+			marginLeft: "0.3rem", 
+		}} onClick={(e)=>{
+			me.setState({
+				activate_idx: !me.state.activate_idx
+			})
+		}}>
+			<TextIcon text="测" sx={{
+				...icon_style,
+			}}/>
+		</IconButton>
+	}
+
 	render(){
 		let me = this
 		let {editorcore, printer, tree} = this.state
@@ -242,6 +267,8 @@ class App extends  React.Component<{}, {
 			let {children , ...tree_property} = tree
 			return [tree_property , children]
 		})()
+
+		let ShowIDButton = me.ShowIDButton.bind(me)
 
 		return <MUIThemeProvider theme={MUICreateTheme(my_theme.mui)}><ThemeProvider value={my_theme} mui><Box sx={(theme)=>({
 			position: "fixed" , 
@@ -310,6 +337,9 @@ class App extends  React.Component<{}, {
 							}}
 							theme = {my_theme}
 							plugin = { withAllPlugins }
+							extra_buttons = {
+								<ShowIDButton />
+							}
 						/>
 					</Box>
 
@@ -328,6 +358,7 @@ class App extends  React.Component<{}, {
 						<GlobalInfoProvider value={{
 							BackendData: BackendData , 
 							cache: me.state.cache , 
+							activate_idx: me.state.activate_idx ,  
 						}}>
 							<DefaultPrinterComponent 
 								printer = {printer} 

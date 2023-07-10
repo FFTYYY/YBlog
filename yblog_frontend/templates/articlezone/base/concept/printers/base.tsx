@@ -20,13 +20,15 @@ import {
     PrinterParagraphBox,
     PrinterNewLevelBox, 
 	ThemeContext , 
-
+    DefaultAbstractRendererAsProperty, 
+    Context, 
 } from "@ftyyy/ytext"
 
 import {
+    Acanthus,
     BaoXiangHua, MeiGui , MeiGui2,  
 } from "../../../assets"
-import { BaJiao, LiuBian, SanJiao, LiuJiaoYuan } from "../../../assets/decors"
+import { BaJiao, LiuBian, SanJiao, LiuJiaoYuan, FangSheng, Acanthus2 } from "../../../assets/decors"
 import {
     Interaction
 } from "../../interaction"
@@ -38,7 +40,10 @@ import { num2chinese } from "../../utils"
 export {
     ErrorPrinter , 
     ReferencePrinter , 
+    ShowIDXPrinter , 
+    StandardAttachers , 
 }
+
 
 /**
  * 这个组件用来包裹一个渲染错误的概念。
@@ -60,6 +65,23 @@ function ErrorPrinter(props: {children: any, msg?: string, inline?: boolean}){
             }} />
         </div></AutoTooltip>
     </div>
+}
+
+/**
+ * 这个组件是一个语法糖，其同时用`DefaultAbstractRendererAsProperty`、`ReferencePrinter`
+ * 和`ShowIDXPrinter`这三个组件来包裹元素。
+ */
+function StandardAttachers(props: {children?: any, context: Context, node: ConceptNode, parameters?: any, inline?: boolean}){
+    let {node, context, children, parameters, inline} = props
+    children = children || <></>
+
+    return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+        <ReferencePrinter {...{node, parameters, inline}}>
+            <ShowIDXPrinter {...{node, inline}}>
+                {children}
+            </ShowIDXPrinter>
+        </ReferencePrinter>
+    </DefaultAbstractRendererAsProperty>
 }
 
 /**
@@ -91,7 +113,10 @@ function ReferencePrinter(props: {children?: any, node: ConceptNode, parameters?
     let my_name = (props.parameters?.label) || props.node.concept
 
     let reference_comp = <Box style={{paddingRight: "5%", width: "20rem"}}>
-        <PrinterParagraphBox>本{my_name}被引用{num2chinese(referencers.length)}次。分别在</PrinterParagraphBox>
+        <PrinterParagraphBox>
+            本{my_name}被引用{num2chinese(referencers.length)}次。
+            {Object.keys(count).length > 1 ? "分别" : "皆"}在
+        </PrinterParagraphBox>
         <PrinterNewLevelBox>{Object.keys(count).map((nodeid, idx)=>{
             return <React.Fragment key={idx}>
                 <Link href={`./${nodeid}`} style={{color: "inherit"}}><TitleWord node_id={parseInt(nodeid)}/></Link>
@@ -105,7 +130,7 @@ function ReferencePrinter(props: {children?: any, node: ConceptNode, parameters?
     let display = props.inline ? "inline-block" : "block"
     return <Box style={{display: display}}>
         {children}
-        <Tooltip title={reference_comp}><div style={{display: "inline-block"}}>
+        <Tooltip title={reference_comp}><div style={{display: display}}>
             <LiuBian fill="rgba(20,120,240,0.4)" strokeWidth="6px" strokeColor="rgba(0,0,0,0.7)" style={{
                 top: "-5px", 
                 left: "2px" , 
@@ -117,5 +142,39 @@ function ReferencePrinter(props: {children?: any, node: ConceptNode, parameters?
                 transform: "scaleY(-1)",
             }} />
         </div></Tooltip>
+    </Box>
+}
+
+/**
+ * 这个组件显示一个组件的编号。
+ */
+function ShowIDXPrinter(props: {children?: any, node: ConceptNode, inline?: boolean}){
+    let children = props.children || <></>
+
+    let [show_by_text, set_sbt] = React.useState<boolean>(false)
+
+    let globalinfo = React.useContext(GlobalInfo)
+    if(!globalinfo.activate_idx){
+        return <>{children}</>
+    }
+
+    let display = props.inline ? "inline-block" : "block"
+    return <Box style={{display: display}} >
+        {children}
+        <Tooltip title={`本节点的ID是 ${props.node.idx}`}><div style={{display: display}} onClick={()=>{
+            set_sbt(!show_by_text)
+        }}>
+            <LiuJiaoYuan fill="rgba(120,120,120,0.1)" strokeWidth="20px" strokeColor="rgba(90,20,20,1.0)" style={{
+                top: "-5px", 
+                left: "2px" , 
+                marginRight: "5px" , 
+                width: "10px" , 
+                height: "10px" , 
+                display: "inline-block" , 
+                position: "relative" , 
+                transform: "scaleY(-1)",
+            }} />
+        </div></Tooltip>
+        {show_by_text ? <>[{props.node.idx}]</> : <></>}
     </Box>
 }

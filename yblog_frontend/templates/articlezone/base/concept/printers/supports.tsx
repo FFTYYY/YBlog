@@ -98,7 +98,7 @@ import {
 
 
 import {
-	ReferencePrinter , 
+	ReferencePrinter , StandardAttachers , 
 } from "./base"
 
 export {
@@ -146,11 +146,9 @@ var sectioner_printer = (()=>{
 			// 如果是`alone`的就不显示序号惹。
 			let order_word = alone ? <></> : <PrinterStructureBoxText inline>第{num2chinese(order)} </PrinterStructureBoxText>
 
-			let title_word = <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
+			let title_word = <StandardAttachers {...{node, context, parameters}} inline>
 				{title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>}
-				</ReferencePrinter>
-			</DefaultAbstractRendererAsProperty>
+			</StandardAttachers>
 
 			return <Divider>{order_word}{title_word}</Divider>
 		}
@@ -172,9 +170,7 @@ var ender_printer = (()=>{
 
 			// 手动添加了一个box，来防止滚动条的高度异常。
 			return <React.Fragment>
-				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
-					<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
-				</ReferencePrinter>
+				<StandardAttachers {...{node, context, parameters}} inline />
 				<Divider/>
 				<Box sx={{height: "2rem"}}></Box> 
 			</React.Fragment> 
@@ -225,11 +221,9 @@ var image_printer = (()=>{
 					height: height > 0 ? `${height}rem` : "100%" , 
 				}}/>	
 			}
-			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
-					{comp}
-				</ReferencePrinter>
-			</DefaultAbstractRendererAsProperty>
+			return <StandardAttachers {...{node, context, parameters}} inline>
+				{comp}
+			</StandardAttachers>
 		} , 
 	})
 })()
@@ -266,8 +260,7 @@ var showchildren_printer = (()=>{
 			} , [ JSON.stringify(parameters) ])
 
 			return <MathJaxFlusher>
-				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
-				<ReferencePrinter node={props.node} parameters={props.parameters} inline />
+				<StandardAttachers {...{node, context, parameters}} inline />
 				{sons.map((son_id , idx) => {
 					let SubIframe = (props: {}) => {
 						let theme = React.useContext(ThemeContext)
@@ -403,8 +396,7 @@ var insertchildren_printer = (()=>{
 			}
 
 			return <MathJaxFlusher>
-				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
-				<ReferencePrinter node={props.node} parameters={props.parameters} inline />
+				<StandardAttachers {...{node, context, parameters}} inline />
 				{
 					son_ids.map((son_id , idx) => {
 						return <GlobalInfoProvider key = {idx} value = {{
@@ -475,8 +467,7 @@ var gatherindis_printer = (()=>{
 			} , [ JSON.stringify(parameters) ])
 
 			return <MathJaxFlusher>
-				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
-				<ReferencePrinter node={props.node} parameters={props.parameters} inline />
+				<StandardAttachers {...{node, context, parameters}} inline />
 				{indis.map((son_id , idx) => {
 					let SubIframe = (props: {}) => {
 						let theme = React.useContext(ThemeContext)

@@ -80,6 +80,8 @@ import {
 import { Acanthus, Acanthus2, Acanthus3, Acanthus4, BaJiao, BaoXiangHua, Hui, MeiGui } from "../../../assets"
 import {
 	ReferencePrinter , 
+	ShowIDXPrinter , 
+	StandardAttachers , 
 } from "./base"
 
 export {
@@ -104,17 +106,15 @@ var subsection_printer = (()=>{
 
 			let title = parameters.title
 			return <PrinterPartBox>
-					<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-						<ReferencePrinter node={node} inline>
-								<PrinterPartBox subtitle_like>
-									<Hui strokeWidth="2px" style={{
-										height: "0.75rem", 
-										marginRight: "0.5rem",
-									}}/>
-									{order_str}{title}
-								</PrinterPartBox>
-						</ReferencePrinter>
-					</DefaultAbstractRendererAsProperty>
+				<PrinterPartBox subtitle_like>
+					<StandardAttachers {...{node, context, parameters}} inline>
+						<Hui strokeWidth="2px" style={{
+							height: "0.75rem", 
+							marginRight: "0.5rem",
+						}}/>
+						{order_str}{title}
+					</StandardAttachers>
+				</PrinterPartBox>
 				<PrinterNewLevelBox>{children}</PrinterNewLevelBox>
             </PrinterPartBox>
 		} , 
@@ -163,11 +163,9 @@ var brightwords_printer = (()=>{
 				inject_content = inject_content + ` （${prefix}）`
 			}
 			
-			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				<ReferencePrinter node={node} parameters={parameters} inline>
-					<PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
-				</ReferencePrinter>
-			</DefaultAbstractRendererAsProperty>
+			return <StandardAttachers {...{node, context, parameters}} inline>
+				<PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
+			</StandardAttachers>
 		} , 
 		outer: (props) => {
 			return <PrinterPartBox subtitle_like>{props.children}</PrinterPartBox>
@@ -214,15 +212,11 @@ var followwords_printer = (()=>{
 			return <AutoStack force_direction="column">
 				{title_content? 
 					<PrinterStructureBoxText>
-						<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-							<ReferencePrinter node={node} parameters={parameters} inline>
+						<StandardAttachers {...{node, context, parameters}} inline>
 							{title_content}
-							</ReferencePrinter>
-						</DefaultAbstractRendererAsProperty>
+						</StandardAttachers>
 					</PrinterStructureBoxText>
-					:<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-						<ReferencePrinter node={node} parameters={parameters} inline />
-					</DefaultAbstractRendererAsProperty>
+					: <StandardAttachers {...{node, context, parameters}} inline />
 				}
 				<PrinterNewLevelBox><PrinterWeakenText>{props.children}</PrinterWeakenText></PrinterNewLevelBox>
 				{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
@@ -325,15 +319,9 @@ var mount_printer = (()=>{
 			return <AutoStack force_direction="column">
 				{title? 
 					<PrinterStructureBoxText>
-						<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-							<ReferencePrinter node={node} parameters={parameters} inline>
-								{title}
-							</ReferencePrinter>
-						</DefaultAbstractRendererAsProperty>
+						<StandardAttachers {...{node, context, parameters}} inline>{title}</StandardAttachers>
 					</PrinterStructureBoxText>
-					:<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-						<ReferencePrinter node={node} parameters={parameters} inline />
-					</DefaultAbstractRendererAsProperty>
+					: <StandardAttachers {...{node, context, parameters}} inline />
 				}
 				{text_jsx}
 				{close ? <PrinterStructureBoxText align="right">{close}</PrinterStructureBoxText> : <></>}
@@ -347,11 +335,9 @@ var formatted_printer = (()=>{
 	return get_default_group_renderer({
 		inner: (props: PrinterRenderFunctionProps<GroupNode>) => {
 			let {node , parameters , context , children} = props
-			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				<ReferencePrinter node={node} parameters={parameters}>
-					<pre>{props.children}</pre>
-				</ReferencePrinter>
-			</DefaultAbstractRendererAsProperty>
+			return <StandardAttachers {...{node, context, parameters}}>
+				<pre>{props.children}</pre>
+			</StandardAttachers>
 		} , 
 	})
 })()
@@ -368,11 +354,9 @@ var display_printer = (()=>{
 				fontSize	: remtimes(theme.printer.fonts.structure.fontSize 	, 1.4) , //字号翻倍
 				lineHeight	: remtimes(theme.printer.fonts.structure.lineHeight , 1.4) ,  //行高翻倍
 			}}>
-				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-					<ReferencePrinter node={node} parameters={parameters}>
-						{props.children}
-					</ReferencePrinter>
-				</DefaultAbstractRendererAsProperty>
+				<StandardAttachers {...{node, context, parameters}}>
+					{props.children}
+				</StandardAttachers>
 			</PrinterDisplayText>
 			
 		} , 
@@ -395,12 +379,10 @@ var mathblock_printer = (()=>{
 
 			value = `${environ_enter}${value}\\text{${suffix}}${environ_exit}`
 			
-			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				<ReferencePrinter node={node} parameters={parameters}>
-					<MathJaxBlock>{value}</MathJaxBlock>
-					{close}
-				</ReferencePrinter>
-			</DefaultAbstractRendererAsProperty>
+			return <StandardAttachers {...{node, context, parameters}} inline>
+				<MathJaxBlock>{value}</MathJaxBlock>
+				{close}
+			</StandardAttachers>
 		} , 
 	})
 })()
@@ -428,11 +410,9 @@ let line_printer = (()=>{
             return <Box sx={{
 				width: `${tot_width}%`
 			}}
-			><DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				<ReferencePrinter node={node} parameters={parameters}>
-					<Grid container columns={sum} sx={{width: "100%"}} spacing={2}>{props.children}</Grid>
-				</ReferencePrinter>
-			</DefaultAbstractRendererAsProperty></Box>
+			><StandardAttachers {...{node, context, parameters}}>
+				<Grid container columns={sum} sx={{width: "100%"}} spacing={2}>{props.children}</Grid>
+			</StandardAttachers></Box>
         } , 
         subinner(props){
             let {node , parameters , context , children , subidx} = props

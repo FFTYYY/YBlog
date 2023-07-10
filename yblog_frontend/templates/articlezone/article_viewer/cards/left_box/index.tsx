@@ -39,7 +39,12 @@ class MyTablePanel extends React.Component<{value: string, children: any, active
     }
 }
 
-function LeftBox(props: {root: AbstractNode}){
+function LeftBox(props: {
+    root: AbstractNode
+
+    idx_activated?: boolean
+    onActivateIdx?: ()=>any
+}){
     const [active_tab, _set_active_tab] = React.useState("-1");
     const cookie_key = "yblog-leftbox-val"
 
@@ -85,7 +90,9 @@ function LeftBox(props: {root: AbstractNode}){
             <MyTablePanel value={"1"} active_tab={active_tab}><LeftComments /></MyTablePanel>
             <MyTablePanel value={"2"} active_tab={active_tab}><LeftContact  /></MyTablePanel>
             { BackendData.logged_in ? 
-                <MyTablePanel value={"3"} active_tab={active_tab}><LeftEdit /></MyTablePanel>
+                <MyTablePanel value={"3"} active_tab={active_tab}>
+                    <LeftEdit idx_activated={props.idx_activated} onActivateIdx={props.onActivateIdx}/>
+                </MyTablePanel>
             : <></> }
         </Box>
         

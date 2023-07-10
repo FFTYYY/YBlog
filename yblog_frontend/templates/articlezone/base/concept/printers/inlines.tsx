@@ -44,7 +44,7 @@ import {
 } from "../../../assets"
 import { BaJiao, LiuBian, SanJiao } from "../../../assets/decors"
 import {
-	ErrorPrinter, ReferencePrinter
+	ErrorPrinter, ReferencePrinter , StandardAttachers
 } from "./base"
 
 import {
@@ -59,34 +59,30 @@ export {
 var nothing_printer = (()=>{
 	return get_default_inline_renderer({
 		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
-			return <DefaultAbstractRendererAsProperty 
+			return <StandardAttachers 
 					node = {props.node} 
 					context = {props.context} 
 					parameters = {props.parameters} 
-					senario = "title"
+					inline
 				>
-				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
 					<span>{props.children}</span>
-				</ReferencePrinter>
-			</DefaultAbstractRendererAsProperty>
+			</StandardAttachers>
 		}
 	})
 })()
-
-
 
 /** 强调。 */
 var strong_printer = (()=>{
 	return get_default_inline_renderer({
 		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
-			return <DefaultAbstractRendererAsProperty 
+			return <StandardAttachers 
 				node = {props.node} 
 				context = {props.context} 
 				parameters = {props.parameters} 
-				senario = "title"
+				inline
 			>
 				<strong>{props.children}</strong>
-			</DefaultAbstractRendererAsProperty>
+			</StandardAttachers>
 		}
 	})
 })()
@@ -95,16 +91,14 @@ var strong_printer = (()=>{
 var delete_printer = (()=>{
 	return get_default_inline_renderer({
 		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
-			return <DefaultAbstractRendererAsProperty 
+			return <StandardAttachers 
 				node = {props.node} 
 				context = {props.context} 
 				parameters = {props.parameters} 
-				senario = "title"
+				inline
 			>
-				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
-					<del>{props.children}</del>
-				</ReferencePrinter>
-			</DefaultAbstractRendererAsProperty>
+				<del>{props.children}</del>
+			</StandardAttachers>
 		}
 	})
 })()
@@ -116,16 +110,14 @@ var mathinline_printer = (()=>{
 			/** 这是一个比较蛋疼的写法，取消原来的children并直接将element序列化。
 			 * 这里的问题在于，如果直接写成${props.children}$，则children里方便定位用的span会阻止mathjax的渲染。
 			 */
-			return <Box component="span" sx={{paddingX: "0.1rem"}}><DefaultAbstractRendererAsProperty 
+			return <Box component="span" sx={{paddingX: "0.1rem"}}><StandardAttachers 
 				node = {props.node} 
 				context = {props.context} 
 				parameters = {props.parameters} 
-				senario = "title"
+				inline
 			>
-				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
-					<MathJaxInline>{node2string(props.node)}</MathJaxInline>
-				</ReferencePrinter>
-			</DefaultAbstractRendererAsProperty></Box>
+				<MathJaxInline>{node2string(props.node)}</MathJaxInline>
+			</StandardAttachers></Box>
 		}
 	})
 })()
@@ -283,11 +275,9 @@ var link_printer = (()=>{
 					<Link href = "#" underline = "hover">链接失败（未指定链接） {children}</Link>
 				</ErrorPrinter>
 			})()
-			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
+			return <StandardAttachers {...{node, context, parameters}} inline>
 					{linker_comp}
-				</ReferencePrinter>
-			</DefaultAbstractRendererAsProperty>
+			</StandardAttachers>
 		}
 	})
 })()

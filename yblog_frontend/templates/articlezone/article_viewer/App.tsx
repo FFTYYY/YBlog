@@ -45,8 +45,8 @@ class App extends  React.Component<{} , {
 	printer: Printer  | undefined
 	tree: AbstractNode  | undefined
 	cache: PrinterCache | undefined
-	link_mode: boolean 
 
+	activate_idx: boolean // 是否要显示每个组件的IDX
 }>{
 	printer_comp_ref: React.RefObject<DefaultPrinterComponent>
 
@@ -58,8 +58,7 @@ class App extends  React.Component<{} , {
 			tree: undefined , 
 			cache: undefined , 
 			
-			link_mode: false , // 如果进入链接模式，每个元素都可以单击并提供自己的链接路径。
-
+			activate_idx: false , 
 		}
 		this.printer_comp_ref = React.createRef()
 	}
@@ -131,7 +130,13 @@ class App extends  React.Component<{} , {
 				height: "96%" , 
 				width: "18%" , 
 			}}>
-				<LeftBox root={tree} />
+				<LeftBox 
+					root = {tree} 
+					idx_activated = {me.state.activate_idx}
+					onActivateIdx = {()=>{ // 逆转！
+						me.setState({activate_idx: !me.state.activate_idx})
+					}}
+				/>
 			</Box>
 			<Box sx={{
 				position: "absolute" , 
@@ -181,6 +186,7 @@ class App extends  React.Component<{} , {
 					<GlobalInfoProvider value={{
 						BackendData: BackendData , 
 						cache: me.state.cache , 
+						activate_idx: me.state.activate_idx, 
 					}}>
 						<DefaultPrinterComponent 
 							ref = {this.printer_comp_ref}

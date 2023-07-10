@@ -1,4 +1,4 @@
-import{D as h,a as t,$ as n,j as a}from"./titleword.ea97c48f.js";var s="E:\\Coding\\Projects\\YBlog\\yblog_frontend\\templates\\articlezone\\base\\construction\\math.tsx";let l="$",c="$",o="$$",m="$$";var u=new h(()=>{let e=window.MathJax;e!=null&&e.typesetPromise!=null&&(e.texReset(),e.typesetPromise(),e.typeset())},1e3);function r(){u.go()}function d(e){return t.useEffect(()=>{let i=n(`
+import{D as h,a as t,$ as n,j as a}from"./titleword.42ab65e4.js";var s="E:\\Coding\\Projects\\YBlog\\yblog_frontend\\templates\\articlezone\\base\\construction\\math.tsx";let l="$",c="$",o="$$",m="$$";var u=new h(()=>{let e=window.MathJax;e!=null&&e.typesetPromise!=null&&(e.texReset(),e.typesetPromise(),e.typeset())},1e3);function r(){u.go()}function d(e){return t.useEffect(()=>{let i=n(`
             
             <script defer>
                 MathJax = {
