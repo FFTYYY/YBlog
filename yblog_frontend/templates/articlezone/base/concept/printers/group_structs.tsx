@@ -104,17 +104,17 @@ var subsection_printer = (()=>{
 
 			let title = parameters.title
 			return <PrinterPartBox>
-				<ReferencePrinter node={node} inline>
 					<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-						<PrinterPartBox subtitle_like>
-							<Hui strokeWidth="2px" style={{
-								height: "0.75rem", 
-								marginRight: "0.5rem",
-							}}/>
-							{order_str}{title}
-						</PrinterPartBox>
+						<ReferencePrinter node={node} inline>
+								<PrinterPartBox subtitle_like>
+									<Hui strokeWidth="2px" style={{
+										height: "0.75rem", 
+										marginRight: "0.5rem",
+									}}/>
+									{order_str}{title}
+								</PrinterPartBox>
+						</ReferencePrinter>
 					</DefaultAbstractRendererAsProperty>
-				</ReferencePrinter>
 				<PrinterNewLevelBox>{children}</PrinterNewLevelBox>
             </PrinterPartBox>
 		} , 
@@ -212,12 +212,18 @@ var followwords_printer = (()=>{
 
 			// followwords 不论如何都会有额外的缩进。
 			return <AutoStack force_direction="column">
-				
-					{title_content ? <PrinterStructureBoxText>{
+				{title_content? 
+					<PrinterStructureBoxText>
 						<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-							<>{title_content}</>
-						</DefaultAbstractRendererAsProperty>}</PrinterStructureBoxText> 
-					: <></>}
+							<ReferencePrinter node={node} parameters={parameters} inline>
+							{title_content}
+							</ReferencePrinter>
+						</DefaultAbstractRendererAsProperty>
+					</PrinterStructureBoxText>
+					:<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+						<ReferencePrinter node={node} parameters={parameters} inline />
+					</DefaultAbstractRendererAsProperty>
+				}
 				<PrinterNewLevelBox><PrinterWeakenText>{props.children}</PrinterWeakenText></PrinterNewLevelBox>
 				{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
 			</AutoStack>
@@ -283,7 +289,9 @@ var subwords_printer = (()=>{
 							{title_content ? 
 								<PrinterParagraphBox>
 									<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-										{title_jsx}
+										<ReferencePrinter node={node} parameters={parameters} inline>
+											{title_jsx}
+										</ReferencePrinter>
 									</DefaultAbstractRendererAsProperty>
 								</PrinterParagraphBox> 
 							: <></>}
@@ -315,9 +323,18 @@ var mount_printer = (()=>{
 			}
 
 			return <AutoStack force_direction="column">
-				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-					{title ? <PrinterStructureBoxText>{title}</PrinterStructureBoxText> : <></>}
-				</DefaultAbstractRendererAsProperty>
+				{title? 
+					<PrinterStructureBoxText>
+						<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+							<ReferencePrinter node={node} parameters={parameters} inline>
+								{title}
+							</ReferencePrinter>
+						</DefaultAbstractRendererAsProperty>
+					</PrinterStructureBoxText>
+					:<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+						<ReferencePrinter node={node} parameters={parameters} inline />
+					</DefaultAbstractRendererAsProperty>
+				}
 				{text_jsx}
 				{close ? <PrinterStructureBoxText align="right">{close}</PrinterStructureBoxText> : <></>}
 			</AutoStack>
@@ -331,7 +348,9 @@ var formatted_printer = (()=>{
 		inner: (props: PrinterRenderFunctionProps<GroupNode>) => {
 			let {node , parameters , context , children} = props
 			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				<pre>{props.children}</pre>
+				<ReferencePrinter node={node} parameters={parameters}>
+					<pre>{props.children}</pre>
+				</ReferencePrinter>
 			</DefaultAbstractRendererAsProperty>
 		} , 
 	})
@@ -350,7 +369,9 @@ var display_printer = (()=>{
 				lineHeight	: remtimes(theme.printer.fonts.structure.lineHeight , 1.4) ,  //行高翻倍
 			}}>
 				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-					{props.children}
+					<ReferencePrinter node={node} parameters={parameters}>
+						{props.children}
+					</ReferencePrinter>
 				</DefaultAbstractRendererAsProperty>
 			</PrinterDisplayText>
 			
@@ -375,10 +396,10 @@ var mathblock_printer = (()=>{
 			value = `${environ_enter}${value}\\text{${suffix}}${environ_exit}`
 			
 			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				<React.Fragment>
+				<ReferencePrinter node={node} parameters={parameters}>
 					<MathJaxBlock>{value}</MathJaxBlock>
 					{close}
-				</React.Fragment>
+				</ReferencePrinter>
 			</DefaultAbstractRendererAsProperty>
 		} , 
 	})
@@ -408,7 +429,9 @@ let line_printer = (()=>{
 				width: `${tot_width}%`
 			}}
 			><DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				<Grid container columns={sum} sx={{width: "100%"}} spacing={2}>{props.children}</Grid>
+				<ReferencePrinter node={node} parameters={parameters}>
+					<Grid container columns={sum} sx={{width: "100%"}} spacing={2}>{props.children}</Grid>
+				</ReferencePrinter>
 			</DefaultAbstractRendererAsProperty></Box>
         } , 
         subinner(props){

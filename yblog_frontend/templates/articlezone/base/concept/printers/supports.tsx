@@ -96,6 +96,11 @@ import {
 	IndexContexter , 
 } from "./contexter"
 
+
+import {
+	ReferencePrinter , 
+} from "./base"
+
 export {
 	renderers , 
 }
@@ -141,9 +146,11 @@ var sectioner_printer = (()=>{
 			// 如果是`alone`的就不显示序号惹。
 			let order_word = alone ? <></> : <PrinterStructureBoxText inline>第{num2chinese(order)} </PrinterStructureBoxText>
 
-			let title_word = <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">{
-				title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>
-			}</DefaultAbstractRendererAsProperty>
+			let title_word = <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
+				{title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>}
+				</ReferencePrinter>
+			</DefaultAbstractRendererAsProperty>
 
 			return <Divider>{order_word}{title_word}</Divider>
 		}
@@ -165,7 +172,9 @@ var ender_printer = (()=>{
 
 			// 手动添加了一个box，来防止滚动条的高度异常。
 			return <React.Fragment>
-				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
+				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
+					<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
+				</ReferencePrinter>
 				<Divider/>
 				<Box sx={{height: "2rem"}}></Box> 
 			</React.Fragment> 
@@ -206,16 +215,21 @@ var image_printer = (()=>{
 			if(width < 0 && height < 0){ // 不能同时<0
 				width = 1
 			}
+			let comp = <Box sx={{
+				widths: width > 0 ? `${width}rem` : `${height}rem`, 
+				height: height > 0 ? `${height}rem` : `${width}rem`, 
+			}}></Box>
 			if(url){
-				return <img src = {url || undefined} style = {{
+				comp = <img src = {url || undefined} style = {{
 					width: width > 0   ? `${width}rem` : "100%", 
 					height: height > 0 ? `${height}rem` : "100%" , 
 				}}/>	
 			}
-			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title"><Box sx={{
-				widths: width > 0 ? `${width}rem` : `${height}rem`, 
-				height: height > 0 ? `${height}rem` : `${width}rem`, 
-			}}></Box></DefaultAbstractRendererAsProperty>
+			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
+				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
+					{comp}
+				</ReferencePrinter>
+			</DefaultAbstractRendererAsProperty>
 		} , 
 	})
 })()
@@ -253,6 +267,7 @@ var showchildren_printer = (()=>{
 
 			return <MathJaxFlusher>
 				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
+				<ReferencePrinter node={props.node} parameters={props.parameters} inline />
 				{sons.map((son_id , idx) => {
 					let SubIframe = (props: {}) => {
 						let theme = React.useContext(ThemeContext)
@@ -389,6 +404,7 @@ var insertchildren_printer = (()=>{
 
 			return <MathJaxFlusher>
 				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
+				<ReferencePrinter node={props.node} parameters={props.parameters} inline />
 				{
 					son_ids.map((son_id , idx) => {
 						return <GlobalInfoProvider key = {idx} value = {{
@@ -460,6 +476,7 @@ var gatherindis_printer = (()=>{
 
 			return <MathJaxFlusher>
 				<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title" />
+				<ReferencePrinter node={props.node} parameters={props.parameters} inline />
 				{indis.map((son_id , idx) => {
 					let SubIframe = (props: {}) => {
 						let theme = React.useContext(ThemeContext)

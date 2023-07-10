@@ -65,7 +65,8 @@ function ErrorPrinter(props: {children: any, msg?: string, inline?: boolean}){
 /**
  * 这个组件指出一个概念的被引用次数。
  */
-function ReferencePrinter(props: {children: any, node: ConceptNode, parameters?: any, inline?: boolean}){
+function ReferencePrinter(props: {children?: any, node: ConceptNode, parameters?: any, inline?: boolean}){
+    let children = props.children || <></>
 
     let [referencers , set_referencers] = React.useState<[number, number] []>([])
     React.useEffect(()=>{(async ()=>{
@@ -74,7 +75,7 @@ function ReferencePrinter(props: {children: any, node: ConceptNode, parameters?:
     })()}, [])
 
     if(referencers.length == 0){
-        return props.children
+        return children
     }
 
     // 统计每个文章里出现了几次引用
@@ -103,12 +104,12 @@ function ReferencePrinter(props: {children: any, node: ConceptNode, parameters?:
 
     let display = props.inline ? "inline-block" : "block"
     return <Box style={{display: display}}>
-        {props.children}
+        {children}
         <Tooltip title={reference_comp}><div style={{display: "inline-block"}}>
             <LiuBian fill="rgba(20,120,240,0.4)" strokeWidth="6px" strokeColor="rgba(0,0,0,0.7)" style={{
                 top: "-5px", 
-                left: "-5px" , 
-                marginRight: "0px" , 
+                left: "2px" , 
+                marginRight: "5px" , 
                 width: "10px" , 
                 height: "10px" , 
                 display: "inline-block" , 

@@ -44,7 +44,7 @@ import {
 } from "../../../assets"
 import { BaJiao, LiuBian, SanJiao } from "../../../assets/decors"
 import {
-	ErrorPrinter
+	ErrorPrinter, ReferencePrinter
 } from "./base"
 
 import {
@@ -65,7 +65,9 @@ var nothing_printer = (()=>{
 					parameters = {props.parameters} 
 					senario = "title"
 				>
-				<span>{props.children}</span>
+				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
+					<span>{props.children}</span>
+				</ReferencePrinter>
 			</DefaultAbstractRendererAsProperty>
 		}
 	})
@@ -99,7 +101,9 @@ var delete_printer = (()=>{
 				parameters = {props.parameters} 
 				senario = "title"
 			>
-				<del>{props.children}</del>
+				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
+					<del>{props.children}</del>
+				</ReferencePrinter>
 			</DefaultAbstractRendererAsProperty>
 		}
 	})
@@ -118,7 +122,9 @@ var mathinline_printer = (()=>{
 				parameters = {props.parameters} 
 				senario = "title"
 			>
-				<MathJaxInline>{node2string(props.node)}</MathJaxInline>
+				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
+					<MathJaxInline>{node2string(props.node)}</MathJaxInline>
+				</ReferencePrinter>
 			</DefaultAbstractRendererAsProperty></Box>
 		}
 	})
@@ -278,7 +284,9 @@ var link_printer = (()=>{
 				</ErrorPrinter>
 			})()
 			return <DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-				{linker_comp}
+				<ReferencePrinter node={props.node} parameters={props.parameters} inline>
+					{linker_comp}
+				</ReferencePrinter>
 			</DefaultAbstractRendererAsProperty>
 		}
 	})
