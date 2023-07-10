@@ -91,7 +91,11 @@ function LeftBox(props: {
             <MyTablePanel value={"2"} active_tab={active_tab}><LeftContact  /></MyTablePanel>
             { BackendData.logged_in ? 
                 <MyTablePanel value={"3"} active_tab={active_tab}>
-                    <LeftEdit idx_activated={props.idx_activated} onActivateIdx={props.onActivateIdx}/>
+                    <LeftEdit 
+                        root = {props.root} 
+                        idx_activated = {props.idx_activated} 
+                        onActivateIdx = {props.onActivateIdx}
+                    />
                 </MyTablePanel>
             : <></> }
         </Box>

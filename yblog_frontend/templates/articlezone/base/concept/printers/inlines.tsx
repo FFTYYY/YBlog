@@ -71,6 +71,17 @@ var nothing_printer = (()=>{
 	})
 })()
 
+/** 错误。 
+ * 这些信息是给编辑者看的，因此不显示。
+*/
+var error_printer = (()=>{
+	return get_default_inline_renderer({
+		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
+			return <></>
+		}
+	})
+})()
+
 /** 强调。 */
 var strong_printer = (()=>{
 	return get_default_inline_renderer({
@@ -289,5 +300,6 @@ let renderers = {
 		"缀"  : link_printer , 
 		"数学": mathinline_printer , 
 		"无"  : nothing_printer , 
+		"阻"  : error_printer , 
 	},
 }

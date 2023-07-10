@@ -31,6 +31,7 @@ let MyLink = (props: LinkProps)=>{
 }
 
 class LeftEdit extends React.Component<{
+    root: any , 
     idx_activated?: boolean
     onActivateIdx?: ()=>any
 } , {}>{
@@ -51,12 +52,13 @@ class LeftEdit extends React.Component<{
             <MyLink underline="hover" href={url_from_root(`/admin/articlezone/node/${BackendData.node_id}/change/`)}>进入后台</MyLink>
             <br />
 
-            <div>组件ID显示{props.idx_activated ? "已" : "未"}打开。</div>
+            <div>组件IDX显示{props.idx_activated ? "已" : "未"}打开。</div>
             <Button onClick={()=>{
                 if(props.onActivateIdx){
                     props.onActivateIdx()
                 }
             }}>{props.idx_activated ? "停止显示" : "显示"}组件ID</Button>
+            <div>根节点IDX: {props.root["idx"]}</div>
         </AutoStack></Box>
     }
 }

@@ -172,6 +172,12 @@ var nothing_style  = new FirstClassConcept  ({type: "inline", name: "无" ,
     })
 })
 
+var error_style  = new FirstClassConcept  ({type: "inline", name: "阻" , 
+    parameter_prototype: make_param({
+        label: "阻" ,
+    })
+})
+
 
 var image_style       = new FirstClassConcept ({type: "support", name: "图"   , 
     parameter_prototype: {
@@ -265,4 +271,5 @@ let first_concepts = [
     gatherindis_style , 
     insertchildren_style , 
     nothing_style , 
+    error_style , 
 ]
