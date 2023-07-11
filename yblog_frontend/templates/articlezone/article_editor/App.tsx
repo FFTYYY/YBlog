@@ -239,7 +239,7 @@ class App extends  React.Component<{}, {
 	ShowIDButton(){
 		let me = this
 		let icon_style = me.state.activate_idx ? {
-			backgroundColor: "black" , 
+			backgroundColor: "rgb(20,20,20,0.8)" , 
 			color: "rgb(200,170,220)" , 	
 		} : {}
 		return <IconButton sx={{
@@ -249,9 +249,7 @@ class App extends  React.Component<{}, {
 				activate_idx: !me.state.activate_idx
 			})
 		}}>
-			<TextIcon text="测" sx={{
-				...icon_style,
-			}}/>
+			<TextIcon text="瞧" sx={{...icon_style,}}/>
 		</IconButton>
 	}
 
