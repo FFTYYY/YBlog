@@ -3,7 +3,7 @@ import $ from "jquery"
 import { DoSomething } from "@ftyyy/ytext"
 // import "mathjax/es5/tex-svg"
 
-export { MathJaxContext , MathJaxInline , MathJaxBlock , MathJaxFlusher , flush_math, }
+export { MathJaxContext , MathJaxInline , MathJaxBlock , MathJaxFlusher , flush_math, flush_mathjax}
 
 let MATHJAX_INLINE_START = "$"
 let MATHJAX_INLINE_END = "$"
@@ -13,7 +13,7 @@ let MATHJAX_BLOCK_END = "$$"
 var flush_math = new DoSomething(()=>{
     let MathJax = (window as any).MathJax
     if(MathJax != undefined && MathJax.typesetPromise != undefined){
-        MathJax.texReset()
+        MathJax.typeset()
         MathJax.typesetPromise()
         MathJax.typeset()
     }
@@ -28,13 +28,14 @@ function flush_mathjax(){
 }
 function MathJaxContext(props: {children: any}){
     React.useEffect(() => {
+
         let script = $(`
             ${""/** mathjax配置。必须先于mathjax的引入。 */}
             <script defer>
                 MathJax = {
-                    ${""/*loader: {load: ["[tex]/tagformat"]},*/}
+                    loader: {load: ["[tex]/boldsymbol"]},
                     tex: {
-                        packages: {"[+]": ["tagformat"]} , 
+                        packages: {"[+]": ["tagformat", "boldsymbol"]} , 
                         inlineMath: [["${MATHJAX_INLINE_START}", "${MATHJAX_INLINE_END}"]] , 
                         displayMath: [["${MATHJAX_BLOCK_START}", "${MATHJAX_BLOCK_END}"]] , 
                         tags: "ams" , 
@@ -53,11 +54,10 @@ function MathJaxContext(props: {children: any}){
                 }
             </script>
 
-            <script type="text/javascript" id="MathJax-script" async
-                src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+            <script type="text/javascript" id="MathJax-script" defer
+              src="https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-chtml-full.js">
             </script>
         `)
-
         // XXX 不知道是否应该用cdn版本
         // import ("mathjax/es5/tex-svg.js")
 

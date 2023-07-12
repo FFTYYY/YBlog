@@ -190,7 +190,7 @@ class Node(models.Model):
 				try:
 					inst = ConceptInstance.objects.get(concept_id = ins_id)
 				except ConceptInstance.DoesNotExist:
-					print ("warning: no linker element %d" % ins_id)
+					print (f"warning: no linker element {ins_id}")
 					continue
 				try:
 					targ = ConceptInstance.objects.get(concept_id = ins_cont["linkto"])
