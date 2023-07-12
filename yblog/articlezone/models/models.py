@@ -152,6 +152,7 @@ class Node(models.Model):
 		return False
 	
 	def get_instances(self):
+		
 		ret = set()
 		def _process(tree):
 			if tree.get("idx") is not None:
@@ -164,7 +165,10 @@ class Node(models.Model):
 			if tree.get("abstract") is not None:
 				for ch in range(len(tree["abstract"])):
 					_process(tree["abstract"][ch])
-		content_tree = json.loads(self.content)
+		try:
+			content_tree = json.loads(self.content)
+		except ValueError:
+			return ret
 		_process(content_tree)
 		return ret
 
@@ -183,8 +187,10 @@ class Node(models.Model):
 			inst.save()
 
 	def update_linkto(self):
-
-		cache_content = json.loads(self.cache)
+		try:
+			cache_content = json.loads(self.cache)
+		except ValueError:
+			return 
 		for ins_id, ins_cont in cache_content.items():
 			if ins_cont.get("linkto"):
 				try:
@@ -222,11 +228,12 @@ class Node(models.Model):
 			min_iif = min(bros) if len(bros) > 0 else 0
 			self.index_in_father = min_iif - 1
 
-		# 更新概念实例
-		self.update_concept_instances()
+		if not flag_new:
+			# 更新概念实例
+			self.update_concept_instances()
 
-		# 更新linkto
-		self.update_linkto()
+			# 更新linkto
+			self.update_linkto()
 			
 		return super().save(*args , **kwargs)
 

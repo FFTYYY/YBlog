@@ -15,10 +15,9 @@ import {
     EditorComponent , 
     GlobalInfo , 
     ConceptNode , 
-
-    MouselessParameterEditor , 
     ButtonDescription , 
 
+    MouselessParameterEditor
 } from "@ftyyy/ytext"
 
 import {
@@ -53,7 +52,42 @@ var error_editor        = get_default_inline_editor({surrounder: (props)=>{
     </span>
 }})
 var delete_editor       = get_default_inline_editor({surrounder: (props)=><del>{props.children}</del>  })
-var link_editor         = get_default_inline_editor({surrounder: (props)=><u>{props.children}</u>      })
+var link_editor         = get_default_inline_editor({
+    surrounder: (props)=><u>{props.children}</u>, 
+    rightbar_extra: ({node}) => {/** 在右侧提供一个用于快速输入退出符号的文本框。 */
+        return <MouselessParameterEditor 
+            node = {node} 
+            idx = {0} 
+            parameter_name = "target_idx" 
+            label = "idx"
+            input
+            width = "7rem"
+            generate_parameter={(value)=>{
+                if(!isNaN(value)){
+                    return {
+                        "target_idx":{
+                            val: parseInt(value) , 
+                            type: "number"
+                        } , 
+                    }
+                }
+                else{
+                    return {
+                        "target_idx":{
+                            val: -1 , 
+                            type: "number"
+                        } , 
+                        "target_url": {
+                            val: value , 
+                            type: "string"
+                        }
+                    }
+
+                }
+            }}
+        />
+    },
+})
 var mathinline_editor   = get_default_inline_editor({surrounder: (props)=><>{props.children}</>        })
 var alignedwords_editor = get_default_struct_editor_with_rightbar({
     get_label: ()=>"行" , 
