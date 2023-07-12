@@ -10,12 +10,20 @@ let MATHJAX_INLINE_END = "$"
 let MATHJAX_BLOCK_START = "$$"
 let MATHJAX_BLOCK_END = "$$"
 
+/** 这个函数清除mathjax的缓存内容（label和节点编号之类的） */
+function clear_memory(MathJax: any){
+    MathJax.startup.document.state(0)
+    MathJax.texReset()
+    MathJax.typeset()
+    MathJax.typesetClear()
+}
+
 var flush_math = new DoSomething(()=>{
     let MathJax = (window as any).MathJax
     if(MathJax != undefined && MathJax.typesetPromise != undefined){
-        MathJax.typeset()
+        clear_memory(MathJax)
         MathJax.typesetPromise()
-        MathJax.typeset()
+        clear_memory(MathJax)    
     }
 } , 1000)
 
