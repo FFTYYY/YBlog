@@ -159,6 +159,10 @@ var link_printer = (()=>{
 			return [undefined, undefined]
 		}
 
+		if(tar_node.concept == "root"){ // 第一个返回值是undefined表示是root
+			return [ "root", cut_str(node2string_autotip(tar_node)) ]
+		}
+
 		return [ `此${tar_node.concept}`, cut_str(node2string_autotip(tar_node)) ]
 	}
 
@@ -227,7 +231,7 @@ var link_printer = (()=>{
 								return <AutoTooltip title={contt_ref_comp}><Link 
 									underline = "hover"
 									onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
-								>{title_ref}</Link></AutoTooltip>
+								>{title_ref == "root" ? "本文" : title_ref}</Link></AutoTooltip>
 							}
 						}
 		
@@ -266,7 +270,7 @@ var link_printer = (()=>{
 							return <AutoTooltip title = {contt_ref_comp}><Link 
 								href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
 								underline = "hover"
-							>此页的{title_ref}</Link></AutoTooltip>
+							>{title_ref != "root" ? `此页的${title_ref}` : "此页"}</Link></AutoTooltip>
 						}
 						return <AutoTooltip title = {contt_ref_comp}><Link 
 							href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动

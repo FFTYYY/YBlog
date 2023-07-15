@@ -41,8 +41,13 @@ function MathJaxContext(props: {children: any}){
             ${""/** mathjax配置。必须先于mathjax的引入。 */}
             <script defer>
                 MathJax = {
+                    config: ["MMLorHTML.js"],
+                    jax: ["input/TeX","input/MathML","input/AsciiMath","output/HTML-CSS","output/NativeMML"],
+                    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js"],
+
                     loader: {load: ["[tex]/boldsymbol"]},
                     tex: {
+                        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"] , 
                         packages: {"[+]": ["tagformat", "boldsymbol"]} , 
                         inlineMath: [["${MATHJAX_INLINE_START}", "${MATHJAX_INLINE_END}"]] , 
                         displayMath: [["${MATHJAX_BLOCK_START}", "${MATHJAX_BLOCK_END}"]] , 
@@ -63,7 +68,7 @@ function MathJaxContext(props: {children: any}){
             </script>
 
             <script type="text/javascript" id="MathJax-script" defer
-              src="https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-chtml-full.js">
+              src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js">
             </script>
         `)
         // XXX 不知道是否应该用cdn版本
