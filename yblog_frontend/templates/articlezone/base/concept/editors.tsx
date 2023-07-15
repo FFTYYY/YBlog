@@ -111,7 +111,7 @@ var mathblock_editor    = get_default_group_editor_with_rightbar({
             other_props: {
                 idx: 0 , 
                 parameter_name: "suffix" , 
-                label: "extra" , 
+                label: "extra" ,     
             } , 
             skip_mouseless: true , 
         }] as any 

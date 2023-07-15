@@ -10,6 +10,7 @@ import pdb
 import json
 from tqdm import tqdm
 from articlezone.models.models import Node
+import time
 
 if __name__ == "__main__":
 
@@ -21,4 +22,5 @@ if __name__ == "__main__":
         x.update_tldr()
         x.save()
         pbar.set_description_str("now %d" % x.id)
+        time.sleep(10)
     print ("done!")

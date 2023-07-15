@@ -41,7 +41,11 @@ def get_referenced_by(request: HttpRequest , concept_id: int):
 @debug_convenient
 def get_node_concepts(request: HttpRequest , node_id: int):
 
-	node = Node.objects.get(id = node_id) 
+	try:
+		node = Node.objects.get(id = node_id) 
+	except Node.DoesNotExist:
+		raise Http404()
+
 	if not node_can_view(request , node):
 		raise Http404()
 
@@ -53,7 +57,11 @@ def get_node_concepts(request: HttpRequest , node_id: int):
 @debug_convenient
 def get_node_comments(request: HttpRequest , node_id: int):
 
-	node = Node.objects.get(id = node_id) 
+	try:
+		node = Node.objects.get(id = node_id) 
+	except Node.DoesNotExist:
+		raise Http404()
+
 	if not node_can_view(request , node):
 		raise Http404()
 
@@ -66,7 +74,12 @@ def get_node_comments(request: HttpRequest , node_id: int):
 
 @debug_convenient
 def get_node_content(request, node_id) -> HttpResponse:
-	node = Node.objects.get(id = node_id) 
+
+	try:
+		node = Node.objects.get(id = node_id) 
+	except Node.DoesNotExist:
+		raise Http404()
+
 	if not node_can_view(request , node):
 		raise Http404()
 
@@ -80,7 +93,11 @@ def get_node_content(request, node_id) -> HttpResponse:
 
 @debug_convenient
 def get_node_cache(request, node_id):
-	node = Node.objects.get(id = node_id) 
+	try:
+		node = Node.objects.get(id = node_id) 
+	except Node.DoesNotExist:
+		raise Http404()
+
 	if not node_can_view(request , node):
 		raise Http404()
 
@@ -94,7 +111,11 @@ def get_node_cache(request, node_id):
 
 @debug_convenient
 def get_node_create_time(request , node_id):
-	node = Node.objects.get(id = node_id) 
+	try:
+		node = Node.objects.get(id = node_id) 
+	except Node.DoesNotExist:
+		raise Http404()
+
 	if not node_can_view(request , node):
 		raise Http404()
 
@@ -108,7 +129,11 @@ def get_node_create_time(request , node_id):
 
 @debug_convenient
 def get_node_tldr(request , node_id):
-	node = Node.objects.get(id = node_id) 
+	try:
+		node = Node.objects.get(id = node_id) 
+	except Node.DoesNotExist:
+		raise Http404()
+
 	if not node_can_view(request , node):
 		raise Http404()
 
@@ -132,7 +157,10 @@ def get_node_visibility(request , node_id):
 @debug_convenient
 def get_indiscriminates(request , node_id):
 
-	node = Node.objects.get(id = node_id) 
+	try:
+		node = Node.objects.get(id = node_id) 
+	except Node.DoesNotExist:
+		raise Http404()
 
 	if not node_can_view(request , node):
 		raise Http404()
@@ -151,7 +179,13 @@ def get_nodetree(request , node_id):
 	if node_id == 0:
 		lis = Node.objects.all()
 	else:
-		lis = Node.objects.get(id = node_id).get_sons()
+		try:
+			node = Node.objects.get(id = node_id) 
+		except Node.DoesNotExist:
+			raise Http404()
+
+		lis = node.get_sons()
+		
 	lis = list(lis)
 	lis.sort(key = lambda nd: nd.index_in_father)
 	
@@ -172,8 +206,13 @@ def get_nodetree(request , node_id):
 def get_nodetree_shallow(request , node_id):
 	if node_id == 0:
 		node_id = 1
-		
-	lis = list( Node.objects.get(id = node_id).get_sons(2) )
+
+	try:
+		node = Node.objects.get(id = node_id) 
+	except Node.DoesNotExist:
+		raise Http404()
+
+	lis = list( node.get_sons(2) )
 	lis.sort(key = lambda nd: nd.index_in_father)
 	
 	return JsonResponse({
@@ -191,7 +230,12 @@ def get_nodetree_shallow(request , node_id):
 
 @debug_convenient
 def get_node_resources(request , node_id):
-	node = Node.objects.get(id = node_id)
+
+	try:
+		node = Node.objects.get(id = node_id) 
+	except Node.DoesNotExist:
+		raise Http404()
+	
 	if not node_can_view(request , node):
 		raise Http404()
 
@@ -204,7 +248,12 @@ def get_node_resources(request , node_id):
 @debug_convenient
 def get_node_resource_info(request , node_id):
 	'''给定一个资源文件的和所在节点和名称，查询其`url`。'''
-	node = Node.objects.get(id = node_id)
+
+	try:
+		node = Node.objects.get(id = node_id) 
+	except Node.DoesNotExist:
+		raise Http404()
+
 	if not node_can_view(request , node):
 		raise Http404()
 
@@ -247,7 +296,11 @@ def get_node_son_ids(request , node_id):
 def get_node_father_id(request , node_id):
 	'''询问一个节点的父节点'''
 
-	node = Node.objects.get(id = node_id)
+	try:
+		node = Node.objects.get(id = node_id) 
+	except Node.DoesNotExist:
+		raise Http404()
+
 	if not node_can_view(request , node):
 		raise Http404()
 	# 如果节点可见，那么其父节点也一定可见，因此无需额外判断。

@@ -326,7 +326,6 @@ class App extends  React.Component<{}, {
 							init_rootchildren = {tree_children} // 编辑器会记住第一次看到的树，所以务必在树初始化之后再渲染编辑器
 							onSave = {()=>{
 								let root = me.update_tree()
-								console.log($(".yblog-error").length)
 								setTimeout(()=>{
 									flush_math.go()
 									me.save_content(root)

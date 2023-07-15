@@ -31,9 +31,9 @@ def generate_tldr(node):
     if len(node_content) <= 100:
         return ""
     
-    node_content = node_content[:6000] # 防止token太多
+    node_content = node_content[:14000] # 防止token太多
 
-    ret = ask_chatgpt(prompt_suff + node_content + prompt_post)
+    ret = ask_chatgpt(prompt_suff + node_content + prompt_post, model = "gpt-3.5-turbo-16k")
     if ret is None:
         ret = ""
     ret = ret.strip()
