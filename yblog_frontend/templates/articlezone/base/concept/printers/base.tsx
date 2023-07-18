@@ -2,7 +2,7 @@ import * as React from "react"
 import * as Slate from "slate" 
 import * as SlateReact from "slate-react" 
 import { Grid , Box , 
-    Link, ThemeOptions , Dialog, Tooltip  , Badge  , Button , Paper , IconButton  , TextField , Typography ,  
+    Link, ThemeOptions , Dialog, Tooltip  , Badge  , Button , Paper , IconButton  , TextField , Typography, BoxProps ,  
 } from "@mui/material"
 import {
     PrinterPartBox , 
@@ -125,10 +125,10 @@ function ReferencePrinter(props: {children?: any, node: ConceptNode, parameters?
             {Object.keys(count).length > 1 ? "分别" : "皆"}在
         </PrinterParagraphBox>
         <PrinterNewLevelBox>{Object.keys(count).map((nodeid, idx)=>{
-            return <React.Fragment key={idx}>
+            return <Box key={idx}>
                 <Link href={`./${nodeid}`} style={{color: "inherit"}}><TitleWord node_id={parseInt(nodeid)}/></Link>
                 <span>（{num2chinese(count[nodeid])}次）,</span>
-            </React.Fragment>
+            </Box>
         })}
         </PrinterNewLevelBox>
         <PrinterParagraphBox>中。</PrinterParagraphBox>
@@ -166,9 +166,21 @@ function ShowIDXPrinter(props: {children?: any, node: ConceptNode, inline?: bool
     }
 
     let display = props.inline ? "inline-block" : "block"
-    return <Box style={{display: display}} >
+    let sx = {
+        display: display
+    } as BoxProps
+    if(!props.inline){
+        sx = {...sx, 
+            display: "flex", 
+            justifyContent: "nowrap", 
+            flexWrap: "nowrap",
+            flexDirection: "row" , 
+        }
+        children = <Box sx={{flex: "10000"}}>{children}</Box>
+    }
+    return <Box sx={sx} >
         {children}
-        <Tooltip title={`本节点的ID是 ${props.node.idx}`}><div style={{display: display}} onClick={()=>{
+        <Tooltip title={`本节点的ID是 ${props.node.idx}`}><div style={{display: "inline"}} onClick={()=>{
             set_sbt(!show_by_text)
         }}>
             <LiuJiaoYuan fill="rgba(120,120,120,0.1)" strokeWidth="20px" strokeColor="rgba(90,20,20,1.0)" style={{

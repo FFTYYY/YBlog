@@ -282,13 +282,11 @@ var subwords_printer = (()=>{
 						<PrinterOldLevelBox sx={{position: "relative"}}> {/* 套一层`PrinterParagraphBox`，是为了获得正确的间距。 */}
 							{title_content ? 
 								<PrinterParagraphBox>
-									<DefaultAbstractRendererAsProperty {...{node, context, parameters}} senario="title">
-										<ReferencePrinter node={node} parameters={parameters} inline>
-											{title_jsx}
-										</ReferencePrinter>
-									</DefaultAbstractRendererAsProperty>
+									<StandardAttachers {...{node, context, parameters}} inline>
+										{title_jsx}
+									</StandardAttachers>
 								</PrinterParagraphBox> 
-							: <></>}
+							: <StandardAttachers {...{node, context, parameters}} inline />}
 						</PrinterOldLevelBox>
 						<Box>{props.children}</Box>
 					</AutoStack>
@@ -319,9 +317,9 @@ var mount_printer = (()=>{
 			return <AutoStack force_direction="column">
 				{title? 
 					<PrinterStructureBoxText>
-						<StandardAttachers {...{node, context, parameters}} inline>{title}</StandardAttachers>
+						<StandardAttachers {...{node, context, parameters}}>{title}</StandardAttachers>
 					</PrinterStructureBoxText>
-					: <StandardAttachers {...{node, context, parameters}} inline />
+					: <StandardAttachers {...{node, context, parameters}} />
 				}
 				{text_jsx}
 				{close ? <PrinterStructureBoxText align="right">{close}</PrinterStructureBoxText> : <></>}
@@ -379,7 +377,7 @@ var mathblock_printer = (()=>{
 
 			value = `${environ_enter}${value}\\text{${suffix}}${environ_exit}`
 			
-			return <StandardAttachers {...{node, context, parameters}} inline>
+			return <StandardAttachers {...{node, context, parameters}}>
 				<MathJaxBlock>{value}</MathJaxBlock>
 				{close}
 			</StandardAttachers>

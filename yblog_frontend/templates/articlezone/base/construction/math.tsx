@@ -70,7 +70,25 @@ function MathJaxContext(props: {children: any}){
             <script type="text/javascript" id="MathJax-script" defer
               src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js">
             </script>
+            
+            <style>
+                mjx-merror mjx-utext{
+                    width: 100% !important;
+                    padding: 0 !important;
+                }
+                mjx-merror mjx-container{
+                    margin: 0 !important;
+                }
+                mjx-merror{
+                    background-color: rgba(0,0,0,0) !important;
+                    color: inherit !important;
+                }
+
+            </style>
         `)
+        // style是为了cancel掉mathjax无端报错的样式
+        
+
         // XXX 不知道是否应该用cdn版本
         // import ("mathjax/es5/tex-svg.js")
 
