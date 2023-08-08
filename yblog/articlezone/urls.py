@@ -1,6 +1,7 @@
 from django.urls import path
 from .views.views import edit_node_view , edit_nodetree_view , read_node_view  
 from .views.views import edit_nodetree_shallow_view , read_node_pure_view
+from .views.views import test_unity_view
 from .views.posts import post_nodetree , post_node_content , post_node_comments , post_node_comments 
 from .views.posts import post_generate_tldr
 from .views.posts import post_upload_file , post_manage_resource , post_delete_resource , post_node_cache
@@ -21,6 +22,7 @@ urlpatterns = [
     path("edit/shallow_structure/"              , partial(edit_nodetree_shallow_view , node_id = 0)) , 
     path("view/content/<int:node_id>"           , read_node_view) , 
     path("view/content/pure/<int:node_id>"      , read_node_pure_view) , 
+    path("view/test"                            , test_unity_view) , 
 
     path("get/node/content/<int:node_id>"       , get_node_content) , 
     path("get/node/cache/<int:node_id>"         , get_node_cache) , 

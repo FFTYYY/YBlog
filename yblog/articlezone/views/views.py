@@ -55,3 +55,9 @@ def read_node_pure_view(request , node_id = None):
         "logged_in": request.user.is_authenticated , 
         "linkto": linkto , 
     })
+
+@debug_convenient
+@allow_iframe
+def test_unity_view(request):
+
+    return render(request , "articlezone_unity/index.html")
