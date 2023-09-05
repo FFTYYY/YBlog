@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | test</title>
+    <title>Unity WebGL Player | casket-of-star</title>
     <link rel="shortcut icon" href="/static/articlezone_unity/TemplateData/favicon.ico">
     <link rel="stylesheet" href="/static/articlezone_unity/TemplateData/style.css">
   </head>
@@ -20,7 +20,7 @@
       <div id="unity-footer">
         <div id="unity-webgl-logo"></div>
         <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">test</div>
+        <div id="unity-build-title">casket-of-star</div>
       </div>
     </div>
     <script>
@@ -57,14 +57,14 @@
       }
 
       var buildUrl = "/static/articlezone_unity/Build";
-      var loaderUrl = buildUrl + "/build.loader.js";
+      var loaderUrl = buildUrl + "/Build.loader.js";
       var config = {
-        dataUrl: buildUrl + "/build.data.br",
-        frameworkUrl: buildUrl + "/build.framework.js.br",
-        codeUrl: buildUrl + "/build.wasm.br",
+        dataUrl: buildUrl + "/Build.data.br",
+        frameworkUrl: buildUrl + "/Build.framework.js.br",
+        codeUrl: buildUrl + "/Build.wasm.br",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
-        productName: "test",
+        productName: "casket-of-star",
         productVersion: "1.0",
         showBanner: unityShowBanner,
       };
@@ -108,7 +108,7 @@
               }).then((unityInstance) => {
                 loadingBar.style.display = "none";
                 fullscreenButton.onclick = () => {
-                  unityInstance.SetFullscreen(1);
+                  window.vuplex.SetFullscreen(1)/*https://support.vuplex.com/articles/webgl-fullscreen*/;
                 };
               }).catch((message) => {
                 alert(message);
