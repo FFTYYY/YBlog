@@ -64,6 +64,8 @@ function find_sectioner(node: Node, path: number[] = []){
 
 function RenderIndexItem (props:{item: IndexItem, onScroll: (path: number[])=>void}){
     let item = props.item 
+    let _name = item.name
+    let [idx, name] = _name.split("___")
     return <Box sx={{
         marginTop: "0.2rem" , 
     }}>
@@ -72,7 +74,25 @@ function RenderIndexItem (props:{item: IndexItem, onScroll: (path: number[])=>vo
             underline = "hover"
             onClick = {(e)=>{props.onScroll(item.node_path)}}
             color = "text.primary"
-        ><Typography sx={{fontSize: "0.8rem"}}>{item.name}</Typography></Link>
+            textAlign="left"
+        >
+            <Typography sx={{
+                fontSize: "0.8rem",
+                left: "0", 
+                right: "1rem",
+                position: "absolute" , 
+            }}>{idx}</Typography>
+            
+            <Typography sx={{
+                fontSize: "0.8rem",
+                left: "1rem", 
+                marginRight: "1rem" , 
+                
+                position: "relative" , 
+            }}>{name}</Typography>
+        </Link>
+
+        {/* 渲染子小节（但目前其实没有子小节） */}
         <Box>{item.sons.map((son, idx)=>{
             return <RenderIndexItem item={son} key={idx} onScroll={props.onScroll}/>
         })}</Box>

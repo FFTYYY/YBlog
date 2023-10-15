@@ -68,7 +68,7 @@ function MathJaxContext(props: {children: any}){
             </script>
 
             <script type="text/javascript" id="MathJax-script" defer
-              src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js">
+              src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml-full.js">
             </script>
             
             <style>

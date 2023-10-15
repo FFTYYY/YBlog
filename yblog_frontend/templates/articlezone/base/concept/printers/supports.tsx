@@ -126,7 +126,9 @@ var sectioner_printer = (()=>{
 			if(param.alone){
 				return undefined
 			}
-			return `${num2chinese(order)} ${param.title}`
+
+			// use ___ as spliter
+			return `${num2chinese(order)}___${param.title}`
 		} )
 	}
 

@@ -289,7 +289,7 @@ class BasicInformation extends React.Component<{
             >
                 <Typography color="text.secondary" sx={{
                     marginRight: theme.printer.margins.colon , 
-                    fontSize: "0.5rem" , 
+                    fontSize: "0.8rem" , 
                     display: "inline-block" , 
                 }}>{props.title}</Typography>
                 <Typography sx={{fontSize: "0.8rem" , display: "inline-block" , whiteSpace: "pre-wrap"}}>{
