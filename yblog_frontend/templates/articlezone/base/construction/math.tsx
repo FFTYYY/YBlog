@@ -91,8 +91,8 @@ function MathJaxContext(props: {children: any}){
 
         // XXX 不知道是否应该用cdn版本
         // import ("mathjax/es5/tex-svg.js")
-
-        $("head").append(script)
+        
+        setTimeout(()=>{ $("head").append(script) }, 1000)
         
         /** 刷新页面 */
         // setInterval(flush_mathjax , 500)

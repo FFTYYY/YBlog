@@ -3,7 +3,7 @@
 	"version": "0.0.0",
 	"scripts": {
 		"dev": "vite",
-		"build": "tsc && vite build",
+		"build": "del /Q ..\\yblog\\articlezone\\static\\articlezone\\* &&  tsc && vite build",
 		"build-dev": "del /Q ..\\yblog\\articlezone\\static\\articlezone\\* &&  tsc && vite build --mode development",
 		"preview": "vite preview"
 	},
