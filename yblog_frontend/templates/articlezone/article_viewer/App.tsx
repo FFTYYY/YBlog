@@ -23,16 +23,7 @@ import {
 	createTheme as MUICreateTheme, 
 	ThemeProvider as MUIThemeProvider ,  
 } from "@mui/material/styles"
-	
-import { my_theme } from "../base/construction"
-import { Interaction , BackendData } from "../base/interaction"
-import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../base/construction"
-import { renderers , default_renderers } from "../base/concept"
-import { parse_second_concepts } from "../base/utils"
-import { first_concepts } from "../base/concept"
-import { LeftBox, RightBox } from "./cards"
-import { flush_math , MathJaxFlusher } from "../base/construction/math"
-import { FangSheng, BaJiao, Hui, BaoXiangHua, Acanthus, Acanthus3, Acanthus4 } from "../assets"
+
 import "overlayscrollbars/overlayscrollbars.css"
 import { OverlayScrollbars } from "overlayscrollbars"
 import {
@@ -40,6 +31,17 @@ import {
 	CssBaseline,
 	SvgIcon, 
 } from "@mui/material"
+
+import { my_theme } from "../base/construction"
+import { Interaction , BackendData } from "../base/interaction"
+import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../base/construction"
+import { renderers , default_renderers } from "../base/concept"
+import { parse_second_concepts } from "../base/utils"
+import { first_concepts } from "../base/concept"
+import { LeftBox, RightBox, TopBox } from "./cards"
+import { flush_math , MathJaxFlusher } from "../base/construction/math"
+import { FangSheng, BaJiao, Hui, BaoXiangHua, Acanthus, Acanthus3, Acanthus4 } from "../assets"
+
 
 class App extends  React.Component<{} , {
 	printer: Printer  | undefined
@@ -126,24 +128,19 @@ class App extends  React.Component<{} , {
 			<Box sx={{
 				position: "absolute" , 
 				top: "2%" ,
-				left: "1%" , 
-				height: "96%" , 
-				width: "18%" , 
+				left: "2%" , 
+				height: "2%" , 
+				width: "96%" , 
 			}}>
-				<LeftBox 
-					root = {tree} 
-					idx_activated = {me.state.activate_idx}
-					onActivateIdx = {()=>{ // 逆转！
-						me.setState({activate_idx: !me.state.activate_idx})
-					}}
-				/>
+				<TopBox root = {tree}/>
 			</Box>
+
 			<Box sx={{
 				position: "absolute" , 
-				top: "2%" ,
-				left: "25%" , 
+				top: "6%" ,
+				left: "15%" , 
 				height: "96%" , 
-				width: "62%" , 
+				width: "70%" , 
 			}}>
 				<Box sx = {{
 					position: "absolute" , 
@@ -217,10 +214,10 @@ class App extends  React.Component<{} , {
 			</Box>
 			<Box sx={{
 				position: "absolute" , 
-				top: "2%" ,
-				left: "88%" , 
+				top: "6%" ,
+				left: "86%" , 
 				height: "96%" , 
-				width: "11%" , 
+				width: "13%" , 
 			}}>
 				<RightBox 
 					root = {tree} 
