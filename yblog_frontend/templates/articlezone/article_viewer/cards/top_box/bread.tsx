@@ -7,7 +7,7 @@ import {
     Box , Divider , Typography , Link , Paper , Breadcrumbs ,
 } from "@mui/material"
 import {
-    KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon , 
+    ArrowRight  as ArrowRightIcon , 
     KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon , 
     NavigateNext as NavigateNextIcon , 
     
@@ -28,7 +28,7 @@ import "./style.css"
 
 import {
     TopMenu , 
-} from "./top_menu"
+} from "./bread_menu"
 
 export {TopBread}
 
@@ -57,7 +57,7 @@ function TopBread(props: {
         sx = {{
             color: theme.extra_paltte.text.on_primary , 
         }}
-        separator = {<NavigateNextIcon fontSize="small" sx={{color: theme.extra_paltte.text.weak_on_primary}}/>}
+        separator = {<ArrowRightIcon sx={{color: theme.extra_paltte.text.weak_on_primary}}/>}
     >{fathers.map(father_id=>{
         return <TopMenu node_id = {father_id} key = {father_id} ></TopMenu>
     })}</Breadcrumbs>

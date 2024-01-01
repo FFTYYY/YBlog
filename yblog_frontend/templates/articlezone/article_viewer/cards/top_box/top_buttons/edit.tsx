@@ -63,15 +63,19 @@ function EditButton(props: {
         <AutoTooltip title = "编辑">
             <Button
                 sx = {{
-                    marginX: "0.2rem" , 
+                    paddingX: "0.2rem",
+                    minHeight: "1.3rem",
+                    paddingY: "0.2rem" , 
+                    marginY: "0.4rem",
+                    minWidth: "0.5rem" , 
+                    marginX: "0.3rem" , 
+    
                     ...(active ? active_style : unactive_style),
-                    height: "2.5rem" , 
                     "&:hover": {
                         ...(active ? unactive_style : active_style),
                         transition: "background-color 400ms ease-out, color 400ms ease-out"
                     },
                     transition: "background-color 400ms ease-out, color 400ms ease-out" , 
-                    minWidth: "1rem" , 
                 }}
                 onClick={(e)=>{set_active(!active)}}
             ><EditIcon fontSize="small"/></Button>
@@ -84,7 +88,7 @@ function EditButton(props: {
                 width: "14%" , 
                 height: "90%" , 
                 opacity: 0.95 , 
-                marginTop: "2.5rem" , 
+                marginTop: "2.7rem" , 
             }}
                         
             open = {active}

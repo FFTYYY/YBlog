@@ -41,9 +41,16 @@ function ButtonBase(props: {
         <AutoTooltip title = {props.title}>
             <Button
                 sx = {{
+
+                    paddingX: "0.2rem",
+                    minHeight: "1.3rem",
+                    paddingY: "0.2rem" , 
+                    marginY: "0.4rem",
+                    minWidth: "0.5rem" , 
+                    marginX: "0.3rem" , 
+                    
                     color: "white", 
-                    height: "2.5rem" , 
-                    marginX: "0.2rem" , 
+
                     backgroundColor: "inherit" , 
                     "&:hover": {
                         backgroundColor: theme.extra_paltte.background.anti_primary,
@@ -51,7 +58,6 @@ function ButtonBase(props: {
                         transition: "background-color 400ms ease-out, color 400ms ease-out"
                     },
                     transition: "background-color 400ms ease-out, color 400ms ease-out" , 
-                    minWidth: "1rem" , 
                 }}
                 onClick={(e)=>{set_open(true)}}
             >{props.button_content}</Button>

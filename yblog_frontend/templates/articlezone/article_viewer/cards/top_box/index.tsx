@@ -31,16 +31,16 @@ function TopBox(props: {
             paddingX: "1rem" , 
             maxWidth: "80%",
             overflow: "auto" , 
+            borderRight: "1px solid grey"
         }}>
             <TopBread root = {props.root}/>
         </Box>
-        <Divider orientation="vertical" variant="middle" flexItem sx={{
-            borderColor: theme.extra_paltte.text.on_primary , 
-            borderWidth: "1px"
-        }}/>
         <Box sx={{
             textAlign: "right" , 
             marginLeft: "auto" , 
+            paddingLeft: "1rem" , 
+            paddingRight: "0.4rem" , 
+            borderLeft: "1px solid grey"
         }}>
             {(!BackendData.logged_in) ? <></> : // 只有登录之后才能看到编辑按钮（只是显示方便，不会导致权限的实际提升）
                 <EditButton 

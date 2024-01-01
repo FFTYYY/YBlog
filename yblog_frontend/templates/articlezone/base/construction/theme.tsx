@@ -9,7 +9,7 @@ let light_extra_paltte = {
     } , 
     text: {
         on_primary: "rgb(230,230,230)" , 
-        weak_on_primary: "rgb(120,150,150)" , 
+        weak_on_primary: "rgb(150,150,150)" , 
         anti_on_primary: "rgb(20,20,20)" , 
         on_secondary: "rgb(230,230,230)" , 
         weak_on_secondary: "rgb(200,200,200)" , 

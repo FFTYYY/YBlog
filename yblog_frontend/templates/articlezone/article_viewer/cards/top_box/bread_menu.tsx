@@ -106,12 +106,14 @@ function TopMenu(props: {
             ref = {link_ref}
             sx = {{
                 width: "100%", 
-                sxmarginX: "0.1rem", 
-                minWidth: "1rem", 
-                paddingX: "0.1rem",
-                minHeight: level == "high" ? "2.5rem" : "1.7rem",
                 color: "inherit" , 
-
+                
+                paddingX: "0.2rem",
+                minHeight: "1.3rem",
+                paddingY: "0.1rem" , 
+                marginY: level == "high" ? "0.4rem" : 0,
+                minWidth: "1rem", 
+                
                 backgroundColor: "inherit" , 
                 "&:hover": {
                     backgroundColor: theme.extra_paltte.background.anti_primary,
@@ -132,9 +134,6 @@ function TopMenu(props: {
                 anchorEl = {link_ref.current}
                 open = {mouse_in}
                 placement = {level == "high"? "bottom-start" : "right-start"}
-                sx = {{
-                    marginLeft: "0.1rem" , 
-                }}
                 transition
                 modifiers={[
                     {
@@ -153,12 +152,15 @@ function TopMenu(props: {
                 // keepMounted          
             >{({ TransitionProps }) => (<Fade {...TransitionProps} timeout={200}><Box><ScrollBarBox
                 sx = {{
+                    marginLeft: "0.1rem" , 
+                    marginTop: "0.5rem" , 
+                    marginBottom: "1rem" , 
+                    
                     minWidth: "5rem" , 
                     maxWidth: "15rem" ,
                     maxHeight: "30rem",
-                    marginBottom: "1rem" , 
                 }}
-            ><Paper 
+            ><Box 
                 sx = {{
                     paddingY: "0.5rem" , 
                     backgroundColor: (theme.mui.palette.primary as any).main , 
@@ -167,13 +169,13 @@ function TopMenu(props: {
                 }}
             >{sons.map((son_id)=>{
                 return <TopMenu 
-                        level = "low"
-                        node_id = {son_id}
-                        lower_level = {lower_level + 1}
-                        key = {son_id}
-                    ></TopMenu>
+                    level = "low"
+                    node_id = {son_id}
+                    lower_level = {lower_level + 1}
+                    key = {son_id}
+                ></TopMenu>
             })
-            }</Paper></ScrollBarBox></Box></Fade>)}</Popper>
+            }</Box></ScrollBarBox></Box></Fade>)}</Popper>
         }
         </ ClickAwayListener>
         
