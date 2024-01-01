@@ -1,64 +1,57 @@
-
-
-import React from "react"
+import React  from "react"
 
 import {
-    Tabs , Tab , Button , IconButton , 
-    Box , Divider , Typography , Link , Paper , Breadcrumbs ,
-} from "@mui/material"
-import {
-    KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon , 
-    KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon , 
-    NavigateNext as NavigateNextIcon , 
-    
-} from "@mui/icons-material"
-import {
-    TabContext  , 
-    TabList  , 
-    TabPanel   , 
-} from "@mui/lab"
-
-import {
-    AbstractNode , 
-    ThemeContext , 
+    AbstractNode , AutoStack , ThemeContext
 } from "@ftyyy/ytext"
+
+import {
+	Box , 
+	CssBaseline,
+	SvgIcon , 
+	Divider , 
+	AppBar , 
+} from "@mui/material"
+
+
+import { TopBread } from "./bread"
+import { BasicInfoButton , CommentButton , AboutButton, EditButton} from "./top_buttons"
 import { Interaction , BackendData } from "../../../base/interaction"
 
-import "./style.css"
-
-import {
-    TopMenu , 
-} from "./top_menu"
-
-export {TopBox}
+export { TopBox }
 
 function TopBox(props: {
-    root: AbstractNode
+    root: AbstractNode , 
+    
+    idx_activated?: boolean , 
+    onActivateIdx?: ()=>any , 
 }){
-    let my_id = BackendData.node_id
-    let [fathers , set_fathers] = React.useState<number[]>([my_id])
     let theme = React.useContext(ThemeContext)
-    
-    React.useEffect(()=>{(async ()=>{
-        let now_id = my_id
-        let father_ids = [my_id]
-        for(let i = 0;i < 20;i ++){ // 最多20层
-            let father_id = await Interaction.get.father_id(now_id)
-            if(father_id <= 0){
-                break
+    return <AutoStack force_direction="row">
+        <Box sx={{
+            paddingX: "1rem" , 
+            maxWidth: "80%",
+            overflow: "auto" , 
+        }}>
+            <TopBread root = {props.root}/>
+        </Box>
+        <Divider orientation="vertical" variant="middle" flexItem sx={{
+            borderColor: theme.extra_paltte.text.on_primary , 
+            borderWidth: "1px"
+        }}/>
+        <Box sx={{
+            textAlign: "right" , 
+            marginLeft: "auto" , 
+        }}>
+            {(!BackendData.logged_in) ? <></> : // 只有登录之后才能看到编辑按钮（只是显示方便，不会导致权限的实际提升）
+                <EditButton 
+                root = {props.root} 
+                idx_activated = {props.idx_activated} 
+                onActivateIdx = {props.onActivateIdx}
+                />
             }
-            father_ids = [father_id, ...father_ids]
-            now_id = father_id
-        }
-        set_fathers(father_ids)
-    })()} , [])
-    
-    return <Breadcrumbs 
-        sx = {{
-            color: theme.extra_paltte.text.on_primary , 
-        }}
-        separator = {<NavigateNextIcon fontSize="small" sx={{color: theme.mui.palette.text.disabled}}/>}
-    >{fathers.map(father_id=>{
-        return <TopMenu node_id = {father_id} key = {father_id} ></TopMenu>
-    })}</Breadcrumbs>
+            <CommentButton   root = {props.root} />
+            <BasicInfoButton root = {props.root} />
+            <AboutButton />
+        </Box>
+    </AutoStack>
 }

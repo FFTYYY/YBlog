@@ -9,10 +9,13 @@ let light_extra_paltte = {
     } , 
     text: {
         on_primary: "rgb(230,230,230)" , 
+        weak_on_primary: "rgb(120,150,150)" , 
         anti_on_primary: "rgb(20,20,20)" , 
+        on_secondary: "rgb(230,230,230)" , 
+        weak_on_secondary: "rgb(200,200,200)" , 
     } , 
     background: {
-        anti_primary: "#BF8681"
+        anti_primary: "#B0B0B0"
     } , 
 }
 
@@ -20,13 +23,15 @@ let light_paltte = {
     divider: "#060606" , 
     mode: "light" as "light",
     primary: {
-        main: "#40797E",
+        // main: "#40797E",
+        main: "#303030",
     },
     info: {
         main: "#666677",
     },
     secondary: {
-        main: "#606099",
+        main: "#40797E",
+        // main: "#606099",
     },
     background: {
         default: "rgba(250,250,250,1)",

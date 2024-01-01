@@ -137,7 +137,13 @@ class App extends  React.Component<{} , {
 				opacity: "0.9" , 
 				// backgroundColor: "rgb(240,240,230)" , 
 			}}>
-				<TopBox root = {tree}/>
+				<TopBox 
+					root = {tree} 
+					idx_activated = {me.state.activate_idx}
+					onActivateIdx = {()=>{ // 逆转！
+						me.setState({activate_idx: !me.state.activate_idx})
+					}}
+				></TopBox>
 			</AppBar>
 			
 			{/* <Divider sx={{

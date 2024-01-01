@@ -63,13 +63,17 @@ let node_info_cache = new UniversalCache(500)
  * @param key 要从获得的数据中直接取得的项。如果为`undefined`，就直接返回从后端获得的数据。
  * @param node_id 要访问的节点的编号。默认为当前正在修改的节点。
  */
-async function get_node_information(urlmaker:(nodeid:number) => string , key?: string, node_id?: number){
+async function get_node_information(urlmaker:(nodeid:number) => string , key?: string, node_id?: number, disable_cache?: boolean){
     if(node_id == undefined)
         node_id = BackendData.node_id
     let url = urlmaker(node_id)
 
     let cache_key = JSON.stringify([url,key,node_id])
-    let data = node_info_cache.get(cache_key)
+    let data = undefined
+    if(!disable_cache){
+        data = node_info_cache.get(cache_key)
+    }
+
     if(data == undefined){
         data = (await axios.get(url)).data
         node_info_cache.set(cache_key, data)
@@ -153,7 +157,7 @@ var Interaction = {
         shallowtree :(nodeid: number) => get_node_information(urls.get.shallowtree , "data"     , nodeid), 
         concept     :(nodeid: number) => get_node_information(urls.get.concept     , "concepts" , nodeid), 
         create_time :(nodeid: number) => get_node_information(urls.get.create_time , undefined  , nodeid), 
-        comments    :(nodeid: number) => get_node_information(urls.get.comments    , "comments" , nodeid), 
+        comments    :(nodeid: number) => get_node_information(urls.get.comments    , "comments" , nodeid, true), 
         resources   :(nodeid: number) => get_node_information(urls.get.resources   , "resources", nodeid), 
         resource_info: async (resouce_name: string, nodeid: number) => {
             if(nodeid == undefined){

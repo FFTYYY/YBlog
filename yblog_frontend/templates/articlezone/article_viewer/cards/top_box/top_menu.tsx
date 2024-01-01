@@ -109,7 +109,6 @@ function TopMenu(props: {
                 sxmarginX: "0.1rem", 
                 minWidth: "1rem", 
                 paddingX: "0.1rem",
-                paddingY: "0.3rem" ,
                 minHeight: level == "high" ? "2.5rem" : "1.7rem",
                 color: "inherit" , 
 
@@ -164,7 +163,7 @@ function TopMenu(props: {
                     paddingY: "0.5rem" , 
                     backgroundColor: (theme.mui.palette.primary as any).main , 
                     color: theme.extra_paltte.text.on_primary , 
-                    opacity: 0.9 , 
+                    opacity: 0.85 , 
                 }}
             >{sons.map((son_id)=>{
                 return <TopMenu 
