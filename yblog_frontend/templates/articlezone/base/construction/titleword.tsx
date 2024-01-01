@@ -19,13 +19,25 @@ class TitleWord extends React.PureComponent<{
         }
     }
 
-    async componentDidMount() {
-        if(id2title[this.props.node_id] == undefined){
-            let root = await Interaction.get.content(this.props.node_id)
+    async update_id2title(){
+        let node_id = this.props.node_id
+        if(id2title[node_id] == undefined){
+            let root = await Interaction.get.content(node_id)
             let title = root.parameters.title.val
-            id2title[this.props.node_id] = title
+            id2title[node_id] = title
         }
-        this.setState({title: id2title[this.props.node_id] as string}) 
+        if(this.state[id2title[node_id]] != id2title[node_id]){
+            this.setState({title: id2title[node_id] as string}) 
+        }
+    }
+
+    async componentDidMount() {
+        await this.update_id2title()
+    }
+
+    async componentDidUpdate(){
+        await this.update_id2title()
+
     }
 
     render(){
