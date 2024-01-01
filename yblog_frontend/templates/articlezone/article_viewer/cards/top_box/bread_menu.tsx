@@ -75,11 +75,16 @@ function TopMenu(props: {
                 let brother_ids = await Interaction.get.son_ids(father_id)
                 set_sons(brother_ids)
             }
+            else{
+                let son_ids = await Interaction.get.son_ids(my_id)
+                set_sons(son_ids)
+            }
         }
         else{
             let son_ids = await Interaction.get.son_ids(my_id)
             set_sons(son_ids)
         }
+    
     })()} , [props.level, props.node_id, props.lower_level])
 
     // 鼠标离开的行为

@@ -132,9 +132,10 @@ class App extends  React.Component<{} , {
 				position: "absolute" , 
 				top: "0" ,
 				left: "0" , 
-				height: "2.5rem" , 
+				height: "2.60rem" , 
 				width: "100%" , 
 				opacity: "0.9" , 
+				border: "1px solid grey" , 
 				// backgroundColor: "rgb(240,240,230)" , 
 			}}>
 				<TopBox 

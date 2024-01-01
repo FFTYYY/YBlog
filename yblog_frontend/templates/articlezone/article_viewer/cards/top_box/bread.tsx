@@ -59,7 +59,7 @@ function TopBread(props: {
         }}
         separator = {<ArrowRightIcon sx={{color: theme.extra_paltte.text.weak_on_primary}}/>}
     >{fathers.map(father_id=>{
-        return <TopMenu node_id = {father_id} key = {father_id} ></TopMenu>
+        return <TopMenu node_id={father_id} key={father_id} ></TopMenu>
     })}</Breadcrumbs>
 }
 

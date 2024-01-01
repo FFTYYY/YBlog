@@ -31,14 +31,14 @@ function TopBox(props: {
             paddingX: "1rem" , 
             maxWidth: "80%",
             overflow: "auto" , 
-            borderRight: "1px solid grey"
+            borderRight: "1px solid grey" , 
         }}>
             <TopBread root = {props.root}/>
         </Box>
         <Box sx={{
             textAlign: "right" , 
             marginLeft: "auto" , 
-            paddingLeft: "1rem" , 
+            paddingLeft: "0.8rem" , 
             paddingRight: "0.4rem" , 
             borderLeft: "1px solid grey"
         }}>

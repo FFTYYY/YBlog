@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 
 import {
     Tabs , Tab , Button , IconButton , 
@@ -25,13 +25,6 @@ import Cookies from "universal-cookie"
 
 export {EditButton}
 
-const COOKIE_KEY = "yblog-topbox-edit-active"
-/** read intial val from cookie. If not set then return `false` (default). */
-function get_val_from_cookie(): boolean{
-    let cookies = new Cookies()
-    let val = cookies.get(COOKIE_KEY)
-    return val
-}
 
 function EditButton(props: {
     root: AbstractNode , 
@@ -39,13 +32,21 @@ function EditButton(props: {
     idx_activated?: boolean , 
     onActivateIdx?: ()=>any , 
 }){
-
-    let [active, _set_active] = React.useState<boolean>(get_val_from_cookie())
+    const COOKIE_KEY = "yblog-topbox-edit-active"
+    let [active, _set_active] = React.useState<boolean>(false)
+    
+    // read intial val from cookie. If not set then return `false` (default).
+    useEffect(()=>{
+        let cookies = new Cookies()
+        let val = (cookies.get(COOKIE_KEY) == "true")
+        
+        _set_active(val)
+    }, [])
 
     let set_active = (v)=>{
-        _set_active(v)
         let cookies = new Cookies()
-        cookies.set(COOKIE_KEY , v, {path: "/", maxAge: 6000000})
+        cookies.set(COOKIE_KEY , v ? "true" : "false", {path: "/", maxAge: 6000000})
+        _set_active(v)
     }
 
     let theme = React.useContext(ThemeContext)
@@ -89,6 +90,7 @@ function EditButton(props: {
                 height: "90%" , 
                 opacity: 0.95 , 
                 marginTop: "2.7rem" , 
+                marginLeft: "0.2rem" , 
             }}
                         
             open = {active}
