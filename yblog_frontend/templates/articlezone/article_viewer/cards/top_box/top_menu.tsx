@@ -5,12 +5,17 @@ import {
     Link , 
     Button , 
     Menu , 
-    MenuItem  , 
+    MenuItem,  
+    Popper, 
+    Paper , 
+    Fade , 
+    ClickAwayListener , 
 } from "@mui/material"
 
 import {
     AutoStack , 
     Direction ,
+    ScrollBarBox , 
 } from "@ftyyy/ytext"
 
 import {
@@ -31,40 +36,19 @@ export {
 function TopMenu(props: {
     node_id: number , 
     level?: "high" | "low" , 
-    update_state?: (state: boolean)=>void 
+    lower_level?: number
 }){
     let my_id = props.node_id
     let level = props.level || "high"
-    let update_state = props.update_state || ( (s)=>{return ;} ) // 向父节点通知自身状态
+    let lower_level = props.lower_level || 0
 
     let mouseout_timer = undefined // 用来控制鼠标离开时间的timer
     let [mouse_in , _set_mouse_in] = React.useState<boolean> (false)
 
     let [sons, set_sons] = React.useState<number[]> ([])
-    let [son_states, _set_son_states] = React.useState<{[son_id in string]: boolean}> ({})
-
-    // 只要自身或者组件有一个活着，那就是活着
-    function get_alive(){
-        let alive = false
-        if(mouse_in){
-            alive = true
-        }
-        for(let son_id in sons){
-            if(son_states[son_id]){
-                alive = true
-            }
-        }
-        return alive
-    }
 
     // 设置鼠标进入的行为
     let set_mouse_in = (s: boolean) => {
-        if(s){
-            console.log("applied mouse in")
-        }
-        else{
-            console.log("applied mouse out")
-        }
 
         _set_mouse_in(s)
         if(s){
@@ -72,17 +56,13 @@ function TopMenu(props: {
                 clearTimeout(mouseout_timer)
             }
         }
-        update_state(get_alive()) // 向父节点更新自身状态
     } 
     
-    // 设置子节点状态
-    let set_son_states = (son_states: {[son_id in string]: boolean}) => {
-        _set_son_states(son_states)
-        update_state(get_alive()) // 向父节点更新自身状态
-    }
-
     // 获得子节点
     React.useEffect(()=>{(async ()=>{
+        if(lower_level > 4){ // 不能太深
+            return 
+        }
         if(level == "high"){
             let father_id = await Interaction.get.father_id(my_id)
             if(father_id > 0){
@@ -94,33 +74,17 @@ function TopMenu(props: {
             let son_ids = await Interaction.get.son_ids(my_id)
             set_sons(son_ids)
         }
-        set_son_states({})
-    })()} , [props.level, props.node_id])
+    })()} , [props.level, props.node_id, props.lower_level])
 
     // 鼠标离开的行为
-    function on_mouse_out(){
-        console.log("mouseout!!")
-
-        if(mouseout_timer){
-            clearTimeout(mouseout_timer) // 先清除以前的
-        }
-        mouseout_timer = setTimeout(()=>{
-            set_mouse_in(false)
-            console.log("timeout!!!")
-        }, 500)
-    }
-
-    // 获得子节点更新状态的方法
-    function get_son_update_state(son_id: number){
-        return (state: boolean)=>{
-            if(state != son_states[son_id]){
-                set_son_states({...son_states, son_id: state})
+    function get_on_mouse_out(timeout: number){
+        return () => {
+            if(mouseout_timer){
+                clearTimeout(mouseout_timer) // 先清除以前的
             }
-            if(state){
-                if(mouseout_timer){
-                    clearTimeout(mouseout_timer)
-                }
-            }
+            mouseout_timer = setTimeout(()=>{
+                set_mouse_in(false)
+            }, timeout)
         }
     }
 
@@ -129,8 +93,7 @@ function TopMenu(props: {
             // onClick = {(e)=>{set_anchorel(e.currentTarget)}}
 
             onMouseOver = {()=>{set_mouse_in(true)}}
-            // onMouseOut = {on_mouse_out}
-            onMouseOut = {on_mouse_out}
+            onMouseOut = {get_on_mouse_out(100)}
 
             // underline = "always"
             // href = "#"
@@ -140,40 +103,52 @@ function TopMenu(props: {
             <TitleWord node_id = {props.node_id} />
         </Button>
 
+        <ClickAwayListener onClickAway = {()=>{set_mouse_in(false)}}>
         {sons.length <= 0 ? <></> : 
-            <Menu
+            <Popper
+                onMouseOver = {()=>{set_mouse_in(true)}}
+                onMouseOut = {get_on_mouse_out(300)}
                 anchorEl = {link_ref.current}
-                open = {get_alive()}
-                // onClose = {()=>{set_anchorel(undefined)}}
-                anchorOrigin = {level == "high"? {
-                    vertical: "bottom" as "bottom",
-                    horizontal: "left" as "left",
-                } : {
-                    vertical: "top" as "top",
-                    horizontal: "right" as "right",
-                }}
+                open = {mouse_in}
+                placement = {level == "high"? "bottom-start" : "right-start"}
                 sx = {{
-                    marginLeft: "0.1rem"
+                    marginLeft: "0.1rem" , 
                 }}
-                // onMouseEnter = {()=>{set_mouse_in(true)}}
-                autoFocus = {false}
+                transition
+                modifiers={[
+                    {
+                        name: "preventOverflow",
+                        enabled: true,
+                        options: {
+                            altAxis: true,
+                            altBoundary: false,
+                            tether: false,
+                            rootBoundary: "document",
+                            padding: 8,
+                        },
+                    },
+                ]}
+                
+                // keepMounted          
+            >{({ TransitionProps }) => (<Fade {...TransitionProps} timeout={200}><Box><ScrollBarBox
+                sx = {{
+                    width: "10rem" ,
+                    maxHeight: "30rem",
+                    marginBottom: "1rem" , 
+                }}
+            ><Paper 
+                variant="outlined"
             >{sons.map((son_id)=>{
-                console.log(son_id)
-                return <MenuItem 
-                    sx = {{
-                        padding: 0,
-                    }}
-                    autoFocus = {false}
-                >
-                    <TopMenu 
-                        // update_state={()=>{get_son_update_state(son_id)}}
+                return <TopMenu 
                         level = "low"
                         node_id = {son_id}
+                        lower_level = {lower_level + 1}
+                        key = {son_id}
                     ></TopMenu>
-                </MenuItem>
             })
-            }</Menu>
+            }</Paper></ScrollBarBox></Box></Fade>)}</Popper>
         }
+        </ ClickAwayListener>
         
     </>
 }

@@ -48,6 +48,6 @@ function TopBox(props: {
     })()} , [])
     
     return <Breadcrumbs>{fathers.map(father_id=>{
-        return <TopMenu node_id = {father_id}></TopMenu>
+        return <TopMenu node_id = {father_id} key = {father_id}></TopMenu>
     })}</Breadcrumbs>
 }
