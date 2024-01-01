@@ -1,0 +1,9 @@
+.MuiBreadcrumbs-separator{
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.MuiBreadcrumbs-li{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}

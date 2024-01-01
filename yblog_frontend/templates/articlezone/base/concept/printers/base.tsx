@@ -96,6 +96,7 @@ function StandardAttachers(props: {children?: any, context: Context, node: Conce
  */
 function ReferencePrinter(props: {children?: any, node: ConceptNode, parameters?: any, inline?: boolean}){
     let children = props.children || <></>
+    let theme = React.useContext(ThemeContext)
 
     let [referencers , set_referencers] = React.useState<[number, number] []>([])
     React.useEffect(()=>{(async ()=>{
@@ -138,7 +139,7 @@ function ReferencePrinter(props: {children?: any, node: ConceptNode, parameters?
     return <Box style={{display: display}}>
         {children}
         <Tooltip title={reference_comp}><div style={{display: display}}>
-            <LiuBian fill="rgba(20,120,240,0.4)" strokeWidth="6px" strokeColor="rgba(0,0,0,0.7)" style={{
+            <LiuBian fill={theme.extra_paltte.symbol.reference} strokeWidth="6px" strokeColor="rgba(0,0,0,0.7)" style={{
                 top: "-5px", 
                 left: "2px" , 
                 marginRight: "5px" , 

@@ -29,7 +29,9 @@ import { OverlayScrollbars } from "overlayscrollbars"
 import {
 	Box , 
 	CssBaseline,
-	SvgIcon, 
+	SvgIcon , 
+	Divider , 
+	AppBar , 
 } from "@mui/material"
 
 import { my_theme } from "../base/construction"
@@ -41,6 +43,7 @@ import { first_concepts } from "../base/concept"
 import { LeftBox, RightBox, TopBox } from "./cards"
 import { flush_math , MathJaxFlusher } from "../base/construction/math"
 import { FangSheng, BaJiao, Hui, BaoXiangHua, Acanthus, Acanthus3, Acanthus4 } from "../assets"
+// import "./style.css"
 
 
 class App extends  React.Component<{} , {
@@ -121,59 +124,44 @@ class App extends  React.Component<{} , {
 			height: "100%" , 
 			left: "0" , 
 			right: "0" , 
-			backgroundColor: "background.default", 
+			backgroundColor: "rgba(0,0,0,0)", 
 			color: "text.primary" , 
 		}}
 		><CssBaseline />
-			<Box sx={{
+			<AppBar sx={{
 				position: "absolute" , 
-				top: "2%" ,
-				left: "2%" , 
-				height: "2%" , 
-				width: "96%" , 
+				top: "0" ,
+				left: "0" , 
+				height: "2.5rem" , 
+				width: "100%" , 
+				opacity: "0.9" , 
+				// backgroundColor: "rgb(240,240,230)" , 
 			}}>
 				<TopBox root = {tree}/>
-			</Box>
+			</AppBar>
+			
+			{/* <Divider sx={{
+				position: "absolute" , 
+				top: "2.5rem" ,
+				left: "0" , 
+				width: "90%" , 
+				height: "2px" , 
+			}}/> */}
 
 			<Box sx={{
 				position: "absolute" , 
-				top: "6%" ,
+				top: "2.6rem" ,
 				left: "15%" , 
-				height: "96%" , 
+				bottom: "0.5rem" , 
 				width: "70%" , 
 			}}>
-				<Box sx = {{
-					position: "absolute" , 
-					width: "98%" ,
-					left: "1%" , 
-					top: "1%" , 
-					height: "3%" , 
-					display: "flex" , 
-					justifyContent: "center" , 
-					alignContent: "space-between" , 
-				}}>
-					<FangSheng fill="rgba(0,0,0,0)" strokeWidth="4px" style={{
-						height: "1.5rem" , 
-					}} />
-					<PrinterStructureBoxText sx={{
-						textAlign: "center" , 
-						fontSize: "1.5rem", 
-						marginX: "1.5rem", 
-					}}><MathJaxFlusher>{
-						tree.parameters.title.val
-					}</MathJaxFlusher></PrinterStructureBoxText>
-					<FangSheng style={{
-						height: "1.5rem" , 
-					}} />
-				</Box>
-
 				<ScrollBarBox  
 					sx = {{
 						position: "absolute" , 
 						width: "98%" ,
 						left: "1%" , 
-						top: "5%" , 
-						height: "94%" , 
+						top: "1%" , 
+						height: "98%" , 
 						overflowY: "auto" ,
 						wordBreak:"break-all" , 
 					}} 
@@ -185,6 +173,16 @@ class App extends  React.Component<{} , {
 						cache: me.state.cache , 
 						activate_idx: me.state.activate_idx, 
 					}}>
+						<PrinterStructureBoxText sx={{
+							textAlign: "left" , 
+							fontSize: "1.5rem", 
+							marginLeft: "2rem", 
+							marginTop: "1rem" , 
+							marginBottom: "2rem" , 
+						}}>{
+							tree.parameters.title.val
+						}</PrinterStructureBoxText>
+
 						<DefaultPrinterComponent 
 							ref = {this.printer_comp_ref}
 							printer = {printer} 
@@ -216,7 +214,7 @@ class App extends  React.Component<{} , {
 				position: "absolute" , 
 				top: "6%" ,
 				left: "86%" , 
-				height: "96%" , 
+				height: "92%" , 
 				width: "13%" , 
 			}}>
 				<RightBox 

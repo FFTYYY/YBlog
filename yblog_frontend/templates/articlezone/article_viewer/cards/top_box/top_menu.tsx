@@ -10,18 +10,22 @@ import {
     Paper , 
     Fade , 
     ClickAwayListener , 
+    Chip , 
 } from "@mui/material"
+
 
 import {
     AutoStack , 
     Direction ,
     ScrollBarBox , 
+    ThemeContext , 
 } from "@ftyyy/ytext"
 
 import {
     TitleWord , 
 } from "../../../base/construction/titleword"
 import { Interaction } from "../../../base"
+
 
 export {
     TopMenu , 
@@ -41,6 +45,8 @@ function TopMenu(props: {
     let my_id = props.node_id
     let level = props.level || "high"
     let lower_level = props.lower_level || 0
+
+    let theme = React.useContext(ThemeContext)
 
     let mouseout_timer = undefined // 用来控制鼠标离开时间的timer
     let [mouse_in , _set_mouse_in] = React.useState<boolean> (false)
@@ -98,7 +104,23 @@ function TopMenu(props: {
             // underline = "always"
             // href = "#"
             ref = {link_ref}
-            sx = {{width: "100%"}}
+            sx = {{
+                width: "100%", 
+                sxmarginX: "0.1rem", 
+                minWidth: "1rem", 
+                paddingX: "0.1rem",
+                paddingY: "0.3rem" ,
+                minHeight: level == "high" ? "2.5rem" : "1.7rem",
+                color: "inherit" , 
+
+                backgroundColor: "inherit" , 
+                "&:hover": {
+                    backgroundColor: theme.extra_paltte.background.anti_primary,
+                    color: theme.extra_paltte.text.anti_on_primary , 
+                    transition: "background-color 400ms ease-out, color 400ms ease-out"
+                },
+                transition: "background-color 400ms ease-out, color 400ms ease-out" , 
+            }}
         >
             <TitleWord node_id = {props.node_id} />
         </Button>
@@ -132,12 +154,18 @@ function TopMenu(props: {
                 // keepMounted          
             >{({ TransitionProps }) => (<Fade {...TransitionProps} timeout={200}><Box><ScrollBarBox
                 sx = {{
-                    width: "10rem" ,
+                    minWidth: "5rem" , 
+                    maxWidth: "15rem" ,
                     maxHeight: "30rem",
                     marginBottom: "1rem" , 
                 }}
             ><Paper 
-                variant="outlined"
+                sx = {{
+                    paddingY: "0.5rem" , 
+                    backgroundColor: (theme.mui.palette.primary as any).main , 
+                    color: theme.extra_paltte.text.on_primary , 
+                    opacity: 0.9 , 
+                }}
             >{sons.map((son_id)=>{
                 return <TopMenu 
                         level = "low"

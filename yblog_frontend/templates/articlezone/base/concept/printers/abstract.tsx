@@ -16,13 +16,13 @@ import {
     DefaultPrinterComponent , 
     DefaultAbstractAsRoot, 
     AutoStack, 
+    ThemeContext , 
 
 } from "@ftyyy/ytext"
 import {
     BaoXiangHua, MeiGui , 
 } from "../../../assets"
 import { BaJiao, LiuBian, SanJiao } from "../../../assets/decors"
-
 import { flush_math , MathJaxFlusher } from "../../construction/math"
 
 export {
@@ -47,6 +47,8 @@ let renderer_comment = (()=>{
         contexters: [] , 
         render_function_as_property: (props: PrinterRenderFunctionProps<AbstractNode>) => {
     
+            let theme = React.useContext(ThemeContext)
+
             if(props.flags["senario"] != senario){
                 return <>{props.children}</>
             }
@@ -77,7 +79,7 @@ let renderer_comment = (()=>{
                         }}
                     >
                         <div style={{display: "inline-block"}}>
-                            <SanJiao fill="rgba(0,50,50,0.5)" strokeWidth="1px" style={{
+                            <SanJiao fill={theme.extra_paltte.symbol.abstract} strokeWidth="1px" style={{
                                 top: "-5px", 
                                 left: "-5px" , 
                                 marginRight: "-5px" , 

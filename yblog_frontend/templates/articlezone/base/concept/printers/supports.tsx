@@ -152,7 +152,7 @@ var sectioner_printer = (()=>{
 				{title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>}
 			</StandardAttachers>
 
-			return <Divider>{order_word}{title_word}</Divider>
+			return <>{order_word}{title_word}</>
 		}
 	})
 })()

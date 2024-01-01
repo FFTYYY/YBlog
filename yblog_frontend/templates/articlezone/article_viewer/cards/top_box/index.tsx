@@ -9,6 +9,8 @@ import {
 import {
     KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon , 
     KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon , 
+    NavigateNext as NavigateNextIcon , 
+    
 } from "@mui/icons-material"
 import {
     TabContext  , 
@@ -18,8 +20,11 @@ import {
 
 import {
     AbstractNode , 
+    ThemeContext , 
 } from "@ftyyy/ytext"
 import { Interaction , BackendData } from "../../../base/interaction"
+
+import "./style.css"
 
 import {
     TopMenu , 
@@ -32,6 +37,7 @@ function TopBox(props: {
 }){
     let my_id = BackendData.node_id
     let [fathers , set_fathers] = React.useState<number[]>([my_id])
+    let theme = React.useContext(ThemeContext)
     
     React.useEffect(()=>{(async ()=>{
         let now_id = my_id
@@ -47,7 +53,12 @@ function TopBox(props: {
         set_fathers(father_ids)
     })()} , [])
     
-    return <Breadcrumbs>{fathers.map(father_id=>{
-        return <TopMenu node_id = {father_id} key = {father_id}></TopMenu>
+    return <Breadcrumbs 
+        sx = {{
+            color: theme.extra_paltte.text.on_primary , 
+        }}
+        separator = {<NavigateNextIcon fontSize="small" sx={{color: theme.mui.palette.text.disabled}}/>}
+    >{fathers.map(father_id=>{
+        return <TopMenu node_id = {father_id} key = {father_id} ></TopMenu>
     })}</Breadcrumbs>
 }
