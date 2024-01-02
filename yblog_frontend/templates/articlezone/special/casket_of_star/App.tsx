@@ -169,10 +169,10 @@ class App extends  React.Component<{} , App_State>{
 		// TODO 不知道为什么build之后cssbaseline没有生效，需要手动加入背景和前景颜色。
 		return <MUIThemeProvider theme={MUICreateTheme(my_theme.mui)}><ThemeProvider value={my_theme}><Box sx={{
 			position: "fixed" , 
-			width: "100%" , 
-			height: "100%" , 
-			left: "0" , 
-			right: "0" , 
+			top: "2%" , 
+			width: "50%" , 
+			height: "96%" , 
+			left: "25%" , 
 			backgroundColor: "rgba(0,0,0,0)", 
 			color: "text.primary" , 
 		}}
@@ -188,26 +188,31 @@ class App extends  React.Component<{} , App_State>{
 			    <MyTypo sx={{fontSize: "1rem"}}>
 					{"你又仔细看了一下这棵树，发现总共有这么些节点。"}
 				</MyTypo>
-				<ScrollBarBox sx={{
-					width: "min( max(30%, 20rem) , 50%)" , 
-					maxHeight: "20rem" ,
-					marginLeft: "2rem" , 
-					overflow: "auto" ,  
-					marginY: "0.5rem" , 
-				}}>
-					<TreeView 
-						defaultCollapseIcon = {<ExpandMoreIcon />}
-						defaultExpandIcon = {<ChevronRightIcon />}
-						defaultExpanded = {[`${ROOT_ID}`]}
-					>
-						<MyTreeItem my_info = { tree_root }></MyTreeItem>
+				{/* <Box sx={{
+					width: "100%" , 
+				  
+				}}> */}
+					<ScrollBarBox sx={{
+						width: "min( max(30%, 20rem) , 50%)" , 
+						maxHeight: "calc(100% - 18rem)" ,
+						overflow: "auto" ,  
+						marginY: "0.5rem" ,
+						marginX: "auto" , 
+					}}>
+						<TreeView 
+							defaultCollapseIcon = {<ExpandMoreIcon />}
+							defaultExpandIcon = {<ChevronRightIcon />}
+							defaultExpanded = {[`${ROOT_ID}`]}
+						>
+							<MyTreeItem my_info = { tree_root }></MyTreeItem>
 
-					</TreeView>
-				</ScrollBarBox>
+						</TreeView>
+					</ScrollBarBox>
+				{/* </Box> */}
 			</>}
             <MyTypo sx={{fontSize: "1rem"}}>
-				{"在根节点『星之器』的结尾，还写了一句诗。是唐代诗人陈子昂的诗。"}
-				{"好像是种下这棵树的人死之前写上去的，想必他/她一定很喜欢这句诗吧。"}
+				{"在树根『星之器』的结尾，还写着一首诗。是唐代诗人陈子昂的诗。"}
+				{"好像是种这棵树的人死之前写上去的，想必他/她一定很喜欢这句诗吧。"}
 			</MyTypo>
 			<Box sx={{
 				marginY: "0.5rem" , 
