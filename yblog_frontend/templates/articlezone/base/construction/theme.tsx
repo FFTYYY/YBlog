@@ -30,7 +30,7 @@ let light_paltte = {
         main: "#666677",
     },
     secondary: {
-        main: "#5B775B",
+        main: "#546A54",
         // main: "#606099",
     },
     background: {

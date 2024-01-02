@@ -158,7 +158,7 @@ class App extends  React.Component<{} , {
 			<Box sx={{
 				position: "absolute" , 
 				top: "2.6rem" ,
-				left: "15%" , 
+				left: "12%" , 
 				bottom: "0.5rem" , 
 				width: "70%" , 
 			}}>
@@ -220,7 +220,7 @@ class App extends  React.Component<{} , {
 			<Box sx={{
 				position: "absolute" , 
 				top: "6%" ,
-				left: "86%" , 
+				left: "83%" , 
 				height: "92%" , 
 				width: "13%" , 
 			}}>

@@ -88,8 +88,8 @@ function EditButton(props: {
                 top: "0",
                 width: "14%" , 
                 height: "90%" , 
-                opacity: 0.95 , 
-                marginTop: "2.7rem" , 
+                opacity: 0.85 , 
+                marginTop: "3rem" , 
                 marginLeft: "0.2rem" , 
             }}
                         

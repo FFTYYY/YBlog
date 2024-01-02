@@ -19,12 +19,17 @@ import {
     Direction ,
     ScrollBarBox , 
     ThemeContext , 
+    AutoTooltip , 
+    TextIcon , 
 } from "@ftyyy/ytext"
 
 import {
     TitleWord , 
 } from "../../../base/construction/titleword"
-import { Interaction } from "../../../base"
+import {
+    MathJaxFlusher , 
+} from "../../../base/construction/math"
+import { Interaction , urls } from "../../../base"
 
 
 export {
@@ -48,12 +53,9 @@ function TopMenu(props: {
 
     let theme = React.useContext(ThemeContext)
 
+    // 设置鼠标进入的行为
     let mouseout_timer = undefined // 用来控制鼠标离开时间的timer
     let [mouse_in , _set_mouse_in] = React.useState<boolean> (false)
-
-    let [sons, set_sons] = React.useState<number[]> ([])
-
-    // 设置鼠标进入的行为
     let set_mouse_in = (s: boolean) => {
 
         _set_mouse_in(s)
@@ -63,8 +65,17 @@ function TopMenu(props: {
             }
         }
     } 
+
+    // 节点是否可见
+    let [ visible   , set_visible   ] = React.useState(true)
+    React.useEffect(()=>{(async ()=>{
+        let visibility = await Interaction.get.visibility(my_id)
+        set_visible(!visibility.secret)
+    })()})
+
     
     // 获得子节点
+    let [sons, set_sons] = React.useState<number[]> ([])
     React.useEffect(()=>{(async ()=>{
         if(lower_level > 4){ // 不能太深
             return 
@@ -100,26 +111,32 @@ function TopMenu(props: {
     }
 
     let link_ref = React.useRef<HTMLButtonElement>(undefined)
-    return <><Button
-            // onClick = {(e)=>{set_anchorel(e.currentTarget)}}
-
+    return <MathJaxFlusher>
+        <Link 
+            href = {urls.view.content(my_id)}
+            target = "_blank"
+            underline = "none"
+        ><Button
             onMouseOver = {()=>{set_mouse_in(true)}}
             onMouseOut = {get_on_mouse_out(100)}
 
-            // underline = "always"
-            // href = "#"
             ref = {link_ref}
             sx = {{
-                width: "100%", 
-                color: "inherit" , 
-                
+                marginLeft: "0.2rem" ,  
+                marginRight: "0.2rem" ,  
+                width: "calc(100% - 0.4rem)", 
+
+                justifyContent: "flex-start" , 
+                textAlign: "left" , 
+
                 paddingX: "0.2rem",
                 minHeight: "1.3rem",
                 paddingY: "0.1rem" , 
-                marginY: level == "high" ? "0.4rem" : 0,
+                marginY: level == "high" ? "0.4rem" : "0.2rem",
                 minWidth: "1rem", 
                 
-                backgroundColor: "inherit" , 
+                color: theme.extra_paltte.text.on_primary , 
+                backgroundColor: (theme.mui.palette.primary as any).main , 
                 "&:hover": {
                     backgroundColor: theme.extra_paltte.background.anti_primary,
                     color: theme.extra_paltte.text.anti_on_primary , 
@@ -128,8 +145,22 @@ function TopMenu(props: {
                 transition: "background-color 400ms ease-out, color 400ms ease-out" , 
             }}
         >
+
             <TitleWord node_id = {props.node_id} />
-        </Button>
+            {visible ? <></> :
+                <Box key="unseen" sx={{
+                    display: "inline-block", 
+                    marginLeft: "auto" , 
+                    right: 0,               
+                    paddingLeft: "0.4rem" , 
+                }}>
+                    <AutoTooltip title="不让看"><Box>
+                        <TextIcon text="隐" fontSize="0.7rem" color="inherit"/>
+                    </Box></AutoTooltip>
+                </ Box>
+            }
+
+        </Button></Link>
 
         <ClickAwayListener onClickAway = {()=>{set_mouse_in(false)}}>
         {sons.length <= 0 ? <></> : 
@@ -153,17 +184,16 @@ function TopMenu(props: {
                         },
                     },
                 ]}
-                
-                // keepMounted          
             >{({ TransitionProps }) => (<Fade {...TransitionProps} timeout={200}><Box><ScrollBarBox
                 sx = {{
-                    marginLeft: "0.1rem" , 
+                    marginLeft: "0.3rem" , 
                     marginTop: "0.5rem" , 
                     marginBottom: "1rem" , 
                     
                     minWidth: "5rem" , 
                     maxWidth: "15rem" ,
                     maxHeight: "30rem",
+                    borderRadius: 1,
                 }}
             ><Box 
                 sx = {{
@@ -183,6 +213,5 @@ function TopMenu(props: {
             }</Box></ScrollBarBox></Box></Fade>)}</Popper>
         }
         </ ClickAwayListener>
-        
-    </>
+    </MathJaxFlusher>
 }
