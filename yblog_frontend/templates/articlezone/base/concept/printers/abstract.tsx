@@ -79,7 +79,7 @@ let renderer_comment = (()=>{
                         }}
                     >
                         <div style={{display: "inline-block"}}>
-                            <SanJiao fill={theme.extra_paltte.symbol.abstract} strokeWidth="1px" style={{
+                            <SanJiao fill={theme.my_palette.symbol.abstract} strokeWidth="1px" style={{
                                 top: "-5px", 
                                 left: "-5px" , 
                                 marginRight: "-5px" , 

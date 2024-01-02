@@ -45,11 +45,13 @@ export {
 function TopMenu(props: {
     node_id: number , 
     level?: "high" | "low" , 
-    lower_level?: number
+    lower_order?: number , // 在lower中是第几个
+    lower_level?: number , 
 }){
     let my_id = props.node_id
     let level = props.level || "high"
     let lower_level = props.lower_level || 0
+    let lower_order = props.lower_order
 
     let theme = React.useContext(ThemeContext)
 
@@ -122,24 +124,23 @@ function TopMenu(props: {
 
             ref = {link_ref}
             sx = {{
-                marginLeft: "0.2rem" ,  
-                marginRight: "0.2rem" ,  
+                marginX: "0.2rem" ,  
                 width: "calc(100% - 0.4rem)", 
-
                 justifyContent: "flex-start" , 
                 textAlign: "left" , 
-
+                ...(level == "high" ? {whiteSpace: "nowarp"} : {}) ,  
+            
                 paddingX: "0.2rem",
                 minHeight: "1.3rem",
                 paddingY: "0.1rem" , 
-                marginY: level == "high" ? "0.4rem" : "0.2rem",
+                marginY: level == "high" ? "0.4rem" : "0.1rem",
                 minWidth: "1rem", 
                 
-                color: theme.extra_paltte.text.on_primary , 
-                backgroundColor: (theme.mui.palette.primary as any).main , 
+                color: theme.my_palette.text.on_primary , 
+                backgroundColor: theme.my_palette.background.primary , 
                 "&:hover": {
-                    backgroundColor: theme.extra_paltte.background.anti_primary,
-                    color: theme.extra_paltte.text.anti_on_primary , 
+                    backgroundColor: theme.my_palette.background.anti_primary,
+                    color: theme.my_palette.text.anti_on_primary , 
                     transition: "background-color 400ms ease-out, color 400ms ease-out"
                 },
                 transition: "background-color 400ms ease-out, color 400ms ease-out" , 
@@ -187,7 +188,7 @@ function TopMenu(props: {
             >{({ TransitionProps }) => (<Fade {...TransitionProps} timeout={200}><Box><ScrollBarBox
                 sx = {{
                     marginLeft: "0.3rem" , 
-                    marginTop: "0.5rem" , 
+                    marginTop: level == "high" ? "0.5rem" : (lower_order == 0 ? 0 : "-1.5rem") , 
                     marginBottom: "1rem" , 
                     
                     minWidth: "5rem" , 
@@ -198,16 +199,17 @@ function TopMenu(props: {
             ><Box 
                 sx = {{
                     paddingY: "0.5rem" , 
-                    backgroundColor: (theme.mui.palette.primary as any).main , 
-                    color: theme.extra_paltte.text.on_primary , 
+                    backgroundColor: theme.my_palette.background.primary , 
+                    color: theme.my_palette.text.on_primary , 
                     opacity: 0.85 , 
                 }}
-            >{sons.map((son_id)=>{
+            >{sons.map((son_id, lower_order)=>{
                 return <TopMenu 
                     level = "low"
                     node_id = {son_id}
                     lower_level = {lower_level + 1}
                     key = {son_id}
+                    lower_order = {lower_order}
                 ></TopMenu>
             })
             }</Box></ScrollBarBox></Box></Fade>)}</Popper>

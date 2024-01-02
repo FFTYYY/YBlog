@@ -87,13 +87,13 @@ class BasicInformation extends React.Component<{
                     marginRight: theme.printer.margins.colon , 
                     display: "inline-block" , 
                     ...theme.printer.fonts.structure , 
-                    color: theme.extra_paltte.text.on_secondary , 
+                    color: theme.my_palette.text.on_secondary , 
                 }}>{props.title}</Typography>
                 <Typography sx={{
                     ...theme.printer.fonts.structure ,
                     display: "inline-block" , 
                     whiteSpace: "pre-wrap" , 
-                    color: theme.extra_paltte.text.weak_on_secondary , 
+                    color: theme.my_palette.text.weak_on_secondary , 
                 }}>{
                     props.content
                 }</Typography>

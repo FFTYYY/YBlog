@@ -2,10 +2,11 @@ import { Theme } from "@ftyyy/ytext"
 import { light } from "@mui/material/styles/createPalette"
 export { my_theme }
 
-let light_extra_paltte = {
+let my_palette_light = {
     symbol:{
-        reference: "rgba(0,50,240,1)" , 
-        abstract: "rgba(0,120,120,1)" , 
+        reference: "#6baed6" , 
+        abstract: "#7fcdbb" , 
+        error: "rgba(230,20,20,0.65)" , 
     } , 
     text: {
         on_primary: "rgb(230,230,230)" , 
@@ -13,25 +14,28 @@ let light_extra_paltte = {
         anti_on_primary: "rgb(20,20,20)" , 
         on_secondary: "rgb(250,250,250)" , 
         weak_on_secondary: "rgb(220,220,220)" , 
+
+        link: "#40797E" , 
+        info: "#777788" , 
     } , 
     background: {
-        anti_primary: "#B0B0B0"
+        primary: "#324347" , 
+        anti_primary: "#B0B0B0"  ,
+        secondary: "#546A54" , 
     } , 
 }
 
-let light_paltte = {
+let light_palette = {
     divider: "#060606" , 
     mode: "light" as "light",
     primary: {
-        // main: "#40797E",
-        main: "#324347",
+        main: my_palette_light.background.primary,
     },
     info: {
-        main: "#666677",
+        main: my_palette_light.text.info,
     },
     secondary: {
-        main: "#546A54",
-        // main: "#606099",
+        main: my_palette_light.background.secondary,
     },
     background: {
         default: "rgba(250,250,250,1)",
@@ -69,9 +73,9 @@ let dark_paltte = {
 
 const my_theme: Theme = {
     mui:{
-        palette: light_paltte , 
+        palette: light_palette , 
     } , 
-    extra_paltte: light_extra_paltte , 
+    my_palette: my_palette_light , 
     printer: {
         margins: {
             paragraph: "0.4rem" ,  

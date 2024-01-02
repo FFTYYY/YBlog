@@ -1,3 +1,4 @@
+
 import {
     SecondClassConcept , 
     Node , 
@@ -18,6 +19,8 @@ export {
     cut_str , 
     node2string_autotip , 
 }
+
+
 
 /** 根据给定的编号和编号格式，生成编号字符串。 */
 function make_oerder_str(order: number , ordering: string){

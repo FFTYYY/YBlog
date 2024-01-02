@@ -56,8 +56,8 @@ function EditButton(props: {
         color: "white", 
     }
     let active_style = {
-        backgroundColor: theme.extra_paltte.background.anti_primary,
-        color: theme.extra_paltte.text.anti_on_primary , 
+        backgroundColor: theme.my_palette.background.anti_primary,
+        color: theme.my_palette.text.anti_on_primary , 
     }
 
     return <>
@@ -103,7 +103,7 @@ function EditButton(props: {
                     width: "100%" , 
                     height: "100%" , 
 
-                    backgroundColor: (theme.mui.palette.secondary as any).main , 
+                    backgroundColor: theme.my_palette.background.secondary , 
                     color: "white" , 
                 }}>
                     <LeftEdit 
@@ -124,7 +124,7 @@ let MyLink = (props: LinkProps)=>{
         marginTop: "0.2rem",
         marginBottom: "0.3rem",
         ...theme.printer.fonts.body , 
-        color: theme.extra_paltte.text.on_secondary , 
+        color: theme.my_palette.text.on_secondary , 
     }}></Link>
 }
 
@@ -143,12 +143,12 @@ class LeftEdit extends React.Component<{
         let theme = this.context
 
         let active_style = {
-            color: theme.extra_paltte.text.on_secondary , 
+            color: theme.my_palette.text.on_secondary , 
             backgroundColor: "rgba(30,60,40,0.5)"
         }
         let unactive_style = {
             backgroundColor: "rgba(130,170,160,0.5)",
-            color: theme.extra_paltte.text.anti_on_primary ,
+            color: theme.my_palette.text.anti_on_primary ,
         }
         return <Box sx={{
             position: "absolute" , 

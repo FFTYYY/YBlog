@@ -31,7 +31,8 @@ import {
 	CssBaseline,
 	SvgIcon , 
 	Divider , 
-	AppBar , 
+	AppBar, 
+	Typography, 
 } from "@mui/material"
 
 import { my_theme } from "../base/construction"
@@ -45,11 +46,14 @@ import { flush_math , MathJaxFlusher } from "../base/construction/math"
 import { FangSheng, BaJiao, Hui, BaoXiangHua, Acanthus, Acanthus3, Acanthus4 } from "../assets"
 // import "./style.css"
 
-
 class App extends  React.Component<{} , {
 	printer: Printer  | undefined
 	tree: AbstractNode  | undefined
 	cache: PrinterCache | undefined
+	info: {
+		create_time?: string ,
+		modify_time?: string ,  
+	}
 
 	activate_idx: boolean // 是否要显示每个组件的IDX
 }>{
@@ -63,6 +67,8 @@ class App extends  React.Component<{} , {
 			tree: undefined , 
 			cache: undefined , 
 			
+			info: {} , 
+
 			activate_idx: false , 
 		}
 		this.printer_comp_ref = React.createRef()
@@ -98,10 +104,17 @@ class App extends  React.Component<{} , {
 		// 获得缓存内容（其实是不必要的...）
 		let cache = await Interaction.get.cache(BackendData.node_id)
 
+		// 获得info
+		let time_info = await Interaction.get.create_time(BackendData.node_id)
+
 		this.setState({
 			printer: printer , 
 			tree: root , 
 			cache: cache , 
+			info: {
+				create_time: time_info.create_time , 
+				modify_time: time_info.modify_time , 
+			}
 		})
 
 		setTimeout(()=>{
@@ -147,14 +160,6 @@ class App extends  React.Component<{} , {
 				></TopBox>
 			</AppBar>
 			
-			{/* <Divider sx={{
-				position: "absolute" , 
-				top: "2.5rem" ,
-				left: "0" , 
-				width: "90%" , 
-				height: "2px" , 
-			}}/> */}
-
 			<Box sx={{
 				position: "absolute" , 
 				top: "2.6rem" ,
@@ -180,40 +185,44 @@ class App extends  React.Component<{} , {
 						cache: me.state.cache , 
 						activate_idx: me.state.activate_idx, 
 					}}>
-						<PrinterStructureBoxText sx={{
-							textAlign: "left" , 
-							fontSize: "1.5rem", 
+						<Box sx={{
+							marginTop: "2.5rem" , 
 							marginLeft: "2rem", 
-							marginTop: "1rem" , 
-							marginBottom: "2rem" , 
-						}}>{
-							tree.parameters.title.val
-						}</PrinterStructureBoxText>
-
-						<DefaultPrinterComponent 
-							ref = {this.printer_comp_ref}
-							printer = {printer} 
-							theme = {my_theme}
-							onUpdateCache = {(cache)=>{
-								if(cache && JSON.stringify(cache) != JSON.stringify(me.state.cache)){
-									// XXX 这里会报warning，这是因为printer里在render()里调用了这个函数...
-									setTimeout(()=>me.setState({cache: cache}) , 200)
-								}
-							}}
-							root = {tree}
-							onDidMount = {(printer_comp)=>{
-								if(BackendData.linkto){ // 初始化滚动。
-									setTimeout(()=>{
-										let tar_idx = parseInt(BackendData.linkto)
-										printer_comp.scroll_to_idx(tar_idx)
-										let tar = printer_comp.get_ref_from_idx(tar_idx)
-										if(tar){
-											tar.style.border = "2px solid"
-										}
-									} , 300) // 给他一点时间来初始化好
-								}
-							}}
-						></DefaultPrinterComponent>
+							marginBottom: "2.5rem" , 
+						}}>
+							<PrinterStructureBoxText sx={{
+								fontSize: "1.5rem", 
+								// marginBottom: "1rem" , 
+							}}>{
+								tree.parameters.title.val
+							}</PrinterStructureBoxText>
+						</Box>
+						<Box>
+							<DefaultPrinterComponent 
+								ref = {this.printer_comp_ref}
+								printer = {printer} 
+								theme = {my_theme}
+								onUpdateCache = {(cache)=>{
+									if(cache && JSON.stringify(cache) != JSON.stringify(me.state.cache)){
+										// XXX 这里会报warning，这是因为printer里在render()里调用了这个函数...
+										setTimeout(()=>me.setState({cache: cache}) , 200)
+									}
+								}}
+								root = {tree}
+								onDidMount = {(printer_comp)=>{
+									if(BackendData.linkto){ // 初始化滚动。
+										setTimeout(()=>{
+											let tar_idx = parseInt(BackendData.linkto)
+											printer_comp.scroll_to_idx(tar_idx)
+											let tar = printer_comp.get_ref_from_idx(tar_idx)
+											if(tar){
+												tar.style.border = "2px solid"
+											}
+										} , 500) // 给他一点时间来初始化好
+									}
+								}}
+							></DefaultPrinterComponent>
+						</Box>
 					</GlobalInfoProvider>
 				</MathJaxContext></ScrollBarBox>
 			</Box>

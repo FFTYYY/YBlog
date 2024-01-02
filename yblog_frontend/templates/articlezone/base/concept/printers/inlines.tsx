@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 
 import {
-	Box , Link , Typography , Divider , Grid, Tooltip
+	Box , Link , Typography , Divider , Grid, Tooltip, styled
 } from "@mui/material"
 
 import {
@@ -17,7 +17,8 @@ import {
     PrinterRenderFunctionProps, 
 	PrinterCache, 
 	AbstractNode , 
-	DefaultAbstractRendererAsProperty , 
+	DefaultAbstractRendererAsProperty, 
+	ThemeContext, 
 } from "@ftyyy/ytext"
 
 import {
@@ -44,7 +45,7 @@ import {
 } from "../../../assets"
 import { BaJiao, LiuBian, SanJiao } from "../../../assets/decors"
 import {
-	ErrorPrinter, ReferencePrinter , StandardAttachers
+	ErrorPrinter, ReferencePrinter , StandardAttachers , MyLink
 } from "./base"
 
 import {
@@ -169,6 +170,8 @@ var link_printer = (()=>{
 	return get_default_inline_renderer({
 		contexters: [()=>new LinktoContexter()] , 
 		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
+			let theme = React.useContext(ThemeContext)
+
 			let {node,parameters,context,children} = props
 			let target_idx = parameters.target_idx
 			let target_url = parameters.target_url
@@ -205,7 +208,7 @@ var link_printer = (()=>{
 				if(target_idx >= 1){
 					if(target_node == undefined || target_node <= 0){ // 在加载完成之前传入一个空link
 						return <ErrorPrinter inline msg="链接失败">
-							<Link href = "#" underline = "hover">链接失败： {children}</Link>
+							<MyLink href = "#" underline = "hover">链接失败： {children}</MyLink>
 						</ErrorPrinter>
 					}
 
@@ -228,28 +231,28 @@ var link_printer = (()=>{
 		
 						if(autotext){
 							if(!(title_ref == undefined || contt_ref == undefined)){
-								return <AutoTooltip title={contt_ref_comp}><Link 
+								return <AutoTooltip title={contt_ref_comp}><MyLink 
 									underline = "hover"
 									onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
-								>{title_ref == "root" ? "本文" : title_ref}</Link></AutoTooltip>
+								>{title_ref == "root" ? "本文" : title_ref}</MyLink></AutoTooltip>
 							}
 						}
 		
 						// 不要自动确定文本。
-						return <AutoTooltip title = {contt_ref}><Link 
+						return <AutoTooltip title = {contt_ref}><MyLink 
 							underline = "hover"
 							onClick = {()=>{printer_comp.scroll_to_idx(tar_idx)}}
-						>{children}</Link></AutoTooltip>
+						>{children}</MyLink></AutoTooltip>
 					}
 					else{ // 本文外的节点
 						let tar_page = parseInt(target_node as any)
 						let tar_idx  = parseInt(target_idx)
 		
 						if(tar_idx <= 0){ // 找不到所在页面
-							return <ErrorPrinter inline msg="链接失败"><Link 
+							return <ErrorPrinter inline msg="链接失败"><MyLink 
 								href = {urls.view.content(tar_page , {linkto: tar_idx})}
 								underline = "hover"
-							>链接失败（找不到节点）{children}</Link></ErrorPrinter>
+							>链接失败（找不到节点）{children}</MyLink></ErrorPrinter>
 						}
 		
 						let [title_ref , contt_ref] = [undefined , undefined]
@@ -267,27 +270,27 @@ var link_printer = (()=>{
 						let contt_ref_comp = <MathJaxFlusher>{contt_ref}</MathJaxFlusher> as any
 		
 						if(autotext){
-							return <AutoTooltip title = {contt_ref_comp}><Link 
+							return <AutoTooltip title = {contt_ref_comp}><MyLink 
 								href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
 								underline = "hover"
-							>{title_ref != "root" ? `此页的${title_ref}` : "此页"}</Link></AutoTooltip>
+							>{title_ref != "root" ? `此页的${title_ref}` : "此页"}</MyLink></AutoTooltip>
 						}
-						return <AutoTooltip title = {contt_ref_comp}><Link 
+						return <AutoTooltip title = {contt_ref_comp}><MyLink 
 							href = {urls.view.content(tar_page , {linkto: tar_idx})} // 跳转并设置初始化滚动
 							underline = "hover"
-						>{children}</Link></AutoTooltip>
+						>{children}</MyLink></AutoTooltip>
 					}
 				}
 				
 				if(target_url){
 					if(autotext){
-						return <Link href = {target_url} underline = "hover">此页</Link>
+						return <MyLink href = {target_url} underline = "hover">此页</MyLink>
 					}
-					return <Link href = {target_url} underline = "hover">{children}</Link>	
+					return <MyLink href = {target_url} underline = "hover">{children}</MyLink>	
 				}
 
 				return <ErrorPrinter inline msg="链接失败">
-					<Link href = "#" underline = "hover">链接失败（未指定链接） {children}</Link>
+					<MyLink href = "#" underline = "hover">链接失败（未指定链接） {children}</MyLink>
 				</ErrorPrinter>
 			})()
 			return <StandardAttachers {...{node, context, parameters}} inline>

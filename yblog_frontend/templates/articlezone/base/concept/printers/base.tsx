@@ -2,7 +2,7 @@ import * as React from "react"
 import * as Slate from "slate" 
 import * as SlateReact from "slate-react" 
 import { Grid , Box , 
-    Link, ThemeOptions , Dialog, Tooltip  , Badge  , Button , Paper , IconButton  , TextField , Typography, BoxProps ,  
+    Link, ThemeOptions , Dialog, Tooltip  , Badge  , Button , Paper , IconButton  , TextField , Typography, BoxProps, LinkProps ,  
 } from "@mui/material"
 import {
     PrinterPartBox , 
@@ -49,6 +49,19 @@ export {
     ReferencePrinter , 
     ShowIDXPrinter , 
     StandardAttachers , 
+    MyLink , 
+}
+
+/** 这个组件提供一`Link`，但是字体颜色不用primary。*/
+function MyLink(props: LinkProps){
+    let theme = React.useContext(ThemeContext)
+    let new_props = {...props, sx: {
+        color: theme.my_palette.text.link , 
+        ...(props.sx || {}) , 
+    }}
+    
+    return <Link {...new_props} />
+    
 }
 
 
@@ -59,10 +72,11 @@ export {
 function ErrorPrinter(props: {children: any, msg?: string, inline?: boolean}){
 
     let display = props.inline ? "inline-block" : "block"
+    let theme = React.useContext(ThemeContext)
     return <div className="yblog-error" data-yblog-errormsg={props.msg} style={{display: display}}>
         {props.children}
         <AutoTooltip title={props.msg}><div style={{display: "inline-block"}}>
-            <MeiGui2 fill="rgba(230,20,20,0.65)" strokeWidth="17px" style={{
+            <MeiGui2 fill={theme.my_palette.symbol.error} strokeWidth="17px" style={{
                 width: "1rem" , 
                 height: "1rem" , 
                 marginBottom: "-0.13rem",
@@ -120,12 +134,14 @@ function ReferencePrinter(props: {children?: any, node: ConceptNode, parameters?
     // 决定称呼
     let my_name = (props.parameters?.label) || props.node.concept
 
-    let reference_comp = <Box style={{paddingRight: "5%", width: "20rem"}}>
+    let reference_comp = <Box sx={{paddingRight: "5%", width: "25rem"}}>
         <PrinterParagraphBox>
             本{my_name}被引用{num2chinese(referencers.length)}次。
             {Object.keys(count).length > 1 ? "分别" : "皆"}在
         </PrinterParagraphBox>
-        <PrinterNewLevelBox>{Object.keys(count).map((nodeid, idx)=>{
+        <PrinterNewLevelBox sx={{
+            maxWidth: `calc(100% - ${theme.printer.margins.level} - 6rem)`
+        }}>{Object.keys(count).map((nodeid, idx)=>{
             return <Box key={idx}>
                 <Link href={`./${nodeid}`} style={{color: "inherit"}}><TitleWord node_id={parseInt(nodeid)}/></Link>
                 <span>（{num2chinese(count[nodeid])}次）,</span>
@@ -139,7 +155,7 @@ function ReferencePrinter(props: {children?: any, node: ConceptNode, parameters?
     return <Box style={{display: display}}>
         {children}
         <Tooltip title={reference_comp}><div style={{display: display}}>
-            <LiuBian fill={theme.extra_paltte.symbol.reference} strokeWidth="6px" strokeColor="rgba(0,0,0,0.7)" style={{
+            <LiuBian fill={theme.my_palette.symbol.reference} strokeWidth="6px" strokeColor="rgba(0,0,0,0.7)" style={{
                 top: "-5px", 
                 left: "2px" , 
                 marginRight: "5px" , 

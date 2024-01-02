@@ -58,7 +58,7 @@ class LeftContact extends React.Component{
                     marginTop: "1rem" , 
                     fontSize: "1rem" , 
                     display: "inline-block" , 
-                    color: theme.extra_paltte.text.on_secondary
+                    color: theme.my_palette.text.on_secondary
                 }}
             >👉我的个人主页</Link>
         </Box>

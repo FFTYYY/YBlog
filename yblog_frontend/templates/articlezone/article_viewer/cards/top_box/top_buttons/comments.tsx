@@ -144,7 +144,7 @@ class NewComments extends React.Component<{
 
         return <Box>
             <TextField 
-                label = {<span style={{color: theme.extra_paltte.text.weak_on_secondary}}>留言</span>}
+                label = {<span style={{color: theme.my_palette.text.weak_on_secondary}}>留言</span>}
                 placeholder = "说点啥"
                 multiline
                 onChange = {(e)=>{me.setState({content: e.target.value})}}
@@ -154,17 +154,17 @@ class NewComments extends React.Component<{
                 value = {me.state.content}
                 InputProps = {{
                     style:{
-                        color: theme.extra_paltte.text.on_secondary , 
+                        color: theme.my_palette.text.on_secondary , 
                     } , 
                     inputProps: { // 占位符
                         style: { 
-                            color: theme.extra_paltte.text.on_secondary ,  
+                            color: theme.my_palette.text.on_secondary ,  
                         }, 
                     },
                 }}
             />
             <TextField 
-                label = {<span style={{color: theme.extra_paltte.text.weak_on_secondary}}>称呼</span>}
+                label = {<span style={{color: theme.my_palette.text.weak_on_secondary}}>称呼</span>}
                 placeholder = "你是谁？"
                 onChange = {(e)=>{me.setState({name: e.target.value})}}
                 variant = "standard" 
@@ -174,11 +174,11 @@ class NewComments extends React.Component<{
                 }}
                 InputProps = {{
                     style:{
-                        color: theme.extra_paltte.text.on_secondary , 
+                        color: theme.my_palette.text.on_secondary , 
                     } , 
                     inputProps: { // 占位符
                         style: { 
-                            color: theme.extra_paltte.text.on_secondary ,  
+                            color: theme.my_palette.text.on_secondary ,  
                         }, 
                     }
                   
@@ -192,8 +192,8 @@ class NewComments extends React.Component<{
                 variant =  "outlined" 
                 onClick = {()=>me.submit()} 
                 sx = {{
-                    color: theme.extra_paltte.text.on_primary ,  
-                    borderColor: theme.extra_paltte.text.on_primary ,  
+                    color: theme.my_palette.text.on_primary ,  
+                    borderColor: theme.my_palette.text.on_primary ,  
 
                 }}
             >
@@ -235,7 +235,7 @@ class CommentsArea extends React.Component<{} , {}>{
                 <Box sx={{textAlign: "left"}}>
                     <Chip sx = {{
                         border: "1px solid white" , 
-                        color: theme.extra_paltte.text.on_secondary
+                        color: theme.my_palette.text.on_secondary
                     }} 
                     label = "留言列表"  
                     size = "small" />

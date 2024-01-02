@@ -1,7 +1,8 @@
 import React  from "react"
 
 import {
-    AbstractNode , AutoStack , ThemeContext
+    AbstractNode , AutoStack , ThemeContext , Direction , DirectionValues , 
+    ScrollBarBox , 
 } from "@ftyyy/ytext"
 
 import {
@@ -10,6 +11,8 @@ import {
 	SvgIcon , 
 	Divider , 
 	AppBar , 
+    Stack,  
+    StackProps,
 } from "@mui/material"
 
 
@@ -19,6 +22,30 @@ import { Interaction , BackendData } from "../../../base/interaction"
 
 export { TopBox }
 
+function MyAutoStack(props: {
+    sx?: StackProps , 
+    force_direction?: DirectionValues
+    children?: any
+    simple?: boolean
+}){
+    let flip_direction = ! props.simple // 如果是简单版本，就不翻转方向，否则翻转
+
+    let subcomponent = (nowdir: DirectionValues) => {
+        let newdir = flip_direction ? (nowdir == "row" ? "column" : "row") : nowdir
+        return <Direction.Provider value={newdir}><Stack direction={nowdir} {...(props.sx || {})}>{
+            props.children
+        }</Stack></Direction.Provider>
+    }
+    
+    if(props.force_direction != undefined){
+        return subcomponent(props.force_direction)
+    }
+
+    return <Direction.Consumer>{nowdir => subcomponent(nowdir)}</Direction.Consumer> 
+}
+
+
+
 function TopBox(props: {
     root: AbstractNode , 
     
@@ -26,15 +53,19 @@ function TopBox(props: {
     onActivateIdx?: ()=>any , 
 }){
     let theme = React.useContext(ThemeContext)
-    return <AutoStack force_direction="row">
-        <Box sx={{
+    return <MyAutoStack 
+        force_direction = "row"
+        sx={{width: "100%", height: "100%", overflow: "hidden"}}
+    >
+        <ScrollBarBox sx={{
             paddingX: "1rem" , 
             maxWidth: "80%",
+            maxHeight: "100%" , 
             overflow: "auto" , 
             borderRight: "1px solid grey" , 
         }}>
             <TopBread root = {props.root}/>
-        </Box>
+        </ScrollBarBox>
         <Box sx={{
             textAlign: "right" , 
             marginLeft: "auto" , 
@@ -49,9 +80,9 @@ function TopBox(props: {
                 onActivateIdx = {props.onActivateIdx}
                 />
             }
+            <AboutButton />
             <CommentButton   root = {props.root} />
             <BasicInfoButton root = {props.root} />
-            <AboutButton />
         </Box>
-    </AutoStack>
+    </MyAutoStack>
 }

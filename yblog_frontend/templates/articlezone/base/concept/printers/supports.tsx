@@ -3,7 +3,7 @@ import ReactDom from "react-dom"
 import * as Slate from "slate"
 
 import {
-	Box , Link , Typography , Divider , Grid , Chip
+	Box  , Typography , Divider , Grid , Chip, styled
 } from "@mui/material"
 import {
     ExpandMore as ExpandMoreIcon , 
@@ -71,7 +71,6 @@ import {
 	ThemeContext , 
 	TextIcon , 
 	DefaultAbstractRendererAsProperty , 
-
 } from "@ftyyy/ytext"
 
 import {
@@ -96,9 +95,12 @@ import {
 	IndexContexter , 
 } from "./contexter"
 
+import {
+	FangSheng , 
+} from "../../../assets"
 
 import {
-	ReferencePrinter , StandardAttachers , 
+	ReferencePrinter , StandardAttachers , MyLink
 } from "./base"
 
 export {
@@ -145,18 +147,42 @@ var sectioner_printer = (()=>{
 				return <Divider />
 			}
 			
+
 			// 如果是`alone`的就不显示序号惹。
-			let order_word = alone ? <></> : <PrinterStructureBoxText inline>第{num2chinese(order)} </PrinterStructureBoxText>
+			let order_word = alone ? <></> : <PrinterStructureBoxText inline sx={{fontWeight: 10000}}>
+				第{num2chinese(order)} 
+			</PrinterStructureBoxText>
 
-			let title_word = <StandardAttachers {...{node, context, parameters}} inline>
-				{title ? <PrinterStructureBoxText inline sx={{marginRight: 0}}>{title}</PrinterStructureBoxText> : <></>}
-			</StandardAttachers>
+			let title_word = title ? <StandardAttachers {...{node, context, parameters}} inline>
+				<PrinterStructureBoxText inline sx={{marginRight: 0}}>
+					{title}
+				</PrinterStructureBoxText> 
+			</StandardAttachers>: <></>
 
-			return <>{order_word}{title_word}</>
+			let symbol = (alone && !(title)) ? <></> : <FangSheng strokeWidth="2px" style={{
+				height: "0.85rem", 
+				marginRight: "0.5rem",
+			}}/>
+
+			return <PrinterPartBox>
+				<PrinterPartBox subtitle_like>
+					{/* <Divider sx={{width: "30%"}}/> */}
+					<div style={{
+						borderBottom: "1px solid black" , 
+						display: "inline-block" , 
+						paddingRight: "1rem" , 
+						minWidth: "30%" , 
+					}}>
+						{symbol}{order_word}{title_word}
+					</div>
+				</PrinterPartBox>
+				<PrinterNewLevelBox>{children}</PrinterNewLevelBox>
+			</PrinterPartBox>
 		}
 	})
 })()
 
+// XXX 要用divider吗..？
 /** 章节线。 */
 var ender_printer = (()=>{
 	let index_gene = ()=>{
@@ -273,13 +299,13 @@ var showchildren_printer = (()=>{
 
 						return <Box>
 							<Box >
-								<Link 
+								<MyLink 
 									href = {urls.view.content(son_id)} 
 									underline = "hover" 
 									sx = {{
 										...theme.printer.fonts.structure
 									}}
-								>▶<TitleWord node_id={son_id}/></Link>
+								>▶<TitleWord node_id={son_id}/></MyLink>
 								<Box sx={{display: "inline", textAlign: "right", right: 0, position: "absolute"}}>
 									<AutoTooltip title="这个节点是一个子节点"><Box>
 									<TextIcon text="子" fontSize="small" color={(theme.mui.palette.info as any).main}/>
@@ -340,8 +366,15 @@ var insertchildren_printer = (()=>{
 		if(is_supportnode(guess) && guess.concept == "章节线"){
 			root.children = root.children.slice(0,root.children.length-1)
 		}
+		let guess_2 = root.children[0] // 删除开头的空白小节线。
+		if(is_supportnode(guess_2) && guess_2.concept == "小节线" && (
+			guess_2.parameters.alone.val && guess_2.parameters.title.val == ""
+		)){
+			root.children = root.children.slice(1,root.children.length)
+		}
 		return root
 	}
+
 	return new PrinterRenderer({
 		enter(node: Readonly<SupportNode> , path: Readonly<number []>, parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){    
 			context["env"] = JSON.parse(JSON.stringify(env)) // 把整个env记到context里面去。
@@ -366,7 +399,11 @@ var insertchildren_printer = (()=>{
 			}
 
 			React.useEffect(()=>{(async ()=>{
+				// XXX 应该在enter的时候也来这么一出，从而获得正确的env
+				// 然而问题是，在enter的时候没有globalinfo，也就没有preproces
+				
 				let son_ids = await Interaction.get.son_ids(globalinfo.BackendData.node_id)
+				set_son_ids(son_ids)
 				
 				let last_env = JSON.parse(JSON.stringify(context["env"])) // deepcopy
 				let init_envs = [] // init_envs表示每个位置所用的初始env
@@ -387,7 +424,6 @@ var insertchildren_printer = (()=>{
 					last_env = cur_env
 				}
 
-				set_son_ids(son_ids)
 				set_sub_infos({roots: roots, init_envs: init_envs})
 				setTimeout(flush_mathjax, 500)
 			})()}, [])
@@ -488,13 +524,13 @@ var gatherindis_printer = (()=>{
 								display: "flex" , 
 								justifyContent: "space-between"
 							}}>
-								<Link 
+								<MyLink 
 									href = {urls.view.content(son_id)} 
 									underline = "hover" 
 									sx = {{
 										...theme.printer.fonts.structure
 									}}
-								>▶<TitleWord node_id={son_id}/></Link>
+								>▶<TitleWord node_id={son_id}/></MyLink>
 								<Box sx={{display: "inline", textAlign: "right"}}>
 									<AutoTooltip title="这个节点是浮上来的节点"><Box>
 										<TextIcon text="浮" fontSize="small" color={(theme.mui.palette.info as any).main}/>

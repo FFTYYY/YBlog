@@ -119,13 +119,12 @@ function RightBox(props: {root: AbstractNode, printer: Printer , onScroll: (path
     }
 
     return <Box sx={{
-            ...theme.printer.fonts.body , 
-            position: "relative" , 
-            top: "30%" , 
-            height: "40%" , 
-            width: "auto" , 
+        ...theme.printer.fonts.body , 
+        position: "relative" , 
+        top: "30%" , 
+        height: "40%" , 
+        width: "auto" , 
     }}><Box sx={{
-        backgroundColor: "background.default" , 
         
         position: "absolute" , 
         width: "100%", 
@@ -140,15 +139,15 @@ function RightBox(props: {root: AbstractNode, printer: Printer , onScroll: (path
             height: "1.5rem" , 
             width: "100%" , 
             left: 0 , 
-            backgroundColor: (theme.mui.palette.primary as any).main , 
-            color: theme.extra_paltte.text.on_primary , 
+            backgroundColor: theme.my_palette.background.primary , 
+            color: theme.my_palette.text.on_primary , 
             opacity: 0.9 , 
             paddingLeft: "0.2rem" , 
             lineHeight: "1.5rem" , 
             paddingY: "0.2rem" , 
         }}><Typography fontSize = "small" sx={{
             paddingLeft: "0.2rem"
-        }}>目录 </Typography></Box>
+        }}>目录</Typography></Box>
 
         {<ScrollBarBox sx={{ 
             overflow: "auto" , 

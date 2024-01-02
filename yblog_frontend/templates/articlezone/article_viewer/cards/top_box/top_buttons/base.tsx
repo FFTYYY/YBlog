@@ -53,8 +53,8 @@ function ButtonBase(props: {
 
                     backgroundColor: "inherit" , 
                     "&:hover": {
-                        backgroundColor: theme.extra_paltte.background.anti_primary,
-                        color: theme.extra_paltte.text.anti_on_primary , 
+                        backgroundColor: theme.my_palette.background.anti_primary,
+                        color: theme.my_palette.text.anti_on_primary , 
                         transition: "background-color 400ms ease-out, color 400ms ease-out"
                     },
                     transition: "background-color 400ms ease-out, color 400ms ease-out" , 
@@ -79,7 +79,7 @@ function ButtonBase(props: {
                     width: "100%" , 
                     height: "100%" , 
     
-                    backgroundColor: (theme.mui.palette.secondary as any).main , 
+                    backgroundColor: theme.my_palette.background.secondary , 
                     color: "white" , 
                 },
             }}
