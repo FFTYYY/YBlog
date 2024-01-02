@@ -47,7 +47,7 @@ function ButtonBase(props: {
                     paddingY: "0.2rem" , 
                     marginY: "0.4rem",
                     minWidth: "0.5rem" , 
-                    marginX: "0.3rem" , 
+                    marginX: "0.1rem" , 
                     
                     color: "white", 
 

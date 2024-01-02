@@ -7,7 +7,7 @@ import {
     Popper , Paper , Fade , 
 } from "@mui/material"
 import {
-    Edit as EditIcon  , 
+    EditOutlined as EditIcon  , 
 } from "@mui/icons-material"
 
 import {
@@ -69,7 +69,7 @@ function EditButton(props: {
                     paddingY: "0.2rem" , 
                     marginY: "0.4rem",
                     minWidth: "0.5rem" , 
-                    marginX: "0.3rem" , 
+                    marginX: "0.1rem" , 
     
                     ...(active ? active_style : unactive_style),
                     "&:hover": {

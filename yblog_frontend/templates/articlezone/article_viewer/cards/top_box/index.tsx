@@ -32,6 +32,7 @@ function MyAutoStack(props: {
 
     let subcomponent = (nowdir: DirectionValues) => {
         let newdir = flip_direction ? (nowdir == "row" ? "column" : "row") : nowdir
+        // XXX 这合理吗？
         return <Direction.Provider value={newdir}><Stack direction={nowdir} {...(props.sx || {})}>{
             props.children
         }</Stack></Direction.Provider>
@@ -69,7 +70,7 @@ function TopBox(props: {
         <Box sx={{
             textAlign: "right" , 
             marginLeft: "auto" , 
-            paddingLeft: "0.8rem" , 
+            paddingLeft: "0.6rem" , 
             paddingRight: "0.4rem" , 
             borderLeft: "1px solid grey"
         }}>

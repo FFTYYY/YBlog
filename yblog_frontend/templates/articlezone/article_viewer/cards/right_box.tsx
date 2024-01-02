@@ -78,14 +78,14 @@ function RenderIndexItem (props:{item: IndexItem, onScroll: (path: number[])=>vo
         >
             <Typography sx={{
                 fontSize: "0.8rem",
-                left: "0", 
+                left: 0, 
                 right: "1rem",
                 position: "absolute" , 
             }}>{idx}</Typography>
             
             <Typography sx={{
                 fontSize: "0.8rem",
-                left: "1rem", 
+                left: "1.5rem", 
                 marginRight: "1rem" , 
                 
                 position: "relative" , 
@@ -152,7 +152,7 @@ function RightBox(props: {root: AbstractNode, printer: Printer , onScroll: (path
         {<ScrollBarBox sx={{ 
             overflow: "auto" , 
             position: "absolute" , 
-            left: "1rem" , 
+            left: "0.4rem" , 
             right: "0.5rem" , 
             top: "2rem" , 
             bottom: "0.5rem" , 

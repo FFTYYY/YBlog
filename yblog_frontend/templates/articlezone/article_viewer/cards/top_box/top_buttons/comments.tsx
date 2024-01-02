@@ -10,7 +10,7 @@ import {
     ArrowUpward as ArrowUpwardIcon , 
     ArrowDownward as ArrowDownwardIcon , 
     Info as InfoIcon , 
-    Forum as ForumIcon 
+    ForumOutlined as ForumIcon 
 } from "@mui/icons-material"
 
 import {

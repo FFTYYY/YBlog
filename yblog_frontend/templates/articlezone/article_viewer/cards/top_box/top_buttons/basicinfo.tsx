@@ -7,7 +7,7 @@ import {
 import {
     ArrowUpward as ArrowUpwardIcon , 
     ArrowDownward as ArrowDownwardIcon , 
-    Description as DescriptionIcon , 
+    DescriptionOutlined as DescriptionIcon , 
 } from "@mui/icons-material"
 
 import {

@@ -8,7 +8,7 @@ import {
 } from "@mui/material"
 
 import {
-    AccessibleForward as AccessibleForwardIcon , 
+    AccessibleForwardOutlined as AccessibleForwardIcon , 
 } from "@mui/icons-material"
 
 import {
