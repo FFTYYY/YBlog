@@ -10,6 +10,7 @@ export {
     Acanthus3 , 
     Acanthus4 , 
     LiuJiaoYuan , 
+    LiuBian , 
 } from "./decors"
 
 export type {

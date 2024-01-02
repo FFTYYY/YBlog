@@ -26,7 +26,59 @@ import { BaJiao, LiuBian, SanJiao } from "../../../assets/decors"
 import { flush_math , MathJaxFlusher } from "../../construction/math"
 
 export {
-    renderers
+    renderers , 
+    MakeAbstract , 
+}
+
+function MakeAbstract(props: {subcomp: any, children: any}){
+    let subcomp = props.subcomp
+    let [show_abstract , set_show_abstract] = React.useState(false)
+    let theme = React.useContext(ThemeContext)
+
+    return <React.Fragment>
+        <div style={{display: "inline-block", marginRight: "5px"}}>{props.children}</div>
+        <Tooltip title={subcomp} placement="right" onMouseMove={()=>{
+            flush_math.go()
+        }}>
+            <Link 
+                onClick = {(e)=>{
+                    set_show_abstract(true)
+                    // setTimeout(()=>{flush_math.go()} , 500)
+                }} 
+                color = "inherit"
+                href = "#"
+                underline = "none"
+                sx={{
+                    width: "auto" , 
+                    height: "auto" , 
+                    paddingRight: "0.35rem" , 
+                }}
+            >
+                <div style={{display: "inline-block"}}>
+                    <SanJiao fill={theme.my_palette.symbol.abstract} strokeWidth="1px" style={{
+                        top: "-5px", 
+                        left: "-5px" , 
+                        marginRight: "-5px" , 
+                        width: "10px" , 
+                        height: "10px" , 
+                        display: "inline-block" , 
+                        position: "relative" , 
+                        transform: "scaleY(-1)",
+                    }} />
+                </div>
+            </Link>
+        </Tooltip>
+        <Dialog 
+            fullWidth 
+            maxWidth = "lg" 
+            open = {show_abstract} 
+            onClose = {()=>set_show_abstract(false)}
+            onAnimationEnd = {()=>{
+                flush_math.go()
+            }}
+        >{subcomp}</Dialog>
+    </React.Fragment> 
+
 }
 
 let renderer_comment = (()=>{
@@ -47,61 +99,17 @@ let renderer_comment = (()=>{
         contexters: [] , 
         render_function_as_property: (props: PrinterRenderFunctionProps<AbstractNode>) => {
     
-            let theme = React.useContext(ThemeContext)
-
             if(props.flags["senario"] != senario){
                 return <>{props.children}</>
             }
     
-            let [show_abstract , set_show_abstract] = React.useState(false)
     
             let subcomp = <DefaultAbstractAsRoot
                 {...props}
             ></DefaultAbstractAsRoot>
+
+            return <MakeAbstract subcomp={subcomp}>{props.children}</MakeAbstract>
     
-            return <React.Fragment>
-                <div style={{display: "inline-block", marginRight: "5px"}}>{props.children}</div>
-                <Tooltip title={subcomp} placement="right" onMouseMove={()=>{
-                    flush_math.go()
-                }}>
-                    <Link 
-                        onClick = {(e)=>{
-                            set_show_abstract(true)
-                            // setTimeout(()=>{flush_math.go()} , 500)
-                        }} 
-                        color = "inherit"
-                        href = "#"
-                        underline = "none"
-                        sx={{
-                            width: "auto" , 
-                            height: "auto" , 
-                            paddingRight: "0.35rem" , 
-                        }}
-                    >
-                        <div style={{display: "inline-block"}}>
-                            <SanJiao fill={theme.my_palette.symbol.abstract} strokeWidth="1px" style={{
-                                top: "-5px", 
-                                left: "-5px" , 
-                                marginRight: "-5px" , 
-                                width: "10px" , 
-                                height: "10px" , 
-                                display: "inline-block" , 
-                                position: "relative" , 
-                                transform: "scaleY(-1)",
-                            }} />
-                        </div>
-                    </Link>
-                </Tooltip>
-                <Dialog 
-                    fullWidth 
-                    maxWidth = "lg" 
-                    open = {show_abstract} 
-                    onClose = {()=>set_show_abstract(false)}
-                    onAnimationEnd = {()=>{
-                        flush_math.go()
-                    }}
-                >{subcomp}</Dialog>
-            </React.Fragment> 
         } , 
         render_function: (props: PrinterRenderFunctionProps<AbstractNode>) => {
             let props_except_children = {

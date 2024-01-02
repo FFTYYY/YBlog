@@ -16,6 +16,8 @@ import {
 
 	KeyEventManager, 
 	AutoStack, 
+	AutoTooltip , 
+	TextIcon , 
 } from "@ftyyy/ytext"
 
 
@@ -32,103 +34,138 @@ import {
 	SvgIcon , 
 	Divider , 
 	AppBar, 
-	Typography, 
+	Typography,
+	styled, 
+	Link , 
 } from "@mui/material"
+import {
+    TreeItem , TreeView , 
+    TreeItemProps, treeItemClasses , 
+} from "@mui/lab"
+import {
+	ExpandMore as ExpandMoreIcon , 
+	ChevronRight as ChevronRightIcon , 
+} from "@mui/icons-material"
 
-import { my_theme } from "../../base/construction"
-import { Interaction , BackendData } from "../../base/interaction"
+import { TitleWord, my_theme } from "../../base/construction"
+import { Interaction , BackendData, urls } from "../../base/interaction"
 import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../../base/construction"
 import { renderers , default_renderers } from "../../base/concept"
 import { parse_second_concepts } from "../../base/utils"
 import { first_concepts } from "../../base/concept"
 import { LeftBox, RightBox, TopBox } from "../../article_viewer/cards"
 import { flush_math , MathJaxFlusher } from "../../base/construction/math"
-// import "./style.css"
+import { LiuBian } from "../../assets"
+import { MakeAbstract } from "../../base/concept/printers/abstract"
+import { Nodetree } from "../../base/nodetree"
+import type { info_item , raw_info_item } from "../../base/nodetree"
 
-class App extends  React.Component<{} , {
-	printer: Printer  | undefined
-	tree: AbstractNode  | undefined
-	cache: PrinterCache | undefined
-	info: {
-		create_time?: string ,
-		modify_time?: string ,  
-	}
+let ROOT_ID = 1 // 根节点的编号
 
-	activate_idx: boolean // 是否要显示每个组件的IDX
-}>{
-	printer_comp_ref: React.RefObject<DefaultPrinterComponent>
+let MyTypo = styled(Typography)({
+	fontFamily: "Microsoft JhengHei" , 
+	marginBottom: "0.2rem" , 
+})
+
+function MyTreeItem(props: {my_info: info_item}){
+
+	let my_info = props.my_info
+
+    let [ visible   , set_visible   ] = React.useState(true)
+    React.useEffect(()=>{(async ()=>{
+        let visibility = await Interaction.get.visibility(my_info.my_id)
+        set_visible(!visibility.secret)
+    })()})
+
+	let my_title = <Box sx={{
+		marginX: "0.5rem" , 
+		marginY: "0.2rem" , 
+		width: "95%" , 
+		display: "flex" , 
+	}}>
+		<Link 
+			sx = {{color: "inherit", width: "auto", display: "inline-block"}}
+			href = {urls.view.content(my_info.my_id)} 
+		>
+			<MyTypo sx={{fontSize: "0.9rem"}}><TitleWord node_id={my_info.my_id}/></MyTypo>
+		</Link>
+
+		{visible ? <></> :
+			<Box sx={{
+				display: "inline-block", 
+				marginLeft: "auto" , 
+				right: 0,               
+				paddingLeft: "0.4rem" , 
+				
+			}}>
+				<AutoTooltip title="不让看"><Box>
+					<TextIcon text="隐" fontSize="0.7rem" color="inherit"/>
+				</Box></AutoTooltip>
+			</ Box>
+		}
+
+	</Box>
+	return <TreeItem nodeId={`${my_info.my_id}`} label={my_title}>{my_info.sons.map(son_info => {
+		return <MyTreeItem my_info={son_info}/>
+	})}</TreeItem>
+}
+
+
+interface App_State{
+
+    /** 节点树。
+    */
+    nodetree: Nodetree
+
+    /** 已经展开的节点，这是 mui TreeView 需要的状态。 */
+    expanded: (string | number) [] 
+
+
+	root_sons: number []
+}
+
+class App extends  React.Component<{} , App_State>{
 
 	constructor(props: {}){
 		super(props)
 		
-		this.state = {		
-			printer: undefined , 
-			tree: undefined , 
-			cache: undefined , 
-			
-			info: {} , 
+        this.state = {
+            nodetree: new Nodetree([]) , 
+            expanded: [] , 
 
-			activate_idx: false , 
-		}
-		this.printer_comp_ref = React.createRef()
-	}
-
-	get_printer_comp(){
-		if(this.printer_comp_ref && this.printer_comp_ref.current){
-			return this.printer_comp_ref.current
-		}
-		return undefined
+            root_sons: [] , 
+        }
 	}
 
 	async componentDidMount(){
 		let me = this
-
-		// 从后端获得所有概念。
-		let sec_concepts_data = await Interaction.get.concept(BackendData.node_id) as string[]
-		let sec_concepts = parse_second_concepts(sec_concepts_data)
-
-		// 建立印刷器核心。
-		let printer = new Printer(
-			first_concepts , 
-			sec_concepts , 
-			renderers , 
-			default_renderers , 
-		)
-
-		// 获得树。
-		let root = await Interaction.get.content(BackendData.node_id)
-		// 设置网页标题
-		document.title = "星星"
-
-		// 获得缓存内容（其实是不必要的...）
-		let cache = await Interaction.get.cache(BackendData.node_id)
-
-		// 获得info
-		let time_info = await Interaction.get.create_time(BackendData.node_id)
-
-		this.setState({
-			printer: printer , 
-			tree: root , 
-			cache: cache , 
-			info: {
-				create_time: time_info.create_time , 
-				modify_time: time_info.modify_time , 
-			}
-		})
-
-		setTimeout(()=>{
-			flush_math.go()
-		} , 1000)
+		let raw_nodetree = await Interaction.get.nodetree(ROOT_ID) as raw_info_item[]
+		this.setState( {
+            nodetree: me.state.nodetree.update_rawinfo(raw_nodetree , ROOT_ID) , 
+            expanded: Object.values(raw_nodetree).map( (val:raw_info_item)=>val[1] )
+        } )
 	}
 
 	render(){
 		let me = this
 
-		let {printer , tree} = this.state
 
-		if(!(printer && tree)){
-			return <></>
-		}
+		let whitespace = <div style={{width:"1rem", display: "inline-block"}}></div>
+		let starter = <LiuBian 
+			style={{height: "0.7rem"}} 
+			fill="#336688AA"
+			strokeWidth="6px" 
+			strokeColor="rgba(0,0,0,0.7)"
+		/>
+		let abstract_example_subcomp = <Box sx={{marginX: "0.3rem" , marginY: "0.2rem"}}><Typography sx={{
+			fontFamily: "Dengxian"
+		}}>
+			就像这样。
+			<br />
+			话说为啥要叫穆言啊，这名字好怪。有没有更合适的叫法呢...
+		</Typography></Box>
+		let tree_root = me.state.nodetree.get_root().sons[0]
+
 		// TODO 不知道为什么build之后cssbaseline没有生效，需要手动加入背景和前景颜色。
 		return <MUIThemeProvider theme={MUICreateTheme(my_theme.mui)}><ThemeProvider value={my_theme}><Box sx={{
 			position: "fixed" , 
@@ -140,27 +177,49 @@ class App extends  React.Component<{} , {
 			color: "text.primary" , 
 		}}
 		><CssBaseline />
-			<AppBar sx={{
-				position: "absolute" , 
-				top: "0" ,
-				left: "0" , 
-				height: "2.60rem" , 
-				width: "100%" , 
-				opacity: "0.9" , 
-				border: "1px solid grey" , 
-				// backgroundColor: "rgb(240,240,230)" , 
-			}}>
-				<TopBox 
-					root = {tree} 
-					idx_activated = {me.state.activate_idx}
-					onActivateIdx = {()=>{ // 逆转！
-						me.setState({activate_idx: !me.state.activate_idx})
-					}}
-				></TopBox>
-			</AppBar>
 
-            哈哈!
+			<MyTypo sx={{fontSize: "3rem"}}>星之器</MyTypo>
 			
+            <MyTypo sx={{fontSize: "1rem"}}>
+				{"你在路边偶然捡到了一棵树，这棵树的每个节点上都有一些文字。树根上写着几个大字『星之器』和几行小字。"}
+			</MyTypo>
+
+			{tree_root == undefined ? <></> :<>
+			    <MyTypo sx={{fontSize: "1rem"}}>
+					{"你又仔细看了一下这棵树，发现总共有这么些节点。"}
+				</MyTypo>
+				<ScrollBarBox sx={{
+					width: "min( max(30%, 20rem) , 50%)" , 
+					maxHeight: "20rem" ,
+					marginLeft: "2rem" , 
+					overflow: "auto" ,  
+					marginY: "0.5rem" , 
+				}}>
+					<TreeView 
+						defaultCollapseIcon = {<ExpandMoreIcon />}
+						defaultExpandIcon = {<ChevronRightIcon />}
+						defaultExpanded = {[`${ROOT_ID}`]}
+					>
+						<MyTreeItem my_info = { tree_root }></MyTreeItem>
+
+					</TreeView>
+				</ScrollBarBox>
+			</>}
+            <MyTypo sx={{fontSize: "1rem"}}>
+				{"在根节点『星之器』的结尾，还写了一句诗。是唐代诗人陈子昂的诗。"}
+				{"好像是种下这棵树的人死之前写上去的，想必他/她一定很喜欢这句诗吧。"}
+			</MyTypo>
+			<Box sx={{
+				marginY: "0.5rem" , 
+				marginLeft: "2rem" , 
+				textAlign: "center" , 
+			}}>
+				<MyTypo sx={{
+					fontFamily: "Kaiti" , 
+					fontSize: "1rem" , 
+				}}>前不见古人，后不见来者。念天地之悠悠，独怆然而涕下。</MyTypo>
+			</Box>
+
 		</Box></ThemeProvider></MUIThemeProvider>
 	}
 }
@@ -168,3 +227,27 @@ class App extends  React.Component<{} , {
 export default App
 
 
+/**
+ * 
+ * 			<Box sx={{
+				marginLeft: "2rem" , 
+			}}>
+				<MyTypo sx={{fontSize: "0.9rem" }}>{starter}{whitespace}
+					{"每个节点都是唯一的根节点的后代。如果一个节点有子节点，那么这个节点就被称为『集』，否则称为『章』。"}
+				</MyTypo>
+
+				<MyTypo sx={{fontSize: "0.9rem"}}>{starter}{whitespace}
+					{"有些文本上加注了一些注释文本。"}
+					<MakeAbstract subcomp={abstract_example_subcomp}>
+						{"这样的文本称为一个『穆言』"}
+					</MakeAbstract>
+					{"。只需要把鼠标移动到绿色小三角形上或者点击就可以看到了。"}
+				</MyTypo>
+
+				<MyTypo sx={{fontSize: "0.9rem"}}>{starter}{whitespace}
+					{"还有一些特殊的节点类型。"}
+					{"但是我懒得写了，所以就这样吧。"}
+				</MyTypo>
+			</Box>
+
+ */
