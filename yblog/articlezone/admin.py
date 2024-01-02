@@ -4,7 +4,17 @@ from django import forms
 from django_json_widget.widgets import JSONEditorWidget
 from functools import partial
 
+class NodeForm(forms.ModelForm):
+    template = forms.ChoiceField(choices = (
+        ("standard" , "standard") , 
+        ("special/casket_of_star", "special/casket_of_star"), 
+    ))
+    class Meta:
+        model = Node
+        fields = "__all__"
+
 class NodeAdmin(admin.ModelAdmin):
+    form = NodeForm
     add_form_template 	 = "customize_admin/node_add.html"
 
     list_display = ["get_title" , "id" , "can_public_view" ]
@@ -39,6 +49,9 @@ class NodeAdmin(admin.ModelAdmin):
 
                                
         return [
+            ["模板" , {
+                "fields": ["template"] , 
+            }] , 
             ["可见性" , {
                 "fields": ["secret" , "indiscriminate_provider" , "indiscriminate_consumer"] , 
                 "description": visualbility_desc , 

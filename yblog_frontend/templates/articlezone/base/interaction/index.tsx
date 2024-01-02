@@ -56,7 +56,7 @@ axios.defaults.baseURL = root
 axios.defaults.xsrfHeaderName = "X-CSRFToken"
 axios.defaults.headers.post["X-CSRFToken"] = BackendData.csrf
 
-let node_info_cache = new UniversalCache(500)
+let node_info_cache = new UniversalCache(5000)
 
 /** 这个函数从后端读取一个节点相关的信息。
  * @param urlmaker 从节点编号生成 url 的函数。
@@ -68,7 +68,7 @@ async function get_node_information(urlmaker:(nodeid:number) => string , key?: s
         node_id = BackendData.node_id
     let url = urlmaker(node_id)
 
-    let cache_key = JSON.stringify([url,key,node_id])
+    let cache_key = JSON.stringify(url)
     let data = undefined
     if(!disable_cache){
         data = node_info_cache.get(cache_key)

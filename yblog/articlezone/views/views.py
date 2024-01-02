@@ -1,6 +1,8 @@
+
 from django.shortcuts import render
 from django.http import HttpResponse , Http404
-from .utils import debug_convenient , must_login , allow_iframe
+from .utils import debug_convenient , must_login , allow_iframe, JSONDecode , node_can_view
+from ..models import Node
 
 @debug_convenient
 @must_login(Http404())
@@ -38,7 +40,20 @@ def read_node_view(request , node_id = None):
 
     linkto = request.GET.get("linkto")
 
-    return render(request , "articlezone/article_viewer_index.html" , {
+    try:
+        node = Node.objects.get(id = node_id) 
+    except Node.DoesNotExist:
+        raise Http404()
+
+    if not node_can_view(request , node):
+        raise Http404()
+    
+    template_location = "articlezone/article_viewer_index.html"
+    if node.template != "standard":
+        template_location = f"articlezone/{node.template}.html"
+    print(template_location)
+
+    return render(request , template_location , {
         "node_id": node_id , 
         "logged_in": request.user.is_authenticated , 
         "linkto": linkto , 

@@ -52,6 +52,10 @@ class Node(models.Model):
 	concept_instants: BaseManager[ConceptInstance]
 	father			: models.ForeignKey
 
+	template	    : models.TextField
+
+	template 		= models.TextField(default = "standard")
+
 	father 			= models.ForeignKey(
 		"self", 
 		on_delete = models.SET_NULL , 

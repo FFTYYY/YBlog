@@ -1,4 +1,4 @@
-import{D as p,a as t,$ as n,j as o,b as m}from"./titleword.1346116c.js";let l="$",c="$",d="$$",h="$$";function s(e){e.startup.document.state(0),e.texReset(),e.typeset(),e.typesetClear()}var f=new p(()=>{let e=window.MathJax;e!=null&&e.typesetPromise!=null&&(s(e),e.typesetPromise(),s(e))},1e3);function r(){f.go()}function x(e){return t.useEffect(()=>{let i=n(`
+import{D as p,a as t,$ as n,j as o,b as m}from"./titleword.80f09066.js";let l="$",c="$",d="$$",h="$$";function s(e){e.startup.document.state(0),e.texReset(),e.typeset(),e.typesetClear()}var f=new p(()=>{let e=window.MathJax;e!=null&&e.typesetPromise!=null&&(s(e),e.typesetPromise(),s(e))},1e3);function r(){f.go()}function x(e){return t.useEffect(()=>{let i=n(`
             
             <script defer>
                 MathJax = {

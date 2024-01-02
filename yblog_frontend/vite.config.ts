@@ -12,6 +12,8 @@ export default defineConfig({
 				viewer: "./templates/articlezone/article_viewer_index.html" , 
 				nodetree: "./templates/articlezone/nodetree_index.html" , 
 				pureprinter: "./templates/articlezone/pure_printer_index.html" , 
+
+				special_casket_of_star: "./templates/articlezone/special/casket_of_star.html" , 
 			},
 		} , 
 		outDir: "../yblog/articlezone/" , 
