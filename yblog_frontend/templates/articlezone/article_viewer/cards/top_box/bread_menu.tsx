@@ -125,12 +125,12 @@ function TopMenu(props: {
             ref = {link_ref}
             sx = {{
                 marginX: "0.2rem" ,  
-                width: "calc(100% - 0.4rem)", 
+                width: level == "high" ? "calc(100% - 0.4rem)" : "calc(100% - 0.4rem)", 
                 justifyContent: "flex-start" , 
                 textAlign: "left" , 
                 ...(level == "high" ? {whiteSpace: "nowarp"} : {}) ,  
             
-                paddingX: "0.2rem",
+                // paddingX: "0.2rem",
                 minHeight: "1.3rem",
                 paddingY: "0.1rem" , 
                 marginY: level == "high" ? "0.4rem" : "0.1rem",

@@ -42,7 +42,11 @@ function generate_id2node(node: info_item): {[id: number]: info_item}{
  * @param root_id 这颗子树的根节点。
 */
 function raw_to_processed(raw_nodetree: raw_info_item[] , root_id: number = -1): info_item{
-    raw_nodetree.sort(((x1: raw_info_item,x2: raw_info_item) => x1[2]<x2[2]?1:0)) // 按父节点内的顺序排序
+    raw_nodetree.sort(((x1: raw_info_item,x2: raw_info_item) => x1[2]<x2[2]?0:1)) // 按父节点内的顺序排序
+    if(raw_nodetree.length > 1 && raw_nodetree[0][2] > raw_nodetree[1][2]){
+        // 有些浏览器排序的逻辑是反的...
+        raw_nodetree = raw_nodetree.reverse()
+    }
 
     // 如果不是完整的树，那么将根节点的1前一个节点设为`-1`。
     if(root_id > 0){
