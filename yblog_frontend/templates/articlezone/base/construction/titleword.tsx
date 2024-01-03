@@ -1,9 +1,13 @@
 import React from "react"
 import { Interaction } from "../interaction"
 
-export { TitleWord }
+export { TitleWord , update_id2title }
 
 var id2title = {} // 缓存。
+
+function update_id2title(new_id2title: {[id: number]: string}){
+    id2title = {...id2title, ...new_id2title}
+}
 
 /** 这个组件异步加载一个节点的标题，等加载好了就显示出来。 */
 class TitleWord extends React.PureComponent<{

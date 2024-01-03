@@ -1,1 +1,0 @@
-import{R as e,j as t,a,b as r}from"./titleword.80f09066.js";import{M as o}from"./theme.9845efad.js";e.render(t(a.StrictMode,{children:r("div",{children:[t(o,{children:" $12$ "})," about! "]})}),document.getElementById("root"));

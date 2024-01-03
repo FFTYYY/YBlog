@@ -43,8 +43,8 @@ import {
     TreeItemProps, treeItemClasses , 
 } from "@mui/lab"
 import {
-	ExpandMore as ExpandMoreIcon , 
-	ChevronRight as ChevronRightIcon , 
+	ExpandMore as ArrowDropDownIcon , 
+	ChevronRight as ArrowRightIcon , 
 } from "@mui/icons-material"
 
 import { TitleWord, my_theme } from "../../base/construction"
@@ -181,38 +181,31 @@ class App extends  React.Component<{} , App_State>{
 			<MyTypo sx={{fontSize: "3rem"}}>星之器</MyTypo>
 			
             <MyTypo sx={{fontSize: "1rem"}}>
-				{"你在路边偶然捡到了一棵树，这棵树的每个节点上都有一些文字。树根上写着几个大字『星之器』和几行小字。"}
+				{"你在路边偶然捡到了一棵树，树根上写着几个大字『星之器』和几行小字。"}
+				{"再仔细看看，你发现每个节点上都写了一些文字，这使得每个节点都是独特的"}
+				{tree_root == undefined ? "。" : "，并且这些节点是这样排列的。"}
 			</MyTypo>
 
 			{tree_root == undefined ? <></> :<>
-			    <MyTypo sx={{fontSize: "1rem"}}>
-					{"你又仔细看了一下这棵树，发现总共有这么些节点。"}
-				</MyTypo>
-				{/* <Box sx={{
-					width: "100%" , 
-				  
-				}}> */}
-					<ScrollBarBox sx={{
-						width: "min( max(30%, 20rem) , 50%)" , 
-						maxHeight: "calc(100% - 18rem)" ,
-						overflow: "auto" ,  
-						marginY: "0.5rem" ,
-						marginX: "auto" , 
-					}}>
-						<TreeView 
-							defaultCollapseIcon = {<ExpandMoreIcon />}
-							defaultExpandIcon = {<ChevronRightIcon />}
-							defaultExpanded = {[`${ROOT_ID}`]}
-						>
-							<MyTreeItem my_info = { tree_root }></MyTreeItem>
+				<ScrollBarBox sx={{
+					width: "min( max(30%, 20rem) , 50%)" , 
+					maxHeight: "calc(100% - 18rem)" ,
+					overflow: "auto" ,  
+					marginY: "0.5rem" ,
+					marginX: "auto" , 
+				}}>
+					<TreeView 
+						defaultCollapseIcon = {<ArrowDropDownIcon fontSize="large"/>}
+						defaultExpandIcon = {<ArrowRightIcon fontSize="large"/>}
+						defaultExpanded = {[`${ROOT_ID}`]}
+					>
+						<MyTreeItem my_info = { tree_root }></MyTreeItem>
 
-						</TreeView>
-					</ScrollBarBox>
-				{/* </Box> */}
+					</TreeView>
+				</ScrollBarBox>
 			</>}
             <MyTypo sx={{fontSize: "1rem"}}>
-				{"在树根『星之器』的结尾，还写着一首诗。是唐代诗人陈子昂的诗。"}
-				{"好像是种这棵树的人死之前写上去的，想必他/她一定很喜欢这句诗吧。"}
+				{"在树根『星之器』的结尾，还写着几句诗，好像摘自一首晋代的乐府。想必种这棵树的人很喜欢这首诗吧。"}
 			</MyTypo>
 			<Box sx={{
 				marginY: "0.5rem" , 
@@ -221,8 +214,8 @@ class App extends  React.Component<{} , App_State>{
 			}}>
 				<MyTypo sx={{
 					fontFamily: "Kaiti" , 
-					fontSize: "1rem" , 
-				}}>前不见古人，后不见来者。念天地之悠悠，独怆然而涕下。</MyTypo>
+					fontSize: "1.1rem" , 
+				}}>荠与麦兮夏零，兰桂践霜逾馨。禄命悬天难明，妾心结意丹青，何忧君心中倾。</MyTypo>
 			</Box>
 
 		</Box></ThemeProvider></MUIThemeProvider>

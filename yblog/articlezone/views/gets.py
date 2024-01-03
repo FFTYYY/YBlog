@@ -153,6 +153,15 @@ def get_node_visibility(request , node_id):
 			"indiscriminate_provider": node.indiscriminate_provider , 
 		}
 	})
+@debug_convenient
+def get_node_title(request , node_id):
+	node = Node.objects.get(id = node_id) 
+	if not node_can_view(request , node):
+		raise Http404()
+
+	return JsonResponse({
+		"title": node.get_title()
+	})
 
 @debug_convenient
 def get_indiscriminates(request , node_id):
@@ -289,7 +298,12 @@ def get_node_son_ids(request , node_id):
 
 	# 只返回能被看见的节点的信息
 	return JsonResponse({
-		"son_ids": [ x.id for x in lis if node_can_view(request , x) ]
+		"son_ids": [ x.id for x in lis if node_can_view(request , x) ] , 
+		"titles" : [ x.get_title() for x in lis if node_can_view(request , x) ] , #顺便也询问标题
+		"visibility" : [ {
+			"secret": x.secret , 
+			"indiscriminate_provider": x.indiscriminate_provider , 
+		} for x in lis if node_can_view(request , x) ] , #顺便也询问可见性
 	})
 
 @debug_convenient

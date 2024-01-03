@@ -10,7 +10,7 @@ from .views.gets import get_node_create_time , get_node_content
 from .views.gets import get_node_resources , get_node_resource_info , get_node_son_ids , get_node_father_id
 from .views.gets import get_nodetree_shallow , get_node_cache
 from .views.gets import get_node_tldr , get_node_visibility , get_indiscriminates
-from .views.gets import get_conceptins_location, get_referenced_by
+from .views.gets import get_conceptins_location, get_referenced_by , get_node_title
 from functools import partial
 
 urlpatterns = [
@@ -26,6 +26,7 @@ urlpatterns = [
 
     path("get/node/content/<int:node_id>"       , get_node_content) , 
     path("get/node/cache/<int:node_id>"         , get_node_cache) , 
+    path("get/node/title/<int:node_id>"         , get_node_title) , 
     path("get/node/concepts/<int:node_id>"      , get_node_concepts) , 
     path("get/node/create_time/<int:node_id>"   , get_node_create_time) , 
     path("get/node/comments/<int:node_id>"      , get_node_comments) , 

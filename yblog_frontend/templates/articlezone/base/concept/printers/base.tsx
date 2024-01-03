@@ -3,6 +3,7 @@ import * as Slate from "slate"
 import * as SlateReact from "slate-react" 
 import { Grid , Box , 
     Link, ThemeOptions , Dialog, Tooltip  , Badge  , Button , Paper , IconButton  , TextField , Typography, BoxProps, LinkProps ,  
+    styled , 
 } from "@mui/material"
 import {
     PrinterPartBox , 
@@ -43,6 +44,7 @@ import {
     TitleWord
 } from "../../construction/titleword"
 import { num2chinese } from "../../utils"
+import { my_theme } from "../../construction"
 
 export {
     ErrorPrinter , 
@@ -53,17 +55,9 @@ export {
 }
 
 /** 这个组件提供一`Link`，但是字体颜色不用primary。*/
-function MyLink(props: LinkProps){
-    let theme = React.useContext(ThemeContext)
-    let new_props = {...props, sx: {
-        color: theme.my_palette.text.link , 
-        ...(props.sx || {}) , 
-    }}
-    
-    return <Link {...new_props} />
-    
-}
-
+let MyLink = styled(Link)({
+    color: my_theme.my_palette.text.link // XXX 不行啊不行
+})
 
 /**
  * 这个组件用来包裹一个渲染错误的概念。

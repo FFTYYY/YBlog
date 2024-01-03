@@ -165,7 +165,7 @@ class App extends  React.Component<{} , {
 				top: "2.6rem" ,
 				left: "12%" , 
 				bottom: "0.5rem" , 
-				width: "70%" , 
+				width: "65%" , 
 			}}>
 				<ScrollBarBox  
 					sx = {{
