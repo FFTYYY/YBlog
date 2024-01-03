@@ -182,8 +182,8 @@ class App extends  React.Component<{} , App_State>{
 			
             <MyTypo sx={{fontSize: "1rem"}}>
 				{"你在路边偶然捡到了一棵树，树根上写着几个大字『星之器』和几行小字。"}
-				{"再仔细看看，你发现每个节点上都写了一些文字，这使得每个节点都是独特的"}
-				{tree_root == undefined ? "。" : "，并且这些节点是这样排列的。"}
+				{"再仔细看看，你发现每个节点上都写了一些文字，这使得每个节点都是独特的。"}
+				{tree_root == undefined ? "" : "并且，这些节点是如下排列的。"}
 			</MyTypo>
 
 			{tree_root == undefined ? <></> :<>
