@@ -175,6 +175,8 @@ class App extends  React.Component<{} , App_State>{
 			left: "25%" , 
 			backgroundColor: "rgba(0,0,0,0)", 
 			color: "text.primary" , 
+			
+			overflow: "auto" , 
 		}}
 		><CssBaseline />
 
