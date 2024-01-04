@@ -26,8 +26,7 @@ class TitleWord extends React.PureComponent<{
     async update_id2title(){
         let node_id = this.props.node_id
         if(id2title[node_id] == undefined){
-            let root = await Interaction.get.content(node_id)
-            let title = root.parameters.title.val
+            let title = await Interaction.get.title(node_id)
             id2title[node_id] = title
         }
         if(this.state[id2title[node_id]] != id2title[node_id]){

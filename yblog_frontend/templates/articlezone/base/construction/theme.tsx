@@ -85,18 +85,18 @@ const my_theme: Theme = {
         } , 
         fonts: {
             body: {
-                fontFamily: "STXihei" , 
+                fontFamily: "Microsoft JhengHei, Dengxian" , 
                 fontSize: "1.0rem" ,
                 lineHeight: "1.5rem" , 
             },
             title: {
-                fontFamily: "SimHei" , 
-                fontSize: "1.0rem" ,
+                fontFamily: "MingLiU" , 
+                fontSize: "0.95rem" ,
                 lineHeight: "1.5rem" , 
             } , 
             structure: {
-                fontFamily: "SimHei" , 
-                fontSize: "1.0rem" ,
+                fontFamily: "MingLiU" , 
+                fontSize: "0.95rem" ,
                 lineHeight: "1.5rem" , 
             } , 
             display: {

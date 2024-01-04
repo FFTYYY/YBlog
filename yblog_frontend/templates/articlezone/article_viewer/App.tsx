@@ -191,7 +191,8 @@ class App extends  React.Component<{} , {
 							marginBottom: "2.5rem" , 
 						}}>
 							<PrinterStructureBoxText sx={{
-								fontSize: "1.5rem", 
+								...my_theme.printer.fonts.title , 
+								fontSize: "1.7rem", 
 								// marginBottom: "1rem" , 
 							}}>{
 								tree.parameters.title.val
