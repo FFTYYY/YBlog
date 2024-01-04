@@ -128,7 +128,7 @@ class App extends  React.Component<{} , {
 		let {printer , tree} = this.state
 
 		if(!(printer && tree)){
-			return <></>
+			return <>别急</>
 		}
 		// TODO 不知道为什么build之后cssbaseline没有生效，需要手动加入背景和前景颜色。
 		return <MUIThemeProvider theme={MUICreateTheme(my_theme.mui)}><ThemeProvider value={my_theme}><Box sx={{

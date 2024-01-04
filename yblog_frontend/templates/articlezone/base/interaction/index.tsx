@@ -193,7 +193,6 @@ var Interaction = {
                 let visibility = visibilitys[idx]
                 let son_id = son_ids[idx]
                 let title = titles[idx]
-                console.log(idx, son_id, visibility)
 
                 let url_vis = make_url(urls.get.visibility, son_id)
                 node_info_cache.set(url_vis, {"visibility": visibility})
