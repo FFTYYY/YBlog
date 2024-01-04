@@ -58,8 +58,8 @@ function TopBread(props: {
             color: theme.my_palette.text.on_primary , 
         }}
         separator = {<ArrowRightIcon sx={{color: theme.my_palette.text.weak_on_primary}}/>}
-    >{fathers.map(father_id=>{
-        return <TopMenu node_id={father_id} key={father_id} ></TopMenu>
+    >{fathers.map((father_id, idx)=>{
+        return <TopMenu node_id={father_id} key={father_id} idx={idx} total={fathers.length}></TopMenu>
     })}</Breadcrumbs>
 }
 

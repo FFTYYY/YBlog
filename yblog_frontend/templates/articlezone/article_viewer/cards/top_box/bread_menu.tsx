@@ -45,13 +45,15 @@ export {
 function TopMenu(props: {
     node_id: number , 
     level?: "high" | "low" , 
-    lower_order?: number , // 在lower中是第几个
-    lower_level?: number , 
+    idx: number , // 在lower中是从上往下数第几个 / 在higher中是从左往右数第几个
+    total: number , // 父节点中一共有多少个儿子。只对higher有效
+    lower_level?: number , // 在lower中是从左往右数第几个
 }){
     let my_id = props.node_id
     let level = props.level || "high"
     let lower_level = props.lower_level || 0
-    let lower_order = props.lower_order
+    let idx = props.idx 
+    let total = props.total
 
     let theme = React.useContext(ThemeContext)
 
@@ -188,7 +190,7 @@ function TopMenu(props: {
             >{({ TransitionProps }) => (<Fade {...TransitionProps} timeout={200}><Box><ScrollBarBox
                 sx = {{
                     marginLeft: "0.3rem" , 
-                    marginTop: level == "high" ? "0.5rem" : (lower_order == 0 ? 0 : "-1.5rem") , 
+                    marginTop: level == "high" ? "0.5rem" : (idx == 0 ? 0 : "-1.5rem") , 
                     marginBottom: "1rem" , 
                     
                     minWidth: "5rem" , 
@@ -203,13 +205,14 @@ function TopMenu(props: {
                     color: theme.my_palette.text.on_primary , 
                     opacity: 0.85 , 
                 }}
-            >{sons.map((son_id, lower_order)=>{
+            >{sons.map((son_id, order)=>{
                 return <TopMenu 
                     level = "low"
                     node_id = {son_id}
                     lower_level = {lower_level + 1}
                     key = {son_id}
-                    lower_order = {lower_order}
+                    idx = {order}
+                    total = {sons.length}
                 ></TopMenu>
             })
             }</Box></ScrollBarBox></Box></Fade>)}</Popper>
