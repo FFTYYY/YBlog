@@ -9,6 +9,7 @@ export {
 	num2rem , 
 	remtimes , 
 	num2chinese , 
+	float2chinese , 
 }
 
 /** 用中国字，因为我是 中 国（吴京.jpg） 人 */
@@ -17,6 +18,17 @@ function num2chinese(number: number , map?: string[]){
         map = ["〇","一","二","三","四","五","六","七","八","九",]
     }
     return `${number}`.split("").map((x:string)=>(map as string[])[Number(x)]).join("")
+}
+function float2chinese(number: number , map?: string[], max_digit: number = 2){
+	let int_part = Math.floor(number)
+	let float_part = Math.floor( (number -  int_part) * (10 ** max_digit) + 0.5)
+	while(float_part % 10 == 0){
+		float_part = Math.floor( float_part / 10 )
+	}
+	if (float_part == 0){
+		return num2chinese(int_part, map)
+	}
+	return `${num2chinese(int_part, map)}点${num2chinese(float_part, map)}`
 }
 
 
