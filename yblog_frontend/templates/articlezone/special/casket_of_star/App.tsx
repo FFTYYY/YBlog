@@ -258,21 +258,6 @@ class App extends  React.Component<{} , App_State>{
 						<MyLinkBox id={1288} />
 						<MyLinkBox id={891} />
 						<MyLinkBox id={818} />
-						<MyLinkBox id={1231} />
-						<MyLinkBox id={1078} />
-						<MyLinkBox id={1136} />
-						<MyLinkBox id={1321} />
-						<MyLinkBox id={1362} />
-						<MyLinkBox id={1293} />
-						<MyLinkBox id={1125} />
-						<MyLinkBox id={1061} />
-						<MyLinkBox id={1177} />
-						<MyLinkBox id={1307} />
-						<MyLinkBox id={1305} />
-						<MyLinkBox id={1409} />
-						<MyLinkBox id={1288} />
-						<MyLinkBox id={891} />
-						<MyLinkBox id={818} />
 					</Box>
 
 
@@ -314,7 +299,7 @@ class App extends  React.Component<{} , App_State>{
 					</Box> */}
 					{/* <Divider variant = "middle" sx={{marginTop: "2rem", marginBottom: "1rem", visibility: "hidden"} } light ></Divider> */}
 					<MyTypo sx={{fontSize: "1rem"}}>
-						{`你花了${float2chinese(load_time)}秒仔细考察了这棵树，发现这棵树的所有节点组成了如下的结构。`}
+						{`你花了${load_time}秒仔细考察了这棵树，发现这棵树的所有节点组成了如下的结构。`}
 					</MyTypo>
 					<Box sx={{
 						width: "90%" , 
