@@ -216,12 +216,13 @@ class App extends  React.Component<{} , App_State>{
 
 			<MyTypo sx={{fontSize: "3rem"}}>星之器</MyTypo>
 			
-            <MyTypo sx={{fontSize: "1rem"}}>
-				{"你在路边偶然捡到了一棵树，树根上写着几个大字『星之器』和几行小字。"}
-				{"再仔细看看，你发现这棵树的每个节点上都写了一些文字。这些文本一定是种下这棵树的人写的吧。"}
+            <MyTypo sx={{fontSize: "1rem", marginTop: "1rem"}}>
+				{"你在路边偶然捡到了一棵树，不知道是谁种的。这棵树的树根上写着几个大字『星之器』和一些小字。"}
+				{"再仔细看看，你发现这棵树的每个节点都有一个标题，并且写了一些文字。所有节点相互联结，形成了一棵文章之树。"}
+				{"这些文章一定是种下这棵树的人写的吧。"}
 			</MyTypo>
 			<Box sx={{
-				marginTop: "2.5rem" , 
+				marginTop: "2rem" , 
 				display: "flex" , 
 				flexDirection: "row" , 
 			}}>
@@ -284,6 +285,7 @@ class App extends  React.Component<{} , App_State>{
 
 				{tree_root == undefined  ? <Box></Box> :<Box sx={{
 					marginLeft: "1rem" , 
+					paddingRight: "1rem" , 
 				}}>
 					
 					{/* <Box sx={{
@@ -317,8 +319,7 @@ class App extends  React.Component<{} , App_State>{
 					</Box>
 				</Box>}
 			</Box>
-			{tree_root == undefined ? <Box></Box> :<Box>
-				<br />
+			{tree_root == undefined ? <Box></Box> :<Box sx={{marginTop: "2rem"}}>
 				<MyTypo sx={{fontSize: "1rem"}}>
 					{"在树根『星之器』的结尾，还写着几句诗，好像摘自一首晋代的乐府。想必这棵树的主人一定很喜欢这首诗吧。"}
 				</MyTypo>
