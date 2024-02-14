@@ -55,7 +55,6 @@ function TopMenu(props: {
     let lower_level = props.lower_level || 0
     let idx = props.idx 
     let total = props.total
-    let element = props.element || <TitleWord node_id = {my_id} />
 
     let theme = React.useContext(ThemeContext)
 
@@ -78,6 +77,20 @@ function TopMenu(props: {
         let visibility = await Interaction.get.visibility(my_id)
         set_visible(!visibility.secret)
     })()})
+
+    // 要渲染的元素
+    let element = props.element || <><TitleWord node_id = {my_id} />{visible ? <></> :
+        <Box key="unseen" sx={{
+            display: "inline-block", 
+            marginLeft: "auto" , 
+            right: 0,               
+            paddingLeft: "0.4rem" , 
+        }}>
+            <AutoTooltip title="不让看"><Box>
+                <TextIcon text="隐" fontSize="0.7rem" color="inherit"/>
+            </Box></AutoTooltip>
+        </ Box>
+    }</>
 
     
     // 获得子节点
@@ -151,19 +164,6 @@ function TopMenu(props: {
             }}
         >
             {element}
-            {visible ? <></> :
-                <Box key="unseen" sx={{
-                    display: "inline-block", 
-                    marginLeft: "auto" , 
-                    right: 0,               
-                    paddingLeft: "0.4rem" , 
-                }}>
-                    <AutoTooltip title="不让看"><Box>
-                        <TextIcon text="隐" fontSize="0.7rem" color="inherit"/>
-                    </Box></AutoTooltip>
-                </ Box>
-            }
-
         </Button></Link>
 
         <ClickAwayListener onClickAway = {()=>{set_mouse_in(false)}}>
