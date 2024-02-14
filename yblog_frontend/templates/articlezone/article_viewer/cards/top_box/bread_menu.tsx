@@ -48,12 +48,14 @@ function TopMenu(props: {
     idx: number , // 在lower中是从上往下数第几个 / 在higher中是从左往右数第几个
     total: number , // 父节点中一共有多少个儿子。只对higher有效
     lower_level?: number , // 在lower中是从左往右数第几个
+    element?: any , 
 }){
     let my_id = props.node_id
     let level = props.level || "high"
     let lower_level = props.lower_level || 0
     let idx = props.idx 
     let total = props.total
+    let element = props.element || <TitleWord node_id = {my_id} />
 
     let theme = React.useContext(ThemeContext)
 
@@ -148,8 +150,7 @@ function TopMenu(props: {
                 transition: "background-color 400ms ease-out, color 400ms ease-out" , 
             }}
         >
-
-            <TitleWord node_id = {props.node_id} />
+            {element}
             {visible ? <></> :
                 <Box key="unseen" sx={{
                     display: "inline-block", 

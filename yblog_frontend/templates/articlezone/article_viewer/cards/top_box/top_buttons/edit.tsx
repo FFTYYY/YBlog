@@ -86,9 +86,8 @@ function EditButton(props: {
             sx={{
                 left: "0",
                 top: "0",
-                width: "14%" , 
-                height: "90%" , 
-                opacity: 0.85 , 
+                width: "12%" , 
+                height: "30%" , 
                 marginTop: "3rem" , 
                 marginLeft: "0.2rem" , 
             }}
@@ -97,21 +96,18 @@ function EditButton(props: {
             transition
         >{({ TransitionProps }) => (
             <Fade {...TransitionProps} timeout={350}>
-                <Paper sx = {{
+                <Box sx = {{
                     paddingX: "1rem",
                     paddingY: "1rem" , 
                     width: "100%" , 
                     height: "100%" , 
-
-                    backgroundColor: theme.my_palette.background.secondary , 
-                    color: "white" , 
                 }}>
                     <LeftEdit 
                         root = {props.root} 
                         idx_activated = {props.idx_activated} 
                         onActivateIdx = {props.onActivateIdx}
                     />
-                </Paper>
+                </Box>
             </Fade>
         )}
         </Popper>
@@ -124,7 +120,6 @@ let MyLink = (props: LinkProps)=>{
         marginTop: "0.2rem",
         marginBottom: "0.3rem",
         ...theme.printer.fonts.body , 
-        color: theme.my_palette.text.on_secondary , 
     }}></Link>
 }
 
@@ -143,11 +138,11 @@ class LeftEdit extends React.Component<{
         let theme = this.context
 
         let active_style = {
-            color: theme.my_palette.text.on_secondary , 
-            backgroundColor: "rgba(30,60,40,0.5)"
+            color: theme.my_palette.text.on_primary , 
+            backgroundColor: "rgba(30,60,40,0.7)"
         }
         let unactive_style = {
-            backgroundColor: "rgba(130,170,160,0.5)",
+            backgroundColor: "rgba(130,170,160,0.8)",
             color: theme.my_palette.text.anti_on_primary ,
         }
         return <Box sx={{
@@ -161,8 +156,9 @@ class LeftEdit extends React.Component<{
             <MyLink underline="hover" href={url_from_root(`/admin/articlezone/node/${BackendData.node_id}/change/`)}>进入后台</MyLink>
             <br />
 
-            <div>组件IDX显示{props.idx_activated ? "已" : "未"}打开。</div>
-            <Button 
+            <Box sx={{...theme.printer.fonts.structure}}>
+                <Typography>组件IDX显示{props.idx_activated ? "已" : "未"}打开。</Typography>
+                <Button 
                 sx = {{
                     marginX: "1rem" , 
                     ...(props.idx_activated ? active_style : unactive_style) , 
@@ -171,15 +167,18 @@ class LeftEdit extends React.Component<{
                         transition: "background-color 400ms ease-out, color 400ms ease-out"
                     },
                     transition: "background-color 400ms ease-out, color 400ms ease-out" , 
+                    style: "block-inline" , 
+                }}
+                    onClick={()=>{
+                        if(props.onActivateIdx){
+                            props.onActivateIdx()
+                        }
+                    }}
+                >{props.idx_activated ? "停止显示" : "显示"}组件ID</Button>
 
-                }}
-                onClick={()=>{
-                    if(props.onActivateIdx){
-                        props.onActivateIdx()
-                    }
-                }}
-            >{props.idx_activated ? "停止显示" : "显示"}组件ID</Button>
-            <div>根节点IDX: {props.root["idx"]}</div>
+            </Box>
+            <Typography sx={{...theme.printer.fonts.structure}}></Typography>
+            <div>根节点IDX为 {props.root["idx"]}</div>
         </AutoStack></Box>
     }
 }
