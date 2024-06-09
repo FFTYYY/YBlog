@@ -1,10 +1,11 @@
 
 from django.shortcuts import render
 from django.http import HttpResponse , Http404
-from .utils import debug_convenient , must_login , allow_iframe, JSONDecode , node_can_view
+from .utils import debug_convenient , must_login , allow_iframe, JSONDecode , node_can_view, trigger_inspector
 from ..models import Node
 
 @debug_convenient
+@trigger_inspector
 @must_login(Http404())
 def edit_node_view(request , node_id):
 
@@ -17,6 +18,7 @@ def edit_node_view(request , node_id):
     })
 
 @debug_convenient
+@trigger_inspector
 @must_login(Http404())
 def edit_nodetree_view(request , node_id = None):
 
@@ -26,6 +28,7 @@ def edit_nodetree_view(request , node_id = None):
     })
 
 @debug_convenient
+@trigger_inspector
 @must_login(Http404())
 def edit_nodetree_shallow_view(request , node_id = None):
 

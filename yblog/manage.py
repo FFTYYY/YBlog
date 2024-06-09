@@ -3,10 +3,9 @@
 import os
 import sys
 
-
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'yblog.settings')
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "yblog.settings")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -17,6 +16,18 @@ def main():
         ) from exc
     execute_from_command_line(sys.argv)
 
+def start_inspector():
 
-if __name__ == '__main__':
+    from inspector import main as inspector_main
+    from multiprocessing import Process
+    from inspector_actions.sharedvalue_manage import init_trigger_time
+    
+    if init_trigger_time():
+        return
+    Process(target = inspector_main, args = (), daemon = True, name = "inspector") .start()
+
+if __name__ == "__main__":
+
+    start_inspector() 
+
     main()

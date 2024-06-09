@@ -6,7 +6,6 @@ import django.utils.timezone as timezone
 import django as que
 from ..constants import SHORT_STR_LENGTH 
 import json
-from .chatgpt import generate_tldr
 import time
 
 class Concept(models.Model):
@@ -143,17 +142,6 @@ class Node(models.Model):
 		if self.father is not None:
 			ret = ret + self.father.get_all_concepts()
 		return list( filter(lambda x: len(x) > 0 , ret) )
-
-	def update_tldr(self) -> bool:
-		'''更新摘要'''
-		
-		now_time = int( time.time() )
-		new_tldr = generate_tldr(self)
-		if new_tldr is not None and new_tldr.strip() != "":
-			self.tldr = new_tldr
-			self.tldr_updatetime = now_time
-			return True
-		return False
 	
 	def get_instances(self):
 		

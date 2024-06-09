@@ -3,3 +3,4 @@ django-extensions>=2.1.4
 django-json-widget
 YYYTools
 openai
+xingyun

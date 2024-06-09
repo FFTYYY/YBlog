@@ -2,16 +2,19 @@ from django.http import HttpResponse , JsonResponse , Http404, HttpRequest
 import json
 from ..models import Node , Comment , Resource , ConceptInstance
 from ..constants import SHORT_STR_LENGTH
-from .utils import debug_convenient , JSONDecode , must_login , node_can_view
+from .utils import debug_convenient , JSONDecode , must_login , node_can_view, trigger_inspector
 from django import forms
 import pdb
 import os
+import time 
 
 FAIL = JsonResponse({"status": False})
 SUCCESS = JsonResponse({"status": True})
 
+
 #注意`debug_convenient`必须放在外面，否则debug时访问失败无法正确接收失败信息。
 @debug_convenient
+@trigger_inspector
 @must_login(FAIL)
 def post_nodetree(request: HttpRequest , node_id: int):
 
@@ -38,6 +41,7 @@ def post_nodetree(request: HttpRequest , node_id: int):
 
 
 @debug_convenient
+@trigger_inspector
 @must_login(FAIL)
 def post_node_content(request: HttpRequest, node_id: int): 
 	
@@ -52,18 +56,21 @@ def post_node_content(request: HttpRequest, node_id: int):
 
 	return SUCCESS
 
+# XXX 这个函数可以删掉了
 @debug_convenient
+@trigger_inspector
 @must_login(FAIL)
 def post_generate_tldr(request: HttpRequest, node_id: int): 
 	
 	node = Node.objects.get(id = node_id)
-	node.update_tldr()
+	# node.update_tldr()
 	node.save()
 
 	return SUCCESS
 
 
 @debug_convenient
+@trigger_inspector
 @must_login(FAIL)
 def post_node_cache(request: HttpRequest, node_id: int): 
 	
@@ -80,6 +87,7 @@ def post_node_cache(request: HttpRequest, node_id: int):
 	return SUCCESS
 
 @debug_convenient
+@trigger_inspector
 def post_node_comments(request: HttpRequest , node_id: int):
 
 	if request.body == b"":
@@ -100,6 +108,7 @@ def post_node_comments(request: HttpRequest , node_id: int):
 	return SUCCESS
 
 @debug_convenient
+@trigger_inspector
 @must_login(FAIL)
 def post_upload_file(request: HttpRequest , node_id: int):
 
@@ -116,6 +125,7 @@ def post_upload_file(request: HttpRequest , node_id: int):
 	return SUCCESS
 
 @debug_convenient
+@trigger_inspector
 @must_login(FAIL)
 def post_manage_resource(request: HttpRequest , resource_id: int):
 
@@ -140,6 +150,7 @@ def post_manage_resource(request: HttpRequest , resource_id: int):
 	return SUCCESS
 
 @debug_convenient
+@trigger_inspector
 @must_login(FAIL)
 def post_delete_resource(request: HttpRequest):
 

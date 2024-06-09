@@ -12,11 +12,11 @@ class AllPostsRssFeed(Feed):
     def items(self):
         return Node.objects.all()
 
-    def item_title(self, item):
+    def item_title(self, item: Node):
         return item.get_title()
 
-    def item_description(self, item):
+    def item_description(self, item: Node):
         return item.tldr
     
-    def item_link(self, item):
+    def item_link(self, item: Node):
         return "/view/content/%d" % item.id

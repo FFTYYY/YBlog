@@ -4,6 +4,17 @@ from django.conf import settings
 from django.views.decorators.clickjacking import xframe_options_deny
 from django.views.decorators.clickjacking import xframe_options_sameorigin , xframe_options_exempt
 
+from inspector_actions.sharedvalue_manage import set_trigger_time 
+import time
+
+def trigger_inspector(response_func):
+    '''这个包装器在收到请求时设置trigger_time。'''
+    def warp_response_func(request , *args , **kwargs):
+             
+        set_trigger_time( int(time.time()) )
+        return response_func(request , *args , **kwargs)  
+    return warp_response_func
+
 def allow_iframe(response_func):
     '''这个包装器允许一个页面在iframe中出现。'''
     if settings.DEBUG:
