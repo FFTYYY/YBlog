@@ -8,7 +8,7 @@ import pickle
 import time 
 import numpy as np
 
-KEY = "_ylbog/inspector_trigger_time"
+KEY = "_ylbog_inspector_trigger_time"
 
 def init_trigger_time():
     '''初始化trigger_time。如果已经存在，那么返回False。否则返回True。'''
