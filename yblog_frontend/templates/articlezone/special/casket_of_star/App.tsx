@@ -217,9 +217,8 @@ class App extends  React.Component<{} , App_State>{
 			<MyTypo sx={{fontSize: "3rem"}}>星之器</MyTypo>
 			
             <MyTypo sx={{fontSize: "1rem", marginTop: "1rem"}}>
-				{"你在路边偶然捡到了一棵树，不知道是谁种的。这棵树的树根上写着几个大字『星之器』和一些小字。"}
-				{"再仔细看看，你发现这棵树的每个节点都有一个标题，并且写了一些文字。所有节点相互联结，形成了一棵文章之树。"}
-				{"这些文章一定是种下这棵树的人写的吧。"}
+				{"你在路边偶然捡到了一棵树，不知道是谁种的。这棵树的树根上写着几个大字『星之器』。"}
+				{"再仔细看看，你发现这棵树的每个节点都有一个标题，并且写了一些文字。所有节点相互连结，形成了一棵文章之树。"}
 			</MyTypo>
 			<Box sx={{
 				marginTop: "2rem" , 
@@ -319,7 +318,7 @@ class App extends  React.Component<{} , App_State>{
 					</Box>
 				</Box>}
 			</Box>
-			{tree_root == undefined ? <Box></Box> :<Box sx={{marginTop: "2rem"}}>
+			{/* {tree_root == undefined ? <Box></Box> :<Box sx={{marginTop: "2rem"}}>
 				<MyTypo sx={{fontSize: "1rem"}}>
 					{"在树根『星之器』的结尾，还写着几句诗，好像摘自一首晋代的乐府。想必这棵树的主人一定很喜欢这首诗吧。"}
 				</MyTypo>
@@ -333,7 +332,7 @@ class App extends  React.Component<{} , App_State>{
 						fontSize: "1.1rem" , 
 					}}>荠与麦兮夏零，兰桂践霜逾馨。禄命悬天难明，妾心结意丹青，何忧君心中倾。</MyTypo>
 				</Box>
-			</Box>}
+			</Box>} */}
 
 		</ScrollBarBox></Box></ThemeProvider></MUIThemeProvider>
 	}
@@ -341,28 +340,3 @@ class App extends  React.Component<{} , App_State>{
 
 export default App
 
-
-/**
- * 
- * 			<Box sx={{
-				marginLeft: "2rem" , 
-			}}>
-				<MyTypo sx={{fontSize: "0.9rem" }}>{starter}{whitespace}
-					{"每个节点都是唯一的根节点的后代。如果一个节点有子节点，那么这个节点就被称为『集』，否则称为『章』。"}
-				</MyTypo>
-
-				<MyTypo sx={{fontSize: "0.9rem"}}>{starter}{whitespace}
-					{"有些文本上加注了一些注释文本。"}
-					<MakeAbstract subcomp={abstract_example_subcomp}>
-						{"这样的文本称为一个『穆言』"}
-					</MakeAbstract>
-					{"。只需要把鼠标移动到绿色小三角形上或者点击就可以看到了。"}
-				</MyTypo>
-
-				<MyTypo sx={{fontSize: "0.9rem"}}>{starter}{whitespace}
-					{"还有一些特殊的节点类型。"}
-					{"但是我懒得写了，所以就这样吧。"}
-				</MyTypo>
-			</Box>
-
- */
