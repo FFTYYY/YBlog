@@ -112,6 +112,20 @@ var mathblock_style   = new FirstClassConcept   ({type: "group", name: "数学" 
     })   
 })
 
+var musicblock_style   = new FirstClassConcept   ({type: "group", name: "音乐" , 
+    parameter_prototype: make_param({
+    ...words_params , 
+        label: "音乐" ,
+        key:     "Cmaj" , 
+        unitlen: "1/4" , 
+        meter:  "4/4" ,
+        tempo: "" , 
+        title: "" , 
+        playchords: false , 
+    })   
+})
+
+
 
 var mount_style       = new FirstClassConcept   ({type: "group", name: "裱示"   , 
     parameter_prototype: make_param({
@@ -272,4 +286,5 @@ let first_concepts = [
     insertchildren_style , 
     nothing_style , 
     error_style , 
+    musicblock_style , 
 ]

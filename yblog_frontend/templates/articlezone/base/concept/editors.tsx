@@ -118,6 +118,9 @@ var mathblock_editor    = get_default_group_editor_with_rightbar({
     },
 })
 
+var musicblock_editor    = get_default_group_editor_with_rightbar({})
+
+
 var image_editor = get_default_display_editor({
     get_label: ()=>"图片" , 
     is_empty: (n,p)=>!(p.target) , 
@@ -176,6 +179,7 @@ let editors = {
         "彰示": display_editor ,
         "格示": formatted_editor , 
         "次节": subsection_editor  , 
+        "音乐": musicblock_editor , 
     } , 
     "inline": {
         "强": strong_editor , 

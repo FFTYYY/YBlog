@@ -84,6 +84,9 @@ import {
 	StandardAttachers , 
 } from "./base"
 
+import abcjs from "abcjs"
+import "abcjs/abcjs-audio.css"
+
 export {
 	renderers , 
 }
@@ -385,6 +388,92 @@ var mathblock_printer = (()=>{
 	})
 })()
 
+var musicblock_printer = (()=>{
+	return get_default_group_renderer({
+		inner: (props: PrinterRenderFunctionProps<GroupNode>) => {
+
+			let {node,parameters, context} = props
+			let music_ref = React.useRef<HTMLDivElement>(null)
+			let audio_ref = React.useRef<HTMLDivElement>(null)
+			let value 	= node2string(node, true)
+			let key = parameters.key
+			let unitlen = parameters.unitlen
+			let meter = parameters.meter
+			let tempo = parameters.tempo
+			let title = parameters.title
+			let playchords: boolean = parameters.playchords
+
+			value = `K: ${key}\nL: ${unitlen}\nM: ${meter}\nQ: ${tempo}\nT: ${title}\n${value}`
+
+			React.useEffect(()=>{
+
+				let target = music_ref?.current
+				let audio = audio_ref?.current
+				if((!target) || (!audio)){
+					return 
+				}
+
+				let visual_obj = abcjs.renderAbc(target, value, {
+					responsive: "resize",
+					scale: 1.0,
+					paddingtop: 0,
+					paddingbottom: 0,
+					paddingright: 0,
+					paddingleft: 0,
+					selectTypes: false
+				})
+
+				async function activate() {
+					
+
+					if (! abcjs.synth.supportsAudio()){
+						console.log("audio is not supported on this browser");
+						return 
+					}
+
+					if(audio.innerHTML){
+						audio.innerHTML = ""
+						return 
+					}
+
+					var controlOptions = {
+						displayRestart: true,
+						displayPlay: true,
+						displayProgress: true,
+						displayClock: true , 
+					}
+					var synthControl = new abcjs.synth.SynthController()
+					synthControl.load(audio, null, controlOptions)
+					synthControl.disable(true)
+
+					var midiBuffer = new abcjs.synth.CreateSynth()
+					await midiBuffer.init({
+						visualObj: visual_obj[0],
+						
+						// TODO 不work，不知道为啥
+						options: {
+							chordsOff: ! playchords,
+						} , 
+					})
+
+					await synthControl.setTune(visual_obj[0], true)
+
+					let coll = document.getElementsByClassName("abcjs-inline-audio")
+					for (let a of coll){
+						a.classList.remove("disabled");
+					}
+				}
+				target.addEventListener("click", activate)
+			})	
+			
+			return <StandardAttachers {...{node, context, parameters}}>
+				<div ref={music_ref}></div>
+				<div ref={audio_ref}></div>
+			</StandardAttachers>
+		} , 
+	})
+})()
+
 
 let line_printer = (()=>{
     function get_widths(node: StructNode, parameters: ProcessedParameterList){
@@ -433,7 +522,7 @@ let renderers = {
 		"格示": formatted_printer , 
 		"数学": mathblock_printer , 
 		"次节": subsection_printer , 
-		
+		"音乐": musicblock_printer , 
 	} ,
 
 	structure: {

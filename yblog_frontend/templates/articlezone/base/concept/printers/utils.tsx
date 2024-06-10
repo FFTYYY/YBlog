@@ -5,7 +5,8 @@ import {
     is_textnode , 
     ConceptNode , 
     is_groupnode , 
-    is_inlinenode , 
+    is_inlinenode, 
+    is_paragraphnode, 
 } from "@ftyyy/ytext"
 
 import {
@@ -62,12 +63,15 @@ function idx2node(root: Node, idx: number): ConceptNode | undefined{
 }
 
 /** 这个是一般的节点转字符串函数。这个函数会忠实地只转换叶子text节点。 */
-function node2string(node: Node){
+function node2string(node: Node, newline_when_par: boolean = false){
     if(is_textnode(node)){
-        return node.text
+        return node.text 
     }
-    let ret = (node.children as Node[]).reduce((s: string,x: Node)=>s + node2string(x), "")
-    return ret
+    let ret = (node.children as Node[]).reduce((s: string,x: Node)=>s + node2string(x, newline_when_par), "")
+    if(newline_when_par && is_paragraphnode(node)){
+        return ret + "\n"
+    }
+    return ret 
 }
 
 /** 这个是给autotooltip用的node2string。这个节点会给数学节点加上额外内容。 */
