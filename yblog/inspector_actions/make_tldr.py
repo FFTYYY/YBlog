@@ -25,9 +25,9 @@ def analyze_tree(node_tree):
 def action(node: Node):
     
     now_time = int( time.time() )
-    # if node.tldr_updatetime > now_time - 60 * 60 * 24 * 7:
-    #     logger.log(f"Genrate tldr for node {node.id} fail. Because tldr updated in 7 days.")
-    #     return False
+    if node.tldr_updatetime > now_time - 60 * 60 * 24 * 7:
+        logger.log(f"Genrate tldr for node {node.id} fail. Because tldr updated in 7 days.")
+        return False
 
     prompt_suff = ""
     prompt_post = "\n以上是我写作的一篇文章。假设你是一个专业的文章评论员，请你给这个文章写一小段总结。" \
