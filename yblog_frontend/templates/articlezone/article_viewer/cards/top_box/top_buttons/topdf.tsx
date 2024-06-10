@@ -1,5 +1,5 @@
 /** 这个模块定义右上按钮栏的打印成pdf按钮。 
- * TODO：目前还不work
+ * TODO 目前是latex
 */
 
 import React from "react"
@@ -77,7 +77,6 @@ function ToPDFButton(props: {root: AbstractNode}){
                     let latex = to_pdf(get_printer_comp, props.root)
                     set_latex(latex)
                     set_open(true)
-                    console.log("???")
                 }}
             >
                 <MaleOutlinedIcon fontSize="small"/>
@@ -108,8 +107,14 @@ function ToPDFButton(props: {root: AbstractNode}){
             open = {open}
             anchorReference = "none"
             onClose = {()=>{set_open(false)}}
-        >
+        ><ScrollBarBox sx={{
+            width: "100%" , 
+            height: "100%" , 
+            paddingX: "1rem",
+            paddingY: "1rem" , 
+            overflow: "auto" , 
+        }}>
             <pre>{latex}</pre>
-        </Popover>
+        </ScrollBarBox></Popover>
     </>
 }

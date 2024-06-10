@@ -217,8 +217,8 @@ class App extends  React.Component<{} , App_State>{
 			<MyTypo sx={{fontSize: "3rem"}}>星之器</MyTypo>
 			
             <MyTypo sx={{fontSize: "1rem", marginTop: "1rem"}}>
-				{"你在路边偶然捡到了一棵树，不知道是谁种的。这棵树的树根上写着几个大字『星之器』。"}
-				{"再仔细看看，你发现这棵树的每个节点都有一个标题，并且写了一些文字。所有节点相互连结，形成了一棵文章之树。"}
+				{"你在路边偶然捡到了一棵树，这棵树的树根上写着几个大字『星之器』。"}
+				{"你发现这棵树的每个节点都有一个标题，并且写了一些文字。所有节点相互连结，形成了一棵文章之树。"}
 			</MyTypo>
 			<Box sx={{
 				marginTop: "2rem" , 

@@ -471,10 +471,12 @@ var musicblock_printer = (()=>{
 				target.addEventListener("click", activate)
 			})	
 			
-			return <StandardAttachers {...{node, context, parameters}}>
+			return <StandardAttachers {...{node, context, parameters}}><Box sx={{
+				marginX: "10%" , 
+			}}>
 				<div ref={music_ref}></div>
 				<div ref={audio_ref}></div>
-			</StandardAttachers>
+			</Box></StandardAttachers>
 		} , 
 	})
 })()
