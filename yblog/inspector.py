@@ -46,7 +46,7 @@ def main():
         action_sucess = action(now_node)
 
         if action_sucess:
-            time.sleep(5)
+            time.sleep(10)
 
 
     
