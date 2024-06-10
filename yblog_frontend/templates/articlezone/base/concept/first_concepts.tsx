@@ -189,6 +189,7 @@ var nothing_style  = new FirstClassConcept  ({type: "inline", name: "无" ,
 var error_style  = new FirstClassConcept  ({type: "inline", name: "阻" , 
     parameter_prototype: make_param({
         label: "阻" ,
+        severe: false , 
     })
 })
 

@@ -322,7 +322,7 @@ var mount_printer = (()=>{
 					<PrinterStructureBoxText>
 						<StandardAttachers {...{node, context, parameters}}>{title}</StandardAttachers>
 					</PrinterStructureBoxText>
-					: <StandardAttachers {...{node, context, parameters}} />
+					: <></>
 				}
 				{text_jsx}
 				{close ? <PrinterStructureBoxText align="right">{close}</PrinterStructureBoxText> : <></>}

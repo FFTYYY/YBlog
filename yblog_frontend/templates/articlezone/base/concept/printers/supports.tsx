@@ -148,10 +148,12 @@ var sectioner_printer = (()=>{
 			}
 			
 
+			// XXX 不确定要不要序号
 			// 如果是`alone`的就不显示序号惹。
-			let order_word = alone ? <></> : <PrinterStructureBoxText inline sx={{fontWeight: 10000}}>
-				第{num2chinese(order)} 
-			</PrinterStructureBoxText>
+			// let order_word = alone ? <></> : <PrinterStructureBoxText inline sx={{fontWeight: 10000}}>
+			// 	第{num2chinese(order)} 
+			// </PrinterStructureBoxText>
+			let order_word = <></>
 
 			let title_word = title ? <StandardAttachers {...{node, context, parameters}} inline>
 				<PrinterStructureBoxText inline sx={{marginRight: 0}}>
@@ -159,6 +161,7 @@ var sectioner_printer = (()=>{
 				</PrinterStructureBoxText> 
 			</StandardAttachers>: <></>
 
+			// XXX 不确定要不要这个symbol
 			let symbol = (alone && !(title)) ? <></> : <FangSheng strokeWidth="2px" style={{
 				height: "0.85rem", 
 				marginRight: "0.5rem",
