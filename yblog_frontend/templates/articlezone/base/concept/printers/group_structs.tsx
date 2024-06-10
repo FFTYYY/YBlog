@@ -402,8 +402,14 @@ var musicblock_printer = (()=>{
 			let tempo = parameters.tempo
 			let title = parameters.title
 			let playchords: boolean = parameters.playchords
+			
+			let key_prefix = key ? `K: ${key}\n` : ""
+			let unitlen_prefix = unitlen ? `L: ${unitlen}\n` : ""
+			let meter_prefix = meter ? `M: ${meter}\n` : ""
+			let tempo_prefix = tempo ? `Q: ${tempo}\n` : ""
+			let title_prefix = title ? `T: ${title}\n` : ""
 
-			value = `K: ${key}\nL: ${unitlen}\nM: ${meter}\nQ: ${tempo}\nT: ${title}\n${value}`
+			value = `${key_prefix}${unitlen_prefix}${meter_prefix}${tempo_prefix}${title_prefix}${value}`
 
 			React.useEffect(()=>{
 
@@ -425,7 +431,6 @@ var musicblock_printer = (()=>{
 
 				async function activate() {
 					
-
 					if (! abcjs.synth.supportsAudio()){
 						console.log("audio is not supported on this browser");
 						return 

@@ -17,7 +17,7 @@ import {
 
 
 import { TopBread } from "./bread"
-import { BasicInfoButton , CommentButton , AboutButton, EditButton} from "./top_buttons"
+import { BasicInfoButton , CommentButton , AboutButton, EditButton, ToPDFButton} from "./top_buttons"
 import { Interaction , BackendData } from "../../../base/interaction"
 
 export { TopBox }
@@ -84,6 +84,7 @@ function TopBox(props: {
             <AboutButton />
             <CommentButton   root = {props.root} />
             <BasicInfoButton root = {props.root} />
+            <ToPDFButton     root = {props.root} />
         </Box>
     </MyAutoStack>
 }

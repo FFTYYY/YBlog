@@ -79,7 +79,6 @@ var error_printer = (()=>{
 	return get_default_inline_renderer({
 		outer: (props: PrinterRenderFunctionProps<InlineNode>) => {
 			let parameters = props.parameters
-			console.log(parameters.severe)
 			if(!parameters.severe){
 				return <></>
 			}

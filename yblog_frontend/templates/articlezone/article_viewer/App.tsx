@@ -75,10 +75,7 @@ class App extends  React.Component<{} , {
 	}
 
 	get_printer_comp(){
-		if(this.printer_comp_ref && this.printer_comp_ref.current){
-			return this.printer_comp_ref.current
-		}
-		return undefined
+		return this.printer_comp_ref?.current
 	}
 
 	async componentDidMount(){
@@ -141,24 +138,29 @@ class App extends  React.Component<{} , {
 			color: "text.primary" , 
 		}}
 		><CssBaseline />
-			<AppBar sx={{
-				position: "absolute" , 
-				top: "0" ,
-				left: "0" , 
-				height: "2.60rem" , 
-				width: "100%" , 
-				opacity: "0.9" , 
-				border: "1px solid grey" , 
-				// backgroundColor: "rgb(240,240,230)" , 
+		
+			<GlobalInfoProvider value={{
+				get_printer_comp: () => {return me.get_printer_comp()?.get_component() } ,
 			}}>
-				<TopBox 
-					root = {tree} 
-					idx_activated = {me.state.activate_idx}
-					onActivateIdx = {()=>{ // 逆转！
-						me.setState({activate_idx: !me.state.activate_idx})
-					}}
-				></TopBox>
-			</AppBar>
+				<AppBar sx={{
+					position: "absolute" , 
+					top: "0" ,
+					left: "0" , 
+					height: "2.60rem" , 
+					width: "100%" , 
+					opacity: "0.9" , 
+					border: "1px solid grey" , 
+					// backgroundColor: "rgb(240,240,230)" , 
+				}}>
+					<TopBox 
+						root = {tree} 
+						idx_activated = {me.state.activate_idx}
+						onActivateIdx = {()=>{ // 逆转！
+							me.setState({activate_idx: !me.state.activate_idx})
+						}}
+					></TopBox>
+				</AppBar>
+			</GlobalInfoProvider>
 			
 			<Box sx={{
 				position: "absolute" , 
@@ -198,7 +200,7 @@ class App extends  React.Component<{} , {
 								tree.parameters.title.val
 							}</PrinterStructureBoxText>
 						</Box>
-						<Box>
+						<Box id = "printer_main">
 							<DefaultPrinterComponent 
 								ref = {this.printer_comp_ref}
 								printer = {printer} 
@@ -227,6 +229,7 @@ class App extends  React.Component<{} , {
 					</GlobalInfoProvider>
 				</MathJaxContext></ScrollBarBox>
 			</Box>
+
 			<Box sx={{
 				position: "absolute" , 
 				top: "6%" ,
