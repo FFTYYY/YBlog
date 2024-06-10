@@ -36,7 +36,6 @@ export {
     TopMenu , 
 }
 
-// TODO 
 /**
  * 
  * @param props.node_id 当前节点的id
@@ -142,7 +141,7 @@ function TopMenu(props: {
             ref = {link_ref}
             sx = {{
                 marginX: "0.2rem" ,  
-                width: level == "high" ? "calc(100% - 0.4rem)" : "calc(100% - 0.4rem)", 
+                width: level == "high" ? "100%" : "calc(100% - 0.4rem)", 
                 justifyContent: "flex-start" , 
                 textAlign: "left" , 
                 ...(level == "high" ? {whiteSpace: "nowarp"} : {}) ,  
