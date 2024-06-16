@@ -9,5 +9,5 @@ A blog system based on `YText`.
 
 # Run server
 
-- run `gunicorn --workers 3 yblog.wsgi:application`.
-- run `cd nginx && python make_nginx.py`
+- on any path: run `gunicorn --workers 3 yblog.wsgi:application`.
+- on `nginx/`: run `python make_nginx.py`
