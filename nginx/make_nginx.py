@@ -2,7 +2,6 @@ from config import DOMAIN, LOCALPATH, NGINX_PATH, NGINX_ENABLED_PATH, NAME
 import os 
 
 template = '''
-user www-data;
 server {
 	listen 80;
 	server_name %s;
