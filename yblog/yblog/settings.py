@@ -98,6 +98,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# idk but seems okay....
+# XXX potential security issue
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
