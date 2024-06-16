@@ -1,10 +1,11 @@
 from config import DOMAIN, LOCALPATH, NGINX_PATH, NGINX_ENABLED_PATH, NAME
 import os 
 
-template = '''server {
+template = '''
+user www-data;
+server {
 	listen 80;
 	server_name %s;
-    user www-data;
 
     location / {
         proxy_pass http://127.0.0.1:8001;
