@@ -26,4 +26,5 @@ if __name__ == "__main__":
     with open(NGINX_PATH, "w") as f:
         f.write(template)
     os.system(f"sudo ln -s {NGINX_PATH} {NGINX_ENABLED_PATH}")
+    os.system(f"rm {NGINX_ENABLED_PATH}")
     pass
