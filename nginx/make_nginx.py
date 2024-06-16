@@ -4,7 +4,7 @@ import os
 template = """server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
-	server_name {DOMAIN};
+	server_name {domain};
 
     location / {
         proxy_pass http://127.0.0.1:8001;
@@ -15,13 +15,13 @@ template = """server {
     }
 
     location /static/ {
-        alias {LOCALPATH}/static/;
+        alias {localpath}/static/;
     }
 
     location /media/ {
-        alias {LOCALPATH}/media/;
+        alias {localpath}/media/;
     }
-}""".format(DOMAIN = DOMAIN, LOCALPATH = LOCALPATH)
+}""".format(domain = DOMAIN, localpath = LOCALPATH)
 
 if __name__ == "__main__": 
     with open(NGINX_PATH, "w") as f:
