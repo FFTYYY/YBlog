@@ -4,9 +4,9 @@ A blog system based on `YText`.
 
 - create a file `yblog/extra_infos.py`, and fill it out based on the template provided in `yblog/extra_infos.py.template`
 - creat a file `nginx/config.py`, and fill it out based on the template provided in `nginx/config.py.template`
-- run `python manage.py createsuperuser`, and follow the instructions
-- run `python manage.py migrate`.
 - on `nginx/`: run `python make_nginx.py`.
+- on `yblog/`: run `python manage.py createsuperuser`, and follow the instructions.
+- on `yblog/`: run `python manage.py migrate`.
 
 # Run server
 
