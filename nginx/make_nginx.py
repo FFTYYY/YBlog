@@ -4,7 +4,7 @@ import os
 template = '''server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
-	server_name {0};
+	server_name %s;
 
     location / {
         proxy_pass http://127.0.0.1:8001;
@@ -15,15 +15,16 @@ template = '''server {
     }
 
     location /static/ {
-        alias {1}/static/;
+        alias %s/static/;
     }
 
     location /media/ {
-        alias {1}/media/;
+        alias %s/media/;
     }
-};'''.format(DOMAIN, LOCALPATH)
+};''' % (DOMAIN, LOCALPATH, LOCALPATH)
 
 if __name__ == "__main__": 
     with open(NGINX_PATH, "w") as f:
         f.write(template)
     os.system(f"sudo ln -s {NGINX_PATH} {NGINX_ENABLED_PATH}")
+    pass
