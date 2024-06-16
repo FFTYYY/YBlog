@@ -2,8 +2,7 @@ from config import DOMAIN, LOCALPATH, NGINX_PATH, NGINX_ENABLED_PATH
 import os 
 
 template = '''server {
-	listen 80 default_server;
-	listen [::]:80 default_server;
+	listen 80;
 	server_name %s;
 
     location / {
@@ -21,7 +20,7 @@ template = '''server {
     location /media/ {
         alias %s/media/;
     }
-};''' % (DOMAIN, LOCALPATH, LOCALPATH)
+}''' % (DOMAIN, LOCALPATH, LOCALPATH)
 
 if __name__ == "__main__": 
     with open(NGINX_PATH, "w") as f:
