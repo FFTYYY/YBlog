@@ -213,15 +213,7 @@ var followwords_printer = (()=>{
 
 			// followwords 不论如何都会有额外的缩进。
 			return <AutoStack force_direction="column">
-				{title_content? 
-					<PrinterStructureBoxText>
-						<StandardAttachers {...{node, context, parameters}} inline>
-							{title_content}
-						</StandardAttachers>
-					</PrinterStructureBoxText>
-					: <StandardAttachers {...{node, context, parameters}} inline />
-				}
-				<PrinterNewLevelBox><PrinterWeakenText>{props.children}</PrinterWeakenText></PrinterNewLevelBox>
+				{props.children}
 				{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
 			</AutoStack>
 		} , 
@@ -291,7 +283,7 @@ var subwords_printer = (()=>{
 								</PrinterParagraphBox> 
 							: <StandardAttachers {...{node, context, parameters}} inline />}
 						</PrinterOldLevelBox>
-						<Box>{props.children}</Box>
+						<Box sx={{width: "100%"}}>{props.children}</Box>
 					</AutoStack>
 					{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
 				</AutoStack>
@@ -392,7 +384,7 @@ var musicblock_printer = (()=>{
 	return get_default_group_renderer({
 		inner: (props: PrinterRenderFunctionProps<GroupNode>) => {
 
-			let {node,parameters, context} = props
+			let {node,parameters, context, children} = props
 			let music_ref = React.useRef<HTMLDivElement>(null)
 			let audio_ref = React.useRef<HTMLDivElement>(null)
 			let value 	= node2string(node, true)
@@ -414,7 +406,7 @@ var musicblock_printer = (()=>{
 			React.useEffect(()=>{
 
 				let target = music_ref?.current
-				let audio = audio_ref?.current
+				let audio  = audio_ref?.current
 				if((!target) || (!audio)){
 					return 
 				}
@@ -470,13 +462,10 @@ var musicblock_printer = (()=>{
 				}
 				target.addEventListener("click", activate)
 			})	
-			
-			return <StandardAttachers {...{node, context, parameters}}><Box sx={{
-				marginX: "10%" , 
-			}}>
+			return <StandardAttachers {...{node, context, parameters}}>
 				<div ref={music_ref}></div>
 				<div ref={audio_ref}></div>
-			</Box></StandardAttachers>
+			</StandardAttachers>
 		} , 
 	})
 })()
