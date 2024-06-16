@@ -1,9 +1,10 @@
-from config import DOMAIN, LOCALPATH, NGINX_PATH, NGINX_ENABLED_PATH
+from config import DOMAIN, LOCALPATH, NGINX_PATH, NGINX_ENABLED_PATH, NAME
 import os 
 
 template = '''server {
 	listen 80;
 	server_name %s;
+    user www-data;
 
     location / {
         proxy_pass http://127.0.0.1:8001;
@@ -18,13 +19,13 @@ template = '''server {
     }
 
     location /media/ {
-        alias %s/media/;
+        alias %s/medias/;
     }
 }''' % (DOMAIN, LOCALPATH, LOCALPATH)
 
 if __name__ == "__main__": 
     with open(NGINX_PATH, "w") as f:
         f.write(template)
-    os.system(f"sudo ln -s {NGINX_PATH} {NGINX_ENABLED_PATH}")
-    os.system(f"rm {NGINX_ENABLED_PATH}")
+    os.system(f"rm {NGINX_ENABLED_PATH}/{NAME}")
+    os.system(f"sudo ln -s {NGINX_PATH}/{NAME} {NGINX_ENABLED_PATH}")
     pass
