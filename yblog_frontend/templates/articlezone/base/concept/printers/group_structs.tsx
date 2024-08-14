@@ -213,7 +213,15 @@ var followwords_printer = (()=>{
 
 			// followwords 不论如何都会有额外的缩进。
 			return <AutoStack force_direction="column">
-				{props.children}
+				{title_content? 
+					<PrinterStructureBoxText>
+						<StandardAttachers {...{node, context, parameters}} inline>
+							{title_content}
+						</StandardAttachers>
+					</PrinterStructureBoxText>
+					: <StandardAttachers {...{node, context, parameters}} inline />
+				}
+				<PrinterNewLevelBox><PrinterWeakenText>{props.children}</PrinterWeakenText></PrinterNewLevelBox>
 				{close ? <PrinterStructureBoxText>{close}</PrinterStructureBoxText> : <></>}
 			</AutoStack>
 		} , 
