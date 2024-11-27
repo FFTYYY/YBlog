@@ -1,0 +1,11 @@
+mjx-merror mjx-utext{
+    width: 100% !important;
+    padding: 0 !important;
+}
+mjx-merror mjx-container{
+    margin: 0 !important;
+}
+mjx-merror{
+    background-color: rgba(0,0,0,0) !important;
+    color: inherit !important;
+}

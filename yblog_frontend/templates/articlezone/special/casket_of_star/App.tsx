@@ -95,7 +95,7 @@ function MyLink(props: {id: number, sx?: LinkProps["sx"]}){
 		}}
 		href = {urls.view.content(props.id)} 
 	>
-		<MyTypo sx={{fontSize: "0.9rem"}}><TitleWord node_id={props.id}/></MyTypo>
+		<MyTypo sx={{fontSize: "0.9rem"}}><MathJaxFlusher><TitleWord node_id={props.id}/></MathJaxFlusher></MyTypo>
 	</Link>
 }
 
@@ -203,16 +203,16 @@ class App extends  React.Component<{} , App_State>{
 		// TODO 不知道为什么build之后cssbaseline没有生效，需要手动加入背景和前景颜色。
 		return <MUIThemeProvider theme={MUICreateTheme(my_theme.mui)}><ThemeProvider value={my_theme}><Box><ScrollBarBox sx={{
 			position: "fixed" , 
-			top: "2%" , 
-			width: "50%" , 
-			height: "96%" , 
-			left: "25%" , 
-			backgroundColor: "rgba(0,0,0,0)", 
-			color: "text.primary" , 
-			
-			overflow: "auto" , 
-		}}
-		><CssBaseline />
+				top: "2%" , 
+				width: "50%" , 
+				height: "96%" , 
+				left: "25%" , 
+				backgroundColor: "rgba(0,0,0,0)", 
+				color: "text.primary" , 
+				
+				overflow: "auto" , 
+			}}
+		><MathJaxContext><CssBaseline />
 
 			<MyTypo sx={{fontSize: "3rem"}}>星之器</MyTypo>
 			
@@ -334,7 +334,7 @@ class App extends  React.Component<{} , App_State>{
 				</Box>
 			</Box>} */}
 
-		</ScrollBarBox></Box></ThemeProvider></MUIThemeProvider>
+		</MathJaxContext></ScrollBarBox></Box></ThemeProvider></MUIThemeProvider>
 	}
 }
 

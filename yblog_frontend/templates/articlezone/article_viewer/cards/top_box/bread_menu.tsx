@@ -151,6 +151,8 @@ function TopMenu(props: {
                 paddingY: "0.1rem" , 
                 marginY: level == "high" ? "0.4rem" : "0.1rem",
                 minWidth: "1rem", 
+                textTransform: "none" , 
+
                 
                 color: theme.my_palette.text.on_primary , 
                 backgroundColor: theme.my_palette.background.primary , 

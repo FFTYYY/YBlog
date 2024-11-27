@@ -87,7 +87,6 @@ import {
 	MathJaxBlock , 
 	TitleWord , 
 	MathJaxFlusher , 
-	flush_mathjax , 
 } from "../../construction"
 import { insertchildren_style } from "../first_concepts"
 
@@ -285,7 +284,6 @@ var showchildren_printer = (()=>{
 						now_tldrs[son_id] = now_tldr
 					}
 					set_tldrs(now_tldrs)
-					setTimeout(flush_mathjax, 500)
 				})()
 
 			} , [ JSON.stringify(parameters) ])
@@ -428,18 +426,12 @@ var insertchildren_printer = (()=>{
 				}
 
 				set_sub_infos({roots: roots, init_envs: init_envs})
-				setTimeout(flush_mathjax, 500)
 			})()}, [])
 
 			let {roots , init_envs} = sub_infos
 			if(roots.length != son_ids.length || son_ids.length != init_envs.length){
 				return <></>
 			}
-
-			// setTimeout(()=>{
-			// 	console.log("flushing")
-			// 	flush_mathjax()
-			// }, 5000)
 
 			return <MathJaxFlusher>
 				<StandardAttachers {...{node, context, parameters}} inline />
@@ -507,7 +499,6 @@ var gatherindis_printer = (()=>{
 						now_tldrs[indis_id] = now_tldr
 					}
 					set_tldrs(now_tldrs)
-					setTimeout(flush_mathjax, 500)
 				})()
 
 			} , [ JSON.stringify(parameters) ])

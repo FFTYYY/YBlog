@@ -317,7 +317,7 @@ class App extends  React.Component<{}, {
 						width: "49%" ,
 						left: "0%" , 
 						top: "0" , 
-						height: "100%" , 
+						height: "100%" , 						
 					}}>
 						<DefaultEditorComponent
 							ref = {me.editor_ref}

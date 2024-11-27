@@ -11,6 +11,6 @@ A blog system based on `YText`.
 # Run server
 
 - on `yblog/`: run `python manage.py collectstatic`.
-- on any path: run `gunicorn --workers 3 yblog.wsgi:application --bing 127.0.0.1:8001`.
+- on `yblog/`: run `gunicorn --workers 3 yblog.wsgi:application --bind 127.0.0.1:8001`.
 - make sure nginx is on: `sudo systemctl restart nginx`
 
