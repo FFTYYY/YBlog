@@ -74,7 +74,6 @@ import {
 } from "../../utils"
 
 import {
-	MathJaxInline , 
 	MathJaxBlock , 
 } from "../../construction"
 import { Acanthus, Acanthus2, Acanthus3, Acanthus4, BaJiao, BaoXiangHua, Hui, MeiGui } from "../../../assets"

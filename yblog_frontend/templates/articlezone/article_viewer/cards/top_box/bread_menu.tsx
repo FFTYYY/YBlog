@@ -192,7 +192,7 @@ function TopMenu(props: {
             >{({ TransitionProps }) => (<Fade {...TransitionProps} timeout={200}><Box><ScrollBarBox
                 sx = {{
                     marginLeft: "0.3rem" , 
-                    marginTop: level == "high" ? "0.5rem" : (idx == 0 ? 0 : "-1.5rem") , 
+                    marginTop: level == "high" ? "0.5rem" : (idx == 0 ? 0 : "-0.7rem") , 
                     marginBottom: "1rem" , 
                     
                     minWidth: "5rem" , 

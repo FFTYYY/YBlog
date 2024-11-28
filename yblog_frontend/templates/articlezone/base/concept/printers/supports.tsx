@@ -83,8 +83,6 @@ import {
 } from "../../utils"
 
 import {
-	MathJaxInline , 
-	MathJaxBlock , 
 	TitleWord , 
 	MathJaxFlusher , 
 } from "../../construction"

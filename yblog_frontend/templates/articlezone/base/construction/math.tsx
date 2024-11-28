@@ -13,35 +13,48 @@ let MATHJAX_BLOCK_END = "$$"
 /** 这个函数清除mathjax的缓存内容（label和节点编号之类的） */
 function clear_memory(MathJax: any){
     MathJax.startup.document.state(0)
-    MathJax.texReset()
+    // MathJax.texReset()
     MathJax.typeset()
     MathJax.typesetClear()
 }
 
-var flush_math = new DoSomething(()=>{
-    let MathJax = (window as any).MathJax
-    if(MathJax != undefined && MathJax.typesetPromise != undefined){
-        clear_memory(MathJax)
-        MathJax.typesetPromise()
-        clear_memory(MathJax)    
-        console.log("clear")
-    }
-} , 5000)
+var last_flush = 0
+function flush_math(){
+    // let MathJax = (window as any).MathJax
+    // if(MathJax == undefined || MathJax.typesetPromise == undefined)
+    //     return 
+    // let now = Date.now()
+    // if(now - last_flush < 5000)
+    //     return
+    // console.log("flush")
+
+    // clear_memory(MathJax)
+    // MathJax.typesetPromise()
+    // clear_memory(MathJax)    
+    // last_flush = now
+}
 
 function MathJaxInline(props: {children: any}){
-    return <span className = "mathjax_process">{MATHJAX_INLINE_START}{props.children}{MATHJAX_INLINE_END}</ span>
+    return <span className = "mathjax_process"><MathJax dynamic>{MATHJAX_INLINE_START}{props.children}{MATHJAX_INLINE_END}</MathJax></ span>
 }
 
 function MathJaxBlock(props: {children: any}){
-    return <div className = "mathjax_process">{MATHJAX_BLOCK_START}{props.children}{MATHJAX_BLOCK_END}</div>
+    return <div className = "mathjax_process"><MathJax dynamic>{MATHJAX_BLOCK_START}{props.children}{MATHJAX_BLOCK_END}</MathJax></div>
 }
 
-function MathJaxFlusher(props: {children: any}){
-    React.useEffect(()=>{
-        flush_math.go()
-    } , [props.children] )
-    return <div className = "mathjax_process">{props.children}</ div>
+function MathJaxFlusher(props: {
+    block?: boolean | undefined , 
+    children: any
+}){
+    let block = props.block
+    let children = props.children
+
+    if (block){
+        return <MathJax dynamic>{props.children}</MathJax>
+    }
+    return <MathJax inline dynamic>{props.children}</MathJax>
 }
+
 const config = {
     loader: {
         load: ["input/tex", "output/chtml", "[tex]/boldsymbol"] // 使用 CHTML 渲染并加载必要模块
@@ -63,8 +76,8 @@ const config = {
 };
   
 function MathJaxContext(props: {children: any}){  
-    return <_MathJaxContext version={3} config={config}><MathJax dynamic>
+    return <_MathJaxContext version={3} config={config}>
         {props.children}
-    </MathJax></_MathJaxContext>
+    </_MathJaxContext>
 }
 

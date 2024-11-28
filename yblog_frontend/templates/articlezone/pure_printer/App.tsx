@@ -35,11 +35,11 @@ import {
 } from "@ftyyy/ytext"
 import { my_theme } from "../base/construction"
 import { Interaction , BackendData } from "../base/interaction"
-import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../base/construction"
+import { MathJaxContext  } from "../base/construction"
 import { renderers , default_renderers } from "../base/concept"
 import { parse_second_concepts } from "../base/utils"
 import { first_concepts } from "../base/concept"
-import { flush_math , MathJaxFlusher } from "../base/construction/math"
+import { MathJaxFlusher } from "../base/construction/math"
 
 import "overlayscrollbars/overlayscrollbars.css"
 import { OverlayScrollbars } from "overlayscrollbars"
@@ -88,10 +88,6 @@ class App extends  React.Component<{} , {
 			tree: root , 
 			cache: cache , 
 		})
-
-		setTimeout(()=>{
-			flush_math.go()
-		} , 1000)
 	}
 
 	render(){

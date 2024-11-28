@@ -8,11 +8,14 @@ import {
 
 import {
     get_default_paragraph_renderer , 
-	useless_renderer_text , 
+	// useless_renderer_text , 
 	useless_renderer_inline , 
 	useless_renderer_block , 
 } from "@ftyyy/ytext"
 
+import {
+	my_useless_renderer_text , 
+} from "./basic"
 
 import {renderers as group_struct_renderers} from "./group_structs"
 import {renderers as inline_renderers} from "./inlines"
@@ -31,7 +34,7 @@ let default_renderers = {
     "abstract"  : useless_renderer_block , 
     "paragraph" : get_default_paragraph_renderer({}) , 
     "inline"    : useless_renderer_inline , 
-    "text"      : useless_renderer_text , 
+    "text"      : my_useless_renderer_text , 
 
 }
 

@@ -23,7 +23,7 @@ import {
     BaoXiangHua, MeiGui , 
 } from "../../../assets"
 import { BaJiao, LiuBian, SanJiao } from "../../../assets/decors"
-import { flush_math , MathJaxFlusher } from "../../construction/math"
+import { MathJaxFlusher } from "../../construction/math"
 
 export {
     renderers , 
@@ -37,13 +37,10 @@ function MakeAbstract(props: {subcomp: any, children: any}){
 
     return <React.Fragment>
         <div style={{display: "inline-block", marginRight: "5px"}}>{props.children}</div>
-        <Tooltip title={subcomp} placement="right" onMouseMove={()=>{
-            flush_math.go()
-        }}>
+        <Tooltip title={subcomp} placement="right">
             <Link 
                 onClick = {(e)=>{
                     set_show_abstract(true)
-                    // setTimeout(()=>{flush_math.go()} , 500)
                 }} 
                 color = "inherit"
                 href = "#"
@@ -73,10 +70,7 @@ function MakeAbstract(props: {subcomp: any, children: any}){
             maxWidth = "lg" 
             open = {show_abstract} 
             onClose = {()=>set_show_abstract(false)}
-            onAnimationEnd = {()=>{
-                flush_math.go()
-            }}
-        >{subcomp}</Dialog>
+        ><MathJaxFlusher>{subcomp}</MathJaxFlusher></Dialog>
     </React.Fragment> 
 
 }

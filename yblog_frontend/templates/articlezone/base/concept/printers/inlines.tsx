@@ -36,7 +36,6 @@ import {
 import {
 	MathJaxInline , 
 	MathJaxBlock , 
-	flush_math , 
 	MathJaxFlusher , 
 } from "../../construction"
 

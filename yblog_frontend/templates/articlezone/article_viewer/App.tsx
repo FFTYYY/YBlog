@@ -37,12 +37,11 @@ import {
 
 import { my_theme } from "../base/construction"
 import { Interaction , BackendData } from "../base/interaction"
-import { MathJaxContext , MathJaxInline , MathJaxBlock } from "../base/construction"
+import { MathJaxContext  } from "../base/construction"
 import { renderers , default_renderers } from "../base/concept"
 import { parse_second_concepts } from "../base/utils"
 import { first_concepts } from "../base/concept"
 import { LeftBox, RightBox, TopBox } from "./cards"
-import { flush_math , MathJaxFlusher } from "../base/construction/math"
 import { FangSheng, BaJiao, Hui, BaoXiangHua, Acanthus, Acanthus3, Acanthus4 } from "../assets"
 // import "./style.css"
 
@@ -113,10 +112,6 @@ class App extends  React.Component<{} , {
 				modify_time: time_info.modify_time , 
 			}
 		})
-
-		setTimeout(()=>{
-			flush_math.go()
-		} , 1000)
 	}
 
 	render(){
@@ -137,7 +132,7 @@ class App extends  React.Component<{} , {
 			backgroundColor: "rgba(0,0,0,0)", 
 			color: "text.primary" , 
 		}}
-		><CssBaseline />
+		><MathJaxContext><CssBaseline />
 		
 			<GlobalInfoProvider value={{
 				get_printer_comp: () => {return me.get_printer_comp()?.get_component() } ,
@@ -247,7 +242,7 @@ class App extends  React.Component<{} , {
 					}}
 				/>
 			</Box>
-		</Box></ThemeProvider></MUIThemeProvider>
+		</MathJaxContext></Box></ThemeProvider></MUIThemeProvider>
 	}
 }
 

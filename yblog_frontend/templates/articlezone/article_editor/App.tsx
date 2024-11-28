@@ -87,7 +87,6 @@ import CssBaseline from "@mui/material/CssBaseline"
 import { SnackbarProvider  } from "notistack"
 import "overlayscrollbars/overlayscrollbars.css"
 import { OverlayScrollbars } from "overlayscrollbars"
-import { flush_math } from "../base/construction/math"
 
 class App extends  React.Component<{}, {
 	printer: Printer  | undefined
@@ -327,7 +326,6 @@ class App extends  React.Component<{}, {
 							onSave = {()=>{
 								let root = me.update_tree()
 								setTimeout(()=>{
-									flush_math.go()
 									me.save_content(root)
 									me.scroll_to_selection()
 								}, 50) // 等待state更新
