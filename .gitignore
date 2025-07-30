@@ -24,3 +24,5 @@ yblog_frontend/convert/output.json
 yblog_frontend/convert/output_converted.json
 openai_keys.txt
 nginx/config.py
+
+user_data.json
